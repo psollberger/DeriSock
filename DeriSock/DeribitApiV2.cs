@@ -7,7 +7,7 @@ namespace DeriSock
   using System.Threading.Tasks;
   using Data;
   using Model;
-  
+
   public class DeribitApiV2
   {
     private readonly string _accessKey;
@@ -122,7 +122,7 @@ namespace DeriSock
         callback(response.@params.data.ToObject<BookResponse>());
       });
     }
-    
+
     public Task<bool> SubscribeOrdersAsync(string instrument, Action<OrderResponse> callback)
     {
       return SubscribePrivateAsync("user.orders." + instrument + ".raw", callback, response =>
@@ -258,10 +258,10 @@ namespace DeriSock
       return Socket.SendAsync(
                               "private/get_settlement_history_by_currency", new
                               {
-                                  currency = currency,
-                                  type = "settlement",
-                                  count = count,
-                                  access_token = Socket.AccessToken
+                                currency = currency,
+                                type = "settlement",
+                                count = count,
+                                access_token = Socket.AccessToken
                               }, new ObjectJsonConverter<SettlementResponse>());
     }
   }

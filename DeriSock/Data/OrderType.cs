@@ -1,7 +1,8 @@
-﻿namespace DeriSock.Data {
-    public enum OrderType
-    {
-        Buy,
-        Sell
-    }
+﻿namespace DeriSock.Data
+{
+  public enum OrderType
+  {
+    Buy,
+    Sell
+  }
 }

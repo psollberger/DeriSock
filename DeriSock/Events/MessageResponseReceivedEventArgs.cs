@@ -1,4 +1,4 @@
-namespace DeriSock
+﻿namespace DeriSock.Events
 {
   using Model;
   using Utils;

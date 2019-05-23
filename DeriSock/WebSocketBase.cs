@@ -8,6 +8,7 @@
   using System.Text;
   using System.Threading;
   using System.Threading.Tasks;
+  using Events;
   using Model;
   using Serilog;
   using Utils;

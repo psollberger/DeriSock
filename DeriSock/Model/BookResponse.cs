@@ -1,19 +1,19 @@
 namespace DeriSock.Model
 {
-    using System.Collections.Generic;
+  using System.Collections.Generic;
 
-    public class BookResponse
+  public class BookResponse
+  {
+    public List<double[]> asks;
+    public List<double[]> bids;
+    public long change_id;
+
+    public double Bid { get => bids[0][0]; }
+    public double Ask { get => asks[0][0]; }
+
+    public string ToString(string instrument)
     {
-        public List<double[]> asks;
-        public List<double[]> bids;
-        public long change_id;
-
-        public double Bid { get => bids[0][0]; }
-        public double Ask { get => asks[0][0]; }
-
-        public string ToString(string instrument)
-        {
-            return $"{instrument}, {change_id}, BID: {Bid:0.00}, ASK: {Ask:0.00}";
-        }
+      return $"{instrument}, {change_id}, BID: {Bid:0.00}, ASK: {Ask:0.00}";
     }
+  }
 }

@@ -1,7 +1,7 @@
 ﻿namespace DeriSock
 {
-    public class PublicApiRequest
-    {
-        
-    }
+  public class PublicApiRequest
+  {
+
+  }
 }

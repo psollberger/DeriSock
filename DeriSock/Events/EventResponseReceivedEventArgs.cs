@@ -1,6 +1,5 @@
-namespace DeriSock
+﻿namespace DeriSock.Events
 {
-  using System;
   using Model;
 
   public class EventResponseReceivedEventArgs : MessageReceivedEventArgs
