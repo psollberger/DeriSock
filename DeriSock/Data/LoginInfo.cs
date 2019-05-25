@@ -1,4 +1,4 @@
-namespace DeriSock.Data
+﻿namespace DeriSock.Data
 {
   using System;
   using System.Threading;
@@ -25,7 +25,7 @@ namespace DeriSock.Data
     public async Task Refresh()
     {
       var loginInfo = await _api.LoginAsync();
-      _api.Socket.AccessToken = loginInfo.access_token;
+      _api.AccessToken = loginInfo.access_token;
       _refreshTimer.Change(TimeSpan.FromSeconds(loginInfo.expires_in - 30d), Timeout.InfiniteTimeSpan);
     }
 

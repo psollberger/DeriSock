@@ -29,11 +29,12 @@
     public bool ClosedByError { get; private set; }
     public bool ClosedByClient { get; private set; }
     public bool ClosedByHost { get; private set; }
-
     public bool IsConnected
     {
       get => !(ClosedByHost || ClosedByClient || ClosedByError);
     }
+
+    public string AccessToken { get; set; }
 
     public JsonRpcWebSocketClient(string endpointUri)
     {
@@ -195,7 +196,7 @@
 
             resultMessage = "";
           }
-          catch (OperationCanceledException operationCanceledException)
+          catch (OperationCanceledException)
           {
             if (_receiveLoopCancellationTokenSource.IsCancellationRequested)
             {
@@ -207,7 +208,7 @@
 
             throw;
           }
-          catch (Exception ex)
+          catch (Exception)
           {
             ClosedByError = true;
           }
@@ -301,12 +302,197 @@
 
     protected virtual void HeartbeatTestRequestReceived()
     {
-      _ = SendAsync("public/test", new { expected_result = "ok" }, new ObjectJsonConverter<TestResponse>());
-      var blub = 4;
+      TestAsync("ok");
+    }
+
+    public Task<TestResponse> TestAsync(string expectedResult)
+    {
+      return SendAsync("public/test", new { expected_result = expectedResult }, new ObjectJsonConverter<TestResponse>());
+    }
+
+    public Task<string> PingAsync()
+    {
+      return SendAsync("public/ping", new { }, new ObjectJsonConverter<string>());
+    }
+
+    public Task<List<string>> SubscribePublicAsync(string[] channels)
+    {
+      return SendAsync("public/subscribe", new { channels }, new ListJsonConverter<string>());
+    }
+
+    public Task<List<string>> UnsubscribePublicAsync(string[] channels)
+    {
+      return SendAsync("public/unsubscribe", new { channels }, new ListJsonConverter<string>());
+    }
+
+    public Task<List<string>> SubscribePrivateAsync(string[] channels)
+    {
+      return SendAsync("private/subscribe", new { channels, access_token = AccessToken }, new ListJsonConverter<string>());
+    }
+    
+    public Task<List<string>> UnsubscribePrivateAsync(string[] channels)
+    {
+      return SendAsync("private/unsubscribe", new { channels, access_token = AccessToken }, new ListJsonConverter<string>());
+    }
+
+    public async Task<bool> ManagedSubscribeAsync(string channel, bool @private, Action<EventResponse> callback)
+    {
+      SubscriptionEntry entry;
+      TaskCompletionSource<bool> defer = null;
+      lock (_eventsMap)
+      {
+        if (_eventsMap.ContainsKey(channel))
+        {
+          entry = _eventsMap[channel];
+          switch (entry.State)
+          {
+            case SubscriptionState.Subscribed:
+              {
+                //Logger.Log(LogSeverity.Notice, $"Already subsribed added to callbacks {channel}");
+                if (callback != null)
+                {
+                  entry.Callbacks.Add(callback);
+                }
+                return true;
+              }
+
+            case SubscriptionState.Unsubscribing:
+              //Logger.Log(LogSeverity.Notice, $"Unsubscribing return false {channel}");
+              return false;
+
+            case SubscriptionState.Unsubscribed:
+
+              //Logger.Log(LogSeverity.Notice, $"Unsubscribed resubscribing {channel}");
+              entry.State = SubscriptionState.Subscribing;
+              defer = new TaskCompletionSource<bool>();
+              entry.CurrentAction = defer.Task;
+              break;
+          }
+        }
+        else
+        {
+          //Logger.Log(LogSeverity.Notice, $"Not exists subscribing {channel}");
+          defer = new TaskCompletionSource<bool>();
+          entry = new SubscriptionEntry()
+          {
+            State = SubscriptionState.Subscribing,
+            Callbacks = new List<Action<EventResponse>>(),
+            CurrentAction = defer.Task
+          };
+          _eventsMap[channel] = entry;
+        }
+      }
+      if (defer == null)
+      {
+        //Logger.Log(LogSeverity.Notice, $"Empty defer wait for already subscribing {channel}");
+        var currentAction = entry.CurrentAction;
+        var result = currentAction != null && await currentAction;
+        //Logger.Log(LogSeverity.Notice, $"Empty defer wait for already subscribing res {result} {channel}");
+        lock (_eventsMap)
+        {
+          if (!result || entry.State != SubscriptionState.Subscribed)
+          {
+            return false;
+          }
+
+          //Logger.Log(LogSeverity.Notice, $"Empty defer adding callback {channel}");
+          if (callback != null)
+          {
+            entry.Callbacks.Add(callback);
+          }
+          return true;
+        }
+      }
+      try
+      {
+        //Logger.Log(LogSeverity.Notice, $"Subscribing {channel}");
+        var response = !@private ? await SubscribePublicAsync(new[] { channel }) : await SubscribePrivateAsync(new[] { channel });
+        if (response.Count != 1 || response[0] != channel)
+        {
+          //Logger.Log(LogSeverity.Notice, $"Invalid subscribe result {response} {channel}");
+          defer.SetResult(false);
+        }
+        else
+        {
+          lock (_eventsMap)
+          {
+            //Logger.Log(LogSeverity.Notice, $"Successfully subscribed adding callback {channel}");
+            entry.State = SubscriptionState.Subscribed;
+            if (callback != null)
+            {
+              entry.Callbacks.Add(callback);
+            }
+            entry.CurrentAction = null;
+          }
+          defer.SetResult(true);
+        }
+      }
+      catch (Exception e)
+      {
+        defer.SetException(e);
+      }
+      return await defer.Task;
+    }
+
+    public async Task<bool> ManagedUnsubscribeAsync(string channel, bool @private, Action<EventResponse> callback)
+    {
+      SubscriptionEntry entry;
+      TaskCompletionSource<bool> defer;
+      lock (_eventsMap)
+      {
+        if (!_eventsMap.ContainsKey(channel))
+        {
+          return false;
+        }
+        entry = _eventsMap[channel];
+        if (!entry.Callbacks.Contains(callback))
+        {
+          return false;
+        }
+        switch (entry.State)
+        {
+          case SubscriptionState.Subscribing:
+            return false;
+          case SubscriptionState.Unsubscribed:
+          case SubscriptionState.Unsubscribing:
+            entry.Callbacks.Remove(callback);
+            return true;
+          case SubscriptionState.Subscribed:
+            if (entry.Callbacks.Count > 1)
+            {
+              entry.Callbacks.Remove(callback);
+              return true;
+            }
+            entry.State = SubscriptionState.Unsubscribing;
+            defer = new TaskCompletionSource<bool>();
+            entry.CurrentAction = defer.Task;
+            break;
+          default: return false;
+        }
+      }
+      try
+      {
+        var response = !@private ? await UnsubscribePublicAsync(new[] { channel }) : await UnsubscribePrivateAsync(new[] { channel });
+        if (response.Count != 1 || response[0] != channel)
+        {
+          defer.SetResult(false);
+        }
+        else
+        {
+          lock (_eventsMap)
+          {
+            entry.State = SubscriptionState.Unsubscribed;
+            entry.Callbacks.Remove(callback);
+            entry.CurrentAction = null;
+          }
+          defer.SetResult(true);
+        }
+      }
+      catch (Exception e)
+      {
+        defer.SetException(e);
+      }
+      return await defer.Task;
     }
   }
-
-  public class WebSocketNotConnectedException : Exception { }
-
-  public class WebSocketAlreadyConnectedException : Exception { }
 }
