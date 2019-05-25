@@ -29,7 +29,7 @@
 
     private readonly CancellationTokenSource _receiveLoopCancellationTokenSource = new CancellationTokenSource();
 
-    public bool IsRunning
+    public bool IsConnected
     {
       get => _websocket != null && _websocket.State == WebSocketState.Open;
     }
@@ -45,7 +45,7 @@
     {
       _websocket = new ClientWebSocket();
 
-      _logger.Information("Connecting to websocket");
+      _logger?.Debug("Connecting to websocket");
       try
       {
         await _websocket.ConnectAsync(new Uri($"wss://{_hostname}/ws/api/v2"), CancellationToken.None);
@@ -54,11 +54,11 @@
       {
         _websocket.Dispose();
         _websocket = null;
-        _logger.Information($"Exception during connect: {ex.Message}");
+        _logger?.Error(ex, "Exception during connect");
         throw;
       }
 
-      _logger.Information("Connected to websocket");
+      _logger?.Debug("Connected to websocket");
 
       _ = Task.Factory.StartNew(ReceiveLoopAsync, _receiveLoopCancellationTokenSource.Token, TaskCreationOptions.LongRunning, TaskScheduler.Current);
     }
@@ -69,14 +69,14 @@
       {
         return;
       }
-      _logger.Information("Socket DisconnectAsync");
+      _logger?.Debug("Socket DisconnectAsync");
 
-      _logger.Information("Shutting down the Receive Loop");
+      _logger?.Debug("Shutting down the Receive Loop");
       _receiveLoopCancellationTokenSource.Cancel();
 
       if (_websocket.State == WebSocketState.Open)
       {
-        _logger.Information("Closing Socket");
+        _logger?.Debug("Closing Socket");
         await _websocket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
       }
 
@@ -108,7 +108,7 @@
       _tasks[request.id] = taskInfo;
       var message = JsonConvert.SerializeObject(request);
       var buffer = Encoding.UTF8.GetBytes(message);
-      _logger.Debug($"SendAsync task {method} {request.id} {message}");
+      _logger?.Debug($"SendAsync task {method} {request.id} {message}");
       var msgInfo = new MessageInfo { task = taskInfo, message = buffer };
       _ = _websocket?.SendAsync(new ArraySegment<byte>(msgInfo.message), WebSocketMessageType.Text, true, CancellationToken.None);
       return tcs.Task;
@@ -145,7 +145,7 @@
                                       var message = (string)msg;
                                       try
                                       {
-                                        _logger.Debug($"ReceiveLoopAsync message {message}");
+                                        _logger?.Debug($"ReceiveLoopAsync message {message}");
                                         var jObject = (JObject)JsonConvert.DeserializeObject(message);
                                         if (jObject == null) return;
 
@@ -164,13 +164,13 @@
                                           }
                                           else
                                           {
-                                            _logger.Information($"ConsumeResponsesLoop cannot resolve task {parsedResult.id}");
+                                            _logger?.Debug($"ConsumeResponsesLoop cannot resolve task {parsedResult.id}");
                                           }
                                         }
                                       }
                                       catch (Exception ex)
                                       {
-                                        _logger.Error($"ReceiveLoopAsync Error during parsing task {ex}");
+                                        _logger?.Error(ex, "ReceiveLoopAsync Error during parsing task");
                                       }
                                     }, resultMessage, _receiveLoopCancellationTokenSource.Token, TaskCreationOptions.LongRunning, TaskScheduler.Current);
 
@@ -181,14 +181,14 @@
           if (operationCanceledException.CancellationToken.IsCancellationRequested)
           {
             //ignore - valid cancellation
-            _logger.Debug("Valid manual Cancellation");
+            _logger?.Debug("Valid manual Cancellation");
             return;
           }
           throw;
         }
         catch (Exception ex)
         {
-          _logger.Error($"ReceiveLoopAsync error {ex}");
+          _logger?.Error(ex, "ReceiveLoopAsync error");
         }
       }
     }

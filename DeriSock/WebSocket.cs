@@ -49,7 +49,7 @@
         {
           var convertedResult = e.TaskInfo.Convert(e.Response.result);
 
-          _logger.Debug($"OnMessageResponseReceived task resolve {e.Response.id}");
+          _logger?.Debug($"OnMessageResponseReceived task resolve {e.Response.id}");
           Task.Factory.StartNew(
                                 () =>
                                 {
@@ -59,7 +59,7 @@
       }
       catch (Exception ex)
       {
-        _logger.Error($"ConsumeResponsesLoop Error during parsing task {ex}");
+        _logger?.Error($"ConsumeResponsesLoop Error during parsing task {ex}");
         Task.Factory.StartNew(
                               () =>
                               {
@@ -82,7 +82,7 @@
         }
         if (!_eventsMap.TryGetValue(e.EventData.@params.channel, out var entry))
         {
-          _logger.Warning($"Could not find event for: {e.EventData.@params}");
+          _logger?.Warning($"Could not find event for: {e.EventData.@params}");
           return;
         }
 
@@ -94,7 +94,7 @@
           }
           catch (Exception ex)
           {
-            _logger.Information($"ReceiveMessageQueue Error during calling event callback {e.EventData.@params.channel} {ex}");
+            _logger?.Information($"ReceiveMessageQueue Error during calling event callback {e.EventData.@params.channel} {ex}");
           }
         }
       }

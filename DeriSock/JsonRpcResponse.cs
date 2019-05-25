@@ -1,4 +1,4 @@
-namespace DeriSock.Model
+﻿namespace DeriSock
 {
   using Newtonsoft.Json.Linq;
 
