@@ -32,7 +32,7 @@
 
     public bool IsConnected
     {
-      get => !ClosedByHost && !ClosedByClient && !ClosedByError;
+      get => !(ClosedByHost || ClosedByClient || ClosedByError);
     }
 
     public JsonRpcWebSocketClient(string endpointUri)
@@ -135,81 +135,88 @@
       _receiveLoopRunning = true;
       var buffer = new byte[4096];
       var resultMessage = "";
-      while (!_receiveLoopCancellationTokenSource.IsCancellationRequested)
+      try
       {
-        if (_webSocket == null || _webSocket.State != WebSocketState.Open) continue;
-
-        try
+        while (!_receiveLoopCancellationTokenSource.IsCancellationRequested)
         {
-          var result = await _webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), _receiveLoopCancellationTokenSource.Token);
-          if (result.MessageType == WebSocketMessageType.Close)
-          {
-            ClosedByHost = true;
-            ClosedByClient = false;
-            _logger?.Debug("The host closed the connection");
-            break;
-          }
+          if (_webSocket == null || _webSocket.State != WebSocketState.Open) continue;
 
-          resultMessage = string.Concat(resultMessage, Encoding.UTF8.GetString(buffer, 0, result.Count));
-          if (!result.EndOfMessage)
+          try
           {
-            continue;
-          }
+            var result = await _webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), _receiveLoopCancellationTokenSource.Token);
+            if (result.MessageType == WebSocketMessageType.Close)
+            {
+              ClosedByHost = true;
+              ClosedByClient = false;
+              _logger?.Debug("The host closed the connection");
+              break;
+            }
 
-          _ = Task.Factory.StartNew(
-                                    (msg) =>
-                                    {
-                                      var message = (string)msg;
-                                      try
+            resultMessage = string.Concat(resultMessage, Encoding.UTF8.GetString(buffer, 0, result.Count));
+            if (!result.EndOfMessage)
+            {
+              continue;
+            }
+
+            _ = Task.Factory.StartNew(
+                                      (msg) =>
                                       {
-                                        _logger?.Debug("ReceiveLoopAsync message {Message}", message);
-                                        var jObject = (JObject)JsonConvert.DeserializeObject(message);
-                                        if (jObject == null) return;
+                                        var message = (string)msg;
+                                        try
+                                        {
+                                          _logger?.Debug("ReceiveLoopAsync message {Message}", message);
+                                          var jObject = (JObject)JsonConvert.DeserializeObject(message);
+                                          if (jObject == null) return;
 
-                                        if (jObject.ContainsKey("params"))
-                                        {
-                                          var eventRes = jObject.ToObject<EventResponse>();
-                                          eventRes.@params.timestamp = DateTime.Now;
-                                          EventResponseReceived(new EventResponseReceivedEventArgs(message, eventRes));
-                                        }
-                                        else
-                                        {
-                                          var parsedResult = jObject.ToObject<JsonRpcResponse>();
-                                          if (_tasks.TryRemove(parsedResult.id, out var task))
+                                          if (jObject.ContainsKey("params"))
                                           {
-                                            MessageResponseReceived(new MessageResponseReceivedEventArgs(message, parsedResult, task));
+                                            var eventRes = jObject.ToObject<EventResponse>();
+                                            eventRes.@params.timestamp = DateTime.Now;
+                                            EventResponseReceived(new EventResponseReceivedEventArgs(message, eventRes));
                                           }
                                           else
                                           {
-                                            _logger?.Warning("ConsumeResponsesLoop cannot resolve task {@ParsedResult}", parsedResult);
+                                            var parsedResult = jObject.ToObject<JsonRpcResponse>();
+                                            if (_tasks.TryRemove(parsedResult.id, out var task))
+                                            {
+                                              MessageResponseReceived(new MessageResponseReceivedEventArgs(message, parsedResult, task));
+                                            }
+                                            else
+                                            {
+                                              _logger?.Warning("ConsumeResponsesLoop cannot resolve task {@ParsedResult}", parsedResult);
+                                            }
                                           }
                                         }
-                                      }
-                                      catch (Exception ex)
-                                      {
-                                        _logger?.Error(ex, "ReceiveLoopAsync Error during parsing task");
-                                      }
-                                    }, resultMessage, _receiveLoopCancellationTokenSource.Token, TaskCreationOptions.LongRunning, TaskScheduler.Current);
+                                        catch (Exception ex)
+                                        {
+                                          _logger?.Error(ex, "ReceiveLoopAsync Error during parsing task");
+                                        }
+                                      }, resultMessage, _receiveLoopCancellationTokenSource.Token, TaskCreationOptions.LongRunning, TaskScheduler.Current);
 
-          resultMessage = "";
-        }
-        catch (OperationCanceledException operationCanceledException)
-        {
-          if (_receiveLoopCancellationTokenSource.IsCancellationRequested)
-          {
-            //ignore - valid cancellation
-            ClosedByClient = true;
-            _logger?.Verbose("Valid manual Cancellation");
-            return;
+            resultMessage = "";
           }
-          throw;
-        }
-        catch (Exception ex)
-        {
-          ClosedByError = true;
+          catch (OperationCanceledException operationCanceledException)
+          {
+            if (_receiveLoopCancellationTokenSource.IsCancellationRequested)
+            {
+              //ignore - valid cancellation
+              ClosedByClient = true;
+              _logger?.Verbose("Valid manual Cancellation");
+              return;
+            }
+
+            throw;
+          }
+          catch (Exception ex)
+          {
+            ClosedByError = true;
+          }
         }
       }
-      _receiveLoopRunning = false;
+      finally
+      {
+        _receiveLoopRunning = false;
+      }
       _logger?.Verbose("Leaving ReceiveLoop");
     }
 
@@ -294,12 +301,8 @@
 
     protected virtual void HeartbeatTestRequestReceived()
     {
-      _ = TestAsync("ok");
-    }
-
-    public Task<TestResponse> TestAsync(string expectedResult)
-    {
-      return SendAsync("public/test", new { expected_result = expectedResult }, new ObjectJsonConverter<TestResponse>());
+      _ = SendAsync("public/test", new { expected_result = "ok" }, new ObjectJsonConverter<TestResponse>());
+      var blub = 4;
     }
   }
 

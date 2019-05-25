@@ -1,5 +1,6 @@
 ﻿namespace DeriSock
 {
+  using System;
   using Newtonsoft.Json.Linq;
 
   public class JsonRpcResponse

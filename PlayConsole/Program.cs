@@ -20,12 +20,12 @@
       Console.CancelKeyPress += Console_CancelKeyPress;
 
       Console.Title = "Deribit Development Playground";
-
+      
       Directory.CreateDirectory(@"D:\Temp\Serilog");
       var logFilePath = @"D:\Temp\Serilog\test-log-.txt";
 
-      var outputTemplateLongLevelName = "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level,-11:u}] {Message:lj}{NewLine}{Exception}";
-      var outputTemplateShortLevelName = "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:u3}] {Message:lj}{NewLine}{Exception}";
+      var outputTemplateLongLevelName = "{Timestamp:yyyy-MM-dd HH:mm:ss.fffffff} [{Level,-11:u}] {Message:lj}{NewLine}{Exception}";
+      var outputTemplateShortLevelName = "{Timestamp:yyyy-MM-dd HH:mm:ss.fffffff} [{Level:u3}] {Message:lj}{NewLine}{Exception}";
 
       Log.Logger = new LoggerConfiguration()
                    .MinimumLevel.Verbose()
@@ -41,22 +41,11 @@
 
       while (!canQuitProcess)
       {
-        //Log.Verbose("Verbose Message");
-        //Log.Debug("Debug Message");
-        //Log.Information("Information Message");
-        //Log.Warning("Warning Message");
-        //Log.Error("Error Message");
-        //Log.Fatal("Fatal Message");
-
-        //var api = new DeribitApiV2("test.deribit.com", null, null, "ConsoleTest");
-        //await api.Socket.ConnectAsync();
-        //await api.Socket.DisconnectAsync();
-
-        //var client = new JsonRpcWebSocketClient("wss://test.deribit.com/ws/api/v2");
         _client = new JsonRpcWebSocketClient("wss://test.deribit.com/ws/api/v2");
+        //_client = new JsonRpcWebSocketClient("wss://www.deribit.com/ws/api/v2");
         await _client.ConnectAsync();
-        await _client.SendAsync("public/set_heartbeat", new {interval = 30}, new ObjectJsonConverter<object>());
-        await _client.SendAsync("public/test", new {expected_result = "MyTest"}, new ObjectJsonConverter<TestResponse>());
+        await _client.SendAsync("public/set_heartbeat", new { interval = 30 }, new ObjectJsonConverter<object>());
+        await _client.SendAsync("public/test", new { expected_result = "MyTest" }, new ObjectJsonConverter<TestResponse>());
 
         while (_client.IsConnected)
         {
