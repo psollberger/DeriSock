@@ -33,9 +33,7 @@
     {
       get => _webSocket != null && !(ClosedByHost || ClosedByClient || ClosedByError);
     }
-
-    public string AccessToken { get; set; }
-
+    
     public JsonRpcWebSocketClient(string endpointUri)
     {
       EndpointUri = new Uri(endpointUri);
@@ -307,17 +305,17 @@
       return SendAsync("public/unsubscribe", new { channels }, new ListJsonConverter<string>());
     }
 
-    public Task<List<string>> SubscribePrivateAsync(string[] channels)
+    public Task<List<string>> SubscribePrivateAsync(string[] channels, string accessToken)
     {
-      return SendAsync("private/subscribe", new { channels, access_token = AccessToken }, new ListJsonConverter<string>());
+      return SendAsync("private/subscribe", new { channels, access_token = accessToken }, new ListJsonConverter<string>());
     }
 
-    public Task<List<string>> UnsubscribePrivateAsync(string[] channels)
+    public Task<List<string>> UnsubscribePrivateAsync(string[] channels, string accessToken)
     {
-      return SendAsync("private/unsubscribe", new { channels, access_token = AccessToken }, new ListJsonConverter<string>());
+      return SendAsync("private/unsubscribe", new { channels, access_token = accessToken }, new ListJsonConverter<string>());
     }
 
-    public async Task<bool> ManagedSubscribeAsync(string channel, bool @private, Action<EventResponse> callback)
+    public async Task<bool> ManagedSubscribeAsync(string channel, bool @private, string accessToken, Action<EventResponse> callback)
     {
       SubscriptionEntry entry;
       TaskCompletionSource<bool> defer = null;
@@ -330,7 +328,7 @@
           {
             case SubscriptionState.Subscribed:
               {
-                //Logger.Log(LogSeverity.Notice, $"Already subsribed added to callbacks {channel}");
+                _logger?.Verbose( $"Already subsribed added to callbacks {channel}");
                 if (callback != null)
                 {
                   entry.Callbacks.Add(callback);
@@ -339,12 +337,12 @@
               }
 
             case SubscriptionState.Unsubscribing:
-              //Logger.Log(LogSeverity.Notice, $"Unsubscribing return false {channel}");
+              _logger?.Verbose($"Unsubscribing return false {channel}");
               return false;
 
             case SubscriptionState.Unsubscribed:
 
-              //Logger.Log(LogSeverity.Notice, $"Unsubscribed resubscribing {channel}");
+              _logger?.Verbose($"Unsubscribed resubscribing {channel}");
               entry.State = SubscriptionState.Subscribing;
               defer = new TaskCompletionSource<bool>();
               entry.CurrentAction = defer.Task;
@@ -353,7 +351,7 @@
         }
         else
         {
-          //Logger.Log(LogSeverity.Notice, $"Not exists subscribing {channel}");
+          _logger?.Verbose($"Not exists subscribing {channel}");
           defer = new TaskCompletionSource<bool>();
           entry = new SubscriptionEntry()
           {
@@ -366,10 +364,10 @@
       }
       if (defer == null)
       {
-        //Logger.Log(LogSeverity.Notice, $"Empty defer wait for already subscribing {channel}");
+        _logger?.Verbose($"Empty defer wait for already subscribing {channel}");
         var currentAction = entry.CurrentAction;
         var result = currentAction != null && await currentAction;
-        //Logger.Log(LogSeverity.Notice, $"Empty defer wait for already subscribing res {result} {channel}");
+        _logger?.Verbose($"Empty defer wait for already subscribing res {result} {channel}");
         lock (_eventsMap)
         {
           if (!result || entry.State != SubscriptionState.Subscribed)
@@ -377,7 +375,7 @@
             return false;
           }
 
-          //Logger.Log(LogSeverity.Notice, $"Empty defer adding callback {channel}");
+          _logger?.Verbose($"Empty defer adding callback {channel}");
           if (callback != null)
           {
             entry.Callbacks.Add(callback);
@@ -387,18 +385,18 @@
       }
       try
       {
-        //Logger.Log(LogSeverity.Notice, $"Subscribing {channel}");
-        var response = !@private ? await SubscribePublicAsync(new[] { channel }) : await SubscribePrivateAsync(new[] { channel });
+        _logger?.Verbose($"Subscribing {channel}");
+        var response = !@private ? await SubscribePublicAsync(new[] { channel }) : await SubscribePrivateAsync(new[] { channel }, accessToken);
         if (response.Count != 1 || response[0] != channel)
         {
-          //Logger.Log(LogSeverity.Notice, $"Invalid subscribe result {response} {channel}");
+          _logger?.Verbose($"Invalid subscribe result {response} {channel}");
           defer.SetResult(false);
         }
         else
         {
           lock (_eventsMap)
           {
-            //Logger.Log(LogSeverity.Notice, $"Successfully subscribed adding callback {channel}");
+            _logger?.Verbose($"Successfully subscribed adding callback {channel}");
             entry.State = SubscriptionState.Subscribed;
             if (callback != null)
             {
@@ -416,7 +414,7 @@
       return await defer.Task;
     }
 
-    public async Task<bool> ManagedUnsubscribeAsync(string channel, bool @private, Action<EventResponse> callback)
+    public async Task<bool> ManagedUnsubscribeAsync(string channel, bool @private, string accessToken, Action<EventResponse> callback)
     {
       SubscriptionEntry entry;
       TaskCompletionSource<bool> defer;
@@ -454,7 +452,7 @@
       }
       try
       {
-        var response = !@private ? await UnsubscribePublicAsync(new[] { channel }) : await UnsubscribePrivateAsync(new[] { channel });
+        var response = !@private ? await UnsubscribePublicAsync(new[] { channel }) : await UnsubscribePrivateAsync(new[] { channel }, accessToken);
         if (response.Count != 1 || response[0] != channel)
         {
           defer.SetResult(false);

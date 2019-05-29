@@ -17,6 +17,8 @@
 
     private readonly List<Tuple<string, object, object>> _listeners;
 
+    public string AccessToken { get; set; }
+
     public DeribitApiV2(string hostname, string accessKey, string accessSecret, string sessionName) : base($"wss://{hostname}/ws/api/v2")
     {
       _accessKey = accessKey;
@@ -29,7 +31,7 @@
 
     private async Task<bool> SubscribePublicAsync<T>(string channelName, Action<T> originalCallback, Action<EventResponse> myCallback)
     {
-      if (!await ManagedSubscribeAsync(channelName, false, myCallback)) return false;
+      if (!await ManagedSubscribeAsync(channelName, false, null, myCallback)) return false;
       lock (_listeners)
       {
         _listeners.Add(Tuple.Create(channelName, (object)originalCallback, (object)myCallback));
@@ -45,7 +47,7 @@
         entry = _listeners.FirstOrDefault(x => x.Item1 == channelName && x.Item2 == (object)originalCallback);
       }
       if (entry == null) return false;
-      if (!await ManagedUnsubscribeAsync(channelName, false, (Action<EventResponse>)entry.Item3)) return false;
+      if (!await ManagedUnsubscribeAsync(channelName, false, null, (Action<EventResponse>)entry.Item3)) return false;
       lock (_listeners)
       {
         _listeners.Remove(entry);
@@ -55,7 +57,7 @@
 
     private async Task<bool> SubscribePrivateAsync<T>(string channelName, Action<T> originalCallback, Action<EventResponse> myCallback)
     {
-      if (!await ManagedSubscribeAsync(channelName, true, myCallback)) return false;
+      if (!await ManagedSubscribeAsync(channelName, true, AccessToken, myCallback)) return false;
       lock (_listeners)
       {
         _listeners.Add(Tuple.Create(channelName, (object)originalCallback, (object)myCallback));
@@ -71,7 +73,7 @@
         entry = _listeners.FirstOrDefault(x => x.Item1 == channelName && x.Item2 == (object)originalCallback);
       }
       if (entry == null) return false;
-      if (!await ManagedUnsubscribeAsync(channelName, true, (Action<EventResponse>)entry.Item3)) return false;
+      if (!await ManagedUnsubscribeAsync(channelName, true, AccessToken, (Action<EventResponse>)entry.Item3)) return false;
       lock (_listeners)
       {
         _listeners.Remove(entry);
