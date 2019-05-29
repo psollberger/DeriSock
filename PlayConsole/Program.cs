@@ -20,34 +20,30 @@
       Console.CancelKeyPress += Console_CancelKeyPress;
 
       Console.Title = "Deribit Development Playground";
-      
-      Directory.CreateDirectory(@"D:\Temp\Serilog");
-      var logFilePath = @"D:\Temp\Serilog\test-log-.txt";
 
-      //var outputTemplateLongLevelName = "{Timestamp:yyyy-MM-dd HH:mm:ss.fffffff} [{Level,-11:u}] {Message:lj}{NewLine}{Exception}";
-      var outputTemplateShortLevelName = "{Timestamp:yyyy-MM-dd HH:mm:ss.fffffff} [{Level:u3}] {Message:lj}{NewLine}{Exception}";
+      Directory.CreateDirectory(@"D:\Temp\Serilog");
+      const string logFilePath = @"D:\Temp\Serilog\test-log-.txt";
+
+      //const string outputTemplateLongLevelName = "{Timestamp:yyyy-MM-dd HH:mm:ss.fffffff} [{Level,-11:u}] {Message:lj}{NewLine}{Exception}";
+      const string outputTemplateShortLevelName = "{Timestamp:yyyy-MM-dd HH:mm:ss.fffffff} [{Level:u3}] {Message:lj}{NewLine}{Exception}";
 
       Log.Logger = new LoggerConfiguration()
                    .MinimumLevel.Verbose()
                    .WriteTo.Async(l => l.Trace(outputTemplate: outputTemplateShortLevelName))
                    .WriteTo.Async(l => l.Console(outputTemplate: outputTemplateShortLevelName))
-                   .WriteTo.Async(l => l.File(logFilePath, rollingInterval: RollingInterval.Hour, restrictedToMinimumLevel: LogEventLevel.Information))
+                   .WriteTo.Async(l => l.File(logFilePath, rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: LogEventLevel.Information))
                    .Destructure.ByTransforming<JsonRpcRequest>(JsonConvert.SerializeObject)
                    .Destructure.ByTransforming<JsonRpcResponse>(JsonConvert.SerializeObject)
                    .Destructure.ByTransforming<EventResponse>(JsonConvert.SerializeObject)
                    .CreateLogger();
 
-      var canQuitProcess = false;
+      _client = new DeribitApiV2("test.deribit.com", null, null, "PlayGround");
 
-    _client = new DeribitApiV2("test.deribit.com", null, null, "");
-
-      while (!canQuitProcess)
+      while (!_client.IsConnected)
       {
-        _client = new DeribitApiV2("test.deribit.com", null, null, "blub");
-        //_client = new JsonRpcWebSocketClient("wss://www.deribit.com/ws/api/v2");
         await _client.ConnectAsync();
         await _client.SendAsync("public/set_heartbeat", new { interval = 30 }, new ObjectJsonConverter<object>());
-        await _client.SendAsync("public/test", new { expected_result = "MyTest" }, new ObjectJsonConverter<TestResponse>());
+        //await _client.SendAsync("public/test", new { expected_result = "MyTest" }, new ObjectJsonConverter<TestResponse>());
 
         while (_client.IsConnected)
         {
@@ -75,8 +71,8 @@
           if (_client.ClosedByClient)
           {
             Log.Logger.Information("Closed by Client. Do not Reconnect.");
+            break;
           }
-          canQuitProcess = true;
         }
       }
 

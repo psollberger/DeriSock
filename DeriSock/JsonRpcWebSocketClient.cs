@@ -31,7 +31,7 @@
     public bool ClosedByHost { get; private set; }
     public bool IsConnected
     {
-      get => !(ClosedByHost || ClosedByClient || ClosedByError);
+      get => _webSocket != null && !(ClosedByHost || ClosedByClient || ClosedByError);
     }
 
     public string AccessToken { get; set; }
@@ -43,11 +43,6 @@
 
     public async Task ConnectAsync()
     {
-      if (_webSocket != null)
-      {
-        throw new WebSocketAlreadyConnectedException();
-      }
-
       _logger?.Debug("Connecting to {Host}", EndpointUri);
       _webSocket = new ClientWebSocket();
       try
@@ -61,6 +56,7 @@
         _webSocket = null;
         throw;
       }
+
       _logger?.Debug("Successfully connected to the endpoint");
 
       //Start the threads
@@ -84,6 +80,7 @@
       {
         Thread.Sleep(1);
       }
+
       ClosedByClient = true;
 
       //Close the connection
@@ -98,28 +95,12 @@
 
     public Task<T> SendAsync<T>(string method, object @params, Converter.JsonConverter<T> converter)
     {
-      if (_webSocket == null || _webSocket.State != WebSocketState.Open)
-      {
-        throw new WebSocketNotConnectedException();
-      }
-
       Interlocked.CompareExchange(ref _requestId, 0, int.MaxValue);
       var reqId = Interlocked.Increment(ref _requestId);
 
-      var request = new JsonRpcRequest()
-      {
-        jsonrpc = "2.0",
-        id = reqId,
-        method = method,
-        @params = @params
-      };
+      var request = new JsonRpcRequest() { jsonrpc = "2.0", id = reqId, method = method, @params = @params };
       var tcs = new TaskCompletionSource<T>();
-      var taskInfo = new TypedTaskInfo<T>
-      {
-        Tcs = tcs,
-        id = request.id,
-        Converter = converter
-      };
+      var taskInfo = new TypedTaskInfo<T> { Tcs = tcs, id = request.id, Converter = converter };
 
       _logger?.Verbose("SendAsync task {@Request}", request);
 
@@ -165,7 +146,7 @@
                                         var message = (string)msg;
                                         try
                                         {
-                                          _logger?.Debug("ReceiveLoopAsync message {Message}", message);
+                                          _logger?.Verbose("ReceiveLoopAsync message {Message}", message);
                                           var jObject = (JObject)JsonConvert.DeserializeObject(message);
                                           if (jObject == null) return;
 
@@ -274,6 +255,7 @@
       {
         if (e.EventData.method == "heartbeat")
         {
+          _logger?.Information("Hearbeat received: {@Heartbeat}", e.EventData);
           if (e.EventData.@params.type == "test_request")
           {
             HeartbeatTestRequestReceived();
@@ -329,7 +311,7 @@
     {
       return SendAsync("private/subscribe", new { channels, access_token = AccessToken }, new ListJsonConverter<string>());
     }
-    
+
     public Task<List<string>> UnsubscribePrivateAsync(string[] channels)
     {
       return SendAsync("private/unsubscribe", new { channels, access_token = AccessToken }, new ListJsonConverter<string>());
