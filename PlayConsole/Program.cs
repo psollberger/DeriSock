@@ -55,6 +55,7 @@
         if (_client.ClosedByHost)
         {
           Log.Logger.Information("Closed by Host. Reconnect in 5s");
+
           //try to reconnect
           Thread.Sleep(5000);
           continue;
@@ -62,6 +63,7 @@
         else if (_client.ClosedByError)
         {
           Log.Logger.Information("Closed by Error. Reconnect in 5s");
+
           //try to reconnect
           Thread.Sleep(5000);
           continue;

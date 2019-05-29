@@ -9,6 +9,7 @@
   using System.Threading.Tasks;
   using Converter;
   using Events;
+  using Exceptions;
   using Model;
   using Newtonsoft.Json;
   using Newtonsoft.Json.Linq;
@@ -41,6 +42,11 @@
 
     public async Task ConnectAsync()
     {
+      if (_webSocket != null)
+      {
+        throw new WebSocketAlreadyConnectedException();
+      }
+
       _logger?.Debug("Connecting to {Host}", EndpointUri);
       _webSocket = new ClientWebSocket();
       try
