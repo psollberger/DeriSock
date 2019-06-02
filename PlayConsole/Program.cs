@@ -45,7 +45,7 @@ namespace PlayConsole
                    .Destructure.ByTransforming<EventResponse>(JsonConvert.SerializeObject)
                    .CreateLogger();
 
-      _client = new DeribitApiV2("test.deribit.com", "PlayGround");
+      _client = new DeribitApiV2("test.deribit.com");
 
       while (!_client.IsConnected)
       {
@@ -53,9 +53,27 @@ namespace PlayConsole
         await _client.SendAsync("public/set_heartbeat", new { interval = 30 }, new ObjectJsonConverter<object>());
         await _client.SendAsync("public/test", new { expected_result = "MyTest" }, new ObjectJsonConverter<TestResponse>());
 
+        try
+        {
+          var loginRes = await _client.PublicAuthAsync("xxx", "xxx", "Playground");
+        }
+        catch (Exception ex)
+        {
+          var bla = 4;
+        }
+
         while (_client.IsConnected)
         {
-          Thread.Sleep(1);
+          try
+          {
+            var accSum = await _client.PrivateGetAccountSummaryAsync();
+            Log.Logger.Information("Got Account Summary");
+          }
+          catch (Exception ex)
+          {
+            var blub = 4;
+          }
+          Thread.Sleep(TimeSpan.FromSeconds(5));
         }
 
         //await client.DisconnectAsync();

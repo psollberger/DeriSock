@@ -9,15 +9,14 @@
 
   public class DeribitApiV2 : JsonRpcWebSocketClient
   {
-    public string SessionName { get; }
-
     private readonly List<Tuple<string, object, object>> _listeners;
 
-    public string AccessToken { get; set; }
+    private string _accessToken;
+    private string _refreshToken;
+    private Task _refreshTokenTask;
 
-    public DeribitApiV2(string hostname, string sessionName) : base($"wss://{hostname}/ws/api/v2")
+    public DeribitApiV2(string hostname) : base($"wss://{hostname}/ws/api/v2")
     {
-      SessionName = sessionName;
       _listeners = new List<Tuple<string, object, object>>();
     }
 
@@ -51,7 +50,7 @@
 
     private async Task<bool> PrivateSubscribeAsync<T>(string channelName, Action<T> originalCallback, Action<EventResponse> myCallback)
     {
-      if (!await ManagedSubscribeAsync(channelName, true, AccessToken, myCallback)) return false;
+      if (!await ManagedSubscribeAsync(channelName, true, _accessToken, myCallback)) return false;
       lock (_listeners)
       {
         _listeners.Add(Tuple.Create(channelName, (object)originalCallback, (object)myCallback));
@@ -67,7 +66,7 @@
         entry = _listeners.FirstOrDefault(x => x.Item1 == channelName && x.Item2 == (object)originalCallback);
       }
       if (entry == null) return false;
-      if (!await ManagedUnsubscribeAsync(channelName, true, AccessToken, (Action<EventResponse>)entry.Item3)) return false;
+      if (!await ManagedUnsubscribeAsync(channelName, true, _accessToken, (Action<EventResponse>)entry.Item3)) return false;
       lock (_listeners)
       {
         _listeners.Remove(entry);
@@ -77,20 +76,37 @@
 
     #endregion
 
-    public Task<AuthResponse> PublicAuthAsync(string accessKey, string accessSecret, string sessionName)
+    public async Task<AuthResponse> PublicAuthAsync(string accessKey, string accessSecret, string sessionName)
     {
       var scope = "connection";
       if (!string.IsNullOrEmpty(sessionName))
       {
-        scope = $"session:{sessionName}";
+        scope = $"session:{sessionName} expires:60";
       }
-      return SendAsync("public/auth", new
+      var loginRes = await SendAsync("public/auth", new
       {
         grant_type = "client_credentials",
         client_id = accessKey,
         client_secret = accessSecret,
         scope = scope
       }, new ObjectJsonConverter<AuthResponse>());
+      _accessToken = loginRes.access_token;
+      _refreshToken = loginRes.refresh_token;
+      _refreshTokenTask = Task.Delay(TimeSpan.FromSeconds(loginRes.expires_in - 5)).ContinueWith(t => PublicAuthRefreshAsync(_refreshToken));
+      return loginRes;
+    }
+
+    public async Task<AuthResponse> PublicAuthRefreshAsync(string refreshToken)
+    {
+      var loginRes = await SendAsync("public/auth", new
+      {
+          grant_type = "refresh_token",
+          refresh_token = refreshToken
+      }, new ObjectJsonConverter<AuthResponse>());
+      _accessToken = loginRes.access_token;
+      _refreshToken = loginRes.refresh_token;
+      _refreshTokenTask = Task.Delay(TimeSpan.FromSeconds(loginRes.expires_in - 5)).ContinueWith(t => PublicAuthRefreshAsync(_refreshToken));
+      return loginRes;
     }
 
     public Task<object> PublicSetHeartbeatAsync(int intervalSeconds)
@@ -105,12 +121,12 @@
 
     public Task<object> PrivateDisableCancelOnDisconnectAsync()
     {
-      return SendAsync("private/disable_cancel_on_disconnect", new { access_token = AccessToken }, new ObjectJsonConverter<object>());
+      return SendAsync("private/disable_cancel_on_disconnect", new { access_token = _accessToken }, new ObjectJsonConverter<object>());
     }
 
     public Task<AccountSummaryResponse> PrivateGetAccountSummaryAsync()
     {
-      return SendAsync("private/get_account_summary", new { currency = "BTC", extended = true, access_token = AccessToken }, new ObjectJsonConverter<AccountSummaryResponse>());
+      return SendAsync("private/get_account_summary", new { currency = "BTC", extended = true, access_token = _accessToken }, new ObjectJsonConverter<AccountSummaryResponse>());
     }
 
     public Task<bool> PublicSubscribeBookAsync(string instrument, int group, int depth, Action<BookResponse> callback)
@@ -161,37 +177,37 @@
       return SendAsync("private/get_open_orders_by_instrument", new
       {
         instrument_name = instrument,
-        access_token = AccessToken
+        access_token = _accessToken
       }, new ObjectJsonConverter<OrderItem[]>());
     }
 
-    public Task<BuySellResponse> PrivateBuyLimitAsync(string instrument, double amount, double price)
+    public Task<BuySellResponse> PrivateBuyLimitAsync(string instrument, double amount, double price, string label)
     {
       return SendAsync("private/buy", new
       {
         instrument_name = instrument,
         amount,
         type = "limit",
-        label = SessionName,
+        label = label,
         price,
         time_in_force = "good_til_cancelled",
         post_only = true,
-        access_token = AccessToken
+        access_token = _accessToken
       }, new ObjectJsonConverter<BuySellResponse>());
     }
 
-    public Task<BuySellResponse> PrivateSellLimitAsync(string instrument, double amount, double price)
+    public Task<BuySellResponse> PrivateSellLimitAsync(string instrument, double amount, double price, string label)
     {
       return SendAsync("private/sell", new
       {
         instrument_name = instrument,
         amount,
         type = "limit",
-        label = SessionName,
+        label = label,
         price,
         time_in_force = "good_til_cancelled",
         post_only = true,
-        access_token = AccessToken
+        access_token = _accessToken
       }, new ObjectJsonConverter<BuySellResponse>());
     }
 
@@ -202,7 +218,7 @@
         var result = await SendAsync("private/get_order_state", new
         {
             order_id = orderId,
-            access_token = AccessToken
+            access_token = _accessToken
         }, new ObjectJsonConverter<OrderResponse>());
         return result;
       }
@@ -217,7 +233,7 @@
       return SendAsync("private/cancel", new
       {
         order_id = orderId,
-        access_token = AccessToken
+        access_token = _accessToken
       }, new ObjectJsonConverter<object>());
     }
 
@@ -226,7 +242,7 @@
       return SendAsync("private/cancel_all_by_instrument", new
       {
         instrument_name = instrument,
-        access_token = AccessToken
+        access_token = _accessToken
       }, new ObjectJsonConverter<object>());
     }
 
@@ -237,7 +253,7 @@
           instrument_name = instrument,
           type = "settlement",
           count = count,
-          access_token = AccessToken
+          access_token = _accessToken
       }, new ObjectJsonConverter<SettlementResponse>());
     }
 
@@ -248,7 +264,7 @@
           currency = currency,
           type = "settlement",
           count = count,
-          access_token = AccessToken
+          access_token = _accessToken
       }, new ObjectJsonConverter<SettlementResponse>());
     }
   }

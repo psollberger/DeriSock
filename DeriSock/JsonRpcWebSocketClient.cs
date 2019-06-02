@@ -21,7 +21,7 @@
     private readonly ILogger _logger = Log.Logger;
     private volatile ClientWebSocket _webSocket;
     private readonly CancellationTokenSource _receiveLoopCancellationTokenSource = new CancellationTokenSource();
-    private volatile bool _receiveLoopRunning = false;
+    private volatile bool _receiveLoopRunning;
     private volatile int _requestId;
     private readonly ConcurrentDictionary<int, TaskInfo> _tasks = new ConcurrentDictionary<int, TaskInfo>();
     private readonly Dictionary<string, SubscriptionEntry> _eventsMap = new Dictionary<string, SubscriptionEntry>();
