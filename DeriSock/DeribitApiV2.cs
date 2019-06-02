@@ -5,24 +5,18 @@
   using System.Collections.Generic;
   using System.Linq;
   using System.Threading.Tasks;
-  using Data;
   using Model;
 
   public class DeribitApiV2 : JsonRpcWebSocketClient
   {
-    private readonly string _accessKey;
-    private readonly string _accessSecret;
-
     public string SessionName { get; }
 
     private readonly List<Tuple<string, object, object>> _listeners;
 
     public string AccessToken { get; set; }
 
-    public DeribitApiV2(string hostname, string accessKey, string accessSecret, string sessionName) : base($"wss://{hostname}/ws/api/v2")
+    public DeribitApiV2(string hostname, string sessionName) : base($"wss://{hostname}/ws/api/v2")
     {
-      _accessKey = accessKey;
-      _accessSecret = accessSecret;
       SessionName = sessionName;
       _listeners = new List<Tuple<string, object, object>>();
     }
@@ -83,33 +77,38 @@
 
     #endregion
 
-    public Task<AuthResponse> LoginAsync()
+    public Task<AuthResponse> PublicAuthAsync(string accessKey, string accessSecret, string? sessionName)
     {
+      var scope = "connection";
+      if (!string.IsNullOrEmpty(sessionName))
+      {
+        scope = $"session:{sessionName}";
+      }
       return SendAsync("public/auth", new
       {
         grant_type = "client_credentials",
-        client_id = _accessKey,
-        client_secret = _accessSecret,
-        scope = $"session:{SessionName}"
+        client_id = accessKey,
+        client_secret = accessSecret,
+        scope = scope
       }, new ObjectJsonConverter<AuthResponse>());
     }
 
-    public Task<object> SetHeartbeatAsync(int intervalSeconds)
+    public Task<object> PublicSetHeartbeatAsync(int intervalSeconds)
     {
       return SendAsync("public/set_heartbeat", new { interval = intervalSeconds }, new ObjectJsonConverter<object>());
     }
 
-    public Task<object> DisableHeartbeatAsync()
+    public Task<object> PublicDisableHeartbeatAsync()
     {
       return SendAsync("public/disable_heartbeat", new { }, new ObjectJsonConverter<object>());
     }
 
-    public Task<object> DisableCancelOnDisconnectAsync()
+    public Task<object> PrivateDisableCancelOnDisconnectAsync()
     {
       return SendAsync("private/disable_cancel_on_disconnect", new { access_token = AccessToken }, new ObjectJsonConverter<object>());
     }
 
-    public Task<AccountSummaryResponse> GetAccountSummaryAsync()
+    public Task<AccountSummaryResponse> PrivateGetAccountSummaryAsync()
     {
       return SendAsync("private/get_account_summary", new { currency = "BTC", extended = true, access_token = AccessToken }, new ObjectJsonConverter<AccountSummaryResponse>());
     }

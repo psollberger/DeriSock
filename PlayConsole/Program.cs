@@ -1,12 +1,20 @@
-﻿namespace PlayConsole
+﻿using System;
+using System.Diagnostics;
+using Microsoft.OpenApi.Models;
+
+[assembly: DebuggerDisplay(@"\{Name = {Name} Description = {Description}}", Target = typeof(OpenApiTag))]
+
+namespace PlayConsole
 {
   using System;
   using System.IO;
+  using System.Net.Http;
   using System.Threading;
   using System.Threading.Tasks;
   using DeriSock;
   using DeriSock.Converter;
   using DeriSock.Model;
+  using Microsoft.OpenApi.Readers;
   using Newtonsoft.Json;
   using Serilog;
   using Serilog.Events;
@@ -37,7 +45,7 @@
                    .Destructure.ByTransforming<EventResponse>(JsonConvert.SerializeObject)
                    .CreateLogger();
 
-      _client = new DeribitApiV2("test.deribit.com", null, null, "PlayGround");
+      _client = new DeribitApiV2("test.deribit.com", "PlayGround");
 
       while (!_client.IsConnected)
       {

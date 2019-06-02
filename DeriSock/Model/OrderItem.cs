@@ -1,4 +1,4 @@
-namespace DeriSock.Data
+﻿namespace DeriSock.Model
 {
   using System.Diagnostics;
 
