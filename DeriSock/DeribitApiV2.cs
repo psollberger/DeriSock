@@ -23,7 +23,7 @@
 
     #region Helpers
 
-    private async Task<bool> SubscribePublicAsync<T>(string channelName, Action<T> originalCallback, Action<EventResponse> myCallback)
+    private async Task<bool> PublicSubscribeAsync<T>(string channelName, Action<T> originalCallback, Action<EventResponse> myCallback)
     {
       if (!await ManagedSubscribeAsync(channelName, false, null, myCallback)) return false;
       lock (_listeners)
@@ -49,7 +49,7 @@
       return true;
     }
 
-    private async Task<bool> SubscribePrivateAsync<T>(string channelName, Action<T> originalCallback, Action<EventResponse> myCallback)
+    private async Task<bool> PrivateSubscribeAsync<T>(string channelName, Action<T> originalCallback, Action<EventResponse> myCallback)
     {
       if (!await ManagedSubscribeAsync(channelName, true, AccessToken, myCallback)) return false;
       lock (_listeners)
@@ -77,7 +77,7 @@
 
     #endregion
 
-    public Task<AuthResponse> PublicAuthAsync(string accessKey, string accessSecret, string? sessionName)
+    public Task<AuthResponse> PublicAuthAsync(string accessKey, string accessSecret, string sessionName)
     {
       var scope = "connection";
       if (!string.IsNullOrEmpty(sessionName))
@@ -113,17 +113,17 @@
       return SendAsync("private/get_account_summary", new { currency = "BTC", extended = true, access_token = AccessToken }, new ObjectJsonConverter<AccountSummaryResponse>());
     }
 
-    public Task<bool> SubscribeBookAsync(string instrument, int group, int depth, Action<BookResponse> callback)
+    public Task<bool> PublicSubscribeBookAsync(string instrument, int group, int depth, Action<BookResponse> callback)
     {
-      return SubscribePublicAsync("book." + instrument + "." + (group == 0 ? "none" : group.ToString()) + "." + depth + ".100ms", callback, response =>
+      return PublicSubscribeAsync("book." + instrument + "." + (group == 0 ? "none" : group.ToString()) + "." + depth + ".100ms", callback, response =>
       {
         callback(response.@params.data.ToObject<BookResponse>());
       });
     }
 
-    public Task<bool> SubscribeOrdersAsync(string instrument, Action<OrderResponse> callback)
+    public Task<bool> PrivateSubscribeOrdersAsync(string instrument, Action<OrderResponse> callback)
     {
-      return SubscribePrivateAsync("user.orders." + instrument + ".raw", callback, response =>
+      return PrivateSubscribeAsync("user.orders." + instrument + ".raw", callback, response =>
       {
         var orderResponse = response.@params.data.ToObject<OrderResponse>();
         orderResponse.timestamp = response.@params.timestamp;
@@ -131,23 +131,23 @@
       });
     }
 
-    public Task<bool> SubscribePortfolioAsync(string currency, Action<PortfolioResponse> callback)
+    public Task<bool> PrivateSubscribePortfolioAsync(string currency, Action<PortfolioResponse> callback)
     {
-      return SubscribePrivateAsync($"user.portfolio.{currency.ToLower()}", callback, response =>
+      return PrivateSubscribeAsync($"user.portfolio.{currency.ToLower()}", callback, response =>
       {
         callback(response.@params.data.ToObject<PortfolioResponse>());
       });
     }
 
-    public Task<bool> SubscribeTickerAsync(string instrument, string interval, Action<TickerResponse> callback)
+    public Task<bool> PublicSubscribeTickerAsync(string instrument, string interval, Action<TickerResponse> callback)
     {
-      return SubscribePublicAsync($"ticker.{instrument}.{interval}", callback, response =>
+      return PublicSubscribeAsync($"ticker.{instrument}.{interval}", callback, response =>
       {
         callback(response.@params.data.ToObject<TickerResponse>());
       });
     }
 
-    public Task<BookResponse> GetOrderBook(string instrument, int depth)
+    public Task<BookResponse> PublicGetOrderBookAsync(string instrument, int depth)
     {
       return SendAsync("public/get_order_book", new
       {
@@ -156,7 +156,7 @@
       }, new ObjectJsonConverter<BookResponse>());
     }
 
-    public Task<OrderItem[]> GetOpenOrders(string instrument)
+    public Task<OrderItem[]> PrivateGetOpenOrdersAsync(string instrument)
     {
       return SendAsync("private/get_open_orders_by_instrument", new
       {
@@ -165,7 +165,7 @@
       }, new ObjectJsonConverter<OrderItem[]>());
     }
 
-    public Task<BuySellResponse> BuyLimitAsync(string instrument, double amount, double price)
+    public Task<BuySellResponse> PrivateBuyLimitAsync(string instrument, double amount, double price)
     {
       return SendAsync("private/buy", new
       {
@@ -180,7 +180,7 @@
       }, new ObjectJsonConverter<BuySellResponse>());
     }
 
-    public Task<BuySellResponse> SellLimitAsync(string instrument, double amount, double price)
+    public Task<BuySellResponse> PrivateSellLimitAsync(string instrument, double amount, double price)
     {
       return SendAsync("private/sell", new
       {
@@ -195,16 +195,15 @@
       }, new ObjectJsonConverter<BuySellResponse>());
     }
 
-    public async Task<OrderResponse> GetOrderStateAsnyc(string orderId)
+    public async Task<OrderResponse> PrivateGetOrderStateAsnyc(string orderId)
     {
       try
       {
-        var result = await SendAsync(
-                                               "private/get_order_state", new
-                                               {
-                                                 order_id = orderId,
-                                                 access_token = AccessToken
-                                               }, new ObjectJsonConverter<OrderResponse>());
+        var result = await SendAsync("private/get_order_state", new
+        {
+            order_id = orderId,
+            access_token = AccessToken
+        }, new ObjectJsonConverter<OrderResponse>());
         return result;
       }
       catch
@@ -213,7 +212,7 @@
       }
     }
 
-    public Task<object> CancelOrderAsync(string orderId)
+    public Task<object> PrivateCancelOrderAsync(string orderId)
     {
       return SendAsync("private/cancel", new
       {
@@ -222,15 +221,7 @@
       }, new ObjectJsonConverter<object>());
     }
 
-    //public Task<object> CancelAllOrdersAsync()
-    //{
-    //  return SendAsync("private/cancel_all", new
-    //  {
-    //    access_token = AccessToken
-    //  }, new ObjectJsonConverter<object>());
-    //}
-
-    public Task<object> CancelAllOrdersByInstrument(string instrument)
+    public Task<object> PrivateCancelAllOrdersByInstrumentAsync(string instrument)
     {
       return SendAsync("private/cancel_all_by_instrument", new
       {
@@ -239,28 +230,26 @@
       }, new ObjectJsonConverter<object>());
     }
 
-    public Task<SettlementResponse> GetSettlementHistoryByInstrument(string instrument, int count)
+    public Task<SettlementResponse> PrivateGetSettlementHistoryByInstrumentAsync(string instrument, int count)
     {
-      return SendAsync(
-                              "private/get_settlement_history_by_instrument", new
-                              {
-                                instrument_name = instrument,
-                                type = "settlement",
-                                count = count,
-                                access_token = AccessToken
-                              }, new ObjectJsonConverter<SettlementResponse>());
+      return SendAsync("private/get_settlement_history_by_instrument", new
+      {
+          instrument_name = instrument,
+          type = "settlement",
+          count = count,
+          access_token = AccessToken
+      }, new ObjectJsonConverter<SettlementResponse>());
     }
 
-    public Task<SettlementResponse> GetSettlementHistoryByCurrency(string currency, int count)
+    public Task<SettlementResponse> PrivateGetSettlementHistoryByCurrencyAsync(string currency, int count)
     {
-      return SendAsync(
-                              "private/get_settlement_history_by_currency", new
-                              {
-                                currency = currency,
-                                type = "settlement",
-                                count = count,
-                                access_token = AccessToken
-                              }, new ObjectJsonConverter<SettlementResponse>());
+      return SendAsync("private/get_settlement_history_by_currency", new
+      {
+          currency = currency,
+          type = "settlement",
+          count = count,
+          access_token = AccessToken
+      }, new ObjectJsonConverter<SettlementResponse>());
     }
   }
 }
