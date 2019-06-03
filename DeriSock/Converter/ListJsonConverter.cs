@@ -3,7 +3,7 @@ namespace DeriSock.Converter
   using System.Collections.Generic;
   using Newtonsoft.Json.Linq;
 
-  public class ListJsonConverter<T> : JsonConverter<List<T>>
+  public class ListJsonConverter<T> : IJsonConverter<List<T>>
   {
     public List<T> Convert(JToken value)
     {

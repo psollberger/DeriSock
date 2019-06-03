@@ -7,7 +7,7 @@ namespace DeriSock.Utils
 
   public class TypedTaskInfo<T> : TaskInfo
   {
-    public JsonConverter<T> Converter;
+    public IJsonConverter<T> Converter;
     public TaskCompletionSource<T> Tcs;
 
     public override object Convert(JToken value)

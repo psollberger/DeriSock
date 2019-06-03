@@ -1,4 +1,4 @@
-﻿namespace DeriSock
+namespace DeriSock
 {
   using Converter;
   using System;
@@ -13,7 +13,6 @@
 
     private string _accessToken;
     private string _refreshToken;
-    private Task _refreshTokenTask;
 
     public DeribitApiV2(string hostname) : base($"wss://{hostname}/ws/api/v2")
     {
@@ -78,6 +77,7 @@
 
     public async Task<AuthResponse> PublicAuthAsync(string accessKey, string accessSecret, string sessionName)
     {
+      _logger.Debug("Authenticate");
       var scope = "connection";
       if (!string.IsNullOrEmpty(sessionName))
       {
@@ -92,12 +92,16 @@
       }, new ObjectJsonConverter<AuthResponse>());
       _accessToken = loginRes.access_token;
       _refreshToken = loginRes.refresh_token;
-      _refreshTokenTask = Task.Delay(TimeSpan.FromSeconds(loginRes.expires_in - 5)).ContinueWith(t => PublicAuthRefreshAsync(_refreshToken));
+      _ = Task.Delay(TimeSpan.FromSeconds(loginRes.expires_in - 5)).ContinueWith(t =>
+      {
+        if (IsConnected) _ = PublicAuthRefreshAsync(_refreshToken);
+      });
       return loginRes;
     }
 
     public async Task<AuthResponse> PublicAuthRefreshAsync(string refreshToken)
     {
+      _logger.Debug("Refreshing Auth");
       var loginRes = await SendAsync("public/auth", new
       {
           grant_type = "refresh_token",
@@ -105,7 +109,10 @@
       }, new ObjectJsonConverter<AuthResponse>());
       _accessToken = loginRes.access_token;
       _refreshToken = loginRes.refresh_token;
-      _refreshTokenTask = Task.Delay(TimeSpan.FromSeconds(loginRes.expires_in - 5)).ContinueWith(t => PublicAuthRefreshAsync(_refreshToken));
+      _ = Task.Delay(TimeSpan.FromSeconds(loginRes.expires_in - 5)).ContinueWith(t =>
+      {
+        if (IsConnected) _ = PublicAuthRefreshAsync(_refreshToken);
+      });
       return loginRes;
     }
 

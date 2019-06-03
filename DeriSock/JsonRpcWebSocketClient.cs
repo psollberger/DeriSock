@@ -1,12 +1,5 @@
-﻿namespace DeriSock
+namespace DeriSock
 {
-  using System;
-  using System.Collections.Concurrent;
-  using System.Collections.Generic;
-  using System.Net.WebSockets;
-  using System.Text;
-  using System.Threading;
-  using System.Threading.Tasks;
   using Converter;
   using Events;
   using Exceptions;
@@ -14,11 +7,18 @@
   using Newtonsoft.Json;
   using Newtonsoft.Json.Linq;
   using Serilog;
+  using System;
+  using System.Collections.Concurrent;
+  using System.Collections.Generic;
+  using System.Net.WebSockets;
+  using System.Text;
+  using System.Threading;
+  using System.Threading.Tasks;
   using Utils;
 
   public class JsonRpcWebSocketClient
   {
-    private readonly ILogger _logger = Log.Logger;
+    protected readonly ILogger _logger = Log.Logger;
     private volatile ClientWebSocket _webSocket;
     private readonly CancellationTokenSource _receiveLoopCancellationTokenSource = new CancellationTokenSource();
     private volatile bool _receiveLoopRunning;
@@ -47,7 +47,7 @@
         throw new WebSocketAlreadyConnectedException();
       }
 
-      _logger?.Debug("Connecting to {Host}", EndpointUri);
+      _logger?.Information("Connecting to {Host}", EndpointUri);
       _webSocket = new ClientWebSocket();
       try
       {
@@ -61,9 +61,6 @@
         throw;
       }
 
-      _logger?.Debug("Successfully connected to the endpoint");
-
-      //Start the threads
       _ = Task.Factory.StartNew(ReceiveLoopAsync, _receiveLoopCancellationTokenSource.Token, TaskCreationOptions.LongRunning, TaskScheduler.Current);
     }
 
@@ -74,12 +71,12 @@
         throw new WebSocketNotConnectedException();
       }
 
-      _logger?.Debug("Disconnecting from {Host}", EndpointUri);
+      _logger?.Information("Disconnecting from {Host}", EndpointUri);
 
       //Shutdown the Receive Thread
       _receiveLoopCancellationTokenSource.Cancel();
 
-      //TODO: Wait for the Thread to shutdown gracefully
+      //Wait for the Thread to shutdown gracefully
       while (_receiveLoopRunning)
       {
         Thread.Sleep(1);
@@ -97,7 +94,7 @@
       _webSocket = null;
     }
 
-    public Task<T> SendAsync<T>(string method, object @params, Converter.JsonConverter<T> converter)
+    public Task<T> SendAsync<T>(string method, object @params, Converter.IJsonConverter<T> converter)
     {
       Interlocked.CompareExchange(ref _requestId, 0, int.MaxValue);
       var reqId = Interlocked.Increment(ref _requestId);
@@ -259,7 +256,7 @@
       {
         if (e.EventData.method == "heartbeat")
         {
-          _logger?.Information("Hearbeat received: {@Heartbeat}", e.EventData);
+          _logger?.Debug("Hearbeat received: {@Heartbeat}", e.EventData);
           if (e.EventData.@params.type == "test_request")
           {
             HeartbeatTestRequestReceived();

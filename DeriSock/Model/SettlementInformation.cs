@@ -1,6 +1,7 @@
 namespace DeriSock.Model
 {
   using System;
+  using Extensions;
 
   public class SettlementInformation
   {

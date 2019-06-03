@@ -2,7 +2,7 @@ namespace DeriSock.Converter
 {
   using Newtonsoft.Json.Linq;
 
-  public interface JsonConverter<T>
+  public interface IJsonConverter<out T>
   {
     T Convert(JToken value);
   }

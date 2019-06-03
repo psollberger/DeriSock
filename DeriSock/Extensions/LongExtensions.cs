@@ -1,4 +1,4 @@
-﻿namespace DeriSock
+namespace DeriSock.Extensions
 {
   using System;
 
