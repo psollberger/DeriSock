@@ -1,4 +1,4 @@
-namespace DeriSock.Model
+﻿namespace DeriSock.Model
 {
   using System;
   using Extensions;
@@ -9,7 +9,7 @@ namespace DeriSock.Model
     public long timestamp { get; set; }
     public DateTime LocalDateTime
     {
-      get => LongExtensions.TimeStampToDateTime(timestamp);
+      get => timestamp.AsDateTime();
     }
     public double session_profit_loss { get; set; }
     public double profit_loss { get; set; }
