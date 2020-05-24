@@ -1,6 +1,6 @@
-namespace DeriSock.Model
+﻿namespace DeriSock.Model
 {
-  public class EventResponse
+  public class EventResponse : JsonRpcResponse
   {
     public string jsonrpc;
     public string method;
