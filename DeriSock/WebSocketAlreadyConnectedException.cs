@@ -1,4 +1,4 @@
-﻿namespace DeriSock.Exceptions {
+﻿namespace DeriSock {
   using System;
 
   public class WebSocketAlreadyConnectedException : Exception { }
