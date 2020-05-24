@@ -1,4 +1,4 @@
-namespace DeriSock.Utils
+﻿namespace DeriSock.Utils
 {
   using DeriSock.Converter;
   using Newtonsoft.Json.Linq;
@@ -7,8 +7,8 @@ namespace DeriSock.Utils
 
   public class TypedTaskInfo<T> : TaskInfo
   {
-    public IJsonConverter<T> Converter;
-    public TaskCompletionSource<T> Tcs;
+    public IJsonConverter<T> Converter { get; set; }
+    public TaskCompletionSource<T> CompletionSource { get; set; }
 
     public override object Convert(JToken value)
     {
@@ -17,12 +17,12 @@ namespace DeriSock.Utils
 
     public override void Resolve(object value)
     {
-      Tcs.SetResult((T)value);
+      CompletionSource.SetResult((T)value);
     }
 
     public override void Reject(Exception e)
     {
-      Tcs.SetException(e);
+      CompletionSource.SetException(e);
     }
   }
 }
