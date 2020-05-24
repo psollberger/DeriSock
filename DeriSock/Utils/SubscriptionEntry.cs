@@ -1,14 +1,14 @@
-namespace DeriSock.Utils
+﻿namespace DeriSock.Utils
 {
   using System;
   using System.Collections.Generic;
   using System.Threading.Tasks;
-  using Model;
+  using DeriSock.JsonRpc;
 
   public class SubscriptionEntry
   {
-    public SubscriptionState State;
-    public List<Action<EventResponse>> Callbacks;
+    public List<Action<Notification>> Callbacks;
     public Task<bool> CurrentAction;
+    public SubscriptionState State;
   }
 }

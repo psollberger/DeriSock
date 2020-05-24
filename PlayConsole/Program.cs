@@ -13,6 +13,7 @@ namespace PlayConsole
   using System.Threading.Tasks;
   using DeriSock;
   using DeriSock.Converter;
+  using DeriSock.JsonRpc;
   using DeriSock.Model;
   using Microsoft.OpenApi.Readers;
   using Newtonsoft.Json;
@@ -21,7 +22,7 @@ namespace PlayConsole
 
   public static class Program
   {
-    private static DeribitWebSocketClientV2 _client;
+    private static DeribitV2Client _client;
 
     public static async Task<int> Main(string[] args)
     {
@@ -38,14 +39,14 @@ namespace PlayConsole
       Log.Logger = new LoggerConfiguration()
                    .MinimumLevel.Verbose()
                    //.WriteTo.Async(l => l.Trace(outputTemplate: outputTemplateShortLevelName))
-                   .WriteTo.Async(l => l.Console(outputTemplate: outputTemplateShortLevelName))
-                   //.WriteTo.Async(l => l.File(logFilePath, rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: LogEventLevel.Information))
-                   .Destructure.ByTransforming<JsonRpcRequest>(JsonConvert.SerializeObject)
-                   .Destructure.ByTransforming<JsonRpcResponse>(JsonConvert.SerializeObject)
-                   .Destructure.ByTransforming<EventResponse>(JsonConvert.SerializeObject)
+                   .WriteTo.Async(l => l.Console(outputTemplate: outputTemplateShortLevelName, restrictedToMinimumLevel: LogEventLevel.Information))
+                   //.WriteTo.Async(l => l.File(logFilePath, rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: LogEventLevel.Verbose))
+                   .Destructure.ByTransforming<Request>(JsonConvert.SerializeObject)
+                   .Destructure.ByTransforming<Response>(JsonConvert.SerializeObject)
+                   .Destructure.ByTransforming<Notification>(JsonConvert.SerializeObject)
                    .CreateLogger();
 
-      _client = new DeribitWebSocketClientV2("test.deribit.com");
+      _client = new DeribitV2Client("test.deribit.com");
 
       while (!_client.IsConnected)
       {
@@ -61,7 +62,7 @@ namespace PlayConsole
 
         try
         {
-          var loginRes = await _client.PublicAuthAsync("KxEneYNT9VsK", "S3EL63RBXOJZSN4ACV5SWF2OLO337BKL", "Playground");
+          //var loginRes = await _client.PublicAuthAsync("KxEneYNT9VsK", "S3EL63RBXOJZSN4ACV5SWF2OLO337BKL", "Playground");
         }
         catch (Exception ex)
         {

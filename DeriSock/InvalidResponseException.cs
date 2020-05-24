@@ -1,18 +1,17 @@
-namespace DeriSock
+﻿namespace DeriSock
 {
   using System;
-  using Model;
+  using DeriSock.JsonRpc;
 
   public class InvalidResponseException : Exception
   {
-    public JsonRpcResponse Response { get; }
-
-    public JsonRpcError Error { get; }
+    public Response Response { get; }
+    public Error Error => Response.Error;
     public override string Message { get; }
-    public InvalidResponseException(JsonRpcResponse response, JsonRpcError error, string message)
+
+    public InvalidResponseException(Response response, string message)
     {
       Response = response;
-      Error = error;
       Message = message;
     }
   }
