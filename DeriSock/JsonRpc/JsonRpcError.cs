@@ -3,7 +3,7 @@
   using Newtonsoft.Json;
   using Newtonsoft.Json.Linq;
 
-  public class Error
+  public class JsonRpcError
   {
     [JsonProperty("code")] public int Code { get; set; }
 

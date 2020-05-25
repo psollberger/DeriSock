@@ -2,11 +2,11 @@
 {
   using Newtonsoft.Json;
 
-  public class Request
+  public class JsonRpcRequest
   {
     [JsonProperty("jsonrpc")] public string JsonRpc { get; set; } = "2.0";
 
-    [JsonProperty("id")] public int? Id { get; set; }
+    [JsonProperty("id")] public int Id { get; set; }
 
     [JsonProperty("method")] public string Method { get; set; }
 

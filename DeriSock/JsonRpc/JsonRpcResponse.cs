@@ -3,7 +3,7 @@
   using Newtonsoft.Json;
   using Newtonsoft.Json.Linq;
 
-  public class Response
+  public class JsonRpcResponse
   {
     [JsonProperty("jsonrpc")] public string JsonRpc { get; set; }
 
@@ -11,7 +11,7 @@
 
     [JsonProperty("result")] public JToken Result { get; set; }
 
-    [JsonProperty("error")] public Error Error { get; set; }
+    [JsonProperty("error")] public JsonRpcError JsonRpcError { get; set; }
 
     // Fields not part of the JSON-RPC standard
 

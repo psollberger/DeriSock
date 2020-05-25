@@ -4,7 +4,7 @@
   using Newtonsoft.Json;
   using Newtonsoft.Json.Linq;
 
-  public class Notification : Request
+  public class Notification : JsonRpcRequest
   {
     [JsonIgnore] public DateTime Timestamp { get; set; }
 

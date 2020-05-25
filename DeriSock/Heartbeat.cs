@@ -2,7 +2,7 @@
 {
   using Newtonsoft.Json;
 
-  public class Heartbeat : Request
+  public class Heartbeat : JsonRpcRequest
   {
     [JsonProperty("params")] public new HeartbeatParams Params { get; set; }
 

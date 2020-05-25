@@ -5,13 +5,13 @@
 
   public class InvalidResponseException : Exception
   {
-    public Response Response { get; }
-    public Error Error => Response.Error;
+    public JsonRpcResponse JsonRpcResponse { get; }
+    public JsonRpcError JsonRpcError => JsonRpcResponse.JsonRpcError;
     public override string Message { get; }
 
-    public InvalidResponseException(Response response, string message)
+    public InvalidResponseException(JsonRpcResponse jsonRpcResponse, string message)
     {
-      Response = response;
+      JsonRpcResponse = jsonRpcResponse;
       Message = message;
     }
   }

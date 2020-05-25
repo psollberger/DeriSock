@@ -1,4 +1,4 @@
-namespace DeriSock.Model
+﻿namespace DeriSock.Model
 {
   public class TestResponse
   {
