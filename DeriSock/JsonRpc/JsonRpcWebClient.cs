@@ -26,7 +26,7 @@
     private ClientWebSocket _socket;
 
     public bool SocketAvailable => _socket != null;
-
+    public bool IsConnected => SocketAvailable && !(ClosedByHost || ClosedByClient || ClosedByError);
     public bool ClosedByError { get; private set; }
     public bool ClosedByClient { get; private set; }
     public bool ClosedByHost { get; private set; }
@@ -44,11 +44,12 @@
     /// </summary>
     public async Task ConnectAsync()
     {
-      if (_socket != null)
+      if (IsConnected)
       {
         throw new JsonRpcAlreadyConnectedException();
       }
 
+      _socket?.Dispose();
       ClosedByClient = false;
       ClosedByError = false;
       ClosedByHost = false;
@@ -83,7 +84,7 @@
     /// </summary>
     public async Task DisconnectAsync()
     {
-      if (_socket == null || _socket.State != WebSocketState.Open)
+      if (!IsConnected || _socket.State != WebSocketState.Open)
       {
         throw new JsonRpcNotConnectedException();
       }
@@ -185,8 +186,8 @@
             if (_logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
             {
               _logger.Verbose(
-                "ProcessReceive: Received Message ({Size} ; {Duration}): {@Message}",
-                Encoding.UTF8.GetByteCount(message), msgRecvDiff, message);
+                "ProcessReceive: Received Message ({Size} ; {Duration:N3}ms): {@Message}",
+                Encoding.UTF8.GetByteCount(message), msgRecvDiff.TotalMilliseconds, message);
             }
 
             if (!string.IsNullOrEmpty(message))

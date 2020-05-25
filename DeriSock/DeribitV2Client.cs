@@ -3,10 +3,8 @@
 namespace DeriSock
 {
   using System;
-  using System.Collections.Concurrent;
   using System.Collections.Generic;
   using System.Linq;
-  using System.Threading;
   using System.Threading.Tasks;
   using DeriSock.Converter;
   using DeriSock.JsonRpc;
@@ -16,19 +14,19 @@ namespace DeriSock
   using Newtonsoft.Json.Linq;
   using Serilog;
   using Serilog.Events;
+  using SubscriptionMap = System.Collections.Concurrent.ConcurrentDictionary<string, Utils.SubscriptionEntry>;
+  using SubscriptionListEntry = System.Tuple<string, object, object>;
+  using SubscriptionList = System.Collections.Generic.List<System.Tuple<string, object, object>>;
 
-  public class DeribitV2Client /*: ClientBase*/
+  public class DeribitV2Client
   {
-    //private readonly ConcurrentDictionary<int, TaskInfo> _openRequests = new ConcurrentDictionary<int, TaskInfo>();
-    private readonly ConcurrentDictionary<string, SubscriptionEntry> _subscriptionMap =
-      new ConcurrentDictionary<string, SubscriptionEntry>();
-
-    private readonly List<Tuple<string, object, object>> _subscriptions = new List<Tuple<string, object, object>>();
-    protected readonly ILogger Logger = Log.Logger;
     private readonly JsonRpcWebClient _client;
-    private volatile int _requestId;
+    private readonly ILogger _logger = Log.Logger;
 
-    public DeribitV2Client(string serviceBaseAddress) //: base(new Uri($"wss://{serviceBaseAddress}/ws/api/v2"))
+    private readonly SubscriptionMap _subscriptionMap = new SubscriptionMap();
+    private readonly SubscriptionList _subscriptions = new SubscriptionList();
+
+    public DeribitV2Client(string serviceBaseAddress)
     {
       _client = new JsonRpcWebClient(new Uri($"wss://{serviceBaseAddress}/ws/api/v2"), OnServerRequest);
     }
@@ -39,9 +37,11 @@ namespace DeriSock
 
     public string RefreshToken { get; set; }
 
-    //public bool IsConnected => SocketAvailable && !(ClosedByHost || ClosedByClient || ClosedByError);
-    public bool IsConnected => _client != null && _client.SocketAvailable &&
-                               !(_client.ClosedByHost || _client.ClosedByClient || _client.ClosedByError);
+    public bool ClosedByError => _client?.ClosedByError ?? false;
+    public bool ClosedByClient => _client?.ClosedByClient ?? false;
+    public bool ClosedByHost => _client?.ClosedByHost ?? false;
+
+    public bool IsConnected => (_client?.SocketAvailable ?? false) && !(ClosedByHost || ClosedByClient || ClosedByError);
 
     #endregion
 
@@ -57,10 +57,6 @@ namespace DeriSock
       return _client.DisconnectAsync();
     }
 
-    public bool ClosedByError => _client?.ClosedByError ?? false;
-    public bool ClosedByClient => _client?.ClosedByClient ?? false;
-    public bool ClosedByHost => _client?.ClosedByHost ?? false;
-
     /// <summary>
     ///   Sends a message to the endpoint
     /// </summary>
@@ -69,98 +65,21 @@ namespace DeriSock
     /// <param name="params">The params to be transmitted</param>
     /// <param name="converter">The converter to be used to parse the response</param>
     /// <returns>A Task object</returns>
-    public async Task<T> SendAsync<T>(string method, object @params, IJsonConverter<T> converter)
+    /// <exception cref="ResponseErrorException" />
+    public async Task<T> SendAsync<T>(string method, object @params, IJsonConverter<T> converter) /*where T : JsonRpcResponse*/
     {
-      var response = await _client.SendAsync<JsonRpcResponse>(method, @params);
-      var jObject = (JObject)JsonConvert.DeserializeObject(JsonConvert.SerializeObject(response));
-      return converter.Convert(jObject);
+      //TODO: Limit T to JsonRpcResponse based classes so no exception has to be thrown if the call yields an error
+      var recvStart = DateTime.Now;
+      var response = await _client.SendAsync(method, @params).ConfigureAwait(false);
+      var recvDiff = DateTime.Now.Subtract(recvStart);
+      _logger.Information("SendAsync Duration: {Duration:N3} ms", recvDiff.TotalMilliseconds);
+      if (response.Error != null)
+      {
+        throw new ResponseErrorException(response, response.Error.Message);
+      }
 
-      //var reqId = GetNextRequestId();
-      //var taskInfo = new TypedTaskInfo<T> {CompletionSource = new TaskCompletionSource<T>(), RequestId = reqId, Converter = converter};
-
-      //_openRequests[reqId] = taskInfo;
-
-      //var request = new JsonRpcRequest {Id = reqId, Method = method, Params = @params};
-
-      //if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
-      //{
-      //  Logger.Verbose("SendAsync: {@Request}", request);
-      //}
-
-      //_ = SendAsync(JsonConvert.SerializeObject(request, Formatting.None));
-
-      //return taskInfo.CompletionSource.Task;
+      return converter.Convert(response.Result);
     }
-
-    //protected override void OnMessage(Message message)
-    //{
-    //  try
-    //  {
-    //    if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
-    //    {
-    //      Logger.Verbose("OnMessage: {@Message}", message);
-    //    }
-
-    //    try
-    //    {
-    //      var jObject = (JObject)JsonConvert.DeserializeObject(message.Data);
-    //      if (jObject == null)
-    //      {
-    //        return;
-    //      }
-
-    //      if (jObject.TryGetValue("method", out var method))
-    //      {
-    //        var methodName = method.Value<string>();
-    //        if (methodName == "subscription")
-    //        {
-    //          var eventRes = jObject.ToObject<Notification>();
-    //          eventRes.Timestamp = message.ReceiveEnd;
-    //          OnNotification(eventRes);
-    //        }
-    //        else if (methodName == "heartbeat")
-    //        {
-    //          OnHeartbeat(jObject.ToObject<Heartbeat>());
-    //        }
-    //      }
-    //      else
-    //      {
-    //        if (!jObject.TryGetValue("id", out var idToken))
-    //        {
-    //          if (Logger?.IsEnabled(LogEventLevel.Warning) ?? false)
-    //          {
-    //            Logger.Warning("OnMessage: Cannot read response id: {@Message}", message);
-    //          }
-    //        }
-    //        else
-    //        {
-    //          var idValue = idToken.Value<int>();
-    //          if (_openRequests.TryRemove(idValue, out var task))
-    //          {
-    //            var resp = task.Convert(jObject);
-    //            //var resp = jObject.ToObject<Response>();
-    //            OnResponse(task, (JsonRpcResponse)resp);
-    //          }
-    //          else
-    //          {
-    //            if (Logger?.IsEnabled(LogEventLevel.Warning) ?? false)
-    //            {
-    //              Logger.Warning("OnMessage: Cannot resolve request for response id {ResponseId}", idValue);
-    //            }
-    //          }
-    //        }
-    //      }
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //      Logger?.Error(ex, "OnMessage: Error during parsing message");
-    //    }
-    //  }
-    //  catch (Exception ex)
-    //  {
-    //    Logger?.Error(ex, "OnMessage: Error during receive handling");
-    //  }
-    //}
 
     private void OnServerRequest(JsonRpcRequest request)
     {
@@ -174,13 +93,18 @@ namespace DeriSock
         var jObject = (JObject)JsonConvert.DeserializeObject(JsonConvert.SerializeObject(request));
         OnHeartbeat(jObject.ToObject<Heartbeat>());
       }
+      else
+      {
+        _logger.Warning("Unknown Server Request: {@Request}", request);
+      }
     }
 
     private void OnHeartbeat(Heartbeat heartbeat)
     {
-      if (Logger?.IsEnabled(LogEventLevel.Debug) ?? false)
+      return;
+      if (_logger?.IsEnabled(LogEventLevel.Debug) ?? false)
       {
-        Logger.Debug("OnHeartbeat: {@Heartbeat}", heartbeat);
+        _logger.Debug("OnHeartbeat: {@Heartbeat}", heartbeat);
       }
 
       if (heartbeat.Type == "test_request")
@@ -189,60 +113,20 @@ namespace DeriSock
       }
     }
 
-    private void OnResponse(TaskInfo taskInfo, JsonRpcResponse jsonRpcResponse)
-    {
-      if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
-      {
-        Logger.Verbose("OnResponse: {@Response}", jsonRpcResponse);
-      }
-
-      try
-      {
-        if (jsonRpcResponse.JsonRpcError != null)
-        {
-          Task.Factory.StartNew(
-            () =>
-            {
-              taskInfo.Reject(new InvalidResponseException(jsonRpcResponse,
-                $"(Object) Invalid response for {jsonRpcResponse.Id}, code: {jsonRpcResponse.JsonRpcError.Code}, message: {jsonRpcResponse.JsonRpcError.Message}"));
-            }, TaskCreationOptions.LongRunning);
-        }
-        else
-        {
-          var convertedResult = jsonRpcResponse;
-          //var convertedResult = taskInfo.Convert(response.Result);
-          Task.Factory.StartNew(
-            () =>
-            {
-              taskInfo.Resolve(convertedResult);
-            }, TaskCreationOptions.LongRunning);
-        }
-      }
-      catch (Exception ex)
-      {
-        Logger?.Error(ex, "OnResponse: Error during parsing");
-        Task.Factory.StartNew(
-          () =>
-          {
-            taskInfo.Reject(ex);
-          }, TaskCreationOptions.LongRunning);
-      }
-    }
-
     private void OnNotification(Notification notification)
     {
-      if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
+      if (_logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
       {
-        Logger.Verbose("OnNotification: {@Notification}", notification);
+        _logger.Verbose("OnNotification: {@Notification}", notification);
       }
 
       lock (_subscriptionMap)
       {
         if (!_subscriptionMap.TryGetValue(notification.Channel, out var entry))
         {
-          if (Logger?.IsEnabled(LogEventLevel.Warning) ?? false)
+          if (_logger?.IsEnabled(LogEventLevel.Warning) ?? false)
           {
-            Logger.Warning("OnNotification: Could not find subscription for notification: {@Notification}",
+            _logger.Warning("OnNotification: Could not find subscription for notification: {@Notification}",
               notification);
           }
 
@@ -261,23 +145,9 @@ namespace DeriSock
           }
           catch (Exception ex)
           {
-            Logger?.Error(ex, "OnNotification: Error during event callback call: {@Notification}", notification);
+            _logger?.Error(ex, "OnNotification: Error during event callback call: {@Notification}", notification);
           }
         }
-      }
-    }
-
-    private int GetNextRequestId()
-    {
-      Thread.BeginCriticalRegion();
-      try
-      {
-        Interlocked.CompareExchange(ref _requestId, 0, int.MaxValue);
-        return ++_requestId;
-      }
-      finally
-      {
-        Thread.EndCriticalRegion();
       }
     }
 
@@ -299,9 +169,9 @@ namespace DeriSock
         {
           case SubscriptionState.Subscribed:
           {
-            if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
+            if (_logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
             {
-              Logger.Verbose("Subscription for channel already exists. Adding callback to list ({Channel})", channel);
+              _logger.Verbose("Subscription for channel already exists. Adding callback to list ({Channel})", channel);
             }
 
             entry.Callbacks.Add(callback);
@@ -309,17 +179,17 @@ namespace DeriSock
           }
 
           case SubscriptionState.Unsubscribing:
-            if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
+            if (_logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
             {
-              Logger.Verbose("Unsubscribing from Channel. Abort Subscribe ({Channel})", channel);
+              _logger.Verbose("Unsubscribing from Channel. Abort Subscribe ({Channel})", channel);
             }
 
             return false;
 
           case SubscriptionState.Unsubscribed:
-            if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
+            if (_logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
             {
-              Logger.Verbose("Unsubscribed from channel. Re-Subscribing ({Channel})", channel);
+              _logger.Verbose("Unsubscribed from channel. Re-Subscribing ({Channel})", channel);
             }
 
             entry.State = SubscriptionState.Subscribing;
@@ -330,9 +200,9 @@ namespace DeriSock
       }
       else
       {
-        if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
+        if (_logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
         {
-          Logger.Verbose("Subscription for channel not found. Subscribing ({Channel})", channel);
+          _logger.Verbose("Subscription for channel not found. Subscribing ({Channel})", channel);
         }
 
         defer = new TaskCompletionSource<bool>();
@@ -345,16 +215,16 @@ namespace DeriSock
 
       if (defer == null)
       {
-        if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
+        if (_logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
         {
-          Logger.Verbose("Empty defer: Wait for action completion ({Channel})", channel);
+          _logger.Verbose("Empty defer: Wait for action completion ({Channel})", channel);
         }
 
         var currentAction = entry.CurrentAction;
-        var result = currentAction != null && await currentAction;
-        if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
+        var result = currentAction != null && await currentAction.ConfigureAwait(false);
+        if (_logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
         {
-          Logger.Verbose("Empty defer: Action result: {Result} {Channel}", result, channel);
+          _logger.Verbose("Empty defer: Action result: {Result} {Channel}", result, channel);
         }
 
         if (!result || entry.State != SubscriptionState.Subscribed)
@@ -362,9 +232,9 @@ namespace DeriSock
           return false;
         }
 
-        if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
+        if (_logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
         {
-          Logger.Verbose("Empty defer: Adding callback ({Channel})", channel);
+          _logger.Verbose("Empty defer: Adding callback ({Channel})", channel);
         }
 
         entry.Callbacks.Add(callback);
@@ -373,30 +243,42 @@ namespace DeriSock
 
       try
       {
-        if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
+        if (_logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
         {
-          Logger.Verbose("Subscribing to {Channel}", channel);
+          _logger.Verbose("Subscribing to {Channel}", channel);
+        }
+
+        List<string> subscribedChannels;
+
+        if (@private)
+        {
+          subscribedChannels = await SendAsync(
+            "public/subscribe",
+            new {channels = new[] {channel}},
+            new ListJsonConverter<string>()
+          ).ConfigureAwait(false);
         }
 
         var response = !@private
           ? await SendAsync("public/subscribe", new {channels = new[] {channel}}, new ListJsonConverter<string>())
+            .ConfigureAwait(false)
           : await SendAsync("private/subscribe", new {channels = new[] {channel}, access_token = accessToken},
-            new ListJsonConverter<string>());
+            new ListJsonConverter<string>()).ConfigureAwait(false);
 
         if (response.Count != 1 || response[0] != channel)
         {
-          if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
+          if (_logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
           {
-            Logger.Verbose("Invalid subscribe result: {@Response} {Channel}", response, channel);
+            _logger.Verbose("Invalid subscribe result: {@Response} {Channel}", response, channel);
           }
 
           defer.SetResult(false);
         }
         else
         {
-          if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
+          if (_logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
           {
-            Logger.Verbose("Successfully subscribed. Adding callback ({Channel})", channel);
+            _logger.Verbose("Successfully subscribed. Adding callback ({Channel})", channel);
           }
 
           entry.State = SubscriptionState.Subscribed;
@@ -545,7 +427,7 @@ namespace DeriSock
       return true;
     }
 
-    private bool TryGetSubscriptionEntry<T>(string channelName, Action<T> userCallback, out Tuple<string, object, object> entry)
+    private bool TryGetSubscriptionEntry<T>(string channelName, Action<T> userCallback, out SubscriptionListEntry entry)
     {
       lock (_subscriptions)
       {
@@ -566,7 +448,7 @@ namespace DeriSock
 
     public async Task<AuthResponse> PublicAuthAsync(string accessKey, string accessSecret, string sessionName)
     {
-      Logger.Debug("Authenticate");
+      _logger.Debug("Authenticate");
       var scope = "connection";
       if (!string.IsNullOrEmpty(sessionName))
       {
@@ -590,7 +472,7 @@ namespace DeriSock
 
     public async Task<AuthResponse> PublicAuthRefreshAsync(string refreshToken)
     {
-      Logger.Debug("Refreshing Auth");
+      _logger.Debug("Refreshing Auth");
       var loginRes = await SendAsync("public/auth", new {grant_type = "refresh_token", refresh_token = refreshToken},
         new ObjectJsonConverter<AuthResponse>());
       AccessToken = loginRes.access_token;
@@ -605,9 +487,9 @@ namespace DeriSock
       return loginRes;
     }
 
-    public Task<JsonRpcResponse> PublicSetHeartbeatAsync(int intervalSeconds)
+    public Task<string> PublicSetHeartbeatAsync(int intervalSeconds)
     {
-      return SendAsync("public/set_heartbeat", new {interval = intervalSeconds}, new ObjectJsonConverter<JsonRpcResponse>());
+      return SendAsync("public/set_heartbeat", new {interval = intervalSeconds}, new ObjectJsonConverter<string>());
     }
 
     public Task<JsonRpcResponse> PublicDisableHeartbeatAsync()

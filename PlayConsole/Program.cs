@@ -39,7 +39,7 @@ namespace PlayConsole
       Log.Logger = new LoggerConfiguration()
                    .MinimumLevel.Verbose()
                    //.WriteTo.Async(l => l.Trace(outputTemplate: outputTemplateShortLevelName))
-                   .WriteTo.Async(l => l.Console(outputTemplate: outputTemplateShortLevelName, restrictedToMinimumLevel: LogEventLevel.Verbose))
+                   .WriteTo.Async(l => l.Console(outputTemplate: outputTemplateShortLevelName, restrictedToMinimumLevel: LogEventLevel.Information))
                    //.WriteTo.Async(l => l.File(logFilePath, rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: LogEventLevel.Verbose))
                    .Destructure.ByTransforming<JsonRpcRequest>(JsonConvert.SerializeObject)
                    .Destructure.ByTransforming<JsonRpcResponse>(JsonConvert.SerializeObject)
@@ -52,13 +52,13 @@ namespace PlayConsole
       {
         await _client.ConnectAsync();
         await _client.PublicSetHeartbeatAsync(10);
-        //await _client.SendAsync("public/test", new { expected_result = "MyTest" }, new ObjectJsonConverter<TestResponse>());
+        await _client.SendAsync("public/test", new { expected_result = "MyTest" }, new ObjectJsonConverter<TestResponse>());
 
         // Register for order book changes
-        //if (!await _client.PublicSubscribeBookAsync("BTC-PERPETUAL", 0, 1, HandleBookResponse))
-        //{
-        //  Log.Logger.Fatal("Could not subscribe to the orderbook!");
-        //}
+        if (!await _client.PublicSubscribeBookAsync("BTC-PERPETUAL", 0, 1, HandleBookResponse))
+        {
+          Log.Logger.Fatal("Could not subscribe to the order book!");
+        }
 
         try
         {

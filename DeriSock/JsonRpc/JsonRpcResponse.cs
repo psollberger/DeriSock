@@ -11,7 +11,7 @@
 
     [JsonProperty("result")] public JToken Result { get; set; }
 
-    [JsonProperty("error")] public JsonRpcError JsonRpcError { get; set; }
+    [JsonProperty("error")] public JsonRpcError Error { get; set; }
 
     // Fields not part of the JSON-RPC standard
 
