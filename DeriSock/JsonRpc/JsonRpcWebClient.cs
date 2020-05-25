@@ -1,7 +1,6 @@
 ﻿namespace DeriSock.JsonRpc
 {
   using System;
-  using System.Collections.Concurrent;
   using System.Net.WebSockets;
   using System.Text;
   using System.Threading;
@@ -10,15 +9,15 @@
   using Newtonsoft.Json.Linq;
   using Serilog;
   using Serilog.Events;
+  using RequestDictionary =
+    System.Collections.Concurrent.ConcurrentDictionary<int, System.Threading.Tasks.TaskCompletionSource<JsonRpcResponse>>;
 
+  //TODO: Create OnDisconnect Event or something to let consumers know the connection was closed. Maybe put ClosedBy* properties into DisconnectReason Enum or something
   public sealed class JsonRpcWebClient
   {
     private readonly ILogger _logger = Log.Logger;
+    private readonly RequestDictionary _openRequests = new RequestDictionary();
     private readonly Action<JsonRpcRequest> _serverRequestHandler;
-
-    private readonly ConcurrentDictionary<int, TaskCompletionSource<JsonRpcResponse>> _openRequests =
-      new ConcurrentDictionary<int, TaskCompletionSource<JsonRpcResponse>>();
-
     private volatile int _lastUsedRequestId;
     private Thread _processReceiveThread;
     private CancellationTokenSource _receiveCancellationTokenSource;
@@ -50,6 +49,7 @@
       }
 
       _socket?.Dispose();
+      _openRequests.Clear();
       ClosedByClient = false;
       ClosedByError = false;
       ClosedByHost = false;
@@ -75,7 +75,7 @@
       }
 
       //Start processing Threads
-      _processReceiveThread = new Thread(ProcessReceive) { Name = "ProcessReceive" };
+      _processReceiveThread = new Thread(ProcessReceive) {Name = "ProcessReceive"};
       _processReceiveThread.Start();
     }
 
@@ -118,7 +118,7 @@
     /// <returns>A Task object</returns>
     public Task<JsonRpcResponse> SendAsync(string method, object parameters)
     {
-      var request = new JsonRpcRequest { Id = GetNextRequestId(), Method = method, Params = parameters };
+      var request = new JsonRpcRequest {Id = GetNextRequestId(), Method = method, Params = parameters};
 
       if (_logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
       {
@@ -210,7 +210,11 @@
                 Task.Factory.StartNew(res =>
                 {
                   var response = (JsonRpcResponse)res;
-                  if (response.Id <= 0) return;
+                  if (response.Id <= 0)
+                  {
+                    return;
+                  }
+
                   if (_openRequests.TryRemove(response.Id, out var task))
                   {
                     task.SetResult(response);

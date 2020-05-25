@@ -49,6 +49,12 @@ namespace DeriSock
 
     public Task ConnectAsync()
     {
+      lock (_subscriptions)
+      {
+        _subscriptions.Clear();
+      }
+
+      _subscriptionMap.Clear();
       return _client.ConnectAsync();
     }
 
@@ -101,7 +107,6 @@ namespace DeriSock
 
     private void OnHeartbeat(Heartbeat heartbeat)
     {
-      return;
       if (_logger?.IsEnabled(LogEventLevel.Debug) ?? false)
       {
         _logger.Debug("OnHeartbeat: {@Heartbeat}", heartbeat);
