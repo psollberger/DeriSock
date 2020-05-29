@@ -9,6 +9,7 @@
   {
     [EnumMember(Value = "buy")]
     Buy,
+
     [EnumMember(Value = "sell")]
     Sell
   }

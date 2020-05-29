@@ -4,7 +4,7 @@ namespace DeriSock.Model
 
   public class BuySellResponse
   {
-    public JArray trades;
     public OrderInfo order;
+    public JArray trades;
   }
 }

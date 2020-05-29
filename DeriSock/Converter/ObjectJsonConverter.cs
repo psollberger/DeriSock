@@ -1,4 +1,4 @@
-namespace DeriSock.Converter
+﻿namespace DeriSock.Converter
 {
   using Newtonsoft.Json.Linq;
 

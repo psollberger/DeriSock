@@ -2,19 +2,19 @@ namespace DeriSock.Model
 {
   public class InstrumentInfo
   {
-    public string kind;
     public string baseCurrency;
+    public double contractSize;
+    public string created;
     public string currency;
-    public double minTradeSize;
+    public string expiration;
     public string instrumentName;
     public bool isActive;
-    public string settlement;
-    public string created;
-    public double tickSize;
-    public double pricePrecision;
-    public string expiration;
-    public double contractSize;
-    public double strike;
+    public string kind;
+    public double minTradeSize;
     public string optionType;
+    public double pricePrecision;
+    public string settlement;
+    public double strike;
+    public double tickSize;
   }
 }

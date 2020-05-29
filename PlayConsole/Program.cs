@@ -13,6 +13,7 @@ namespace PlayConsole
   using System.Threading.Tasks;
   using DeriSock;
   using DeriSock.Converter;
+  using DeriSock.JsonRpc;
   using DeriSock.Model;
   using Microsoft.OpenApi.Readers;
   using Newtonsoft.Json;
@@ -21,7 +22,7 @@ namespace PlayConsole
 
   public static class Program
   {
-    private static DeribitWebSocketClientV2 _client;
+    private static DeribitV2Client _client;
 
     public static async Task<int> Main(string[] args)
     {
@@ -38,30 +39,30 @@ namespace PlayConsole
       Log.Logger = new LoggerConfiguration()
                    .MinimumLevel.Verbose()
                    //.WriteTo.Async(l => l.Trace(outputTemplate: outputTemplateShortLevelName))
-                   .WriteTo.Async(l => l.Console(outputTemplate: outputTemplateShortLevelName))
-                   //.WriteTo.Async(l => l.File(logFilePath, rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: LogEventLevel.Information))
+                   .WriteTo.Async(l => l.Console(outputTemplate: outputTemplateShortLevelName, restrictedToMinimumLevel: LogEventLevel.Information))
+                   //.WriteTo.Async(l => l.File(logFilePath, rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: LogEventLevel.Verbose))
                    .Destructure.ByTransforming<JsonRpcRequest>(JsonConvert.SerializeObject)
                    .Destructure.ByTransforming<JsonRpcResponse>(JsonConvert.SerializeObject)
-                   .Destructure.ByTransforming<EventResponse>(JsonConvert.SerializeObject)
+                   .Destructure.ByTransforming<Notification>(JsonConvert.SerializeObject)
+                   .Destructure.ByTransforming<Heartbeat>(JsonConvert.SerializeObject)
                    .CreateLogger();
 
-      _client = new DeribitWebSocketClientV2("test.deribit.com");
+      _client = new DeribitV2Client(DeribitEndpointType.Testnet);
 
       while (!_client.IsConnected)
       {
         await _client.ConnectAsync();
-        await _client.SendAsync("public/set_heartbeat", new { interval = 30 }, new ObjectJsonConverter<object>());
-        await _client.SendAsync("public/test", new { expected_result = "MyTest" }, new ObjectJsonConverter<TestResponse>());
+        var hbRes = await _client.PublicSetHeartbeatAsync(10);
 
         // Register for order book changes
         if (!await _client.PublicSubscribeBookAsync("BTC-PERPETUAL", 0, 1, HandleBookResponse))
         {
-          Log.Logger.Fatal("Could not subscribe to the orderbook!");
+          Log.Logger.Fatal("Could not subscribe to the order book!");
         }
 
         try
         {
-          var loginRes = await _client.PublicAuthAsync("KxEneYNT9VsK", "S3EL63RBXOJZSN4ACV5SWF2OLO337BKL", "Playground");
+          //var loginRes = await _client.PublicAuthAsync("KxEneYNT9VsK", "S3EL63RBXOJZSN4ACV5SWF2OLO337BKL", "Playground");
         }
         catch (Exception ex)
         {

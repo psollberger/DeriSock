@@ -1,10 +1,10 @@
-using Newtonsoft.Json.Linq;
-
 namespace DeriSock.Model
 {
+  using Newtonsoft.Json.Linq;
+
   public class SellResponse
   {
-    public JArray trades;
     public OrderInfo order;
+    public JArray trades;
   }
 }
