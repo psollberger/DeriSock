@@ -1,5 +1,7 @@
 ﻿namespace DeriSock.JsonRpc
 {
+  using System;
+  using DeriSock.Extensions;
   using Newtonsoft.Json;
   using Newtonsoft.Json.Linq;
 
@@ -53,8 +55,14 @@
     [JsonProperty("usIn")]
     public long UsIn { get; set; }
 
+    [JsonIgnore]
+    public DateTime UsInDateTime => UsIn.AsDateTime();
+
     [JsonProperty("usOut")]
     public long UsOut { get; set; }
+
+    [JsonIgnore]
+    public DateTime UsOutDateTime => UsOut.AsDateTime();
 
     [JsonProperty("usDiff")]
     public int UsDiff { get; set; }
