@@ -8,8 +8,8 @@
     public List<double[]> bids;
     public long change_id;
 
-    public double Bid { get => bids[0][0]; }
-    public double Ask { get => asks[0][0]; }
+    public double Bid => bids[0][0];
+    public double Ask => asks[0][0];
 
     public override string ToString()
     {

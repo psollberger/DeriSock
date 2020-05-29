@@ -44,15 +44,15 @@ namespace PlayConsole
                    .Destructure.ByTransforming<JsonRpcRequest>(JsonConvert.SerializeObject)
                    .Destructure.ByTransforming<JsonRpcResponse>(JsonConvert.SerializeObject)
                    .Destructure.ByTransforming<Notification>(JsonConvert.SerializeObject)
+                   .Destructure.ByTransforming<Heartbeat>(JsonConvert.SerializeObject)
                    .CreateLogger();
 
-      _client = new DeribitV2Client("test.deribit.com");
+      _client = new DeribitV2Client(DeribitEndpointType.Testnet);
 
       while (!_client.IsConnected)
       {
         await _client.ConnectAsync();
-        await _client.PublicSetHeartbeatAsync(10);
-        await _client.SendAsync("public/test", new { expected_result = "MyTest" }, new ObjectJsonConverter<TestResponse>());
+        var hbRes = await _client.PublicSetHeartbeatAsync(10);
 
         // Register for order book changes
         if (!await _client.PublicSubscribeBookAsync("BTC-PERPETUAL", 0, 1, HandleBookResponse))

@@ -18,24 +18,36 @@ namespace DeriSock
   using SubscriptionListEntry = System.Tuple<string, object, object>;
   using SubscriptionList = System.Collections.Generic.List<System.Tuple<string, object, object>>;
 
-  public class DeribitV2Client
+  public sealed class DeribitV2Client
   {
-    private readonly JsonRpcWebClient _client;
+    private readonly IJsonRpcClient _client;
     private readonly ILogger _logger = Log.Logger;
 
     private readonly SubscriptionMap _subscriptionMap = new SubscriptionMap();
     private readonly SubscriptionList _subscriptions = new SubscriptionList();
 
-    public DeribitV2Client(string serviceBaseAddress)
+    public DeribitV2Client(DeribitEndpointType endpointType)
     {
-      _client = new JsonRpcWebClient(new Uri($"wss://{serviceBaseAddress}/ws/api/v2"), OnServerRequest);
+      switch (endpointType)
+      {
+        case DeribitEndpointType.Productive:
+          _client = JsonRpcClientFactory.Create(new Uri("wss://www.deribit.com/ws/api/v2"));
+          break;
+        case DeribitEndpointType.Testnet:
+          _client = JsonRpcClientFactory.Create(new Uri("wss://test.deribit.com/ws/api/v2"));
+          break;
+        default:
+          throw new ArgumentOutOfRangeException(nameof(endpointType), endpointType, "Unsupported endpoint type");
+      }
+
+      _client.Request += OnServerRequest;
     }
 
     #region Properties
 
-    public string AccessToken { get; set; }
+    public string AccessToken { get; private set; }
 
-    public string RefreshToken { get; set; }
+    public string RefreshToken { get; private set; }
 
     public bool ClosedByError => _client?.ClosedByError ?? false;
     public bool ClosedByClient => _client?.ClosedByClient ?? false;
@@ -63,41 +75,25 @@ namespace DeriSock
       return _client.DisconnectAsync();
     }
 
-    /// <summary>
-    ///   Sends a message to the endpoint
-    /// </summary>
-    /// <typeparam name="T">The message type to be sent</typeparam>
-    /// <param name="method">The method to be called</param>
-    /// <param name="params">The params to be transmitted</param>
-    /// <param name="converter">The converter to be used to parse the response</param>
-    /// <returns>A Task object</returns>
-    /// <exception cref="ResponseErrorException" />
-    public async Task<T> SendAsync<T>(string method, object @params, IJsonConverter<T> converter) /*where T : JsonRpcResponse*/
+    private async Task<JsonRpcResponse<T>> SendAsync<T>(string method, object @params, IJsonConverter<T> converter) where T : class
     {
-      //TODO: Limit T to JsonRpcResponse based classes so no exception has to be thrown if the call yields an error
-      var recvStart = DateTime.Now;
       var response = await _client.SendAsync(method, @params).ConfigureAwait(false);
-      var recvDiff = DateTime.Now.Subtract(recvStart);
-      _logger.Information("SendAsync Duration: {Duration:N3} ms", recvDiff.TotalMilliseconds);
       if (response.Error != null)
       {
         throw new ResponseErrorException(response, response.Error.Message);
       }
-
-      return converter.Convert(response.Result);
+      return response.CreateTyped(converter.Convert(response.Result));
     }
 
-    private void OnServerRequest(JsonRpcRequest request)
+    private void OnServerRequest(object sender, JsonRpcRequest request)
     {
       if (string.Equals(request.Method, "subscription"))
       {
-        var jObject = (JObject)JsonConvert.DeserializeObject(JsonConvert.SerializeObject(request));
-        OnNotification(jObject.ToObject<Notification>());
+        OnNotification(request.Original.ToObject<Notification>());
       }
       else if (string.Equals(request.Method, "heartbeat"))
       {
-        var jObject = (JObject)JsonConvert.DeserializeObject(JsonConvert.SerializeObject(request));
-        OnHeartbeat(jObject.ToObject<Heartbeat>());
+        OnHeartbeat(request.Original.ToObject<Heartbeat>());
       }
       else
       {
@@ -114,7 +110,7 @@ namespace DeriSock
 
       if (heartbeat.Type == "test_request")
       {
-        _ = SendAsync("public/test", new {expected_result = "ok"}, new ObjectJsonConverter<TestResponse>());
+        _ = SendAsync("public/test", new { expected_result = "ok" }, new ObjectJsonConverter<TestResponse>());
       }
     }
 
@@ -173,15 +169,15 @@ namespace DeriSock
         switch (entry.State)
         {
           case SubscriptionState.Subscribed:
-          {
-            if (_logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
             {
-              _logger.Verbose("Subscription for channel already exists. Adding callback to list ({Channel})", channel);
-            }
+              if (_logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
+              {
+                _logger.Verbose("Subscription for channel already exists. Adding callback to list ({Channel})", channel);
+              }
 
-            entry.Callbacks.Add(callback);
-            return true;
-          }
+              entry.Callbacks.Add(callback);
+              return true;
+            }
 
           case SubscriptionState.Unsubscribing:
             if (_logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
@@ -213,7 +209,9 @@ namespace DeriSock
         defer = new TaskCompletionSource<bool>();
         entry = new SubscriptionEntry
         {
-          State = SubscriptionState.Subscribing, Callbacks = new List<Action<Notification>>(), CurrentAction = defer.Task
+          State = SubscriptionState.Subscribing,
+          Callbacks = new List<Action<Notification>>(),
+          CurrentAction = defer.Task
         };
         _subscriptionMap[channel] = entry;
       }
@@ -253,22 +251,18 @@ namespace DeriSock
           _logger.Verbose("Subscribing to {Channel}", channel);
         }
 
-        List<string> subscribedChannels;
-
-        if (@private)
-        {
-          subscribedChannels = await SendAsync(
-            "public/subscribe",
-            new {channels = new[] {channel}},
-            new ListJsonConverter<string>()
-          ).ConfigureAwait(false);
-        }
-
-        var response = !@private
-          ? await SendAsync("public/subscribe", new {channels = new[] {channel}}, new ListJsonConverter<string>())
+        var subscribeResponse = !@private
+          ? await SendAsync(
+              "public/subscribe", new { channels = new[] { channel } },
+              new ListJsonConverter<string>())
             .ConfigureAwait(false)
-          : await SendAsync("private/subscribe", new {channels = new[] {channel}, access_token = accessToken},
+          : await SendAsync(
+            "private/subscribe", new { channels = new[] { channel }, access_token = accessToken },
             new ListJsonConverter<string>()).ConfigureAwait(false);
+
+        //TODO: Handle possible error in response
+
+        var response = subscribeResponse.ResultData;
 
         if (response.Count != 1 || response[0] != channel)
         {
@@ -338,10 +332,18 @@ namespace DeriSock
 
       try
       {
-        var response = !@private
-          ? await SendAsync("public/unsubscribe", new {channels = new[] {channel}}, new ListJsonConverter<string>())
-          : await SendAsync("private/unsubscribe", new {channels = new[] {channel}, access_token = accessToken},
+        var unsubscribeResponse = !@private
+          ? await SendAsync(
+            "public/unsubscribe", new { channels = new[] { channel } },
+            new ListJsonConverter<string>())
+          : await SendAsync(
+            "private/unsubscribe", new { channels = new[] { channel }, access_token = accessToken },
             new ListJsonConverter<string>());
+
+        //TODO: Handle possible error in response
+
+        var response = unsubscribeResponse.ResultData;
+
         if (response.Count != 1 || response[0] != channel)
         {
           defer.SetResult(false);
@@ -446,23 +448,29 @@ namespace DeriSock
 
     #region API v2 Functionality
 
-    public Task<string> PingAsync()
+    public Task<JsonRpcResponse<string>> PingAsync()
     {
       return SendAsync("public/ping", new { }, new ObjectJsonConverter<string>());
     }
 
-    public async Task<AuthResponse> PublicAuthAsync(string accessKey, string accessSecret, string sessionName)
+    public async Task<JsonRpcResponse<AuthResponse>> PublicAuthAsync(string accessKey, string accessSecret, string sessionName)
     {
       _logger.Debug("Authenticate");
+
       var scope = "connection";
       if (!string.IsNullOrEmpty(sessionName))
       {
         scope = $"session:{sessionName} expires:60";
       }
 
-      var loginRes = await SendAsync("public/auth",
-        new {grant_type = "client_credentials", client_id = accessKey, client_secret = accessSecret, scope},
+      var response = await SendAsync(
+        "public/auth", new { grant_type = "client_credentials", client_id = accessKey, client_secret = accessSecret, scope },
         new ObjectJsonConverter<AuthResponse>());
+
+      //TODO: Handle possible error in response
+
+      var loginRes = response.ResultData;
+
       AccessToken = loginRes.access_token;
       RefreshToken = loginRes.refresh_token;
       _ = Task.Delay(TimeSpan.FromSeconds(loginRes.expires_in - 5)).ContinueWith(t =>
@@ -472,14 +480,22 @@ namespace DeriSock
           _ = PublicAuthRefreshAsync(RefreshToken);
         }
       });
-      return loginRes;
+
+      return response;
     }
 
-    public async Task<AuthResponse> PublicAuthRefreshAsync(string refreshToken)
+    public async Task<JsonRpcResponse<AuthResponse>> PublicAuthRefreshAsync(string refreshToken)
     {
       _logger.Debug("Refreshing Auth");
-      var loginRes = await SendAsync("public/auth", new {grant_type = "refresh_token", refresh_token = refreshToken},
+
+      var response = await SendAsync(
+        "public/auth", new { grant_type = "refresh_token", refresh_token = refreshToken },
         new ObjectJsonConverter<AuthResponse>());
+
+      //TODO: Handle possible error in response
+
+      var loginRes = response.ResultData;
+
       AccessToken = loginRes.access_token;
       RefreshToken = loginRes.refresh_token;
       _ = Task.Delay(TimeSpan.FromSeconds(loginRes.expires_in - 5)).ContinueWith(t =>
@@ -489,29 +505,31 @@ namespace DeriSock
           _ = PublicAuthRefreshAsync(RefreshToken);
         }
       });
-      return loginRes;
+
+      return response;
     }
 
-    public Task<string> PublicSetHeartbeatAsync(int intervalSeconds)
+    public Task<JsonRpcResponse<string>> PublicSetHeartbeatAsync(int intervalSeconds)
     {
-      return SendAsync("public/set_heartbeat", new {interval = intervalSeconds}, new ObjectJsonConverter<string>());
+      return SendAsync("public/set_heartbeat", new { interval = intervalSeconds }, new ObjectJsonConverter<string>());
     }
 
-    public Task<JsonRpcResponse> PublicDisableHeartbeatAsync()
+    public Task<JsonRpcResponse<string>> PublicDisableHeartbeatAsync()
     {
-      return SendAsync("public/disable_heartbeat", new { }, new ObjectJsonConverter<JsonRpcResponse>());
+      return SendAsync("public/disable_heartbeat", new { }, new ObjectJsonConverter<string>());
     }
 
-    public Task<JsonRpcResponse> PrivateDisableCancelOnDisconnectAsync()
+    public Task<JsonRpcResponse<string>> PrivateDisableCancelOnDisconnectAsync()
     {
-      return SendAsync("private/disable_cancel_on_disconnect", new {access_token = AccessToken},
-        new ObjectJsonConverter<JsonRpcResponse>());
+      return SendAsync(
+        "private/disable_cancel_on_disconnect", new { access_token = AccessToken },
+        new ObjectJsonConverter<string>());
     }
 
-    public Task<AccountSummaryResponse> PrivateGetAccountSummaryAsync()
+    public Task<JsonRpcResponse<AccountSummaryResponse>> PrivateGetAccountSummaryAsync(string currency, bool extended)
     {
-      return SendAsync("private/get_account_summary",
-        new {currency = "BTC", extended = true, access_token = AccessToken},
+      return SendAsync(
+        "private/get_account_summary", new { currency, extended, access_token = AccessToken },
         new ObjectJsonConverter<AccountSummaryResponse>());
     }
 
@@ -552,85 +570,93 @@ namespace DeriSock
       });
     }
 
-    public Task<BookResponse> PublicGetOrderBookAsync(string instrument, int depth)
+    public Task<JsonRpcResponse<BookResponse>> PublicGetOrderBookAsync(string instrument, int depth)
     {
-      return SendAsync("public/get_order_book", new {instrument_name = instrument, depth}, new ObjectJsonConverter<BookResponse>());
+      return SendAsync(
+        "public/get_order_book",
+        new { instrument_name = instrument, depth },
+        new ObjectJsonConverter<BookResponse>());
     }
 
-    public Task<OrderItem[]> PrivateGetOpenOrdersAsync(string instrument)
+    public Task<JsonRpcResponse<OrderItem[]>> PrivateGetOpenOrdersAsync(string instrument)
     {
-      return SendAsync("private/get_open_orders_by_instrument",
-        new {instrument_name = instrument, access_token = AccessToken}, new ObjectJsonConverter<OrderItem[]>());
+      return SendAsync(
+        "private/get_open_orders_by_instrument",
+        new { instrument_name = instrument, access_token = AccessToken },
+        new ObjectJsonConverter<OrderItem[]>());
     }
 
-    public Task<BuySellResponse> PrivateBuyLimitAsync(string instrument, double amount, double price, string label)
+    public Task<JsonRpcResponse<BuySellResponse>> PrivateBuyLimitAsync(string instrument, double amount, double price, string label)
     {
-      return SendAsync("private/buy", new
-      {
-        instrument_name = instrument,
-        amount,
-        type = "limit",
-        label,
-        price,
-        time_in_force = "good_til_cancelled",
-        post_only = true,
-        access_token = AccessToken
-      }, new ObjectJsonConverter<BuySellResponse>());
+      return SendAsync(
+        "private/buy",
+        new
+        {
+          instrument_name = instrument,
+          amount,
+          type = "limit",
+          label,
+          price,
+          time_in_force = "good_til_cancelled",
+          post_only = true,
+          access_token = AccessToken
+        }, new ObjectJsonConverter<BuySellResponse>());
     }
 
-    public Task<BuySellResponse> PrivateSellLimitAsync(string instrument, double amount, double price, string label)
+    public Task<JsonRpcResponse<BuySellResponse>> PrivateSellLimitAsync(string instrument, double amount, double price, string label)
     {
-      return SendAsync("private/sell", new
-      {
-        instrument_name = instrument,
-        amount,
-        type = "limit",
-        label,
-        price,
-        time_in_force = "good_til_cancelled",
-        post_only = true,
-        access_token = AccessToken
-      }, new ObjectJsonConverter<BuySellResponse>());
+      return SendAsync(
+        "private/sell",
+        new
+        {
+          instrument_name = instrument,
+          amount,
+          type = "limit",
+          label,
+          price,
+          time_in_force = "good_til_cancelled",
+          post_only = true,
+          access_token = AccessToken
+        }, new ObjectJsonConverter<BuySellResponse>());
     }
 
-    public async Task<OrderResponse> PrivateGetOrderStateAsync(string orderId)
+    public Task<JsonRpcResponse<OrderResponse>> PrivateGetOrderStateAsync(string orderId)
     {
-      try
-      {
-        var result = await SendAsync("private/get_order_state", new {order_id = orderId, access_token = AccessToken},
-          new ObjectJsonConverter<OrderResponse>());
-        return result;
-      }
-      catch
-      {
-        return null;
-      }
+      return SendAsync(
+        "private/get_order_state",
+        new { order_id = orderId, access_token = AccessToken },
+        new ObjectJsonConverter<OrderResponse>());
     }
 
-    public Task<JsonRpcResponse> PrivateCancelOrderAsync(string orderId)
+    public Task<JsonRpcResponse<JObject>> PrivateCancelOrderAsync(string orderId)
     {
-      return SendAsync("private/cancel", new {order_id = orderId, access_token = AccessToken},
-        new ObjectJsonConverter<JsonRpcResponse>());
+      return SendAsync(
+        "private/cancel",
+        new { order_id = orderId, access_token = AccessToken },
+        new ObjectJsonConverter<JObject>());
     }
 
-    public Task<JsonRpcResponse> PrivateCancelAllOrdersByInstrumentAsync(string instrument)
+    public Task<JsonRpcResponse<JObject>> PrivateCancelAllOrdersByInstrumentAsync(string instrument)
     {
       return SendAsync(
         "private/cancel_all_by_instrument",
-        new {instrument_name = instrument, access_token = AccessToken}, new ObjectJsonConverter<JsonRpcResponse>());
+        new { instrument_name = instrument, access_token = AccessToken },
+        new ObjectJsonConverter<JObject>());
     }
 
-    public Task<SettlementResponse> PrivateGetSettlementHistoryByInstrumentAsync(string instrument, int count)
+    public Task<JsonRpcResponse<SettlementResponse>> PrivateGetSettlementHistoryByInstrumentAsync(string instrument, string type, int count)
     {
-      return SendAsync("private/get_settlement_history_by_instrument",
-        new {instrument_name = instrument, type = "settlement", count, access_token = AccessToken},
+      return SendAsync(
+        "private/get_settlement_history_by_instrument",
+        new { instrument_name = instrument, type, count, access_token = AccessToken },
         new ObjectJsonConverter<SettlementResponse>());
     }
 
-    public Task<SettlementResponse> PrivateGetSettlementHistoryByCurrencyAsync(string currency, int count)
+    public Task<JsonRpcResponse<SettlementResponse>> PrivateGetSettlementHistoryByCurrencyAsync(string currency, string type, int count)
     {
-      return SendAsync("private/get_settlement_history_by_currency",
-        new {currency, type = "settlement", count, access_token = AccessToken},
+      return SendAsync(
+        "private/get_settlement_history_by_currency",
+        new { currency, type, count, access_token = AccessToken },
         new ObjectJsonConverter<SettlementResponse>());
     }
 

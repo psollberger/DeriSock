@@ -1,16 +1,15 @@
 ﻿namespace DeriSock.Model
 {
   using System;
-  using Extensions;
+  using DeriSock.Extensions;
 
   public class SettlementInformation
   {
     public string type { get; set; }
     public long timestamp { get; set; }
-    public DateTime LocalDateTime
-    {
-      get => timestamp.AsDateTime();
-    }
+
+    public DateTime LocalDateTime => timestamp.AsDateTime();
+
     public double session_profit_loss { get; set; }
     public double profit_loss { get; set; }
     public int position { get; set; }

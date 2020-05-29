@@ -3,24 +3,62 @@
   using Newtonsoft.Json;
   using Newtonsoft.Json.Linq;
 
+  public class JsonRpcResponse<T> : JsonRpcResponse
+  {
+    [JsonIgnore]
+    public T ResultData { get; set; }
+
+    public JsonRpcResponse(JsonRpcResponse response, T value)
+    {
+      Original = response.Original;
+      JsonRpc = response.JsonRpc;
+      Id = response.Id;
+      Result = response.Result;
+      Error = response.Error;
+      Testnet = response.Testnet;
+      UsIn = response.UsIn;
+      UsOut = response.UsOut;
+      UsDiff = response.UsDiff;
+      ResultData = value;
+    }
+  }
+
   public class JsonRpcResponse
   {
-    [JsonProperty("jsonrpc")] public string JsonRpc { get; set; }
+    [JsonIgnore]
+    public JObject Original { get; set; }
 
-    [JsonProperty("id")] public int Id { get; set; }
+    [JsonProperty("jsonrpc")]
+    public string JsonRpc { get; set; }
 
-    [JsonProperty("result")] public JToken Result { get; set; }
+    [JsonProperty("id")]
+    public int Id { get; set; }
 
-    [JsonProperty("error")] public JsonRpcError Error { get; set; }
+    [JsonProperty("result")]
+    public JToken Result { get; set; }
 
-    // Fields not part of the JSON-RPC standard
+    [JsonProperty("error")]
+    public JsonRpcError Error { get; set; }
 
-    [JsonProperty("testnet")] public bool Testnet { get; set; }
+    public JsonRpcResponse<T> CreateTyped<T>(T value)
+    {
+      return new JsonRpcResponse<T>(this, value);
+    }
 
-    [JsonProperty("usIn")] public long UsIn { get; set; }
+    #region Fields not part of the JSON-RPC standard
 
-    [JsonProperty("usOut")] public long UsOut { get; set; }
+    [JsonProperty("testnet")]
+    public bool Testnet { get; set; }
 
-    [JsonProperty("usDiff")] public int UsDiff { get; set; }
+    [JsonProperty("usIn")]
+    public long UsIn { get; set; }
+
+    [JsonProperty("usOut")]
+    public long UsOut { get; set; }
+
+    [JsonProperty("usDiff")]
+    public int UsDiff { get; set; }
+
+    #endregion
   }
 }

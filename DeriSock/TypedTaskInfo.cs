@@ -1,9 +1,9 @@
 ﻿namespace DeriSock.Utils
 {
-  using DeriSock.Converter;
-  using Newtonsoft.Json.Linq;
   using System;
   using System.Threading.Tasks;
+  using DeriSock.Converter;
+  using Newtonsoft.Json.Linq;
 
   public class TypedTaskInfo<T> : TaskInfo
   {
@@ -12,7 +12,7 @@
 
     public override object Convert(JToken value)
     {
-      return this.Converter.Convert(value);
+      return Converter.Convert(value);
     }
 
     public override void Resolve(object value)

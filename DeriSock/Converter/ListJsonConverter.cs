@@ -13,6 +13,7 @@ namespace DeriSock.Converter
       {
         result.Add(item.ToObject<T>());
       }
+
       return result;
     }
   }

@@ -6,9 +6,11 @@
 
   public class Notification : JsonRpcRequest
   {
-    [JsonIgnore] public DateTime Timestamp { get; set; }
+    [JsonIgnore]
+    public DateTime Timestamp { get; set; }
 
-    [JsonProperty("params")] public new NotificationParams Params { get; set; }
+    [JsonProperty("params")]
+    public new NotificationParams Params { get; set; }
 
     public string Channel => Params.Channel;
 
@@ -16,8 +18,11 @@
 
     public class NotificationParams
     {
-      [JsonProperty("channel")] public string Channel { get; set; }
-      [JsonProperty("data")] public JToken Data { get; set; }
+      [JsonProperty("channel")]
+      public string Channel { get; set; }
+
+      [JsonProperty("data")]
+      public JToken Data { get; set; }
     }
   }
 }

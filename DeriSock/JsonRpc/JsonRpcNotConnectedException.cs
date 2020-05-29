@@ -1,5 +1,8 @@
-﻿namespace DeriSock.JsonRpc {
+﻿namespace DeriSock.JsonRpc
+{
   using System;
 
-  public class JsonRpcNotConnectedException : Exception { }
+  public class JsonRpcNotConnectedException : Exception
+  {
+  }
 }
