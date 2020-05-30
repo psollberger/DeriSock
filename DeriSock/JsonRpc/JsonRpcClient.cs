@@ -1,6 +1,7 @@
 ﻿namespace DeriSock.JsonRpc
 {
   using System;
+  using System.Collections.Concurrent;
   using System.Net.WebSockets;
   using System.Text;
   using System.Threading;
@@ -10,25 +11,26 @@
   using Newtonsoft.Json.Linq;
   using Serilog;
   using Serilog.Events;
-  using RequestDictionary =
-    System.Collections.Concurrent.ConcurrentDictionary<int, System.Threading.Tasks.TaskCompletionSource<JsonRpcResponse>>;
+  using RequestDictionary = System.Collections.Concurrent.ConcurrentDictionary<int, System.Threading.Tasks.TaskCompletionSource<JsonRpcResponse>>;
 
   //TODO: Create OnDisconnect Event or something to let consumers know the connection was closed. Maybe put ClosedBy* properties into DisconnectReason Enum or something
   public class JsonRpcClient : IJsonRpcClient
   {
     protected readonly ILogger Logger = Log.Logger;
-    protected readonly RequestDictionary OpenRequests = new RequestDictionary();
+    protected readonly RequestIdGenerator RequestIdGenerator = new RequestIdGenerator();
+    protected readonly RequestManager RequestMgr;
     protected Thread ProcessReceiveThread;
     protected CancellationTokenSource ReceiveCancellationTokenSource;
-    protected readonly RequestIdGenerator RequestIdGenerator = new RequestIdGenerator();
 
     protected IWebSocket Socket;
 
-    public event EventHandler<JsonRpcRequest> Request;
-    protected virtual void OnRequest(JsonRpcRequest request)
+    public JsonRpcClient(Uri serverUri)
     {
-      Request?.Invoke(this, request);
+      ServerUri = serverUri;
+      RequestMgr = new RequestManager(this);
     }
+
+    public event EventHandler<JsonRpcRequest> Request;
 
     public bool SocketAvailable => Socket != null;
     public bool IsConnected => SocketAvailable && !(ClosedByHost || ClosedByClient || ClosedByError);
@@ -37,11 +39,6 @@
     public bool ClosedByHost { get; private set; }
 
     public Uri ServerUri { get; }
-
-    public JsonRpcClient(Uri serverUri)
-    {
-      ServerUri = serverUri;
-    }
 
     /// <inheritdoc />
     public virtual async Task ConnectAsync()
@@ -52,7 +49,7 @@
       }
 
       Socket?.Dispose();
-      OpenRequests.Clear();
+      RequestMgr.Reset();
       ClosedByClient = false;
       ClosedByError = false;
       ClosedByHost = false;
@@ -83,7 +80,7 @@
       }
 
       //Start processing Threads
-      ProcessReceiveThread = new Thread(CollectMessages) { Name = "ProcessReceive" };
+      ProcessReceiveThread = new Thread(CollectMessages) {Name = "ProcessReceive"};
       ProcessReceiveThread.Start();
     }
 
@@ -121,7 +118,7 @@
     /// <inheritdoc />
     public virtual void SendLogout(string method, object parameters)
     {
-      var request = new JsonRpcRequest { Id = RequestIdGenerator.Next(), Method = method, Params = parameters };
+      var request = new JsonRpcRequest {Id = RequestIdGenerator.Next(), Method = method, Params = parameters};
 
       if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
       {
@@ -138,7 +135,7 @@
     /// <inheritdoc />
     public virtual Task<JsonRpcResponse> SendAsync(string method, object parameters)
     {
-      var request = new JsonRpcRequest { Id = RequestIdGenerator.Next(), Method = method, Params = parameters };
+      var request = new JsonRpcRequest {Id = RequestIdGenerator.Next(), Method = method, Params = parameters};
 
       if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
       {
@@ -146,7 +143,7 @@
       }
 
       var taskSource = new TaskCompletionSource<JsonRpcResponse>();
-      OpenRequests[request.Id] = taskSource;
+      RequestMgr.Add(request.Id, request, taskSource);
 
       _ = Socket.SendAsync(
         new ArraySegment<byte>(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(request, Formatting.None))),
@@ -156,7 +153,12 @@
 
       return taskSource.Task;
     }
-    
+
+    protected virtual void OnRequest(JsonRpcRequest request)
+    {
+      Request?.Invoke(this, request);
+    }
+
     protected virtual void CollectMessages()
     {
       var msgBuffer = new byte[0x1000];
@@ -176,6 +178,7 @@
             {
               Logger?.Debug("ProcessReceive: Socket null or not connected");
             }
+
             continue;
           }
 
@@ -194,6 +197,7 @@
               {
                 Logger.Debug("ProcessReceive: The host closed the connection ({StatusDescription})", receiveResult.CloseStatusDescription);
               }
+
               OnConnectionClosed(!string.Equals(receiveResult.CloseStatusDescription, "logout"));
               break;
             }
@@ -229,6 +233,7 @@
             {
               Logger?.Debug("ProcessReceive: Valid manual cancellation");
             }
+
             OnConnectionClosed(false);
             break;
           }
@@ -284,9 +289,23 @@
         Task.Factory.StartNew(res =>
         {
           var r = (JsonRpcResponse)res;
-          if (OpenRequests.TryRemove(r.Id, out var task))
+          if (!RequestMgr.TryRemove(r.Id, out var request, out var taskSource))
           {
-            task.SetResult(r);
+            if (Logger?.IsEnabled(LogEventLevel.Warning) ?? false)
+            {
+              Logger.Warning("Could not find request id {reqId}", r.Id);
+            }
+
+            return;
+          }
+
+          if (r.Error != null)
+          {
+            taskSource.SetException(new JsonRpcRequestException(request, r));
+          }
+          else
+          {
+            taskSource.SetResult(r);
           }
         }, response);
       }
@@ -303,6 +322,38 @@
       ClosedByHost = false;
       ClosedByClient = false;
       ClosedByError = true;
+    }
+
+    protected class RequestManager
+    {
+      private readonly JsonRpcClient _client;
+      private readonly ConcurrentDictionary<int, JsonRpcRequest> _requestObjects;
+      private readonly ConcurrentDictionary<int, TaskCompletionSource<JsonRpcResponse>> _taskSources;
+
+      public RequestManager(JsonRpcClient client)
+      {
+        _client = client;
+        _taskSources = new ConcurrentDictionary<int, TaskCompletionSource<JsonRpcResponse>>();
+        _requestObjects = new ConcurrentDictionary<int, JsonRpcRequest>();
+      }
+
+      public void Add(int id, JsonRpcRequest request, TaskCompletionSource<JsonRpcResponse> taskSource)
+      {
+        _taskSources[id] = taskSource;
+        _requestObjects[id] = request;
+      }
+
+      public bool TryRemove(int id, out JsonRpcRequest request, out TaskCompletionSource<JsonRpcResponse> taskSource)
+      {
+        taskSource = null;
+        return _requestObjects.TryRemove(id, out request) && _taskSources.TryRemove(id, out taskSource);
+      }
+
+      public void Reset()
+      {
+        _taskSources.Clear();
+        _requestObjects.Clear();
+      }
     }
   }
 }

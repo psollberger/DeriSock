@@ -69,11 +69,6 @@ namespace DeriSock
     private async Task<JsonRpcResponse<T>> SendAsync<T>(string method, object @params, IJsonConverter<T> converter)
     {
       var response = await _client.SendAsync(method, @params).ConfigureAwait(false);
-      if (response.Error != null)
-      {
-        throw new ResponseErrorException(response, response.Error.Message);
-      }
-
       return response.CreateTyped(converter.Convert(response.Result));
     }
 
@@ -433,8 +428,6 @@ namespace DeriSock
           scope
         },
         new ObjectJsonConverter<AuthResponseData>());
-
-      //TODO: Handle possible error in response
 
       var loginRes = response.ResultData;
 
