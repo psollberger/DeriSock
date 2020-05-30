@@ -1,4 +1,4 @@
-﻿namespace DeriSock.Utils
+﻿namespace DeriSock
 {
   using System;
   using System.Collections.Generic;

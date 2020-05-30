@@ -1,10 +1,10 @@
-namespace DeriSock.Utils
+﻿namespace DeriSock
 {
   public enum SubscriptionState
   {
-    Subscribed,
-    Unsubscribed,
     Subscribing,
-    Unsubscribing
+    Subscribed,
+    Unsubscribing,
+    Unsubscribed
   }
 }

@@ -3,26 +3,23 @@
 namespace DeriSock
 {
   using System;
+  using System.Collections.Concurrent;
   using System.Collections.Generic;
-  using System.Linq;
+  using System.Diagnostics;
+  using System.Globalization;
+  using System.Text.RegularExpressions;
   using System.Threading.Tasks;
   using DeriSock.Converter;
   using DeriSock.JsonRpc;
   using DeriSock.Model;
-  using DeriSock.Utils;
-  using Newtonsoft.Json;
   using Newtonsoft.Json.Linq;
   using Serilog;
   using Serilog.Events;
-  using SubscriptionMap = System.Collections.Concurrent.ConcurrentDictionary<string, Utils.SubscriptionEntry>;
-  using SubscriptionListEntry = System.Tuple<string, object, object>;
-  using SubscriptionList = System.Collections.Generic.List<System.Tuple<string, object, object>>;
 
   public class DeribitV2Client
   {
     private readonly IJsonRpcClient _client;
-    private readonly SubscriptionMap _subscriptionMap = new SubscriptionMap();
-    private readonly SubscriptionList _subscriptions = new SubscriptionList();
+    private readonly SubscriptionManager _subscriptionManager;
 
     protected readonly ILogger Logger = Log.Logger;
 
@@ -41,6 +38,249 @@ namespace DeriSock
       }
 
       _client.Request += OnServerRequest;
+      _subscriptionManager = new SubscriptionManager(this);
+    }
+
+    private class SubscriptionManager
+    {
+      private readonly DeribitV2Client _client;
+      private readonly ConcurrentDictionary<string, SubscriptionEntry> _subscriptionMap;
+
+      public SubscriptionManager(DeribitV2Client client)
+      {
+        _client = client;
+        _subscriptionMap = new ConcurrentDictionary<string, SubscriptionEntry>();
+      }
+
+      public async Task<bool> Subscribe(string channel, Action<Notification> callback)
+      {
+        if (callback == null)
+        {
+          return false;
+        }
+
+        var entryFound = _subscriptionMap.TryGetValue(channel, out var entry);
+
+        if (entryFound && entry.State == SubscriptionState.Subscribing)
+        {
+          if (_client.Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
+          {
+            _client.Logger.Verbose("Already subscribing: Wait for action completion ({Channel})", channel);
+          }
+
+          //TODO: entry.CurrentAction could be null due to threading (already completed?)
+          var currentAction = entry.CurrentAction;
+          var result = currentAction != null && await currentAction.ConfigureAwait(false);
+
+          if (_client.Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
+          {
+            _client.Logger.Verbose("Already subscribing: Action result: {Result} ({Channel})", result, channel);
+          }
+
+          if (!result || entry.State != SubscriptionState.Subscribed)
+          {
+            if (_client.Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
+            {
+              _client.Logger.Verbose("Already subscribing: Action failed or subscription not successful ({Channel})", channel);
+            }
+
+            return false;
+          }
+
+          if (_client.Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
+          {
+            _client.Logger.Verbose("Already subscribing: Adding callback ({Channel})", channel);
+          }
+
+          entry.Callbacks.Add(callback);
+          return true;
+        }
+
+        if (entryFound && entry.State == SubscriptionState.Subscribed)
+        {
+          if (_client.Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
+          {
+            _client.Logger.Verbose("Subscription for channel already exists. Adding callback to list ({Channel})", channel);
+          }
+
+          entry.Callbacks.Add(callback);
+          return true;
+        }
+
+        if (entryFound && entry.State == SubscriptionState.Unsubscribing)
+        {
+          if (_client.Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
+          {
+            _client.Logger.Verbose("Currently unsubscribing from Channel. Abort Subscribe ({Channel})", channel);
+          }
+
+          return false;
+        }
+
+        TaskCompletionSource<bool> defer = null;
+
+        if (entryFound && entry.State == SubscriptionState.Unsubscribed)
+        {
+          if (_client.Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
+          {
+            _client.Logger.Verbose("Unsubscribed from channel. Re-Subscribing ({Channel})", channel);
+          }
+
+          defer = new TaskCompletionSource<bool>();
+          entry.State = SubscriptionState.Subscribing;
+          entry.CurrentAction = defer.Task;
+        }
+
+        if (!entryFound)
+        {
+          if (_client.Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
+          {
+            _client.Logger.Verbose("Subscription for channel not found. Subscribing ({Channel})", channel);
+          }
+
+          defer = new TaskCompletionSource<bool>();
+          entry = new SubscriptionEntry
+          {
+            State = SubscriptionState.Subscribing, Callbacks = new List<Action<Notification>>(), CurrentAction = defer.Task
+          };
+          _subscriptionMap[channel] = entry;
+        }
+
+        try
+        {
+          var subscribeResponse = IsPrivateChannel(channel)
+            ? await _client.SendAsync(
+              "private/subscribe", new {channels = new[] {channel}, access_token = _client.AccessToken},
+              new ListJsonConverter<string>()).ConfigureAwait(false)
+            : await _client.SendAsync(
+                "public/subscribe", new {channels = new[] {channel}},
+                new ListJsonConverter<string>())
+              .ConfigureAwait(false);
+
+          //TODO: Handle possible error in response
+
+          var response = subscribeResponse.ResultData;
+
+          if (response.Count != 1 || response[0] != channel)
+          {
+            if (_client.Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
+            {
+              _client.Logger.Verbose("Invalid subscribe result: {@Response} {Channel}", response, channel);
+            }
+
+            Debug.Assert(defer != null, nameof(defer) + " != null");
+            defer.SetResult(false);
+          }
+          else
+          {
+            if (_client.Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
+            {
+              _client.Logger.Verbose("Successfully subscribed. Adding callback ({Channel})", channel);
+            }
+
+            entry.State = SubscriptionState.Subscribed;
+            entry.Callbacks.Add(callback);
+            entry.CurrentAction = null;
+            Debug.Assert(defer != null, nameof(defer) + " != null");
+            defer.SetResult(true);
+          }
+        }
+        catch (Exception e)
+        {
+          Debug.Assert(defer != null, nameof(defer) + " != null");
+          defer.SetException(e);
+        }
+
+        return await defer.Task;
+      }
+
+      public async Task<bool> Unsubscribe(string channel, Action<Notification> callback)
+      {
+        if (!_subscriptionMap.TryGetValue(channel, out var entry))
+        {
+          return false;
+        }
+
+        if (!entry.Callbacks.Contains(callback))
+        {
+          return false;
+        }
+
+        switch (entry.State)
+        {
+          case SubscriptionState.Subscribing:
+            return false;
+          case SubscriptionState.Unsubscribed:
+          case SubscriptionState.Unsubscribing:
+            entry.Callbacks.Remove(callback);
+            return true;
+          case SubscriptionState.Subscribed:
+            if (entry.Callbacks.Count > 1)
+            {
+              entry.Callbacks.Remove(callback);
+              return true;
+            }
+
+            break;
+          default:
+            return false;
+        }
+
+        // At this point it's only possible that the entry-State is Subscribed
+        // and the callback list is empty after removing this callback.
+        // Hence we unsubscribe at the server now
+        entry.State = SubscriptionState.Unsubscribing;
+        var defer = new TaskCompletionSource<bool>();
+        entry.CurrentAction = defer.Task;
+
+        try
+        {
+          var unsubscribeResponse = IsPrivateChannel(channel)
+            ? await _client.SendAsync(
+              "private/unsubscribe", new {channels = new[] {channel}, access_token = _client.AccessToken},
+              new ListJsonConverter<string>())
+            : await _client.SendAsync(
+              "public/unsubscribe", new {channels = new[] {channel}},
+              new ListJsonConverter<string>());
+
+          //TODO: Handle possible error in response
+
+          var response = unsubscribeResponse.ResultData;
+
+          if (response.Count != 1 || response[0] != channel)
+          {
+            defer.SetResult(false);
+          }
+          else
+          {
+            entry.State = SubscriptionState.Unsubscribed;
+            entry.Callbacks.Remove(callback);
+            entry.CurrentAction = null;
+            defer.SetResult(true);
+          }
+        }
+        catch (Exception e)
+        {
+          defer.SetException(e);
+        }
+
+        return await defer.Task;
+      }
+
+      public IEnumerable<Action<Notification>> GetCallbacks(string channel)
+      {
+        return !_subscriptionMap.TryGetValue(channel, out var entry) ? null : entry.Callbacks;
+      }
+
+      public void Reset()
+      {
+        _subscriptionMap.Clear();
+      }
+
+      private static bool IsPrivateChannel(string channel)
+      {
+        return channel.StartsWith("user.");
+      }
     }
 
     #region Properties
@@ -59,15 +299,10 @@ namespace DeriSock
 
     #region Connection Handling
 
-    public Task ConnectAsync()
+    public async Task ConnectAsync()
     {
-      lock (_subscriptions)
-      {
-        _subscriptions.Clear();
-      }
-
-      _subscriptionMap.Clear();
-      return _client.ConnectAsync();
+      await _client.ConnectAsync();
+      _subscriptionManager.Reset();
     }
 
     public Task DisconnectAsync()
@@ -82,6 +317,7 @@ namespace DeriSock
       {
         throw new ResponseErrorException(response, response.Error.Message);
       }
+
       return response.CreateTyped(converter.Convert(response.Result));
     }
 
@@ -110,7 +346,7 @@ namespace DeriSock
 
       if (heartbeat.Type == "test_request")
       {
-        _ = SendAsync("public/test", new { expected_result = "ok" }, new ObjectJsonConverter<TestResponse>());
+        _ = SendAsync("public/test", new {expected_result = "ok"}, new ObjectJsonConverter<TestResponse>());
       }
     }
 
@@ -121,30 +357,29 @@ namespace DeriSock
         Logger.Verbose("OnNotification: {@Notification}", notification);
       }
 
-      lock (_subscriptionMap)
-      {
-        if (!_subscriptionMap.TryGetValue(notification.Channel, out var entry))
-        {
-          if (Logger?.IsEnabled(LogEventLevel.Warning) ?? false)
-          {
-            Logger.Warning("OnNotification: Could not find subscription for notification: {@Notification}",
-              notification);
-          }
+      var callbacks = _subscriptionManager.GetCallbacks(notification.Channel);
 
-          return;
+      if (callbacks == null)
+      {
+        if (Logger?.IsEnabled(LogEventLevel.Warning) ?? false)
+        {
+          Logger.Warning(
+            "OnNotification: Could not find subscription for notification: {@Notification}",
+            notification);
         }
 
-        foreach (var callback in entry.Callbacks)
+        return;
+      }
+
+      foreach (var cb in callbacks)
+      {
+        try
         {
-          try
-          {
-            Task.Factory.StartNew(
-              () =>
-              {
-                callback(notification);
-              });
-          }
-          catch (Exception ex)
+          Task.Factory.StartNew(() => { cb(notification); });
+        }
+        catch (Exception ex)
+        {
+          if (Logger?.IsEnabled(LogEventLevel.Error) ?? false)
           {
             Logger?.Error(ex, "OnNotification: Error during event callback call: {@Notification}", notification);
           }
@@ -154,304 +389,7 @@ namespace DeriSock
 
     #endregion
 
-    #region Subscriptions
-
-    private async Task<bool> ManagedSubscribeAsync(string channel, bool @private, string accessToken, Action<Notification> callback)
-    {
-      if (callback == null)
-      {
-        return false;
-      }
-
-      TaskCompletionSource<bool> defer = null;
-      if (_subscriptionMap.TryGetValue(channel, out var entry))
-      {
-        switch (entry.State)
-        {
-          case SubscriptionState.Subscribed:
-            {
-              if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
-              {
-                Logger.Verbose("Subscription for channel already exists. Adding callback to list ({Channel})", channel);
-              }
-
-              entry.Callbacks.Add(callback);
-              return true;
-            }
-
-          case SubscriptionState.Unsubscribing:
-            if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
-            {
-              Logger.Verbose("Unsubscribing from Channel. Abort Subscribe ({Channel})", channel);
-            }
-
-            return false;
-
-          case SubscriptionState.Unsubscribed:
-            if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
-            {
-              Logger.Verbose("Unsubscribed from channel. Re-Subscribing ({Channel})", channel);
-            }
-
-            entry.State = SubscriptionState.Subscribing;
-            defer = new TaskCompletionSource<bool>();
-            entry.CurrentAction = defer.Task;
-            break;
-        }
-      }
-      else
-      {
-        if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
-        {
-          Logger.Verbose("Subscription for channel not found. Subscribing ({Channel})", channel);
-        }
-
-        defer = new TaskCompletionSource<bool>();
-        entry = new SubscriptionEntry
-        {
-          State = SubscriptionState.Subscribing,
-          Callbacks = new List<Action<Notification>>(),
-          CurrentAction = defer.Task
-        };
-        _subscriptionMap[channel] = entry;
-      }
-
-      if (defer == null)
-      {
-        if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
-        {
-          Logger.Verbose("Empty defer: Wait for action completion ({Channel})", channel);
-        }
-
-        var currentAction = entry.CurrentAction;
-        var result = currentAction != null && await currentAction.ConfigureAwait(false);
-        if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
-        {
-          Logger.Verbose("Empty defer: Action result: {Result} {Channel}", result, channel);
-        }
-
-        if (!result || entry.State != SubscriptionState.Subscribed)
-        {
-          return false;
-        }
-
-        if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
-        {
-          Logger.Verbose("Empty defer: Adding callback ({Channel})", channel);
-        }
-
-        entry.Callbacks.Add(callback);
-        return true;
-      }
-
-      try
-      {
-        if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
-        {
-          Logger.Verbose("Subscribing to {Channel}", channel);
-        }
-
-        var subscribeResponse = !@private
-          ? await SendAsync(
-              "public/subscribe", new { channels = new[] { channel } },
-              new ListJsonConverter<string>())
-            .ConfigureAwait(false)
-          : await SendAsync(
-            "private/subscribe", new { channels = new[] { channel }, access_token = accessToken },
-            new ListJsonConverter<string>()).ConfigureAwait(false);
-
-        //TODO: Handle possible error in response
-
-        var response = subscribeResponse.ResultData;
-
-        if (response.Count != 1 || response[0] != channel)
-        {
-          if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
-          {
-            Logger.Verbose("Invalid subscribe result: {@Response} {Channel}", response, channel);
-          }
-
-          defer.SetResult(false);
-        }
-        else
-        {
-          if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
-          {
-            Logger.Verbose("Successfully subscribed. Adding callback ({Channel})", channel);
-          }
-
-          entry.State = SubscriptionState.Subscribed;
-          entry.Callbacks.Add(callback);
-          entry.CurrentAction = null;
-          defer.SetResult(true);
-        }
-      }
-      catch (Exception e)
-      {
-        defer.SetException(e);
-      }
-
-      return await defer.Task;
-    }
-
-    private async Task<bool> ManagedUnsubscribeAsync(string channel, bool @private, string accessToken, Action<Notification> callback)
-    {
-      TaskCompletionSource<bool> defer;
-
-      if (!_subscriptionMap.TryGetValue(channel, out var entry))
-      {
-        return false;
-      }
-
-      if (!entry.Callbacks.Contains(callback))
-      {
-        return false;
-      }
-
-      switch (entry.State)
-      {
-        case SubscriptionState.Subscribing:
-          return false;
-        case SubscriptionState.Unsubscribed:
-        case SubscriptionState.Unsubscribing:
-          entry.Callbacks.Remove(callback);
-          return true;
-        case SubscriptionState.Subscribed:
-          if (entry.Callbacks.Count > 1)
-          {
-            entry.Callbacks.Remove(callback);
-            return true;
-          }
-
-          entry.State = SubscriptionState.Unsubscribing;
-          defer = new TaskCompletionSource<bool>();
-          entry.CurrentAction = defer.Task;
-          break;
-        default: return false;
-      }
-
-      try
-      {
-        var unsubscribeResponse = !@private
-          ? await SendAsync(
-            "public/unsubscribe", new { channels = new[] { channel } },
-            new ListJsonConverter<string>())
-          : await SendAsync(
-            "private/unsubscribe", new { channels = new[] { channel }, access_token = accessToken },
-            new ListJsonConverter<string>());
-
-        //TODO: Handle possible error in response
-
-        var response = unsubscribeResponse.ResultData;
-
-        if (response.Count != 1 || response[0] != channel)
-        {
-          defer.SetResult(false);
-        }
-        else
-        {
-          entry.State = SubscriptionState.Unsubscribed;
-          entry.Callbacks.Remove(callback);
-          entry.CurrentAction = null;
-          defer.SetResult(true);
-        }
-      }
-      catch (Exception e)
-      {
-        defer.SetException(e);
-      }
-
-      return await defer.Task;
-    }
-
-    private async Task<bool> PublicSubscribeAsync<T>(string channelName, Action<T> userCallback, Action<Notification> apiCallback)
-    {
-      if (!await ManagedSubscribeAsync(channelName, false, null, apiCallback))
-      {
-        return false;
-      }
-
-      lock (_subscriptions)
-      {
-        _subscriptions.Add(Tuple.Create(channelName, (object)userCallback, (object)apiCallback));
-      }
-
-      return true;
-    }
-
-    private async Task<bool> UnsubscribePublicAsync<T>(string channelName, Action<T> userCallback)
-    {
-      if (!TryGetSubscriptionEntry(channelName, userCallback, out var entry))
-      {
-        return false;
-      }
-
-      if (!await ManagedUnsubscribeAsync(channelName, false, null, (Action<Notification>)entry.Item3))
-      {
-        return false;
-      }
-
-      lock (_subscriptions)
-      {
-        _subscriptions.Remove(entry);
-      }
-
-      return true;
-    }
-
-    private async Task<bool> PrivateSubscribeAsync<T>(string channelName, Action<T> userCallback, Action<Notification> apiCallback)
-    {
-      if (!await ManagedSubscribeAsync(channelName, true, AccessToken, apiCallback))
-      {
-        return false;
-      }
-
-      lock (_subscriptions)
-      {
-        _subscriptions.Add(Tuple.Create(channelName, (object)userCallback, (object)apiCallback));
-      }
-
-      return true;
-    }
-
-    private async Task<bool> UnsubscribePrivateAsync<T>(string channelName, Action<T> userCallback)
-    {
-      if (!TryGetSubscriptionEntry(channelName, userCallback, out var entry))
-      {
-        return false;
-      }
-
-      if (!await ManagedUnsubscribeAsync(channelName, true, AccessToken, (Action<Notification>)entry.Item3))
-      {
-        return false;
-      }
-
-      lock (_subscriptions)
-      {
-        _subscriptions.Remove(entry);
-      }
-
-      return true;
-    }
-
-    private bool TryGetSubscriptionEntry<T>(string channelName, Action<T> userCallback, out SubscriptionListEntry entry)
-    {
-      lock (_subscriptions)
-      {
-        entry = _subscriptions.FirstOrDefault(x => x.Item1 == channelName && x.Item2 == (object)userCallback);
-      }
-
-      return entry != null;
-    }
-
-    #endregion
-
-    #region API v2 Functionality
-
-    public Task<JsonRpcResponse<string>> PingAsync()
-    {
-      return SendAsync("public/ping", new { }, new ObjectJsonConverter<string>());
-    }
+    #region Authentication
 
     public async Task<JsonRpcResponse<AuthResponse>> PublicAuthAsync(string accessKey, string accessSecret, string sessionName)
     {
@@ -464,7 +402,7 @@ namespace DeriSock
       }
 
       var response = await SendAsync(
-        "public/auth", new { grant_type = "client_credentials", client_id = accessKey, client_secret = accessSecret, scope },
+        "public/auth", new {grant_type = "client_credentials", client_id = accessKey, client_secret = accessSecret, scope},
         new ObjectJsonConverter<AuthResponse>());
 
       //TODO: Handle possible error in response
@@ -489,7 +427,7 @@ namespace DeriSock
       Logger.Debug("Refreshing Auth");
 
       var response = await SendAsync(
-        "public/auth", new { grant_type = "refresh_token", refresh_token = refreshToken },
+        "public/auth", new {grant_type = "refresh_token", refresh_token = refreshToken},
         new ObjectJsonConverter<AuthResponse>());
 
       //TODO: Handle possible error in response
@@ -509,9 +447,13 @@ namespace DeriSock
       return response;
     }
 
+    #endregion
+
+    #region Session management
+
     public Task<JsonRpcResponse<string>> PublicSetHeartbeatAsync(int intervalSeconds)
     {
-      return SendAsync("public/set_heartbeat", new { interval = intervalSeconds }, new ObjectJsonConverter<string>());
+      return SendAsync("public/set_heartbeat", new {interval = intervalSeconds}, new ObjectJsonConverter<string>());
     }
 
     public Task<JsonRpcResponse<string>> PublicDisableHeartbeatAsync()
@@ -522,69 +464,24 @@ namespace DeriSock
     public Task<JsonRpcResponse<string>> PrivateDisableCancelOnDisconnectAsync()
     {
       return SendAsync(
-        "private/disable_cancel_on_disconnect", new { access_token = AccessToken },
+        "private/disable_cancel_on_disconnect", new {access_token = AccessToken},
         new ObjectJsonConverter<string>());
     }
 
-    public Task<JsonRpcResponse<AccountSummaryResponse>> PrivateGetAccountSummaryAsync(string currency, bool extended)
-    {
-      return SendAsync(
-        "private/get_account_summary", new { currency, extended, access_token = AccessToken },
-        new ObjectJsonConverter<AccountSummaryResponse>());
-    }
+    #endregion
 
-    public Task<bool> PublicSubscribeBookAsync(string instrument, int group, int depth, Action<BookResponse> callback)
-    {
-      return PublicSubscribeAsync(
-        "book." + instrument + "." + (group == 0 ? "none" : group.ToString()) + "." + depth + ".100ms",
-        callback,
-        response =>
-        {
-          callback(response.Data.ToObject<BookResponse>());
-        });
-    }
+    #region Supporting
+    #endregion
 
-    public Task<bool> PrivateSubscribeOrdersAsync(string instrument, Action<OrderResponse> callback)
-    {
-      return PrivateSubscribeAsync("user.orders." + instrument + ".raw", callback, response =>
-      {
-        var orderResponse = response.Data.ToObject<OrderResponse>();
-        orderResponse.timestamp = response.Timestamp;
-        callback(orderResponse);
-      });
-    }
+    #region Account management
 
-    public Task<bool> PrivateSubscribePortfolioAsync(string currency, Action<PortfolioResponse> callback)
-    {
-      return PrivateSubscribeAsync($"user.portfolio.{currency.ToLower()}", callback, response =>
-      {
-        callback(response.Data.ToObject<PortfolioResponse>());
-      });
-    }
+    #endregion
 
-    public Task<bool> PublicSubscribeTickerAsync(string instrument, string interval, Action<TickerResponse> callback)
-    {
-      return PublicSubscribeAsync($"ticker.{instrument}.{interval}", callback, response =>
-      {
-        callback(response.Data.ToObject<TickerResponse>());
-      });
-    }
+    #region Block Trade
 
-    public Task<JsonRpcResponse<BookResponse>> PublicGetOrderBookAsync(string instrument, int depth)
-    {
-      return SendAsync(
-        "public/get_order_book",
-        new { instrument_name = instrument, depth },
-        new ObjectJsonConverter<BookResponse>());
-    }
+    #endregion
 
-    public Task<JsonRpcResponse<OrderItem[]>> PrivateGetOpenOrdersAsync(string instrument)
-    {
-      return SendAsync(
-        "private/get_open_orders_by_instrument",
-        new { instrument_name = instrument, access_token = AccessToken },
-        new ObjectJsonConverter<OrderItem[]>());
-    }
+    #region Trading
 
     public Task<JsonRpcResponse<BuySellResponse>> PrivateBuyLimitAsync(string instrument, double amount, double price, string label)
     {
@@ -620,19 +517,13 @@ namespace DeriSock
         }, new ObjectJsonConverter<BuySellResponse>());
     }
 
-    public Task<JsonRpcResponse<OrderResponse>> PrivateGetOrderStateAsync(string orderId)
-    {
-      return SendAsync(
-        "private/get_order_state",
-        new { order_id = orderId, access_token = AccessToken },
-        new ObjectJsonConverter<OrderResponse>());
-    }
+    //edit
 
     public Task<JsonRpcResponse<JObject>> PrivateCancelOrderAsync(string orderId)
     {
       return SendAsync(
         "private/cancel",
-        new { order_id = orderId, access_token = AccessToken },
+        new {order_id = orderId, access_token = AccessToken},
         new ObjectJsonConverter<JObject>());
     }
 
@@ -640,15 +531,38 @@ namespace DeriSock
     {
       return SendAsync(
         "private/cancel_all_by_instrument",
-        new { instrument_name = instrument, access_token = AccessToken },
+        new {instrument_name = instrument, access_token = AccessToken},
         new ObjectJsonConverter<JObject>());
     }
 
+    public Task<JsonRpcResponse<OrderItem[]>> PrivateGetOpenOrdersAsync(string instrument)
+    {
+      return SendAsync(
+        "private/get_open_orders_by_instrument",
+        new {instrument_name = instrument, access_token = AccessToken},
+        new ObjectJsonConverter<OrderItem[]>());
+    }
+
+    public Task<JsonRpcResponse<OrderResponse>> PrivateGetOrderStateAsync(string orderId)
+    {
+      return SendAsync(
+        "private/get_order_state",
+        new {order_id = orderId, access_token = AccessToken},
+        new ObjectJsonConverter<OrderResponse>());
+    }
+
+    public Task<JsonRpcResponse<AccountSummaryResponse>> PrivateGetAccountSummaryAsync(string currency, bool extended)
+    {
+      return SendAsync(
+        "private/get_account_summary", new {currency, extended, access_token = AccessToken},
+        new ObjectJsonConverter<AccountSummaryResponse>());
+    }
+    
     public Task<JsonRpcResponse<SettlementResponse>> PrivateGetSettlementHistoryByInstrumentAsync(string instrument, string type, int count)
     {
       return SendAsync(
         "private/get_settlement_history_by_instrument",
-        new { instrument_name = instrument, type, count, access_token = AccessToken },
+        new {instrument_name = instrument, type, count, access_token = AccessToken},
         new ObjectJsonConverter<SettlementResponse>());
     }
 
@@ -656,8 +570,71 @@ namespace DeriSock
     {
       return SendAsync(
         "private/get_settlement_history_by_currency",
-        new { currency, type, count, access_token = AccessToken },
+        new {currency, type, count, access_token = AccessToken},
         new ObjectJsonConverter<SettlementResponse>());
+    }
+
+    #endregion
+
+    #region Market data
+
+    public Task<JsonRpcResponse<BookResponse>> PublicGetOrderBookAsync(string instrument, int depth)
+    {
+      return SendAsync(
+        "public/get_order_book",
+        new {instrument_name = instrument, depth},
+        new ObjectJsonConverter<BookResponse>());
+    }
+
+    #endregion
+
+    #region Wallet
+
+    #endregion
+
+    #region Subscriptions
+
+    public Task<bool> PublicSubscribeBookAsync(string instrument, int group, int depth, Action<BookResponse> callback)
+    {
+      var groupName = group == 0 ? "none" : group.ToString();
+      return _subscriptionManager.Subscribe(
+        $"book.{instrument}.{groupName}.{depth}.100ms",
+        n =>
+        {
+          callback(n.Data.ToObject<BookResponse>());
+        });
+    }
+
+    public Task<bool> PrivateSubscribeOrdersAsync(string instrument, Action<OrderResponse> callback)
+    {
+      return _subscriptionManager.Subscribe(
+        "user.orders." + instrument + ".raw",
+        n =>
+        {
+          var orderResponse = n.Data.ToObject<OrderResponse>();
+          orderResponse.timestamp = n.Timestamp;
+          callback(orderResponse);
+        });
+    }
+
+    public Task<bool> PrivateSubscribePortfolioAsync(string currency, Action<PortfolioResponse> callback)
+    {
+      return _subscriptionManager.Subscribe(
+        $"user.portfolio.{currency.ToLower()}", 
+        n =>
+        {
+          callback(n.Data.ToObject<PortfolioResponse>());
+        });
+    }
+
+    public Task<bool> PublicSubscribeTickerAsync(string instrument, string interval, Action<TickerResponse> callback)
+    {
+      return _subscriptionManager.Subscribe(
+        $"ticker.{instrument}.{interval}", 
+        n =>
+        {
+          callback(n.Data.ToObject<TickerResponse>());
+        });
     }
 
     #endregion
