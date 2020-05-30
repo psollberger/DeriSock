@@ -30,22 +30,23 @@ namespace PlayConsole
 
       Console.Title = "Deribit Development Playground";
 
-      Directory.CreateDirectory(@"D:\Temp\Serilog");
       const string logFilePath = @"D:\Temp\Serilog\test-log-.txt";
+      Directory.CreateDirectory(Path.GetDirectoryName(logFilePath));
+
 
       //const string outputTemplateLongLevelName = "{Timestamp:yyyy-MM-dd HH:mm:ss.fffffff} [{Level,-11:u}] {Message:lj}{NewLine}{Exception}";
       const string outputTemplateShortLevelName = "{Timestamp:yyyy-MM-dd HH:mm:ss.fffffff} [{Level:u3}] {Message:lj}{NewLine}{Exception}";
 
       Log.Logger = new LoggerConfiguration()
-                   .MinimumLevel.Verbose()
-                   //.WriteTo.Async(l => l.Trace(outputTemplate: outputTemplateShortLevelName))
-                   .WriteTo.Async(l => l.Console(outputTemplate: outputTemplateShortLevelName, restrictedToMinimumLevel: LogEventLevel.Information))
-                   //.WriteTo.Async(l => l.File(logFilePath, rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: LogEventLevel.Verbose))
-                   .Destructure.ByTransforming<JsonRpcRequest>(JsonConvert.SerializeObject)
-                   .Destructure.ByTransforming<JsonRpcResponse>(JsonConvert.SerializeObject)
-                   .Destructure.ByTransforming<Notification>(JsonConvert.SerializeObject)
-                   .Destructure.ByTransforming<Heartbeat>(JsonConvert.SerializeObject)
-                   .CreateLogger();
+        .MinimumLevel.Verbose()
+        //.WriteTo.Async(l => l.Trace(outputTemplate: outputTemplateShortLevelName))
+        .WriteTo.Async(l => l.Console(outputTemplate: outputTemplateShortLevelName, restrictedToMinimumLevel: LogEventLevel.Information))
+        //.WriteTo.Async(l => l.File(logFilePath, rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: LogEventLevel.Verbose))
+        .Destructure.ByTransforming<JsonRpcRequest>(JsonConvert.SerializeObject)
+        .Destructure.ByTransforming<JsonRpcResponse>(JsonConvert.SerializeObject)
+        .Destructure.ByTransforming<Notification>(JsonConvert.SerializeObject)
+        .Destructure.ByTransforming<Heartbeat>(JsonConvert.SerializeObject)
+        .CreateLogger();
 
       _client = new DeribitV2Client(DeribitEndpointType.Testnet);
 
@@ -53,7 +54,9 @@ namespace PlayConsole
       {
         await _client.ConnectAsync();
 
-        var res = await _client.PublicTest("arigato senpai");
+        var loginRes = await _client.PublicAuthAsync("KxEneYNT9VsK", "S3EL63RBXOJZSN4ACV5SWF2OLO337BKL", "Playground");
+
+        var res = await _client.PrivateGetCancelOnDisconnectAsync("account");
 
         await _client.DisconnectAsync();
 

@@ -5,9 +5,8 @@ namespace DeriSock
   using System;
   using System.Collections.Concurrent;
   using System.Collections.Generic;
+  using System.ComponentModel;
   using System.Diagnostics;
-  using System.Globalization;
-  using System.Text.RegularExpressions;
   using System.Threading.Tasks;
   using DeriSock.Converter;
   using DeriSock.JsonRpc;
@@ -41,6 +40,18 @@ namespace DeriSock
       _client.Request += OnServerRequest;
       _subscriptionManager = new SubscriptionManager(this);
     }
+
+    #region Market data
+
+    public Task<JsonRpcResponse<BookResponse>> PublicGetOrderBookAsync(string instrument, int depth)
+    {
+      return SendAsync(
+        "public/get_order_book",
+        new {instrument_name = instrument, depth},
+        new ObjectJsonConverter<BookResponse>());
+    }
+
+    #endregion
 
     private class SubscriptionManager
     {
@@ -140,12 +151,7 @@ namespace DeriSock
           }
 
           defer = new TaskCompletionSource<bool>();
-          entry = new SubscriptionEntry
-          {
-            State = SubscriptionState.Subscribing,
-            Callbacks = new List<Action<Notification>>(),
-            CurrentAction = defer.Task
-          };
+          entry = new SubscriptionEntry {State = SubscriptionState.Subscribing, Callbacks = new List<Action<Notification>>(), CurrentAction = defer.Task};
           _subscriptionMap[channel] = entry;
         }
 
@@ -153,10 +159,10 @@ namespace DeriSock
         {
           var subscribeResponse = IsPrivateChannel(channel)
             ? await _client.SendAsync(
-              "private/subscribe", new { channels = new[] { channel }, access_token = _client.AccessToken },
+              "private/subscribe", new {channels = new[] {channel}, access_token = _client.AccessToken},
               new ListJsonConverter<string>()).ConfigureAwait(false)
             : await _client.SendAsync(
-                "public/subscribe", new { channels = new[] { channel } },
+                "public/subscribe", new {channels = new[] {channel}},
                 new ListJsonConverter<string>())
               .ConfigureAwait(false);
 
@@ -240,10 +246,10 @@ namespace DeriSock
         {
           var unsubscribeResponse = IsPrivateChannel(channel)
             ? await _client.SendAsync(
-              "private/unsubscribe", new { channels = new[] { channel }, access_token = _client.AccessToken },
+              "private/unsubscribe", new {channels = new[] {channel}, access_token = _client.AccessToken},
               new ListJsonConverter<string>())
             : await _client.SendAsync(
-              "public/unsubscribe", new { channels = new[] { channel } },
+              "public/unsubscribe", new {channels = new[] {channel}},
               new ListJsonConverter<string>());
 
           //TODO: Handle possible error in response
@@ -405,7 +411,7 @@ namespace DeriSock
       }
 
       var response = await SendAsync(
-        "public/auth", new { grant_type = "client_credentials", client_id = accessKey, client_secret = accessSecret, scope },
+        "public/auth", new {grant_type = "client_credentials", client_id = accessKey, client_secret = accessSecret, scope},
         new ObjectJsonConverter<AuthResponse>());
 
       //TODO: Handle possible error in response
@@ -430,7 +436,7 @@ namespace DeriSock
       Logger.Debug("Refreshing Auth");
 
       var response = await SendAsync(
-        "public/auth", new { grant_type = "refresh_token", refresh_token = refreshToken },
+        "public/auth", new {grant_type = "refresh_token", refresh_token = refreshToken},
         new ObjectJsonConverter<AuthResponse>());
 
       //TODO: Handle possible error in response
@@ -454,21 +460,118 @@ namespace DeriSock
 
     #region Session management
 
-    public Task<JsonRpcResponse<string>> PublicSetHeartbeatAsync(int intervalSeconds)
+    /// <summary>
+    ///   <para>
+    ///     Signals the Websocket connection to send and request heartbeats. Heartbeats can be used to detect stale
+    ///     connections.
+    ///     When heartbeats have been set up, the API server will send heartbeat messages and test_request messages.
+    ///     Your software should respond to test_request messages by sending a <see cref="PublicTest" /> request.
+    ///     If your software fails to do so, the API server will immediately close the connection.
+    ///     If your account is configured to cancel on disconnect, any orders opened over the connection will be cancelled.
+    ///   </para>
+    ///   <para>The <see cref="DeribitV2Client" /> will automatically respond to heartbeats.</para>
+    /// </summary>
+    /// <param name="interval">The heartbeat interval in seconds, but not less than 10</param>
+    public Task<JsonRpcResponse<string>> PublicSetHeartbeatAsync(int interval)
     {
-      return SendAsync("public/set_heartbeat", new { interval = intervalSeconds }, new ObjectJsonConverter<string>());
+      return SendAsync("public/set_heartbeat", new {interval}, new ObjectJsonConverter<string>());
     }
 
+    /// <summary>
+    ///   Stop sending heartbeat messages.
+    /// </summary>
     public Task<JsonRpcResponse<string>> PublicDisableHeartbeatAsync()
     {
-      return SendAsync("public/disable_heartbeat", new { }, new ObjectJsonConverter<string>());
+      return SendAsync("public/disable_heartbeat", null, new ObjectJsonConverter<string>());
     }
 
-    public Task<JsonRpcResponse<string>> PrivateDisableCancelOnDisconnectAsync()
+    /// <summary>
+    ///   <para>
+    ///     Enable Cancel On Disconnect for the connection.
+    ///     After enabling Cancel On Disconnect all orders created by the connection will be removed when connection is closed.
+    ///   </para>
+    ///   <para>
+    ///     NOTICE: It does not affect orders created by other connections - they will remain active!
+    ///   </para>
+    ///   <para>
+    ///     When change is applied for the account, then every newly opened connection will start with active Cancel on
+    ///     Disconnect
+    ///   </para>
+    /// </summary>
+    public Task<JsonRpcResponse<string>> PrivateEnableCancelOnDisconnectAsync()
+    {
+      return PrivateEnableCancelOnDisconnectAsync("connection");
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Enable Cancel On Disconnect for the connection.
+    ///     After enabling Cancel On Disconnect all orders created by the connection will be removed when connection is closed.
+    ///   </para>
+    ///   <para>
+    ///     NOTICE: It does not affect orders created by other connections - they will remain active!
+    ///   </para>
+    ///   <para>
+    ///     When change is applied for the account, then every newly opened connection will start with active Cancel on
+    ///     Disconnect
+    ///   </para>
+    /// </summary>
+    /// <param name="scope">Specifies if Cancel On Disconnect change should be applied/checked for the current connection or the account (default - <c>connection</c>)</param>
+    public Task<JsonRpcResponse<string>> PrivateEnableCancelOnDisconnectAsync(string scope)
     {
       return SendAsync(
-        "private/disable_cancel_on_disconnect", new { access_token = AccessToken },
+        "private/enable_cancel_on_disconnect",
+        new {scope, access_token = AccessToken},
         new ObjectJsonConverter<string>());
+    }
+
+    /// <summary>
+    ///   <para>Disable Cancel On Disconnect for the connection.</para>
+    ///   <para>
+    ///     When change is applied for the account, then every newly opened connection will start with inactive Cancel on
+    ///     Disconnect
+    ///   </para>
+    /// </summary>
+    public Task<JsonRpcResponse<string>> PrivateDisableCancelOnDisconnectAsync()
+    {
+      return PrivateDisableCancelOnDisconnectAsync("connection");
+    }
+
+    /// <summary>
+    ///   <para>Disable Cancel On Disconnect for the connection.</para>
+    ///   <para>
+    ///     When change is applied for the account, then every newly opened connection will start with inactive Cancel on
+    ///     Disconnect
+    ///   </para>
+    /// </summary>
+    /// <param name="scope">Specifies if Cancel On Disconnect change should be applied/checked for the current connection or the account (default - <c>connection</c>)</param>
+    public Task<JsonRpcResponse<string>> PrivateDisableCancelOnDisconnectAsync(string scope)
+    {
+      return SendAsync(
+        "private/disable_cancel_on_disconnect",
+        new {scope, access_token = AccessToken},
+        new ObjectJsonConverter<string>());
+    }
+
+    /// <summary>
+    /// Read current Cancel On Disconnect configuration for the account
+    /// </summary>
+    /// <param name="scope">Specifies if Cancel On Disconnect change should be applied/checked for the current connection or the account (default - <c>connection</c>)</param>
+    public Task<JsonRpcResponse<GetCancelOnDisconnectResponseData>> PrivateGetCancelOnDisconnectAsync()
+    {
+      return PrivateGetCancelOnDisconnectAsync("connection");
+    }
+
+    /// <summary>
+    /// Read current Cancel On Disconnect configuration for the account
+    /// </summary>
+    /// <param name="scope">Specifies if Cancel On Disconnect change should be applied/checked for the current connection or the account (default - <c>connection</c>)</param>
+    public Task<JsonRpcResponse<GetCancelOnDisconnectResponseData>> PrivateGetCancelOnDisconnectAsync(string scope)
+    {
+      return SendAsync(
+        "private/get_cancel_on_disconnect",
+        new {scope, access_token = AccessToken},
+        new ObjectJsonConverter<GetCancelOnDisconnectResponseData>());
     }
 
     #endregion
@@ -476,8 +579,8 @@ namespace DeriSock
     #region Supporting
 
     /// <summary>
-    /// Retrieves the current time (in milliseconds).
-    /// This API endpoint can be used to check the clock skew between your software and Deribit's systems.
+    ///   Retrieves the current time (in milliseconds).
+    ///   This API endpoint can be used to check the clock skew between your software and Deribit's systems.
     /// </summary>
     public Task<JsonRpcResponse<DateTime>> PublicGetTime()
     {
@@ -485,9 +588,10 @@ namespace DeriSock
     }
 
     /// <summary>
-    /// Method used to introduce the client software connected to Deribit platform over websocket.
-    /// Provided data may have an impact on the maintained connection and will be collected for internal statistical purposes.
-    /// In response, Deribit will also introduce itself.
+    ///   Method used to introduce the client software connected to Deribit platform over websocket.
+    ///   Provided data may have an impact on the maintained connection and will be collected for internal statistical
+    ///   purposes.
+    ///   In response, Deribit will also introduce itself.
     /// </summary>
     /// <param name="clientName">Client software name</param>
     /// <param name="clientVersion">Client software version</param>
@@ -495,20 +599,23 @@ namespace DeriSock
     {
       return SendAsync(
         "public/hello",
-        new { client_name = clientName, client_version = clientVersion },
+        new {client_name = clientName, client_version = clientVersion},
         new ObjectJsonConverter<HelloResponseData>());
     }
 
     /// <summary>
-    /// Tests the connection to the API server, and returns its version.
-    /// You can use this to make sure the API is reachable, and matches the expected version.
+    ///   Tests the connection to the API server, and returns its version.
+    ///   You can use this to make sure the API is reachable, and matches the expected version.
     /// </summary>
-    /// <param name="expectedResult">The value "exception" will trigger an error response. This may be useful for testing wrapper libraries.</param>
+    /// <param name="expectedResult">
+    ///   The value "exception" will trigger an error response. This may be useful for testing
+    ///   wrapper libraries.
+    /// </param>
     public Task<JsonRpcResponse<TestResponseData>> PublicTest(string expectedResult)
     {
       return SendAsync(
         "public/test",
-        new { expected_result = expectedResult },
+        new {expected_result = expectedResult},
         new ObjectJsonConverter<TestResponseData>());
     }
 
@@ -564,7 +671,7 @@ namespace DeriSock
     {
       return SendAsync(
         "private/cancel",
-        new { order_id = orderId, access_token = AccessToken },
+        new {order_id = orderId, access_token = AccessToken},
         new ObjectJsonConverter<JObject>());
     }
 
@@ -572,7 +679,7 @@ namespace DeriSock
     {
       return SendAsync(
         "private/cancel_all_by_instrument",
-        new { instrument_name = instrument, access_token = AccessToken },
+        new {instrument_name = instrument, access_token = AccessToken},
         new ObjectJsonConverter<JObject>());
     }
 
@@ -580,7 +687,7 @@ namespace DeriSock
     {
       return SendAsync(
         "private/get_open_orders_by_instrument",
-        new { instrument_name = instrument, access_token = AccessToken },
+        new {instrument_name = instrument, access_token = AccessToken},
         new ObjectJsonConverter<OrderItem[]>());
     }
 
@@ -588,14 +695,14 @@ namespace DeriSock
     {
       return SendAsync(
         "private/get_order_state",
-        new { order_id = orderId, access_token = AccessToken },
+        new {order_id = orderId, access_token = AccessToken},
         new ObjectJsonConverter<OrderResponse>());
     }
 
     public Task<JsonRpcResponse<AccountSummaryResponse>> PrivateGetAccountSummaryAsync(string currency, bool extended)
     {
       return SendAsync(
-        "private/get_account_summary", new { currency, extended, access_token = AccessToken },
+        "private/get_account_summary", new {currency, extended, access_token = AccessToken},
         new ObjectJsonConverter<AccountSummaryResponse>());
     }
 
@@ -603,7 +710,7 @@ namespace DeriSock
     {
       return SendAsync(
         "private/get_settlement_history_by_instrument",
-        new { instrument_name = instrument, type, count, access_token = AccessToken },
+        new {instrument_name = instrument, type, count, access_token = AccessToken},
         new ObjectJsonConverter<SettlementResponse>());
     }
 
@@ -611,20 +718,8 @@ namespace DeriSock
     {
       return SendAsync(
         "private/get_settlement_history_by_currency",
-        new { currency, type, count, access_token = AccessToken },
+        new {currency, type, count, access_token = AccessToken},
         new ObjectJsonConverter<SettlementResponse>());
-    }
-
-    #endregion
-
-    #region Market data
-
-    public Task<JsonRpcResponse<BookResponse>> PublicGetOrderBookAsync(string instrument, int depth)
-    {
-      return SendAsync(
-        "public/get_order_book",
-        new { instrument_name = instrument, depth },
-        new ObjectJsonConverter<BookResponse>());
     }
 
     #endregion
