@@ -56,13 +56,13 @@
     public long UsIn { get; set; }
 
     [JsonIgnore]
-    public DateTime UsInDateTime => UsIn.AsDateTime();
+    public DateTime UsInDateTime => UsIn.AsDateTimeFromMicroseconds();
 
     [JsonProperty("usOut")]
     public long UsOut { get; set; }
 
     [JsonIgnore]
-    public DateTime UsOutDateTime => UsOut.AsDateTime();
+    public DateTime UsOutDateTime => UsOut.AsDateTimeFromMicroseconds();
 
     [JsonProperty("usDiff")]
     public int UsDiff { get; set; }

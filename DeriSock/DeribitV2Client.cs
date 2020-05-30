@@ -12,6 +12,7 @@ namespace DeriSock
   using DeriSock.Converter;
   using DeriSock.JsonRpc;
   using DeriSock.Model;
+  using DeriSock.Response;
   using Newtonsoft.Json.Linq;
   using Serilog;
   using Serilog.Events;
@@ -141,7 +142,9 @@ namespace DeriSock
           defer = new TaskCompletionSource<bool>();
           entry = new SubscriptionEntry
           {
-            State = SubscriptionState.Subscribing, Callbacks = new List<Action<Notification>>(), CurrentAction = defer.Task
+            State = SubscriptionState.Subscribing,
+            Callbacks = new List<Action<Notification>>(),
+            CurrentAction = defer.Task
           };
           _subscriptionMap[channel] = entry;
         }
@@ -150,10 +153,10 @@ namespace DeriSock
         {
           var subscribeResponse = IsPrivateChannel(channel)
             ? await _client.SendAsync(
-              "private/subscribe", new {channels = new[] {channel}, access_token = _client.AccessToken},
+              "private/subscribe", new { channels = new[] { channel }, access_token = _client.AccessToken },
               new ListJsonConverter<string>()).ConfigureAwait(false)
             : await _client.SendAsync(
-                "public/subscribe", new {channels = new[] {channel}},
+                "public/subscribe", new { channels = new[] { channel } },
                 new ListJsonConverter<string>())
               .ConfigureAwait(false);
 
@@ -237,10 +240,10 @@ namespace DeriSock
         {
           var unsubscribeResponse = IsPrivateChannel(channel)
             ? await _client.SendAsync(
-              "private/unsubscribe", new {channels = new[] {channel}, access_token = _client.AccessToken},
+              "private/unsubscribe", new { channels = new[] { channel }, access_token = _client.AccessToken },
               new ListJsonConverter<string>())
             : await _client.SendAsync(
-              "public/unsubscribe", new {channels = new[] {channel}},
+              "public/unsubscribe", new { channels = new[] { channel } },
               new ListJsonConverter<string>());
 
           //TODO: Handle possible error in response
@@ -310,7 +313,7 @@ namespace DeriSock
       return _client.DisconnectAsync();
     }
 
-    private async Task<JsonRpcResponse<T>> SendAsync<T>(string method, object @params, IJsonConverter<T> converter) where T : class
+    private async Task<JsonRpcResponse<T>> SendAsync<T>(string method, object @params, IJsonConverter<T> converter)
     {
       var response = await _client.SendAsync(method, @params).ConfigureAwait(false);
       if (response.Error != null)
@@ -346,7 +349,7 @@ namespace DeriSock
 
       if (heartbeat.Type == "test_request")
       {
-        _ = SendAsync("public/test", new {expected_result = "ok"}, new ObjectJsonConverter<TestResponse>());
+        PublicTest("ok");
       }
     }
 
@@ -402,7 +405,7 @@ namespace DeriSock
       }
 
       var response = await SendAsync(
-        "public/auth", new {grant_type = "client_credentials", client_id = accessKey, client_secret = accessSecret, scope},
+        "public/auth", new { grant_type = "client_credentials", client_id = accessKey, client_secret = accessSecret, scope },
         new ObjectJsonConverter<AuthResponse>());
 
       //TODO: Handle possible error in response
@@ -427,7 +430,7 @@ namespace DeriSock
       Logger.Debug("Refreshing Auth");
 
       var response = await SendAsync(
-        "public/auth", new {grant_type = "refresh_token", refresh_token = refreshToken},
+        "public/auth", new { grant_type = "refresh_token", refresh_token = refreshToken },
         new ObjectJsonConverter<AuthResponse>());
 
       //TODO: Handle possible error in response
@@ -453,7 +456,7 @@ namespace DeriSock
 
     public Task<JsonRpcResponse<string>> PublicSetHeartbeatAsync(int intervalSeconds)
     {
-      return SendAsync("public/set_heartbeat", new {interval = intervalSeconds}, new ObjectJsonConverter<string>());
+      return SendAsync("public/set_heartbeat", new { interval = intervalSeconds }, new ObjectJsonConverter<string>());
     }
 
     public Task<JsonRpcResponse<string>> PublicDisableHeartbeatAsync()
@@ -464,13 +467,51 @@ namespace DeriSock
     public Task<JsonRpcResponse<string>> PrivateDisableCancelOnDisconnectAsync()
     {
       return SendAsync(
-        "private/disable_cancel_on_disconnect", new {access_token = AccessToken},
+        "private/disable_cancel_on_disconnect", new { access_token = AccessToken },
         new ObjectJsonConverter<string>());
     }
 
     #endregion
 
     #region Supporting
+
+    /// <summary>
+    /// Retrieves the current time (in milliseconds).
+    /// This API endpoint can be used to check the clock skew between your software and Deribit's systems.
+    /// </summary>
+    public Task<JsonRpcResponse<DateTime>> PublicGetTime()
+    {
+      return SendAsync("public/get_time", null, new TimestampJsonConverter());
+    }
+
+    /// <summary>
+    /// Method used to introduce the client software connected to Deribit platform over websocket.
+    /// Provided data may have an impact on the maintained connection and will be collected for internal statistical purposes.
+    /// In response, Deribit will also introduce itself.
+    /// </summary>
+    /// <param name="clientName">Client software name</param>
+    /// <param name="clientVersion">Client software version</param>
+    public Task<JsonRpcResponse<HelloResponseData>> PublicHello(string clientName, string clientVersion)
+    {
+      return SendAsync(
+        "public/hello",
+        new { client_name = clientName, client_version = clientVersion },
+        new ObjectJsonConverter<HelloResponseData>());
+    }
+
+    /// <summary>
+    /// Tests the connection to the API server, and returns its version.
+    /// You can use this to make sure the API is reachable, and matches the expected version.
+    /// </summary>
+    /// <param name="expectedResult">The value "exception" will trigger an error response. This may be useful for testing wrapper libraries.</param>
+    public Task<JsonRpcResponse<TestResponseData>> PublicTest(string expectedResult)
+    {
+      return SendAsync(
+        "public/test",
+        new { expected_result = expectedResult },
+        new ObjectJsonConverter<TestResponseData>());
+    }
+
     #endregion
 
     #region Account management
@@ -523,7 +564,7 @@ namespace DeriSock
     {
       return SendAsync(
         "private/cancel",
-        new {order_id = orderId, access_token = AccessToken},
+        new { order_id = orderId, access_token = AccessToken },
         new ObjectJsonConverter<JObject>());
     }
 
@@ -531,7 +572,7 @@ namespace DeriSock
     {
       return SendAsync(
         "private/cancel_all_by_instrument",
-        new {instrument_name = instrument, access_token = AccessToken},
+        new { instrument_name = instrument, access_token = AccessToken },
         new ObjectJsonConverter<JObject>());
     }
 
@@ -539,7 +580,7 @@ namespace DeriSock
     {
       return SendAsync(
         "private/get_open_orders_by_instrument",
-        new {instrument_name = instrument, access_token = AccessToken},
+        new { instrument_name = instrument, access_token = AccessToken },
         new ObjectJsonConverter<OrderItem[]>());
     }
 
@@ -547,22 +588,22 @@ namespace DeriSock
     {
       return SendAsync(
         "private/get_order_state",
-        new {order_id = orderId, access_token = AccessToken},
+        new { order_id = orderId, access_token = AccessToken },
         new ObjectJsonConverter<OrderResponse>());
     }
 
     public Task<JsonRpcResponse<AccountSummaryResponse>> PrivateGetAccountSummaryAsync(string currency, bool extended)
     {
       return SendAsync(
-        "private/get_account_summary", new {currency, extended, access_token = AccessToken},
+        "private/get_account_summary", new { currency, extended, access_token = AccessToken },
         new ObjectJsonConverter<AccountSummaryResponse>());
     }
-    
+
     public Task<JsonRpcResponse<SettlementResponse>> PrivateGetSettlementHistoryByInstrumentAsync(string instrument, string type, int count)
     {
       return SendAsync(
         "private/get_settlement_history_by_instrument",
-        new {instrument_name = instrument, type, count, access_token = AccessToken},
+        new { instrument_name = instrument, type, count, access_token = AccessToken },
         new ObjectJsonConverter<SettlementResponse>());
     }
 
@@ -570,7 +611,7 @@ namespace DeriSock
     {
       return SendAsync(
         "private/get_settlement_history_by_currency",
-        new {currency, type, count, access_token = AccessToken},
+        new { currency, type, count, access_token = AccessToken },
         new ObjectJsonConverter<SettlementResponse>());
     }
 
@@ -582,7 +623,7 @@ namespace DeriSock
     {
       return SendAsync(
         "public/get_order_book",
-        new {instrument_name = instrument, depth},
+        new { instrument_name = instrument, depth },
         new ObjectJsonConverter<BookResponse>());
     }
 
@@ -620,7 +661,7 @@ namespace DeriSock
     public Task<bool> PrivateSubscribePortfolioAsync(string currency, Action<PortfolioResponse> callback)
     {
       return _subscriptionManager.Subscribe(
-        $"user.portfolio.{currency.ToLower()}", 
+        $"user.portfolio.{currency.ToLower()}",
         n =>
         {
           callback(n.Data.ToObject<PortfolioResponse>());
@@ -630,7 +671,7 @@ namespace DeriSock
     public Task<bool> PublicSubscribeTickerAsync(string instrument, string interval, Action<TickerResponse> callback)
     {
       return _subscriptionManager.Subscribe(
-        $"ticker.{instrument}.{interval}", 
+        $"ticker.{instrument}.{interval}",
         n =>
         {
           callback(n.Data.ToObject<TickerResponse>());

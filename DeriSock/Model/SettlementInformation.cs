@@ -8,7 +8,7 @@
     public string type { get; set; }
     public long timestamp { get; set; }
 
-    public DateTime LocalDateTime => timestamp.AsDateTime();
+    public DateTime LocalDateTime => timestamp.AsDateTimeFromMilliseconds();
 
     public double session_profit_loss { get; set; }
     public double profit_loss { get; set; }

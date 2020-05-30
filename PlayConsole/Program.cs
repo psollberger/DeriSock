@@ -52,22 +52,10 @@ namespace PlayConsole
       while (!_client.IsConnected)
       {
         await _client.ConnectAsync();
-        var hbRes = await _client.PublicSetHeartbeatAsync(10);
 
-        // Register for order book changes
-        if (!await _client.PublicSubscribeBookAsync("BTC-PERPETUAL", 0, 1, HandleBookResponse))
-        {
-          Log.Logger.Fatal("Could not subscribe to the order book!");
-        }
+        var res = await _client.PublicTest("arigato senpai");
 
-        try
-        {
-          //var loginRes = await _client.PublicAuthAsync("KxEneYNT9VsK", "S3EL63RBXOJZSN4ACV5SWF2OLO337BKL", "Playground");
-        }
-        catch (Exception ex)
-        {
-          var bla = 4;
-        }
+        await _client.DisconnectAsync();
 
         while (_client.IsConnected)
         {
