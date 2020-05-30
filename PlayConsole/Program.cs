@@ -15,6 +15,7 @@ namespace PlayConsole
   using DeriSock.Converter;
   using DeriSock.JsonRpc;
   using DeriSock.Model;
+  using DeriSock.Utils;
   using Microsoft.OpenApi.Readers;
   using Newtonsoft.Json;
   using Serilog;
@@ -32,15 +33,14 @@ namespace PlayConsole
 
       const string logFilePath = @"D:\Temp\Serilog\test-log-.txt";
       Directory.CreateDirectory(Path.GetDirectoryName(logFilePath));
-
-
+      
       //const string outputTemplateLongLevelName = "{Timestamp:yyyy-MM-dd HH:mm:ss.fffffff} [{Level,-11:u}] {Message:lj}{NewLine}{Exception}";
       const string outputTemplateShortLevelName = "{Timestamp:yyyy-MM-dd HH:mm:ss.fffffff} [{Level:u3}] {Message:lj}{NewLine}{Exception}";
 
       Log.Logger = new LoggerConfiguration()
         .MinimumLevel.Verbose()
         //.WriteTo.Async(l => l.Trace(outputTemplate: outputTemplateShortLevelName))
-        .WriteTo.Async(l => l.Console(outputTemplate: outputTemplateShortLevelName, restrictedToMinimumLevel: LogEventLevel.Information))
+        .WriteTo.Async(l => l.Console(outputTemplate: outputTemplateShortLevelName, restrictedToMinimumLevel: LogEventLevel.Debug))
         //.WriteTo.Async(l => l.File(logFilePath, rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: LogEventLevel.Verbose))
         .Destructure.ByTransforming<JsonRpcRequest>(JsonConvert.SerializeObject)
         .Destructure.ByTransforming<JsonRpcResponse>(JsonConvert.SerializeObject)
@@ -49,16 +49,15 @@ namespace PlayConsole
         .CreateLogger();
 
       _client = new DeribitV2Client(DeribitEndpointType.Testnet);
-
+      
       while (!_client.IsConnected)
       {
         await _client.ConnectAsync();
 
-        var loginRes = await _client.PublicAuthAsync("KxEneYNT9VsK", "S3EL63RBXOJZSN4ACV5SWF2OLO337BKL", "Playground");
+        //var loginRes = await _client.PublicAuthAsync("KxEneYNT9VsK", "S3EL63RBXOJZSN4ACV5SWF2OLO337BKL", "Playground");
+        var loginRes = await _client.PublicSignatureAuthAsync("KxEneYNT9VsK", "S3EL63RBXOJZSN4ACV5SWF2OLO337BKL", "Playground");
 
-        var res = await _client.PrivateGetCancelOnDisconnectAsync("account");
-
-        await _client.DisconnectAsync();
+        await _client.PublicSetHeartbeatAsync(10);
 
         while (_client.IsConnected)
         {
@@ -102,6 +101,12 @@ namespace PlayConsole
         }
       }
 
+      Log.Logger.Information("");
+      Log.Logger.Information("");
+      Log.Logger.Information("");
+      Log.Logger.Information("Drücksch du Taschtä für fertig ...");
+      Console.ReadKey();
+
       return 0;
     }
 
@@ -113,7 +118,8 @@ namespace PlayConsole
     private static void Console_CancelKeyPress(object sender, ConsoleCancelEventArgs e)
     {
       if (_client == null) return;
-      var _ = _client.DisconnectAsync();
+      if (!_client.PrivateLogout())
+        _client.DisconnectAsync().GetAwaiter().GetResult();
       e.Cancel = true;
     }
   }

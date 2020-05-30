@@ -25,13 +25,17 @@
     Task DisconnectAsync();
 
     /// <summary>
+    /// Sends a request method to the server as fire and forget
+    /// </summary>
+    /// <param name="method">A string containing the name of the method to be invoked. Probably only used for private/logout</param>
+    /// <param name="parameters">A structured value that hold the parameter values to be used during the invocation of the method</param>
+    void SendLogout(string method, object parameters);
+
+    /// <summary>
     ///   Sends a message to the server
     /// </summary>
     /// <param name="method">A string containing the name of the method to be invoked</param>
-    /// <param name="parameters">
-    ///   A structured value that hold the parameter values to be used during the invocation of the
-    ///   method
-    /// </param>
+    /// <param name="parameters">A structured value that hold the parameter values to be used during the invocation of the method</param>
     /// <returns>A Task object</returns>
     Task<JsonRpcResponse> SendAsync(string method, object parameters);
   }

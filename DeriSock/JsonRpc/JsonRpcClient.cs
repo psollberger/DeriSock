@@ -77,6 +77,11 @@
         throw;
       }
 
+      if (Logger?.IsEnabled(LogEventLevel.Information) ?? false)
+      {
+        Logger.Information("Connected. Start collecting messages");
+      }
+
       //Start processing Threads
       ProcessReceiveThread = new Thread(CollectMessages) { Name = "ProcessReceive" };
       ProcessReceiveThread.Start();
@@ -106,6 +111,28 @@
 
       Socket.Dispose();
       Socket = null;
+
+      if (Logger?.IsEnabled(LogEventLevel.Information) ?? false)
+      {
+        Logger.Information("Disconnected");
+      }
+    }
+
+    /// <inheritdoc />
+    public virtual void SendLogout(string method, object parameters)
+    {
+      var request = new JsonRpcRequest { Id = RequestIdGenerator.Next(), Method = method, Params = parameters };
+
+      if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
+      {
+        Logger.Verbose("Send: {@Request}", request);
+      }
+
+      Socket.SendAsync(
+        new ArraySegment<byte>(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(request, Formatting.None))),
+        WebSocketMessageType.Text,
+        true,
+        CancellationToken.None).GetAwaiter().GetResult();
     }
 
     /// <inheritdoc />
@@ -129,7 +156,7 @@
 
       return taskSource.Task;
     }
-
+    
     protected virtual void CollectMessages()
     {
       var msgBuffer = new byte[0x1000];
@@ -165,9 +192,9 @@
             {
               if (Logger?.IsEnabled(LogEventLevel.Debug) ?? false)
               {
-                Logger.Debug("ProcessReceive: The host closed the connection");
+                Logger.Debug("ProcessReceive: The host closed the connection ({StatusDescription})", receiveResult.CloseStatusDescription);
               }
-              OnConnectionClosed(true);
+              OnConnectionClosed(!string.Equals(receiveResult.CloseStatusDescription, "logout"));
               break;
             }
 

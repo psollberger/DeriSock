@@ -28,5 +28,15 @@
       var dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
       return dateTime.AddTicks(_ticksPerMillisecond * timestamp).ToLocalTime();
     }
+
+    /// <summary>
+    /// Converts a <see cref="DateTime"/> into milliseconds since Unix epoch
+    /// </summary>
+    /// <param name="utc"><see cref="DateTime"/> as UTC</param>
+    /// <returns></returns>
+    public static long AsMilliseconds(this DateTime utc)
+    {
+      return (long)utc.Subtract(DateTime.UnixEpoch).TotalMilliseconds;
+    }
   }
 }

@@ -5,13 +5,13 @@ namespace DeriSock
   using System;
   using System.Collections.Concurrent;
   using System.Collections.Generic;
-  using System.ComponentModel;
   using System.Diagnostics;
   using System.Threading.Tasks;
   using DeriSock.Converter;
   using DeriSock.JsonRpc;
   using DeriSock.Model;
   using DeriSock.Response;
+  using DeriSock.Utils;
   using Newtonsoft.Json.Linq;
   using Serilog;
   using Serilog.Events;
@@ -20,8 +20,18 @@ namespace DeriSock
   {
     private readonly IJsonRpcClient _client;
     private readonly SubscriptionManager _subscriptionManager;
-
     protected readonly ILogger Logger = Log.Logger;
+    private Task _refreshAuthTask;
+
+    public string AccessToken { get; private set; }
+
+    public string RefreshToken { get; private set; }
+
+    public bool ClosedByError => _client?.ClosedByError ?? false;
+    public bool ClosedByClient => _client?.ClosedByClient ?? false;
+    public bool ClosedByHost => _client?.ClosedByHost ?? false;
+
+    public bool IsConnected => (_client?.SocketAvailable ?? false) && !(ClosedByHost || ClosedByClient || ClosedByError);
 
     public DeribitV2Client(DeribitEndpointType endpointType)
     {
@@ -41,17 +51,114 @@ namespace DeriSock
       _subscriptionManager = new SubscriptionManager(this);
     }
 
-    #region Market data
-
-    public Task<JsonRpcResponse<BookResponse>> PublicGetOrderBookAsync(string instrument, int depth)
+    public async Task ConnectAsync()
     {
-      return SendAsync(
-        "public/get_order_book",
-        new {instrument_name = instrument, depth},
-        new ObjectJsonConverter<BookResponse>());
+      await _client.ConnectAsync();
+      AccessToken = null;
+      RefreshToken = null;
+      _subscriptionManager.Reset();
     }
 
-    #endregion
+    public async Task DisconnectAsync()
+    {
+      await _client.DisconnectAsync();
+      AccessToken = null;
+      RefreshToken = null;
+    }
+
+    private async Task<JsonRpcResponse<T>> SendAsync<T>(string method, object @params, IJsonConverter<T> converter)
+    {
+      var response = await _client.SendAsync(method, @params).ConfigureAwait(false);
+      if (response.Error != null)
+      {
+        throw new ResponseErrorException(response, response.Error.Message);
+      }
+
+      return response.CreateTyped(converter.Convert(response.Result));
+    }
+
+    private void OnServerRequest(object sender, JsonRpcRequest request)
+    {
+      if (string.Equals(request.Method, "subscription"))
+      {
+        OnNotification(request.Original.ToObject<Notification>());
+      }
+      else if (string.Equals(request.Method, "heartbeat"))
+      {
+        OnHeartbeat(request.Original.ToObject<Heartbeat>());
+      }
+      else
+      {
+        Logger.Warning("Unknown Server Request: {@Request}", request);
+      }
+    }
+
+    private void OnHeartbeat(Heartbeat heartbeat)
+    {
+      if (Logger?.IsEnabled(LogEventLevel.Debug) ?? false)
+      {
+        Logger.Debug("OnHeartbeat: {@Heartbeat}", heartbeat);
+      }
+
+      if (heartbeat.Type == "test_request")
+      {
+        PublicTest("ok");
+      }
+    }
+
+    private void OnNotification(Notification notification)
+    {
+      if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
+      {
+        Logger.Verbose("OnNotification: {@Notification}", notification);
+      }
+
+      var callbacks = _subscriptionManager.GetCallbacks(notification.Channel);
+
+      if (callbacks == null)
+      {
+        if (Logger?.IsEnabled(LogEventLevel.Warning) ?? false)
+        {
+          Logger.Warning(
+            "OnNotification: Could not find subscription for notification: {@Notification}",
+            notification);
+        }
+
+        return;
+      }
+
+      foreach (var cb in callbacks)
+      {
+        try
+        {
+          Task.Factory.StartNew(() => { cb(notification); });
+        }
+        catch (Exception ex)
+        {
+          if (Logger?.IsEnabled(LogEventLevel.Error) ?? false)
+          {
+            Logger?.Error(ex, "OnNotification: Error during event callback call: {@Notification}", notification);
+          }
+        }
+      }
+    }
+
+    private void EnqueueAuthRefresh(int expiresIn)
+    {
+      if (_refreshAuthTask != null)
+      {
+        return;
+      }
+
+      _refreshAuthTask = Task.Delay(TimeSpan.FromSeconds(expiresIn - 5)).ContinueWith(t =>
+      {
+        _refreshAuthTask = null;
+        if (IsConnected)
+        {
+          PublicAuthRefreshAsync(RefreshToken, true).GetAwaiter().GetResult();
+        }
+      });
+    }
 
     private class SubscriptionManager
     {
@@ -151,7 +258,7 @@ namespace DeriSock
           }
 
           defer = new TaskCompletionSource<bool>();
-          entry = new SubscriptionEntry {State = SubscriptionState.Subscribing, Callbacks = new List<Action<Notification>>(), CurrentAction = defer.Task};
+          entry = new SubscriptionEntry { State = SubscriptionState.Subscribing, Callbacks = new List<Action<Notification>>(), CurrentAction = defer.Task };
           _subscriptionMap[channel] = entry;
         }
 
@@ -159,10 +266,10 @@ namespace DeriSock
         {
           var subscribeResponse = IsPrivateChannel(channel)
             ? await _client.SendAsync(
-              "private/subscribe", new {channels = new[] {channel}, access_token = _client.AccessToken},
+              "private/subscribe", new { channels = new[] { channel }, access_token = _client.AccessToken },
               new ListJsonConverter<string>()).ConfigureAwait(false)
             : await _client.SendAsync(
-                "public/subscribe", new {channels = new[] {channel}},
+                "public/subscribe", new { channels = new[] { channel } },
                 new ListJsonConverter<string>())
               .ConfigureAwait(false);
 
@@ -246,10 +353,10 @@ namespace DeriSock
         {
           var unsubscribeResponse = IsPrivateChannel(channel)
             ? await _client.SendAsync(
-              "private/unsubscribe", new {channels = new[] {channel}, access_token = _client.AccessToken},
+              "private/unsubscribe", new { channels = new[] { channel }, access_token = _client.AccessToken },
               new ListJsonConverter<string>())
             : await _client.SendAsync(
-              "public/unsubscribe", new {channels = new[] {channel}},
+              "public/unsubscribe", new { channels = new[] { channel } },
               new ListJsonConverter<string>());
 
           //TODO: Handle possible error in response
@@ -292,117 +399,62 @@ namespace DeriSock
       }
     }
 
-    #region Properties
-
-    public string AccessToken { get; private set; }
-
-    public string RefreshToken { get; private set; }
-
-    public bool ClosedByError => _client?.ClosedByError ?? false;
-    public bool ClosedByClient => _client?.ClosedByClient ?? false;
-    public bool ClosedByHost => _client?.ClosedByHost ?? false;
-
-    public bool IsConnected => (_client?.SocketAvailable ?? false) && !(ClosedByHost || ClosedByClient || ClosedByError);
-
-    #endregion
-
-    #region Connection Handling
-
-    public async Task ConnectAsync()
-    {
-      await _client.ConnectAsync();
-      _subscriptionManager.Reset();
-    }
-
-    public Task DisconnectAsync()
-    {
-      return _client.DisconnectAsync();
-    }
-
-    private async Task<JsonRpcResponse<T>> SendAsync<T>(string method, object @params, IJsonConverter<T> converter)
-    {
-      var response = await _client.SendAsync(method, @params).ConfigureAwait(false);
-      if (response.Error != null)
-      {
-        throw new ResponseErrorException(response, response.Error.Message);
-      }
-
-      return response.CreateTyped(converter.Convert(response.Result));
-    }
-
-    private void OnServerRequest(object sender, JsonRpcRequest request)
-    {
-      if (string.Equals(request.Method, "subscription"))
-      {
-        OnNotification(request.Original.ToObject<Notification>());
-      }
-      else if (string.Equals(request.Method, "heartbeat"))
-      {
-        OnHeartbeat(request.Original.ToObject<Heartbeat>());
-      }
-      else
-      {
-        Logger.Warning("Unknown Server Request: {@Request}", request);
-      }
-    }
-
-    private void OnHeartbeat(Heartbeat heartbeat)
-    {
-      if (Logger?.IsEnabled(LogEventLevel.Debug) ?? false)
-      {
-        Logger.Debug("OnHeartbeat: {@Heartbeat}", heartbeat);
-      }
-
-      if (heartbeat.Type == "test_request")
-      {
-        PublicTest("ok");
-      }
-    }
-
-    private void OnNotification(Notification notification)
-    {
-      if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
-      {
-        Logger.Verbose("OnNotification: {@Notification}", notification);
-      }
-
-      var callbacks = _subscriptionManager.GetCallbacks(notification.Channel);
-
-      if (callbacks == null)
-      {
-        if (Logger?.IsEnabled(LogEventLevel.Warning) ?? false)
-        {
-          Logger.Warning(
-            "OnNotification: Could not find subscription for notification: {@Notification}",
-            notification);
-        }
-
-        return;
-      }
-
-      foreach (var cb in callbacks)
-      {
-        try
-        {
-          Task.Factory.StartNew(() => { cb(notification); });
-        }
-        catch (Exception ex)
-        {
-          if (Logger?.IsEnabled(LogEventLevel.Error) ?? false)
-          {
-            Logger?.Error(ex, "OnNotification: Error during event callback call: {@Notification}", notification);
-          }
-        }
-      }
-    }
-
-    #endregion
+    #region API Calls
 
     #region Authentication
 
-    public async Task<JsonRpcResponse<AuthResponse>> PublicAuthAsync(string accessKey, string accessSecret, string sessionName)
+    public async Task<JsonRpcResponse<AuthResponseData>> PublicSignatureAuthAsync(string accessKey, string accessSecret, string sessionName)
     {
-      Logger.Debug("Authenticate");
+      if (!string.IsNullOrEmpty(AccessToken))
+      {
+        throw new InvalidOperationException("Already authorized");
+      }
+
+      Logger.Debug("Authenticate (client_signature)");
+
+      var scope = "connection";
+      if (!string.IsNullOrEmpty(sessionName))
+      {
+        scope = $"session:{sessionName} expires:60";
+      }
+
+      SignatureCreator.Create(accessSecret);
+
+      var response = await SendAsync(
+        "public/auth",
+        new
+        {
+          grant_type = "client_signature",
+          client_id = accessKey,
+          timestamp = SignatureCreator.Timestamp,
+          nonce = SignatureCreator.Nonce,
+          data = SignatureCreator.Data,
+          signature = SignatureCreator.Signature,
+          scope
+        },
+        new ObjectJsonConverter<AuthResponseData>());
+
+      //TODO: Handle possible error in response
+
+      var loginRes = response.ResultData;
+
+      AccessToken = loginRes.AccessToken;
+      RefreshToken = loginRes.RefreshToken;
+
+      EnqueueAuthRefresh(loginRes.ExpiresIn);
+
+      return response;
+    }
+
+    //TODO: Provide access to all functionality. Especially defining the scope
+    public async Task<JsonRpcResponse<AuthResponseData>> PublicCredentialsAuthAsync(string accessKey, string accessSecret, string sessionName)
+    {
+      if (!string.IsNullOrEmpty(AccessToken))
+      {
+        throw new InvalidOperationException("Already authorized");
+      }
+
+      Logger.Debug("Authenticate (client_credentials)");
 
       var scope = "connection";
       if (!string.IsNullOrEmpty(sessionName))
@@ -411,49 +463,91 @@ namespace DeriSock
       }
 
       var response = await SendAsync(
-        "public/auth", new {grant_type = "client_credentials", client_id = accessKey, client_secret = accessSecret, scope},
-        new ObjectJsonConverter<AuthResponse>());
+        "public/auth",
+        new { grant_type = "client_credentials", client_id = accessKey, client_secret = accessSecret, scope },
+        new ObjectJsonConverter<AuthResponseData>());
 
       //TODO: Handle possible error in response
 
       var loginRes = response.ResultData;
 
-      AccessToken = loginRes.access_token;
-      RefreshToken = loginRes.refresh_token;
-      _ = Task.Delay(TimeSpan.FromSeconds(loginRes.expires_in - 5)).ContinueWith(t =>
-      {
-        if (IsConnected)
-        {
-          _ = PublicAuthRefreshAsync(RefreshToken);
-        }
-      });
+      AccessToken = loginRes.AccessToken;
+      RefreshToken = loginRes.RefreshToken;
+
+      EnqueueAuthRefresh(loginRes.ExpiresIn);
 
       return response;
     }
 
-    public async Task<JsonRpcResponse<AuthResponse>> PublicAuthRefreshAsync(string refreshToken)
+    public Task<JsonRpcResponse<AuthResponseData>> PublicAuthRefreshAsync(string refreshToken)
+    {
+      return PublicAuthRefreshAsync(refreshToken, false);
+    }
+
+    private async Task<JsonRpcResponse<AuthResponseData>> PublicAuthRefreshAsync(string refreshToken, bool autoRefresh)
     {
       Logger.Debug("Refreshing Auth");
 
       var response = await SendAsync(
-        "public/auth", new {grant_type = "refresh_token", refresh_token = refreshToken},
-        new ObjectJsonConverter<AuthResponse>());
+        "public/auth",
+        new { grant_type = "refresh_token", refresh_token = refreshToken },
+        new ObjectJsonConverter<AuthResponseData>());
 
       //TODO: Handle possible error in response
 
       var loginRes = response.ResultData;
 
-      AccessToken = loginRes.access_token;
-      RefreshToken = loginRes.refresh_token;
-      _ = Task.Delay(TimeSpan.FromSeconds(loginRes.expires_in - 5)).ContinueWith(t =>
+      AccessToken = loginRes.AccessToken;
+      RefreshToken = loginRes.RefreshToken;
+
+      if (autoRefresh)
       {
-        if (IsConnected)
-        {
-          _ = PublicAuthRefreshAsync(RefreshToken);
-        }
-      });
+        EnqueueAuthRefresh(loginRes.ExpiresIn);
+      }
 
       return response;
+    }
+
+    /// <summary>
+    ///   Generates token for new subject id. This method can be used to switch between subaccounts.
+    /// </summary>
+    /// <param name="refreshToken">Refresh token</param>
+    /// <param name="subjectId">New subject id</param>
+    public Task<JsonRpcResponse<ExchangeTokenResponseData>> PublicExchangeToken(string refreshToken, int subjectId)
+    {
+      return SendAsync(
+        "public/exchange_token",
+        new { refresh_token = refreshToken, subject_id = subjectId },
+        new ObjectJsonConverter<ExchangeTokenResponseData>());
+    }
+
+    /// <summary>
+    ///   Generates token for new named session. This method can be used only with session scoped tokens.
+    /// </summary>
+    /// <param name="refreshToken">Refresh token</param>
+    /// <param name="sessionName">New session name</param>
+    public Task<JsonRpcResponse<ForkTokenResponseData>> PublicForkToken(string refreshToken, string sessionName)
+    {
+      return SendAsync(
+        "public/fork_token",
+        new { refresh_token = refreshToken, session_name = sessionName },
+        new ObjectJsonConverter<ForkTokenResponseData>());
+    }
+
+    /// <summary>
+    ///   Gracefully close websocket connection, when COD (Cancel On Disconnect) is enabled orders are not cancelled
+    /// </summary>
+    public bool PrivateLogout()
+    {
+      if (string.IsNullOrEmpty(AccessToken))
+      {
+        return false;
+      }
+
+      _client.SendLogout("private/logout", new { access_token = AccessToken });
+      AccessToken = null;
+      RefreshToken = null;
+      return true;
     }
 
     #endregion
@@ -474,7 +568,7 @@ namespace DeriSock
     /// <param name="interval">The heartbeat interval in seconds, but not less than 10</param>
     public Task<JsonRpcResponse<string>> PublicSetHeartbeatAsync(int interval)
     {
-      return SendAsync("public/set_heartbeat", new {interval}, new ObjectJsonConverter<string>());
+      return SendAsync("public/set_heartbeat", new { interval }, new ObjectJsonConverter<string>());
     }
 
     /// <summary>
@@ -516,12 +610,15 @@ namespace DeriSock
     ///     Disconnect
     ///   </para>
     /// </summary>
-    /// <param name="scope">Specifies if Cancel On Disconnect change should be applied/checked for the current connection or the account (default - <c>connection</c>)</param>
+    /// <param name="scope">
+    ///   Specifies if Cancel On Disconnect change should be applied/checked for the current connection or
+    ///   the account (default - <c>connection</c>)
+    /// </param>
     public Task<JsonRpcResponse<string>> PrivateEnableCancelOnDisconnectAsync(string scope)
     {
       return SendAsync(
         "private/enable_cancel_on_disconnect",
-        new {scope, access_token = AccessToken},
+        new { scope, access_token = AccessToken },
         new ObjectJsonConverter<string>());
     }
 
@@ -544,33 +641,42 @@ namespace DeriSock
     ///     Disconnect
     ///   </para>
     /// </summary>
-    /// <param name="scope">Specifies if Cancel On Disconnect change should be applied/checked for the current connection or the account (default - <c>connection</c>)</param>
+    /// <param name="scope">
+    ///   Specifies if Cancel On Disconnect change should be applied/checked for the current connection or
+    ///   the account (default - <c>connection</c>)
+    /// </param>
     public Task<JsonRpcResponse<string>> PrivateDisableCancelOnDisconnectAsync(string scope)
     {
       return SendAsync(
         "private/disable_cancel_on_disconnect",
-        new {scope, access_token = AccessToken},
+        new { scope, access_token = AccessToken },
         new ObjectJsonConverter<string>());
     }
 
     /// <summary>
-    /// Read current Cancel On Disconnect configuration for the account
+    ///   Read current Cancel On Disconnect configuration for the account
     /// </summary>
-    /// <param name="scope">Specifies if Cancel On Disconnect change should be applied/checked for the current connection or the account (default - <c>connection</c>)</param>
+    /// <param name="scope">
+    ///   Specifies if Cancel On Disconnect change should be applied/checked for the current connection or
+    ///   the account (default - <c>connection</c>)
+    /// </param>
     public Task<JsonRpcResponse<GetCancelOnDisconnectResponseData>> PrivateGetCancelOnDisconnectAsync()
     {
       return PrivateGetCancelOnDisconnectAsync("connection");
     }
 
     /// <summary>
-    /// Read current Cancel On Disconnect configuration for the account
+    ///   Read current Cancel On Disconnect configuration for the account
     /// </summary>
-    /// <param name="scope">Specifies if Cancel On Disconnect change should be applied/checked for the current connection or the account (default - <c>connection</c>)</param>
+    /// <param name="scope">
+    ///   Specifies if Cancel On Disconnect change should be applied/checked for the current connection or
+    ///   the account (default - <c>connection</c>)
+    /// </param>
     public Task<JsonRpcResponse<GetCancelOnDisconnectResponseData>> PrivateGetCancelOnDisconnectAsync(string scope)
     {
       return SendAsync(
         "private/get_cancel_on_disconnect",
-        new {scope, access_token = AccessToken},
+        new { scope, access_token = AccessToken },
         new ObjectJsonConverter<GetCancelOnDisconnectResponseData>());
     }
 
@@ -599,7 +705,7 @@ namespace DeriSock
     {
       return SendAsync(
         "public/hello",
-        new {client_name = clientName, client_version = clientVersion},
+        new { client_name = clientName, client_version = clientVersion },
         new ObjectJsonConverter<HelloResponseData>());
     }
 
@@ -615,19 +721,25 @@ namespace DeriSock
     {
       return SendAsync(
         "public/test",
-        new {expected_result = expectedResult},
+        new { expected_result = expectedResult },
         new ObjectJsonConverter<TestResponseData>());
     }
 
     #endregion
 
+    //TODO: Finish this
+
     #region Account management
 
     #endregion
 
+    //TODO: Finish this
+
     #region Block Trade
 
     #endregion
+
+    //TODO: Finish this
 
     #region Trading
 
@@ -671,7 +783,7 @@ namespace DeriSock
     {
       return SendAsync(
         "private/cancel",
-        new {order_id = orderId, access_token = AccessToken},
+        new { order_id = orderId, access_token = AccessToken },
         new ObjectJsonConverter<JObject>());
     }
 
@@ -679,7 +791,7 @@ namespace DeriSock
     {
       return SendAsync(
         "private/cancel_all_by_instrument",
-        new {instrument_name = instrument, access_token = AccessToken},
+        new { instrument_name = instrument, access_token = AccessToken },
         new ObjectJsonConverter<JObject>());
     }
 
@@ -687,7 +799,7 @@ namespace DeriSock
     {
       return SendAsync(
         "private/get_open_orders_by_instrument",
-        new {instrument_name = instrument, access_token = AccessToken},
+        new { instrument_name = instrument, access_token = AccessToken },
         new ObjectJsonConverter<OrderItem[]>());
     }
 
@@ -695,14 +807,14 @@ namespace DeriSock
     {
       return SendAsync(
         "private/get_order_state",
-        new {order_id = orderId, access_token = AccessToken},
+        new { order_id = orderId, access_token = AccessToken },
         new ObjectJsonConverter<OrderResponse>());
     }
 
     public Task<JsonRpcResponse<AccountSummaryResponse>> PrivateGetAccountSummaryAsync(string currency, bool extended)
     {
       return SendAsync(
-        "private/get_account_summary", new {currency, extended, access_token = AccessToken},
+        "private/get_account_summary", new { currency, extended, access_token = AccessToken },
         new ObjectJsonConverter<AccountSummaryResponse>());
     }
 
@@ -710,7 +822,7 @@ namespace DeriSock
     {
       return SendAsync(
         "private/get_settlement_history_by_instrument",
-        new {instrument_name = instrument, type, count, access_token = AccessToken},
+        new { instrument_name = instrument, type, count, access_token = AccessToken },
         new ObjectJsonConverter<SettlementResponse>());
     }
 
@@ -718,15 +830,33 @@ namespace DeriSock
     {
       return SendAsync(
         "private/get_settlement_history_by_currency",
-        new {currency, type, count, access_token = AccessToken},
+        new { currency, type, count, access_token = AccessToken },
         new ObjectJsonConverter<SettlementResponse>());
     }
 
     #endregion
 
+    //TODO: Finish this
+
+    #region Market data
+
+    public Task<JsonRpcResponse<BookResponse>> PublicGetOrderBookAsync(string instrument, int depth)
+    {
+      return SendAsync(
+        "public/get_order_book",
+        new { instrument_name = instrument, depth },
+        new ObjectJsonConverter<BookResponse>());
+    }
+
+    #endregion
+
+    //TODO: Finish this
+
     #region Wallet
 
     #endregion
+
+    //TODO: Finish this
 
     #region Subscriptions
 
@@ -772,6 +902,8 @@ namespace DeriSock
           callback(n.Data.ToObject<TickerResponse>());
         });
     }
+
+    #endregion
 
     #endregion
   }
