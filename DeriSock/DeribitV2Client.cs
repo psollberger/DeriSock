@@ -18,13 +18,13 @@ namespace DeriSock
   using SubscriptionListEntry = System.Tuple<string, object, object>;
   using SubscriptionList = System.Collections.Generic.List<System.Tuple<string, object, object>>;
 
-  public sealed class DeribitV2Client
+  public class DeribitV2Client
   {
     private readonly IJsonRpcClient _client;
-    private readonly ILogger _logger = Log.Logger;
-
     private readonly SubscriptionMap _subscriptionMap = new SubscriptionMap();
     private readonly SubscriptionList _subscriptions = new SubscriptionList();
+
+    protected readonly ILogger Logger = Log.Logger;
 
     public DeribitV2Client(DeribitEndpointType endpointType)
     {
@@ -97,15 +97,15 @@ namespace DeriSock
       }
       else
       {
-        _logger.Warning("Unknown Server Request: {@Request}", request);
+        Logger.Warning("Unknown Server Request: {@Request}", request);
       }
     }
 
     private void OnHeartbeat(Heartbeat heartbeat)
     {
-      if (_logger?.IsEnabled(LogEventLevel.Debug) ?? false)
+      if (Logger?.IsEnabled(LogEventLevel.Debug) ?? false)
       {
-        _logger.Debug("OnHeartbeat: {@Heartbeat}", heartbeat);
+        Logger.Debug("OnHeartbeat: {@Heartbeat}", heartbeat);
       }
 
       if (heartbeat.Type == "test_request")
@@ -116,18 +116,18 @@ namespace DeriSock
 
     private void OnNotification(Notification notification)
     {
-      if (_logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
+      if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
       {
-        _logger.Verbose("OnNotification: {@Notification}", notification);
+        Logger.Verbose("OnNotification: {@Notification}", notification);
       }
 
       lock (_subscriptionMap)
       {
         if (!_subscriptionMap.TryGetValue(notification.Channel, out var entry))
         {
-          if (_logger?.IsEnabled(LogEventLevel.Warning) ?? false)
+          if (Logger?.IsEnabled(LogEventLevel.Warning) ?? false)
           {
-            _logger.Warning("OnNotification: Could not find subscription for notification: {@Notification}",
+            Logger.Warning("OnNotification: Could not find subscription for notification: {@Notification}",
               notification);
           }
 
@@ -146,7 +146,7 @@ namespace DeriSock
           }
           catch (Exception ex)
           {
-            _logger?.Error(ex, "OnNotification: Error during event callback call: {@Notification}", notification);
+            Logger?.Error(ex, "OnNotification: Error during event callback call: {@Notification}", notification);
           }
         }
       }
@@ -170,9 +170,9 @@ namespace DeriSock
         {
           case SubscriptionState.Subscribed:
             {
-              if (_logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
+              if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
               {
-                _logger.Verbose("Subscription for channel already exists. Adding callback to list ({Channel})", channel);
+                Logger.Verbose("Subscription for channel already exists. Adding callback to list ({Channel})", channel);
               }
 
               entry.Callbacks.Add(callback);
@@ -180,17 +180,17 @@ namespace DeriSock
             }
 
           case SubscriptionState.Unsubscribing:
-            if (_logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
+            if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
             {
-              _logger.Verbose("Unsubscribing from Channel. Abort Subscribe ({Channel})", channel);
+              Logger.Verbose("Unsubscribing from Channel. Abort Subscribe ({Channel})", channel);
             }
 
             return false;
 
           case SubscriptionState.Unsubscribed:
-            if (_logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
+            if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
             {
-              _logger.Verbose("Unsubscribed from channel. Re-Subscribing ({Channel})", channel);
+              Logger.Verbose("Unsubscribed from channel. Re-Subscribing ({Channel})", channel);
             }
 
             entry.State = SubscriptionState.Subscribing;
@@ -201,9 +201,9 @@ namespace DeriSock
       }
       else
       {
-        if (_logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
+        if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
         {
-          _logger.Verbose("Subscription for channel not found. Subscribing ({Channel})", channel);
+          Logger.Verbose("Subscription for channel not found. Subscribing ({Channel})", channel);
         }
 
         defer = new TaskCompletionSource<bool>();
@@ -218,16 +218,16 @@ namespace DeriSock
 
       if (defer == null)
       {
-        if (_logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
+        if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
         {
-          _logger.Verbose("Empty defer: Wait for action completion ({Channel})", channel);
+          Logger.Verbose("Empty defer: Wait for action completion ({Channel})", channel);
         }
 
         var currentAction = entry.CurrentAction;
         var result = currentAction != null && await currentAction.ConfigureAwait(false);
-        if (_logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
+        if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
         {
-          _logger.Verbose("Empty defer: Action result: {Result} {Channel}", result, channel);
+          Logger.Verbose("Empty defer: Action result: {Result} {Channel}", result, channel);
         }
 
         if (!result || entry.State != SubscriptionState.Subscribed)
@@ -235,9 +235,9 @@ namespace DeriSock
           return false;
         }
 
-        if (_logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
+        if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
         {
-          _logger.Verbose("Empty defer: Adding callback ({Channel})", channel);
+          Logger.Verbose("Empty defer: Adding callback ({Channel})", channel);
         }
 
         entry.Callbacks.Add(callback);
@@ -246,9 +246,9 @@ namespace DeriSock
 
       try
       {
-        if (_logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
+        if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
         {
-          _logger.Verbose("Subscribing to {Channel}", channel);
+          Logger.Verbose("Subscribing to {Channel}", channel);
         }
 
         var subscribeResponse = !@private
@@ -266,18 +266,18 @@ namespace DeriSock
 
         if (response.Count != 1 || response[0] != channel)
         {
-          if (_logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
+          if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
           {
-            _logger.Verbose("Invalid subscribe result: {@Response} {Channel}", response, channel);
+            Logger.Verbose("Invalid subscribe result: {@Response} {Channel}", response, channel);
           }
 
           defer.SetResult(false);
         }
         else
         {
-          if (_logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
+          if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
           {
-            _logger.Verbose("Successfully subscribed. Adding callback ({Channel})", channel);
+            Logger.Verbose("Successfully subscribed. Adding callback ({Channel})", channel);
           }
 
           entry.State = SubscriptionState.Subscribed;
@@ -455,7 +455,7 @@ namespace DeriSock
 
     public async Task<JsonRpcResponse<AuthResponse>> PublicAuthAsync(string accessKey, string accessSecret, string sessionName)
     {
-      _logger.Debug("Authenticate");
+      Logger.Debug("Authenticate");
 
       var scope = "connection";
       if (!string.IsNullOrEmpty(sessionName))
@@ -486,7 +486,7 @@ namespace DeriSock
 
     public async Task<JsonRpcResponse<AuthResponse>> PublicAuthRefreshAsync(string refreshToken)
     {
-      _logger.Debug("Refreshing Auth");
+      Logger.Debug("Refreshing Auth");
 
       var response = await SendAsync(
         "public/auth", new { grant_type = "refresh_token", refresh_token = refreshToken },
