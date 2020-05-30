@@ -15,6 +15,7 @@ namespace PlayConsole
   using DeriSock.Converter;
   using DeriSock.JsonRpc;
   using DeriSock.Model;
+  using DeriSock.Request;
   using DeriSock.Utils;
   using Microsoft.OpenApi.Readers;
   using Newtonsoft.Json;
@@ -49,13 +50,21 @@ namespace PlayConsole
         .CreateLogger();
 
       _client = new DeribitV2Client(DeribitEndpointType.Testnet);
-      
+
       while (!_client.IsConnected)
       {
         await _client.ConnectAsync();
 
         //var loginRes = await _client.PublicAuthAsync("KxEneYNT9VsK", "S3EL63RBXOJZSN4ACV5SWF2OLO337BKL", "Playground");
-        var loginRes = await _client.PublicSignatureAuthAsync("KxEneYNT9VsK", "S3EL63RBXOJZSN4ACV5SWF2OLO337BKL", "Playground");
+        //var loginRes = await _client.PublicSignatureAuthAsync("KxEneYNT9VsK", "S3EL63RBXOJZSN4ACV5SWF2OLO337BKL", "Playground");
+        
+        var loginRes = await _client.PublicAuthAsync(new AuthRequestParams
+        {
+          GrantType = "client_signature",
+          ClientId = "KxEneYNT9VsK",
+          ClientSecret = "S3EL63RBXOJZSN4ACV5SWF2OLO337BKL",
+          Scope = "expires:60"
+        });
 
         await _client.PublicSetHeartbeatAsync(10);
 

@@ -10,6 +10,7 @@ namespace DeriSock
   using DeriSock.Converter;
   using DeriSock.JsonRpc;
   using DeriSock.Model;
+  using DeriSock.Request;
   using DeriSock.Response;
   using DeriSock.Utils;
   using Newtonsoft.Json.Linq;
@@ -21,7 +22,6 @@ namespace DeriSock
     private readonly IJsonRpcClient _client;
     private readonly SubscriptionManager _subscriptionManager;
     protected readonly ILogger Logger = Log.Logger;
-    private Task _refreshAuthTask;
 
     public string AccessToken { get; private set; }
 
@@ -140,18 +140,21 @@ namespace DeriSock
 
     private void EnqueueAuthRefresh(int expiresIn)
     {
-      if (_refreshAuthTask != null)
+      var expireTimeSpan = TimeSpan.FromSeconds(expiresIn);
+      if (expireTimeSpan.TotalMilliseconds > Int32.MaxValue)
       {
         return;
       }
 
-      _refreshAuthTask = Task.Delay(TimeSpan.FromSeconds(expiresIn - 5)).ContinueWith(t =>
+      _ = Task.Delay(expireTimeSpan.Subtract(TimeSpan.FromSeconds(5))).ContinueWith(t =>
       {
-        _refreshAuthTask = null;
-        if (IsConnected)
+        if (!IsConnected)
         {
-          PublicAuthRefreshAsync(RefreshToken, true).GetAwaiter().GetResult();
+          return;
         }
+
+        var result = PublicAuthAsync(new AuthRequestParams {GrantType = "refresh_token"}).GetAwaiter().GetResult();
+        EnqueueAuthRefresh(result.ResultData.ExpiresIn);
       });
     }
 
@@ -253,7 +256,7 @@ namespace DeriSock
           }
 
           defer = new TaskCompletionSource<bool>();
-          entry = new SubscriptionEntry { State = SubscriptionState.Subscribing, Callbacks = new List<Action<Notification>>(), CurrentAction = defer.Task };
+          entry = new SubscriptionEntry {State = SubscriptionState.Subscribing, Callbacks = new List<Action<Notification>>(), CurrentAction = defer.Task};
           _subscriptionMap[channel] = entry;
         }
 
@@ -261,10 +264,10 @@ namespace DeriSock
         {
           var subscribeResponse = IsPrivateChannel(channel)
             ? await _client.SendAsync(
-              "private/subscribe", new { channels = new[] { channel }, access_token = _client.AccessToken },
+              "private/subscribe", new {channels = new[] {channel}, access_token = _client.AccessToken},
               new ListJsonConverter<string>()).ConfigureAwait(false)
             : await _client.SendAsync(
-                "public/subscribe", new { channels = new[] { channel } },
+                "public/subscribe", new {channels = new[] {channel}},
                 new ListJsonConverter<string>())
               .ConfigureAwait(false);
 
@@ -348,10 +351,10 @@ namespace DeriSock
         {
           var unsubscribeResponse = IsPrivateChannel(channel)
             ? await _client.SendAsync(
-              "private/unsubscribe", new { channels = new[] { channel }, access_token = _client.AccessToken },
+              "private/unsubscribe", new {channels = new[] {channel}, access_token = _client.AccessToken},
               new ListJsonConverter<string>())
             : await _client.SendAsync(
-              "public/unsubscribe", new { channels = new[] { channel } },
+              "public/unsubscribe", new {channels = new[] {channel}},
               new ListJsonConverter<string>());
 
           //TODO: Handle possible error in response
@@ -398,102 +401,123 @@ namespace DeriSock
 
     #region Authentication
 
-    public async Task<JsonRpcResponse<AuthResponseData>> PublicSignatureAuthAsync(string accessKey, string accessSecret, string sessionName)
+    /// <summary>
+    ///   <para>Retrieve an Oauth access token, to be used for authentication of 'private' requests.</para>
+    ///   <para>Three methods of authentication are supported:</para>
+    ///   <para>
+    ///     <list type="table">
+    ///       <item>
+    ///         <term>client_credentials</term>
+    ///         <description>using the access key and access secret that can be found on the API page on the website</description>
+    ///       </item>
+    ///       <item>
+    ///         <term>client_signature</term>
+    ///         <description>using the access key that can be found on the API page on the website and user generated signature</description>
+    ///       </item>
+    ///       <item>
+    ///         <term>refresh_token</term>
+    ///         <description>using a refresh token that was received from an earlier invocation</description>
+    ///       </item>
+    ///     </list>
+    ///   </para>
+    ///   <para>
+    ///     The response will contain an access token, expiration period (number of seconds that the token is valid) and a
+    ///     refresh token that can be used to get a new set of tokens
+    ///   </para>
+    ///   <para>
+    ///     NOTE: The necessary values for client_signature are automatically calculated.
+    ///     Provide <see cref="AuthRequestParams.ClientId" /> and <see cref="AuthRequestParams.ClientSecret" />.
+    ///     Optional: Provide <see cref="AuthRequestParams.Data" /> for more random data for signature calculation
+    ///   </para>
+    /// </summary>
+    /// <param name="args"><see cref="AuthRequestParams" /> object containing the necessary values</param>
+    public async Task<JsonRpcResponse<AuthResponseData>> PublicAuthAsync(AuthRequestParams args)
     {
-      if (!string.IsNullOrEmpty(AccessToken))
+      Logger.Debug("Authenticate ({GrantType})", args?.GrantType);
+
+      if (!string.Equals(args.GrantType, "client_credentials") &&
+          !string.Equals(args.GrantType, "client_signature") &&
+          !string.Equals(args.GrantType, "refresh_token"))
+      {
+        throw new ArgumentException($"Unknown GrantType: {args.GrantType}");
+      }
+
+      if (!string.IsNullOrEmpty(AccessToken) && !string.Equals(args.GrantType, "refresh_token"))
       {
         throw new InvalidOperationException("Already authorized");
       }
 
-      Logger.Debug("Authenticate (client_signature)");
+      SignatureCreator.Data = string.IsNullOrEmpty(args.Data) ? string.Empty : args.Data;
+      var state = string.IsNullOrEmpty(args.State) ? string.Empty : args.State;
+      var scope = string.IsNullOrWhiteSpace(args.Scope) ? string.Empty : args.Scope;
 
-      var scope = "connection";
-      if (!string.IsNullOrEmpty(sessionName))
+      object reqParams = null;
+
+      if (string.Equals(args.GrantType, "client_credentials"))
       {
-        scope = $"session:{sessionName} expires:60";
-      }
-
-      SignatureCreator.Create(accessSecret);
-
-      var response = await SendAsync(
-        "public/auth",
-        new
+        if (string.IsNullOrEmpty(args.ClientId))
         {
-          grant_type = "client_signature",
-          client_id = accessKey,
+          throw new ArgumentNullException(nameof(args.ClientId));
+        }
+
+        if (string.IsNullOrEmpty(args.ClientSecret))
+        {
+          throw new ArgumentNullException(nameof(args.ClientSecret));
+        }
+
+        reqParams = new
+        {
+          grant_type = "client_credentials",
+          client_id = args.ClientId,
+          client_secret = args.ClientSecret,
+          state,
+          scope
+        };
+      }
+      else if (string.Equals(args.GrantType, "client_signature"))
+      {
+        if (string.IsNullOrEmpty(args.ClientId))
+        {
+          throw new ArgumentNullException(nameof(args.ClientId));
+        }
+
+        if (string.IsNullOrEmpty(args.ClientSecret))
+        {
+          throw new ArgumentNullException(nameof(args.ClientSecret));
+        }
+
+        SignatureCreator.Create(args.ClientSecret);
+
+        reqParams = new
+        {
+          grant_type = args.GrantType,
+          client_id = args.ClientId,
           timestamp = SignatureCreator.Timestamp,
+          signature = SignatureCreator.Signature,
           nonce = SignatureCreator.Nonce,
           data = SignatureCreator.Data,
-          signature = SignatureCreator.Signature,
+          state,
           scope
-        },
-        new ObjectJsonConverter<AuthResponseData>());
-
-      var loginRes = response.ResultData;
-
-      AccessToken = loginRes.AccessToken;
-      RefreshToken = loginRes.RefreshToken;
-
-      EnqueueAuthRefresh(loginRes.ExpiresIn);
-
-      return response;
-    }
-
-    //TODO: Provide access to all functionality. Especially defining the scope
-    public async Task<JsonRpcResponse<AuthResponseData>> PublicCredentialsAuthAsync(string accessKey, string accessSecret, string sessionName)
-    {
-      if (!string.IsNullOrEmpty(AccessToken))
+        };
+      }
+      else if (string.Equals(args.GrantType, "refresh_token"))
       {
-        throw new InvalidOperationException("Already authorized");
+        if (string.IsNullOrEmpty(RefreshToken))
+        {
+          throw new ArgumentNullException(nameof(RefreshToken));
+        }
+
+        reqParams = new {grant_type = "refresh_token", refresh_token = RefreshToken};
       }
 
-      Logger.Debug("Authenticate (client_credentials)");
-
-      var scope = "connection";
-      if (!string.IsNullOrEmpty(sessionName))
-      {
-        scope = $"session:{sessionName} expires:60";
-      }
-
-      var response = await SendAsync(
-        "public/auth",
-        new { grant_type = "client_credentials", client_id = accessKey, client_secret = accessSecret, scope },
-        new ObjectJsonConverter<AuthResponseData>());
-
-      //TODO: Handle possible error in response
+      var response = await SendAsync("public/auth", reqParams, new ObjectJsonConverter<AuthResponseData>());
 
       var loginRes = response.ResultData;
 
       AccessToken = loginRes.AccessToken;
       RefreshToken = loginRes.RefreshToken;
 
-      EnqueueAuthRefresh(loginRes.ExpiresIn);
-
-      return response;
-    }
-
-    public Task<JsonRpcResponse<AuthResponseData>> PublicAuthRefreshAsync(string refreshToken)
-    {
-      return PublicAuthRefreshAsync(refreshToken, false);
-    }
-
-    private async Task<JsonRpcResponse<AuthResponseData>> PublicAuthRefreshAsync(string refreshToken, bool autoRefresh)
-    {
-      Logger.Debug("Refreshing Auth");
-
-      var response = await SendAsync(
-        "public/auth",
-        new { grant_type = "refresh_token", refresh_token = refreshToken },
-        new ObjectJsonConverter<AuthResponseData>());
-
-      //TODO: Handle possible error in response
-
-      var loginRes = response.ResultData;
-
-      AccessToken = loginRes.AccessToken;
-      RefreshToken = loginRes.RefreshToken;
-
-      if (autoRefresh)
+      if (!string.Equals(args.GrantType, "refresh_token"))
       {
         EnqueueAuthRefresh(loginRes.ExpiresIn);
       }
@@ -510,7 +534,7 @@ namespace DeriSock
     {
       return SendAsync(
         "public/exchange_token",
-        new { refresh_token = refreshToken, subject_id = subjectId },
+        new {refresh_token = refreshToken, subject_id = subjectId},
         new ObjectJsonConverter<ExchangeTokenResponseData>());
     }
 
@@ -523,7 +547,7 @@ namespace DeriSock
     {
       return SendAsync(
         "public/fork_token",
-        new { refresh_token = refreshToken, session_name = sessionName },
+        new {refresh_token = refreshToken, session_name = sessionName},
         new ObjectJsonConverter<ForkTokenResponseData>());
     }
 
@@ -537,7 +561,7 @@ namespace DeriSock
         return false;
       }
 
-      _client.SendLogout("private/logout", new { access_token = AccessToken });
+      _client.SendLogout("private/logout", new {access_token = AccessToken});
       AccessToken = null;
       RefreshToken = null;
       return true;
@@ -561,7 +585,7 @@ namespace DeriSock
     /// <param name="interval">The heartbeat interval in seconds, but not less than 10</param>
     public Task<JsonRpcResponse<string>> PublicSetHeartbeatAsync(int interval)
     {
-      return SendAsync("public/set_heartbeat", new { interval }, new ObjectJsonConverter<string>());
+      return SendAsync("public/set_heartbeat", new {interval}, new ObjectJsonConverter<string>());
     }
 
     /// <summary>
@@ -611,7 +635,7 @@ namespace DeriSock
     {
       return SendAsync(
         "private/enable_cancel_on_disconnect",
-        new { scope, access_token = AccessToken },
+        new {scope, access_token = AccessToken},
         new ObjectJsonConverter<string>());
     }
 
@@ -642,7 +666,7 @@ namespace DeriSock
     {
       return SendAsync(
         "private/disable_cancel_on_disconnect",
-        new { scope, access_token = AccessToken },
+        new {scope, access_token = AccessToken},
         new ObjectJsonConverter<string>());
     }
 
@@ -669,7 +693,7 @@ namespace DeriSock
     {
       return SendAsync(
         "private/get_cancel_on_disconnect",
-        new { scope, access_token = AccessToken },
+        new {scope, access_token = AccessToken},
         new ObjectJsonConverter<GetCancelOnDisconnectResponseData>());
     }
 
@@ -698,7 +722,7 @@ namespace DeriSock
     {
       return SendAsync(
         "public/hello",
-        new { client_name = clientName, client_version = clientVersion },
+        new {client_name = clientName, client_version = clientVersion},
         new ObjectJsonConverter<HelloResponseData>());
     }
 
@@ -714,7 +738,7 @@ namespace DeriSock
     {
       return SendAsync(
         "public/test",
-        new { expected_result = expectedResult },
+        new {expected_result = expectedResult},
         new ObjectJsonConverter<TestResponseData>());
     }
 
@@ -776,7 +800,7 @@ namespace DeriSock
     {
       return SendAsync(
         "private/cancel",
-        new { order_id = orderId, access_token = AccessToken },
+        new {order_id = orderId, access_token = AccessToken},
         new ObjectJsonConverter<JObject>());
     }
 
@@ -784,7 +808,7 @@ namespace DeriSock
     {
       return SendAsync(
         "private/cancel_all_by_instrument",
-        new { instrument_name = instrument, access_token = AccessToken },
+        new {instrument_name = instrument, access_token = AccessToken},
         new ObjectJsonConverter<JObject>());
     }
 
@@ -792,7 +816,7 @@ namespace DeriSock
     {
       return SendAsync(
         "private/get_open_orders_by_instrument",
-        new { instrument_name = instrument, access_token = AccessToken },
+        new {instrument_name = instrument, access_token = AccessToken},
         new ObjectJsonConverter<OrderItem[]>());
     }
 
@@ -800,14 +824,14 @@ namespace DeriSock
     {
       return SendAsync(
         "private/get_order_state",
-        new { order_id = orderId, access_token = AccessToken },
+        new {order_id = orderId, access_token = AccessToken},
         new ObjectJsonConverter<OrderResponse>());
     }
 
     public Task<JsonRpcResponse<AccountSummaryResponse>> PrivateGetAccountSummaryAsync(string currency, bool extended)
     {
       return SendAsync(
-        "private/get_account_summary", new { currency, extended, access_token = AccessToken },
+        "private/get_account_summary", new {currency, extended, access_token = AccessToken},
         new ObjectJsonConverter<AccountSummaryResponse>());
     }
 
@@ -815,7 +839,7 @@ namespace DeriSock
     {
       return SendAsync(
         "private/get_settlement_history_by_instrument",
-        new { instrument_name = instrument, type, count, access_token = AccessToken },
+        new {instrument_name = instrument, type, count, access_token = AccessToken},
         new ObjectJsonConverter<SettlementResponse>());
     }
 
@@ -823,7 +847,7 @@ namespace DeriSock
     {
       return SendAsync(
         "private/get_settlement_history_by_currency",
-        new { currency, type, count, access_token = AccessToken },
+        new {currency, type, count, access_token = AccessToken},
         new ObjectJsonConverter<SettlementResponse>());
     }
 
@@ -837,7 +861,7 @@ namespace DeriSock
     {
       return SendAsync(
         "public/get_order_book",
-        new { instrument_name = instrument, depth },
+        new {instrument_name = instrument, depth},
         new ObjectJsonConverter<BookResponse>());
     }
 
