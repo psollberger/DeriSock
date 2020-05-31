@@ -25,9 +25,10 @@
     public string ClientSecret { get; set; }
 
     /// <summary>
-    ///   Optional for grant type <c>client_signature</c>; delivers user generated initialization vector for the server token
+    /// <para>Required for grant type <c>client_signature</c>; it's a cryptographic signature calculated over provided fields using user secret key.</para>
+    /// <para>Use <see cref="CryptoHelper.CreateSignature"/> to create a <see cref="SignatureData"/> instance</para>
     /// </summary>
-    public string Data { get; set; }
+    public SignatureData Signature { get; set; }
 
     /// <summary>
     ///   Will be passed back in the response

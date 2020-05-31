@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using Microsoft.OpenApi.Models;
 
 [assembly: DebuggerDisplay(@"\{Name = {Name} Description = {Description}}", Target = typeof(OpenApiTag))]
@@ -8,16 +7,14 @@ namespace PlayConsole
 {
   using System;
   using System.IO;
-  using System.Net.Http;
   using System.Threading;
   using System.Threading.Tasks;
   using DeriSock;
-  using DeriSock.Converter;
+  using DeriSock.Constants;
   using DeriSock.JsonRpc;
   using DeriSock.Model;
   using DeriSock.Request;
   using DeriSock.Utils;
-  using Microsoft.OpenApi.Readers;
   using Newtonsoft.Json;
   using Serilog;
   using Serilog.Events;
@@ -34,7 +31,7 @@ namespace PlayConsole
 
       const string logFilePath = @"D:\Temp\Serilog\test-log-.txt";
       Directory.CreateDirectory(Path.GetDirectoryName(logFilePath));
-      
+
       //const string outputTemplateLongLevelName = "{Timestamp:yyyy-MM-dd HH:mm:ss.fffffff} [{Level,-11:u}] {Message:lj}{NewLine}{Exception}";
       const string outputTemplateShortLevelName = "{Timestamp:yyyy-MM-dd HH:mm:ss.fffffff} [{Level:u3}] {Message:lj}{NewLine}{Exception}";
 
@@ -57,13 +54,11 @@ namespace PlayConsole
 
         //var loginRes = await _client.PublicAuthAsync("KxEneYNT9VsK", "S3EL63RBXOJZSN4ACV5SWF2OLO337BKL", "Playground");
         //var loginRes = await _client.PublicSignatureAuthAsync("KxEneYNT9VsK", "S3EL63RBXOJZSN4ACV5SWF2OLO337BKL", "Playground");
-        
+
+        var sig = CryptoHelper.CreateSignature("S3EL63RBXOJZSN4ACV5SWF2OLO337BKL");
         var loginRes = await _client.PublicAuthAsync(new AuthRequestParams
         {
-          GrantType = "client_signature",
-          ClientId = "KxEneYNT9VsK",
-          ClientSecret = "S3EL63RBXOJZSN4ACV5SWF2OLO337BKL",
-          Scope = "expires:60"
+          GrantType = GrantType.Signature, ClientId = "KxEneYNT9VsK", Signature = sig, Scope = "expires:60"
         });
 
         await _client.PublicSetHeartbeatAsync(10);
@@ -90,7 +85,6 @@ namespace PlayConsole
 
           //try to reconnect
           Thread.Sleep(5000);
-          continue;
         }
         else if (_client.ClosedByError)
         {
@@ -98,7 +92,6 @@ namespace PlayConsole
 
           //try to reconnect
           Thread.Sleep(5000);
-          continue;
         }
         else
         {
@@ -126,9 +119,16 @@ namespace PlayConsole
 
     private static void Console_CancelKeyPress(object sender, ConsoleCancelEventArgs e)
     {
-      if (_client == null) return;
+      if (_client == null)
+      {
+        return;
+      }
+
       if (!_client.PrivateLogout())
+      {
         _client.DisconnectAsync().GetAwaiter().GetResult();
+      }
+
       e.Cancel = true;
     }
   }

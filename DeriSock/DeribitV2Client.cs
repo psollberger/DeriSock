@@ -447,7 +447,6 @@ namespace DeriSock
         throw new InvalidOperationException("Already authorized");
       }
 
-      SignatureCreator.Data = string.IsNullOrEmpty(args.Data) ? string.Empty : args.Data;
       var state = string.IsNullOrEmpty(args.State) ? string.Empty : args.State;
       var scope = string.IsNullOrWhiteSpace(args.Scope) ? string.Empty : args.Scope;
 
@@ -481,21 +480,19 @@ namespace DeriSock
           throw new ArgumentNullException(nameof(args.ClientId));
         }
 
-        if (string.IsNullOrEmpty(args.ClientSecret))
+        if (args.Signature == null)
         {
-          throw new ArgumentNullException(nameof(args.ClientSecret));
+          throw new ArgumentNullException(nameof(args.Signature));
         }
-
-        SignatureCreator.Create(args.ClientSecret);
 
         reqParams = new
         {
           grant_type = args.GrantType,
           client_id = args.ClientId,
-          timestamp = SignatureCreator.Timestamp,
-          signature = SignatureCreator.Signature,
-          nonce = SignatureCreator.Nonce,
-          data = SignatureCreator.Data,
+          timestamp = args.Signature.Timestamp,
+          signature = args.Signature.Signature,
+          nonce = args.Signature.Nonce,
+          data = args.Signature.Data,
           state,
           scope
         };
