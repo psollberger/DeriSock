@@ -194,11 +194,6 @@ namespace DeriSock.Constants
       Description = description;
     }
 
-    protected bool Equals(ErrorCode other)
-    {
-      return Code == other.Code;
-    }
-
     public override bool Equals(object obj)
     {
       if (ReferenceEquals(null, obj))
@@ -214,7 +209,7 @@ namespace DeriSock.Constants
       switch (obj)
       {
         case ErrorCode codeObj:
-          return Equals(codeObj);
+          return Code == codeObj.Code;
         case int codeInt:
           return Code == codeInt;
         default:

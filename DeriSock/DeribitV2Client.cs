@@ -752,6 +752,12 @@ namespace DeriSock
 
     #region Account management
 
+    //TODO: private/get_account_summary
+    //TODO: private/get_email_language
+    //TODO: private/set_email_language
+    //TODO: private/get_position
+    //TODO: private/get_positions
+
     #region Announcements
 
     /// <inheritdoc cref="PublicGetAnnouncements(DateTime, int)" />
@@ -978,6 +984,126 @@ namespace DeriSock
         "private/set_api_key_as_default",
         new {id},
         new ObjectJsonConverter<ApiKeyResponseData>());
+    }
+
+    #endregion
+
+    #region Subaccount
+
+    //TODO: Check this
+    /// <summary>
+    /// Change the user name for a subaccount
+    /// </summary>
+    /// <param name="sid">The user id for the subaccount</param>
+    /// <param name="name">The new user name</param>
+    public Task<JsonRpcResponse<string>> PrivateChangeSubaccountName(int sid, string name)
+    {
+      return SendAsync(
+        "private/change_subaccount_name",
+        new {sid, name},
+        new ObjectJsonConverter<string>());
+    }
+
+    //TODO: Create response data and then check this
+    /// <summary>
+    /// Create a new subaccount
+    /// </summary>
+    public Task<JsonRpcResponse<JObject>> PrivateCreateSubaccount()
+    {
+      return SendAsync(
+        "private/create_subaccount",
+        null,
+        new ObjectJsonConverter<JObject>());
+    }
+
+    /// <summary>
+    /// Disable two factor authentication for a subaccount
+    /// </summary>
+    /// <param name="sid">The user id for the subaccount</param>
+    public Task<JsonRpcResponse<string>> PrivateDisableTfaForSubaccount(int sid)
+    {
+      return SendAsync(
+        "private/disable_tfa_for_subaccount",
+        new {sid},
+        new ObjectJsonConverter<string>());
+    }
+
+    //TODO: Create response data and then check this
+    /// <inheritdoc cref="PrivateGetSubaccounts(bool)"/>
+    public Task<JsonRpcResponse<JArray>> PrivateGetSubaccounts()
+    {
+      return SendAsync(
+        "private/get_subaccounts",
+        null,
+        new ObjectJsonConverter<JArray>());
+    }
+
+    //TODO: Create response data and then check this
+    /// <summary>
+    /// Get information about subaccounts
+    /// </summary>
+    public Task<JsonRpcResponse<JArray>> PrivateGetSubaccounts(bool withPortfolio)
+    {
+      return SendAsync(
+        "private/get_subaccounts",
+        new {with_portfolio = withPortfolio},
+        new ObjectJsonConverter<JArray>());
+    }
+
+    //TODO: Check this
+    /// <summary>
+    /// Assign an email address to a subaccount. User will receive an email with confirmation link.
+    /// </summary>
+    /// <param name="sid">The user id for the subaccount</param>
+    /// <param name="email">The email address for the subaccount</param>
+    public Task<JsonRpcResponse<string>> PrivateSetEmailForSubaccount(int sid, string email)
+    {
+      return SendAsync(
+        "private/set_email_for_subaccount",
+        new {sid, email},
+        new ObjectJsonConverter<string>());
+    }
+
+    //TODO: Check this
+    /// <summary>
+    /// Set the password for the subaccount
+    /// </summary>
+    /// <param name="sid">The user id for the subaccount</param>
+    /// <param name="password">The password address for the subaccount</param>
+    public Task<JsonRpcResponse<string>> PrivateSetPasswordForSubaccount(int sid, string password)
+    {
+      return SendAsync(
+        "private/set_password_for_subaccount",
+        new {sid, password},
+        new ObjectJsonConverter<string>());
+    }
+
+    //TODO: Check this
+    /// <summary>
+    /// Enable or disable sending of notifications for the subaccount
+    /// </summary>
+    /// <param name="sid">The user id for the subaccount</param>
+    /// <param name="state">enable (<c>true</c>) or disable (<c>false</c>) notifications</param>
+    public Task<JsonRpcResponse<string>> PrivateToggleNotificationsFromSubaccount(int sid, bool state)
+    {
+      return SendAsync(
+        "private/toggle_notifications_from_subaccount",
+        new {sid, state},
+        new ObjectJsonConverter<string>());
+    }
+
+    //TODO: Check this
+    /// <summary>
+    /// Enable or disable login for a subaccount. If login is disabled and a session for the subaccount exists, this session will be terminated
+    /// </summary>
+    /// <param name="sid">The user id for the subaccount</param>
+    /// <param name="state">enable (<c>true</c>) or disable (<c>false</c>) login</param>
+    public Task<JsonRpcResponse<string>> PrivateToggleSubaccountLogin(int sid, bool state)
+    {
+      return SendAsync(
+        "private/toggle_subaccount_login",
+        new {sid, state = state ? "enable" : "disable"},
+        new ObjectJsonConverter<string>());
     }
 
     #endregion
