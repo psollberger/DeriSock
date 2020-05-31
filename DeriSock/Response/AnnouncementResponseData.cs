@@ -36,7 +36,7 @@
     [JsonProperty("publication_timestamp")]
     public long PublicationTimestamp { get; set; }
 
-    /// <inheritdoc cref="PublicationTimestamp"/>
+    /// <inheritdoc cref="PublicationTimestamp" />
     [JsonIgnore]
     public DateTime PublicationTimestampDateTime => PublicationTimestamp.AsDateTimeFromMilliseconds();
 

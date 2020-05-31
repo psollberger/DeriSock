@@ -41,7 +41,7 @@
     public Uri ServerUri { get; }
 
     /// <inheritdoc />
-    public virtual async Task ConnectAsync()
+    public virtual async Task Connect()
     {
       if (IsConnected)
       {
@@ -85,7 +85,7 @@
     }
 
     /// <inheritdoc />
-    public virtual async Task DisconnectAsync()
+    public virtual async Task Disconnect()
     {
       if (!IsConnected || Socket.State != WebSocketState.Open)
       {
@@ -116,7 +116,7 @@
     }
 
     /// <inheritdoc />
-    public virtual void SendLogout(string method, object parameters)
+    public virtual void SendLogoutSync(string method, object parameters)
     {
       var request = new JsonRpcRequest {Id = RequestIdGenerator.Next(), Method = method, Params = parameters};
 
@@ -133,7 +133,7 @@
     }
 
     /// <inheritdoc />
-    public virtual Task<JsonRpcResponse> SendAsync(string method, object parameters)
+    public virtual Task<JsonRpcResponse> Send(string method, object parameters)
     {
       var request = new JsonRpcRequest {Id = RequestIdGenerator.Next(), Method = method, Params = parameters};
 

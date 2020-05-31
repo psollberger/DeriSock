@@ -22,7 +22,7 @@
     /// </summary>
     [JsonProperty("scope")]
     public string Scope { get; set; }
-    
+
     /// <summary>
     ///   Authorization type, allowed value - <c>bearer</c>
     /// </summary>

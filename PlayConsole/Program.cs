@@ -52,10 +52,10 @@ namespace PlayConsole
       {
         try
         {
-          await _client.ConnectAsync();
+          await _client.Connect();
 
           var sig = CryptoHelper.CreateSignature("S3EL63RBXOJZSN4ACV5SWF2OLO337BKL");
-          var loginRes = await _client.PublicAuthAsync(new AuthRequestParams
+          var loginRes = await _client.PublicAuth(new AuthRequestParams
           {
             GrantType = GrantType.Signature,
             ClientId = "KxEneYNT9VsK",
@@ -134,7 +134,7 @@ namespace PlayConsole
 
       if (!_client.PrivateLogout())
       {
-        _client.DisconnectAsync().GetAwaiter().GetResult();
+        _client.Disconnect().GetAwaiter().GetResult();
       }
 
       e.Cancel = true;

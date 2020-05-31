@@ -3,7 +3,6 @@
   using System;
   using DeriSock.Extensions;
   using Newtonsoft.Json;
-  using Newtonsoft.Json.Linq;
 
   public class AccountSummaryResponseData
   {
@@ -248,25 +247,25 @@
     public class LimitsItem
     {
       /// <summary>
-      /// Number of matching engine requests per second allowed for user
+      ///   Number of matching engine requests per second allowed for user
       /// </summary>
       [JsonProperty("matching_engine")]
       public int MatchingEngine { get; set; }
 
       /// <summary>
-      /// Maximal number of matching engine requests per second allowed for user in burst mode
+      ///   Maximal number of matching engine requests per second allowed for user in burst mode
       /// </summary>
       [JsonProperty("matching_engine_burst")]
       public int MatchingEngineBurst { get; set; }
 
       /// <summary>
-      /// Number of non matching engine requests per second allowed for user
+      ///   Number of non matching engine requests per second allowed for user
       /// </summary>
       [JsonProperty("non_matching_engine")]
       public int NonMatchingEngine { get; set; }
 
       /// <summary>
-      /// Maximal number of non matching engine requests per second allowed for user in burst mode
+      ///   Maximal number of non matching engine requests per second allowed for user in burst mode
       /// </summary>
       [JsonProperty("non_matching_engine_burst")]
       public int NonMatchingEngineBurst { get; set; }
@@ -275,31 +274,33 @@
     public class FeesItem
     {
       /// <summary>
-      /// The currency the fee applies to
+      ///   The currency the fee applies to
       /// </summary>
       [JsonProperty("currency")]
       public string Currency { get; set; }
 
       /// <summary>
-      /// Fee type - <c>relative</c> if fee is calculated as a fraction of base instrument fee, <c>fixed</c> if fee is calculated solely using user fee
+      ///   Fee type - <c>relative</c> if fee is calculated as a fraction of base instrument fee, <c>fixed</c> if fee is
+      ///   calculated solely using user fee
       /// </summary>
       [JsonProperty("fee_type")]
       public string FeeType { get; set; }
 
       /// <summary>
-      /// Type of the instruments the fee applies to - <c>future</c> for future instruments (excluding perpetual), <c>perpetual</c> for future perpetual instruments, <c>option</c> for options
+      ///   Type of the instruments the fee applies to - <c>future</c> for future instruments (excluding perpetual),
+      ///   <c>perpetual</c> for future perpetual instruments, <c>option</c> for options
       /// </summary>
       [JsonProperty("instrument_type")]
       public string InstrumentType { get; set; }
 
       /// <summary>
-      /// User fee as a maker
+      ///   User fee as a maker
       /// </summary>
       [JsonProperty("maker_fee")]
       public double MakerFee { get; set; }
 
       /// <summary>
-      /// User fee as a taker
+      ///   User fee as a taker
       /// </summary>
       [JsonProperty("taker_fee")]
       public double TakerFee { get; set; }

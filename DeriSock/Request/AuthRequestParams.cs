@@ -25,8 +25,11 @@
     public string ClientSecret { get; set; }
 
     /// <summary>
-    /// <para>Required for grant type <c>client_signature</c>; it's a cryptographic signature calculated over provided fields using user secret key.</para>
-    /// <para>Use <see cref="CryptoHelper.CreateSignature"/> to create a <see cref="SignatureData"/> instance</para>
+    ///   <para>
+    ///     Required for grant type <c>client_signature</c>; it's a cryptographic signature calculated over provided fields
+    ///     using user secret key.
+    ///   </para>
+    ///   <para>Use <see cref="CryptoHelper.CreateSignature" /> to create a <see cref="SignatureData" /> instance</para>
     /// </summary>
     public SignatureData Signature { get; set; }
 

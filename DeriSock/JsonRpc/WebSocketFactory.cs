@@ -1,7 +1,5 @@
 ﻿namespace DeriSock.JsonRpc
 {
-  using System.Net.WebSockets;
-
   public class WebSocketFactory
   {
     private static IWebSocketFactory _factory;
