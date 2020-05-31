@@ -8,7 +8,7 @@
     ///   User email
     /// </summary>
     [JsonProperty("email")]
-    public string EMail { get; set; }
+    public string Email { get; set; }
 
     /// <summary>
     ///   Account/Subaccount identifier
@@ -35,7 +35,7 @@
     public string NotConfirmedEMail { get; set; }
 
     [JsonProperty("portfolio")]
-    public PortfolioEntry Portfolio { get; set; }
+    public PortfolioItem Portfolio { get; set; }
 
     /// <summary>
     ///   When <c>true</c>, receive all notification emails on the main email
@@ -61,16 +61,16 @@
     [JsonProperty("username")]
     public string Username { get; set; }
 
-    public class PortfolioEntry
+    public class PortfolioItem
     {
       [JsonProperty("btc")]
-      public PortfolioEntryItem Btc { get; set; }
+      public PortfolioItemEntry Btc { get; set; }
 
       [JsonProperty("eth")]
-      public PortfolioEntryItem Eth { get; set; }
+      public PortfolioItemEntry Eth { get; set; }
     }
 
-    public class PortfolioEntryItem
+    public class PortfolioItemEntry
     {
       [JsonProperty("available_funds")]
       public double AvailableFunds { get; set; }
