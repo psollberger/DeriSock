@@ -62,7 +62,7 @@ namespace PlayConsole
             Signature = sig
           });
 
-          var res = await _client.PrivateGetAccountSummary("btc", true);
+          var res = await _client.PrivateGetPositions("BTC", "option");
 
           var blub = 4;
         }

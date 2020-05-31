@@ -750,7 +750,6 @@ namespace DeriSock
 
     #region Account management
 
-    //TODO: Check this
     /// <summary>
     /// Retrieves user account summary
     /// </summary>
@@ -764,10 +763,62 @@ namespace DeriSock
         new ObjectJsonConverter<AccountSummaryResponseData>());
     }
 
-    //TODO: private/get_email_language
-    //TODO: private/set_email_language
-    //TODO: private/get_position
-    //TODO: private/get_positions
+    /// <summary>
+    /// Retrieves the language to be used for emails
+    /// </summary>
+    public Task<JsonRpcResponse<string>> PrivateGetEmailLanguage()
+    {
+      return SendAsync(
+        "private/get_email_language",
+        null,
+        new ObjectJsonConverter<string>());
+    }
+
+    /// <summary>
+    /// Changes the language to be used for emails
+    /// </summary>
+    /// <param name="language">The abbreviated language name. Valid values include <c>en</c>, <c>ko</c>, <c>zh</c>, <c>ja</c>, <c>ru</c></param>
+    public Task<JsonRpcResponse<string>> PrivateSetEmailLanguage(string language)
+    {
+      return SendAsync(
+        "private/set_email_language",
+        new {language},
+        new ObjectJsonConverter<string>());
+    }
+
+    /// <summary>
+    /// Retrieve user position
+    /// </summary>
+    /// <param name="instrumentName">Instrument name</param>
+    public Task<JsonRpcResponse<PositionResponseData>> PrivateGetPosition(string instrumentName)
+    {
+      return SendAsync(
+        "private/get_position",
+        new {instrument_name = instrumentName},
+        new ObjectJsonConverter<PositionResponseData>());
+    }
+
+    /// <inheritdoc cref="PrivateGetPositions(string, string)"/>
+    public Task<JsonRpcResponse<PositionResponseData[]>> PrivateGetPositions(string currency)
+    {
+      return SendAsync(
+        "private/get_positions",
+        new {currency},
+        new ObjectJsonConverter<PositionResponseData[]>());
+    }
+
+    /// <summary>
+    /// Retrieve user positions
+    /// </summary>
+    /// <param name="currency"><c>BTC</c> or <c>ETH</c></param>
+    /// <param name="kind">Kind filter on positions: <c>future</c> or <c>option</c></param>
+    public Task<JsonRpcResponse<PositionResponseData[]>> PrivateGetPositions(string currency, string kind)
+    {
+      return SendAsync(
+        "private/get_positions",
+        new {currency, kind},
+        new ObjectJsonConverter<PositionResponseData[]>());
+    }
 
     #region Announcements
 
