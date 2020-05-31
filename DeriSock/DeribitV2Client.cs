@@ -1004,16 +1004,16 @@ namespace DeriSock
         new ObjectJsonConverter<string>());
     }
 
-    //TODO: Create response data and then check this
+    //TODO: check this
     /// <summary>
     /// Create a new subaccount
     /// </summary>
-    public Task<JsonRpcResponse<JObject>> PrivateCreateSubaccount()
+    public Task<JsonRpcResponse<SubaccountResponseData>> PrivateCreateSubaccount()
     {
       return SendAsync(
         "private/create_subaccount",
         null,
-        new ObjectJsonConverter<JObject>());
+        new ObjectJsonConverter<SubaccountResponseData>());
     }
 
     /// <summary>
@@ -1028,26 +1028,26 @@ namespace DeriSock
         new ObjectJsonConverter<string>());
     }
 
-    //TODO: Create response data and then check this
+    //TODO: check this
     /// <inheritdoc cref="PrivateGetSubaccounts(bool)"/>
-    public Task<JsonRpcResponse<JArray>> PrivateGetSubaccounts()
+    public Task<JsonRpcResponse<SubaccountResponseData[]>> PrivateGetSubaccounts()
     {
       return SendAsync(
         "private/get_subaccounts",
         null,
-        new ObjectJsonConverter<JArray>());
+        new ObjectJsonConverter<SubaccountResponseData[]>());
     }
 
-    //TODO: Create response data and then check this
+    //TODO: check this
     /// <summary>
     /// Get information about subaccounts
     /// </summary>
-    public Task<JsonRpcResponse<JArray>> PrivateGetSubaccounts(bool withPortfolio)
+    public Task<JsonRpcResponse<SubaccountResponseData[]>> PrivateGetSubaccounts(bool withPortfolio)
     {
       return SendAsync(
         "private/get_subaccounts",
         new {with_portfolio = withPortfolio},
-        new ObjectJsonConverter<JArray>());
+        new ObjectJsonConverter<SubaccountResponseData[]>());
     }
 
     //TODO: Check this
