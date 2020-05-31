@@ -748,11 +748,22 @@ namespace DeriSock
 
     #endregion
 
-    //TODO: Finish this
-
     #region Account management
 
-    //TODO: private/get_account_summary
+    //TODO: Check this
+    /// <summary>
+    /// Retrieves user account summary
+    /// </summary>
+    /// <param name="currency">The currency symbol</param>
+    /// <param name="extended">Include additional fields</param>
+    public Task<JsonRpcResponse<AccountSummaryResponseData>> PrivateGetAccountSummary(string currency, bool extended)
+    {
+      return SendAsync(
+        "private/get_account_summary",
+        new {currency, extended},
+        new ObjectJsonConverter<AccountSummaryResponseData>());
+    }
+
     //TODO: private/get_email_language
     //TODO: private/set_email_language
     //TODO: private/get_position
@@ -1191,15 +1202,7 @@ namespace DeriSock
         new { order_id = orderId/*, access_token = AccessToken*/},
         new ObjectJsonConverter<OrderResponse>());
     }
-
-    public Task<JsonRpcResponse<AccountSummaryResponse>> PrivateGetAccountSummaryAsync(string currency, bool extended)
-    {
-      //TODO: check if private method works without access_token being sent
-      return SendAsync(
-        "private/get_account_summary", new { currency, extended/*, access_token = AccessToken*/},
-        new ObjectJsonConverter<AccountSummaryResponse>());
-    }
-
+    
     public Task<JsonRpcResponse<SettlementResponse>> PrivateGetSettlementHistoryByInstrumentAsync(string instrument, string type, int count)
     {
       //TODO: check if private method works without access_token being sent

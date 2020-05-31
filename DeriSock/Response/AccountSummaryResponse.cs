@@ -1,0 +1,308 @@
+﻿namespace DeriSock.Response
+{
+  using System;
+  using DeriSock.Extensions;
+  using Newtonsoft.Json;
+  using Newtonsoft.Json.Linq;
+
+  public class AccountSummaryResponseData
+  {
+    /// <summary>
+    ///   Options summary gamma
+    /// </summary>
+    [JsonProperty("options_gamma")]
+    public double OptionsGamma { get; set; }
+
+    /// <summary>
+    ///   Projected maintenance margin (for portfolio margining users)
+    /// </summary>
+    [JsonProperty("projected_maintenance_margin")]
+    public double ProjectedMaintenanceMargin { get; set; }
+
+    /// <summary>
+    ///   System generated user nickname (available when parameter <c>extended</c> is true)
+    /// </summary>
+    [JsonProperty("system_name")]
+    public string SystemName { get; set; }
+
+    /// <summary>
+    ///   The account's margin balance
+    /// </summary>
+    [JsonProperty("margin_balance")]
+    public double MarginBalance { get; set; }
+
+    /// <summary>
+    ///   Whether two factor authentication is enabled (available when parameter <c>extended</c> is true)
+    /// </summary>
+    [JsonProperty("tfa_enabled")]
+    public bool TfaEnabled { get; set; }
+
+    /// <summary>
+    ///   Options value
+    /// </summary>
+    [JsonProperty("options_value")]
+    public double OptionsValue { get; set; }
+
+    /// <summary>
+    ///   Account name (given by user) (available when parameter <c>extended</c> is true)
+    /// </summary>
+    [JsonProperty("username")]
+    public string Username { get; set; }
+
+    [JsonProperty("limits")]
+    public LimitsItem Limits { get; set; }
+
+    /// <summary>
+    ///   The account's current equity
+    /// </summary>
+    [JsonProperty("equity")]
+    public double Equity { get; set; }
+
+    /// <summary>
+    ///   Futures profit and loss
+    /// </summary>
+    [JsonProperty("futures_pl")]
+    public double FuturesPl { get; set; }
+
+    /// <summary>
+    ///   User fees in case of any discounts (available when parameter <c>extended</c> is true and user has any discounts)
+    /// </summary>
+    [JsonProperty("fees")]
+    public FeesItem[] Fees { get; set; }
+
+    /// <summary>
+    ///   Options session unrealized profit and loss
+    /// </summary>
+    [JsonProperty("options_session_upl")]
+    public double OptionsSessionUpl { get; set; }
+
+    /// <summary>
+    ///   Account id (available when parameter <c>extended</c> is true)
+    /// </summary>
+    [JsonProperty("id")]
+    public int Id { get; set; }
+
+    /// <summary>
+    ///   Options summary vega
+    /// </summary>
+    [JsonProperty("options_vega")]
+    public double OptionsVega { get; set; }
+
+    /// <summary>
+    ///   Optional identifier of the referrer (of the affiliation program, and available when parameter <c>extended</c> is
+    ///   true), which link was used by this account at registration. It coincides with suffix of the affiliation link path
+    ///   after <c>/reg-</c>
+    /// </summary>
+    [JsonProperty("referrer_id")]
+    public string ReferrerId { get; set; }
+
+    /// <summary>
+    ///   Session funding
+    /// </summary>
+    [JsonProperty("session_funding")]
+    public double SessionFunding { get; set; }
+
+    /// <summary>
+    ///   The selected currency
+    /// </summary>
+    [JsonProperty("currency")]
+    public string Currency { get; set; }
+
+    /// <summary>
+    ///   Account type (available when parameter <c>extended</c> is true)
+    /// </summary>
+    [JsonProperty("type")]
+    public string Type { get; set; }
+
+    /// <summary>
+    ///   Futures session realized profit and loss
+    /// </summary>
+    [JsonProperty("futures_session_rpl")]
+    public double FuturesSessionRpl { get; set; }
+
+    /// <summary>
+    ///   Options summary theta
+    /// </summary>
+    [JsonProperty("options_theta")]
+    public double OptionsTheta { get; set; }
+
+    /// <summary>
+    ///   <c>true</c> when portfolio margining is enabled for user
+    /// </summary>
+    [JsonProperty("portfolio_margining_enabled")]
+    public bool PortfolioMarginingEnabled { get; set; }
+
+    /// <summary>
+    ///   Session realized profit and loss
+    /// </summary>
+    [JsonProperty("session_rpl")]
+    public double SessionRpl { get; set; }
+
+    /// <summary>
+    ///   The sum of position deltas
+    /// </summary>
+    [JsonProperty("delta_total")]
+    public double DeltaTotal { get; set; }
+
+    /// <summary>
+    ///   Options profit and loss
+    /// </summary>
+    [JsonProperty("options_pl")]
+    public double OptionsPl { get; set; }
+
+    /// <summary>
+    ///   The account's available to withdrawal funds
+    /// </summary>
+    [JsonProperty("available_withdrawal_funds")]
+    public double AvailableWithdrawalFunds { get; set; }
+
+    /// <summary>
+    ///   The maintenance margin
+    /// </summary>
+    [JsonProperty("maintenance_margin")]
+    public double MaintenanceMargin { get; set; }
+
+    /// <summary>
+    ///   The account's initial margin
+    /// </summary>
+    [JsonProperty("initial_margin")]
+    public double InitialMargin { get; set; }
+
+    /// <summary>
+    ///   <c>true</c> when the inter-user transfers are enabled for user (available when parameter <c>extended</c> is true)
+    /// </summary>
+    [JsonProperty("interuser_transfers_enabled")]
+    public bool InterUserTransfersEnabled { get; set; }
+
+    /// <summary>
+    ///   Futures session unrealized profit and loss
+    /// </summary>
+    [JsonProperty("futures_session_upl")]
+    public double FuturesSessionUpl { get; set; }
+
+    /// <summary>
+    ///   Options session realized profit and loss
+    /// </summary>
+    [JsonProperty("options_session_rpl")]
+    public double OptionsSessionRpl { get; set; }
+
+    /// <summary>
+    ///   The account's available funds
+    /// </summary>
+    [JsonProperty("available_funds")]
+    public double AvailableFunds { get; set; }
+
+    /// <summary>
+    ///   User email (available when parameter <c>extended</c> is true)
+    /// </summary>
+    [JsonProperty("email")]
+    public string Email { get; set; }
+
+    /// <summary>
+    ///   Time at which the account was created (milliseconds since the Unix epoch; available when parameter <c>extended</c> is
+    ///   true)
+    /// </summary>
+    [JsonProperty("creation_timestamp")]
+    public long CreationTimestamp { get; set; }
+
+    /// <inheritdoc cref="CreationTimestamp" />
+    [JsonIgnore]
+    public DateTime CreationTimestampDateTime => CreationTimestamp.AsDateTimeFromMilliseconds();
+
+    /// <summary>
+    ///   Session unrealized profit and loss
+    /// </summary>
+    [JsonProperty("session_upl")]
+    public double SessionUpl { get; set; }
+
+    /// <summary>
+    ///   Profit and loss
+    /// </summary>
+    [JsonProperty("total_pl")]
+    public double TotalPl { get; set; }
+
+    /// <summary>
+    ///   Options summary delta
+    /// </summary>
+    [JsonProperty("options_delta")]
+    public double OptionsDelta { get; set; }
+
+    /// <summary>
+    ///   The account's balance
+    /// </summary>
+    [JsonProperty("balance")]
+    public double Balance { get; set; }
+
+    /// <summary>
+    ///   Projected initial margin (for portfolio margining users)
+    /// </summary>
+    [JsonProperty("projected_initial_margin")]
+    public double ProjectedInitialMargin { get; set; }
+
+    /// <summary>
+    ///   The deposit address for the account (if available)
+    /// </summary>
+    [JsonProperty("deposit_address")]
+    public string DepositAddress { get; set; }
+
+    public class LimitsItem
+    {
+      /// <summary>
+      /// Number of matching engine requests per second allowed for user
+      /// </summary>
+      [JsonProperty("matching_engine")]
+      public int MatchingEngine { get; set; }
+
+      /// <summary>
+      /// Maximal number of matching engine requests per second allowed for user in burst mode
+      /// </summary>
+      [JsonProperty("matching_engine_burst")]
+      public int MatchingEngineBurst { get; set; }
+
+      /// <summary>
+      /// Number of non matching engine requests per second allowed for user
+      /// </summary>
+      [JsonProperty("non_matching_engine")]
+      public int NonMatchingEngine { get; set; }
+
+      /// <summary>
+      /// Maximal number of non matching engine requests per second allowed for user in burst mode
+      /// </summary>
+      [JsonProperty("non_matching_engine_burst")]
+      public int NonMatchingEngineBurst { get; set; }
+    }
+
+    public class FeesItem
+    {
+      /// <summary>
+      /// The currency the fee applies to
+      /// </summary>
+      [JsonProperty("currency")]
+      public string Currency { get; set; }
+
+      /// <summary>
+      /// Fee type - <c>relative</c> if fee is calculated as a fraction of base instrument fee, <c>fixed</c> if fee is calculated solely using user fee
+      /// </summary>
+      [JsonProperty("fee_type")]
+      public string FeeType { get; set; }
+
+      /// <summary>
+      /// Type of the instruments the fee applies to - <c>future</c> for future instruments (excluding perpetual), <c>perpetual</c> for future perpetual instruments, <c>option</c> for options
+      /// </summary>
+      [JsonProperty("instrument_type")]
+      public string InstrumentType { get; set; }
+
+      /// <summary>
+      /// User fee as a maker
+      /// </summary>
+      [JsonProperty("maker_fee")]
+      public double MakerFee { get; set; }
+
+      /// <summary>
+      /// User fee as a taker
+      /// </summary>
+      [JsonProperty("taker_fee")]
+      public double TakerFee { get; set; }
+    }
+  }
+}
