@@ -28,7 +28,7 @@
   public class JsonRpcResponse
   {
     [JsonIgnore]
-    public JObject Original { get; set; }
+    public string Original { get; set; }
 
     [JsonProperty("jsonrpc")]
     public string JsonRpc { get; set; }

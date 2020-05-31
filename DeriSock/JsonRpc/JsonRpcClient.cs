@@ -261,15 +261,15 @@
 
       if (jObject.TryGetValue("method", out _))
       {
-        OnRequest(jObject);
+        OnRequest(message, jObject);
       }
       else
       {
-        OnResponse(jObject);
+        OnResponse(message, jObject);
       }
     }
 
-    protected virtual void OnRequest(JObject requestObject)
+    protected virtual void OnRequest(string message, JObject requestObject)
     {
       var request = requestObject.ToObject<JsonRpcRequest>();
       request.Original = requestObject;
@@ -279,10 +279,10 @@
       }, request);
     }
 
-    protected virtual void OnResponse(JObject responseObject)
+    protected virtual void OnResponse(string message, JObject responseObject)
     {
       var response = responseObject.ToObject<JsonRpcResponse>();
-      response.Original = responseObject;
+      response.Original = message;
 
       if (response.Id > 0)
       {
