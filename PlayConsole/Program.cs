@@ -54,13 +54,15 @@ namespace PlayConsole
         {
           await _client.ConnectAsync();
 
-          //var sig = CryptoHelper.CreateSignature("S3EL63RBXOJZSN4ACV5SWF2OLO337BKL");
-          //var loginRes = await _client.PublicAuthAsync(new AuthRequestParams
-          //{
-          //  GrantType = GrantType.Signature, ClientId = "KxEneYNT9VsK", Signature = sig, Scope = "expires:60"
-          //});
+          var sig = CryptoHelper.CreateSignature("S3EL63RBXOJZSN4ACV5SWF2OLO337BKL");
+          var loginRes = await _client.PublicAuthAsync(new AuthRequestParams
+          {
+            GrantType = GrantType.Signature,
+            ClientId = "KxEneYNT9VsK",
+            Signature = sig
+          });
 
-          var res = await _client.PublicGetAnnouncements(50);
+          var res = await _client.PrivateListApiKeys();
 
           var blub = 4;
         }

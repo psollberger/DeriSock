@@ -1,10 +1,10 @@
-﻿namespace DeriSock.Model
+﻿namespace DeriSock.Response
 {
   using System;
   using DeriSock.Extensions;
   using Newtonsoft.Json;
 
-  public class Announcement
+  public class AnnouncementResponseData
   {
     /// <summary>
     ///   The HTML body of the announcement
@@ -37,6 +37,7 @@
     public long PublicationTimestamp { get; set; }
 
     /// <inheritdoc cref="PublicationTimestamp"/>
+    [JsonIgnore]
     public DateTime PublicationTimestampDateTime => PublicationTimestamp.AsDateTimeFromMilliseconds();
 
     /// <summary>

@@ -153,7 +153,7 @@ namespace DeriSock
           return;
         }
 
-        var result = PublicAuthAsync(new AuthRequestParams {GrantType = "refresh_token"}).GetAwaiter().GetResult();
+        var result = PublicAuthAsync(new AuthRequestParams { GrantType = "refresh_token" }).GetAwaiter().GetResult();
         EnqueueAuthRefresh(result.ResultData.ExpiresIn);
       });
     }
@@ -256,18 +256,19 @@ namespace DeriSock
           }
 
           defer = new TaskCompletionSource<bool>();
-          entry = new SubscriptionEntry {State = SubscriptionState.Subscribing, Callbacks = new List<Action<Notification>>(), CurrentAction = defer.Task};
+          entry = new SubscriptionEntry { State = SubscriptionState.Subscribing, Callbacks = new List<Action<Notification>>(), CurrentAction = defer.Task };
           _subscriptionMap[channel] = entry;
         }
 
         try
         {
+          //TODO: check if private subscribe works without access_token being sent
           var subscribeResponse = IsPrivateChannel(channel)
             ? await _client.SendAsync(
-              "private/subscribe", new {channels = new[] {channel}, access_token = _client.AccessToken},
+              "private/subscribe", new { channels = new[] { channel }/*, access_token = _client.AccessToken*/ },
               new ListJsonConverter<string>()).ConfigureAwait(false)
             : await _client.SendAsync(
-                "public/subscribe", new {channels = new[] {channel}},
+                "public/subscribe", new { channels = new[] { channel } },
                 new ListJsonConverter<string>())
               .ConfigureAwait(false);
 
@@ -349,12 +350,13 @@ namespace DeriSock
 
         try
         {
+          //TODO: check if private unsubscribe works without access_token being sent
           var unsubscribeResponse = IsPrivateChannel(channel)
             ? await _client.SendAsync(
-              "private/unsubscribe", new {channels = new[] {channel}, access_token = _client.AccessToken},
+              "private/unsubscribe", new { channels = new[] { channel }/*, access_token = _client.AccessToken*/},
               new ListJsonConverter<string>())
             : await _client.SendAsync(
-              "public/unsubscribe", new {channels = new[] {channel}},
+              "public/unsubscribe", new { channels = new[] { channel } },
               new ListJsonConverter<string>());
 
           //TODO: Handle possible error in response
@@ -504,7 +506,7 @@ namespace DeriSock
           throw new ArgumentNullException(nameof(RefreshToken));
         }
 
-        reqParams = new {grant_type = "refresh_token", refresh_token = RefreshToken};
+        reqParams = new { grant_type = "refresh_token", refresh_token = RefreshToken };
       }
 
       var response = await SendAsync("public/auth", reqParams, new ObjectJsonConverter<AuthResponseData>());
@@ -531,7 +533,7 @@ namespace DeriSock
     {
       return SendAsync(
         "public/exchange_token",
-        new {refresh_token = refreshToken, subject_id = subjectId},
+        new { refresh_token = refreshToken, subject_id = subjectId },
         new ObjectJsonConverter<ExchangeTokenResponseData>());
     }
 
@@ -544,7 +546,7 @@ namespace DeriSock
     {
       return SendAsync(
         "public/fork_token",
-        new {refresh_token = refreshToken, session_name = sessionName},
+        new { refresh_token = refreshToken, session_name = sessionName },
         new ObjectJsonConverter<ForkTokenResponseData>());
     }
 
@@ -558,7 +560,9 @@ namespace DeriSock
         return false;
       }
 
-      _client.SendLogout("private/logout", new {access_token = AccessToken});
+      //TODO: check if logout works without access_token being sent
+      //_client.SendLogout("private/logout", new {access_token = AccessToken});
+      _client.SendLogout("private/logout", null);
       AccessToken = null;
       RefreshToken = null;
       return true;
@@ -582,7 +586,7 @@ namespace DeriSock
     /// <param name="interval">The heartbeat interval in seconds, but not less than 10</param>
     public Task<JsonRpcResponse<string>> PublicSetHeartbeatAsync(int interval)
     {
-      return SendAsync("public/set_heartbeat", new {interval}, new ObjectJsonConverter<string>());
+      return SendAsync("public/set_heartbeat", new { interval }, new ObjectJsonConverter<string>());
     }
 
     /// <summary>
@@ -630,9 +634,10 @@ namespace DeriSock
     /// </param>
     public Task<JsonRpcResponse<string>> PrivateEnableCancelOnDisconnectAsync(string scope)
     {
+      //TODO: check if private method works without access_token being sent
       return SendAsync(
         "private/enable_cancel_on_disconnect",
-        new {scope, access_token = AccessToken},
+        new { scope/*, access_token = AccessToken*/},
         new ObjectJsonConverter<string>());
     }
 
@@ -661,9 +666,10 @@ namespace DeriSock
     /// </param>
     public Task<JsonRpcResponse<string>> PrivateDisableCancelOnDisconnectAsync(string scope)
     {
+      //TODO: check if private method works without access_token being sent
       return SendAsync(
         "private/disable_cancel_on_disconnect",
-        new {scope, access_token = AccessToken},
+        new { scope/*, access_token = AccessToken*/},
         new ObjectJsonConverter<string>());
     }
 
@@ -688,9 +694,10 @@ namespace DeriSock
     /// </param>
     public Task<JsonRpcResponse<GetCancelOnDisconnectResponseData>> PrivateGetCancelOnDisconnectAsync(string scope)
     {
+      //TODO: check if private method works without access_token being sent
       return SendAsync(
         "private/get_cancel_on_disconnect",
-        new {scope, access_token = AccessToken},
+        new { scope/*, access_token = AccessToken*/},
         new ObjectJsonConverter<GetCancelOnDisconnectResponseData>());
     }
 
@@ -719,7 +726,7 @@ namespace DeriSock
     {
       return SendAsync(
         "public/hello",
-        new {client_name = clientName, client_version = clientVersion},
+        new { client_name = clientName, client_version = clientVersion },
         new ObjectJsonConverter<HelloResponseData>());
     }
 
@@ -735,7 +742,7 @@ namespace DeriSock
     {
       return SendAsync(
         "public/test",
-        new {expected_result = expectedResult},
+        new { expected_result = expectedResult },
         new ObjectJsonConverter<TestResponseData>());
     }
 
@@ -745,26 +752,28 @@ namespace DeriSock
 
     #region Account management
 
+    #region Announcements
+
     /// <inheritdoc cref="PublicGetAnnouncements(DateTime, int)" />
-    public Task<JsonRpcResponse<Announcement[]>> PublicGetAnnouncements()
+    public Task<JsonRpcResponse<AnnouncementResponseData[]>> PublicGetAnnouncements()
     {
       return SendAsync(
         "public/get_announcements",
         null,
-        new ObjectJsonConverter<Announcement[]>());
+        new ObjectJsonConverter<AnnouncementResponseData[]>());
     }
 
     /// <inheritdoc cref="PublicGetAnnouncements(DateTime, int)" />
-    public Task<JsonRpcResponse<Announcement[]>> PublicGetAnnouncements(DateTime startTime)
+    public Task<JsonRpcResponse<AnnouncementResponseData[]>> PublicGetAnnouncements(DateTime startTime)
     {
       return SendAsync(
         "public/get_announcements",
-        new {start_timestamp = startTime.AsMilliseconds()},
-        new ObjectJsonConverter<Announcement[]>());
+        new { start_timestamp = startTime.AsMilliseconds() },
+        new ObjectJsonConverter<AnnouncementResponseData[]>());
     }
 
     /// <inheritdoc cref="PublicGetAnnouncements(DateTime, int)" />
-    public Task<JsonRpcResponse<Announcement[]>> PublicGetAnnouncements(int count)
+    public Task<JsonRpcResponse<AnnouncementResponseData[]>> PublicGetAnnouncements(int count)
     {
       if (count < 1 || count > 50)
       {
@@ -773,8 +782,8 @@ namespace DeriSock
 
       return SendAsync(
         "public/get_announcements",
-        new {count},
-        new ObjectJsonConverter<Announcement[]>());
+        new { count },
+        new ObjectJsonConverter<AnnouncementResponseData[]>());
     }
 
     /// <summary>
@@ -783,7 +792,7 @@ namespace DeriSock
     /// </summary>
     /// <param name="startTime">Timestamp from which we want to retrieve announcements</param>
     /// <param name="count">Maximum count of returned announcements. Must be between 1 and 50</param>
-    public Task<JsonRpcResponse<Announcement[]>> PublicGetAnnouncements(DateTime startTime, int count)
+    public Task<JsonRpcResponse<AnnouncementResponseData[]>> PublicGetAnnouncements(DateTime startTime, int count)
     {
       if (count < 1 || count > 50)
       {
@@ -792,9 +801,186 @@ namespace DeriSock
 
       return SendAsync(
         "public/get_announcements",
-        new {start_timestamp = startTime.AsMilliseconds(), count},
-        new ObjectJsonConverter<Announcement[]>());
+        new { start_timestamp = startTime.AsMilliseconds(), count },
+        new ObjectJsonConverter<AnnouncementResponseData[]>());
     }
+
+    /// <summary>
+    /// Retrieves announcements that have not been marked read by the user
+    /// </summary>
+    public Task<JsonRpcResponse<AnnouncementResponseData[]>> PrivateGetNewAnnouncements()
+    {
+      return SendAsync(
+        "private/get_new_announcements",
+        null,
+        new ObjectJsonConverter<AnnouncementResponseData[]>());
+    }
+
+    /// <summary>
+    /// Marks an announcement as read, so it will not be shown in <see cref="PrivateGetNewAnnouncements"/>
+    /// </summary>
+    /// <param name="id">The ID of the announcement</param>
+    public Task<JsonRpcResponse<string>> PrivateSetAnnouncementAsRead(long id)
+    {
+      return SendAsync(
+        "private/set_announcement_as_read",
+        new { announcement_id = id },
+        new ObjectJsonConverter<string>());
+    }
+
+    #endregion
+
+    #region Api Key
+
+    //TODO: Check this
+    /// <summary>
+    /// Changes name for key with given id
+    /// </summary>
+    /// <param name="id">Id of key</param>
+    /// <param name="name">Name of key (only letters, numbers and underscores allowed; maximum length is 16 characters)</param>
+    public Task<JsonRpcResponse<ApiKeyResponseData>> PrivateChangeApiKeyName(int id, string name)
+    {
+      return SendAsync(
+        "private/change_api_key_name",
+        new { id, name },
+        new ObjectJsonConverter<ApiKeyResponseData>());
+    }
+
+    //TODO: Check this
+    /// <summary>
+    /// Changes scope for key with given id
+    /// </summary>
+    /// <param name="id">Id of key</param>
+    /// <param name="maxScope"></param>
+    public Task<JsonRpcResponse<ApiKeyResponseData>> PrivateChangeScopeInApiKey(int id, string maxScope)
+    {
+      return SendAsync(
+        "private/change_scope_in_api_key",
+        new { id, max_scope = maxScope },
+        new ObjectJsonConverter<ApiKeyResponseData>());
+    }
+
+    //TODO: Check this
+    /// <inheritdoc cref="PrivateCreateApiKey(string, string, bool)"/>
+    public Task<JsonRpcResponse<ApiKeyResponseData>> PrivateCreateApiKey(string maxScope)
+    {
+      return SendAsync(
+        "private/create_api_key",
+        new { max_scope = maxScope },
+        new ObjectJsonConverter<ApiKeyResponseData>());
+    }
+
+    //TODO: Check this
+    /// <inheritdoc cref="PrivateCreateApiKey(string, string, bool)"/>
+    public Task<JsonRpcResponse<ApiKeyResponseData>> PrivateCreateApiKey(string maxScope, string name)
+    {
+      return SendAsync(
+        "private/create_api_key",
+        new { name, max_scope = maxScope },
+        new ObjectJsonConverter<ApiKeyResponseData>());
+    }
+
+    //TODO: Check this
+    /// <inheritdoc cref="PrivateCreateApiKey(string, string, bool)"/>
+    public Task<JsonRpcResponse<ApiKeyResponseData>> PrivateCreateApiKey(string maxScope, bool asDefault)
+    {
+      return SendAsync(
+        "private/create_api_key",
+        new { @default = asDefault, max_scope = maxScope },
+        new ObjectJsonConverter<ApiKeyResponseData>());
+    }
+
+    //TODO: Check this
+    /// <summary>
+    /// Creates new api key with given scope
+    /// </summary>
+    /// <param name="maxScope"></param>
+    /// <param name="name">Name of key (only letters, numbers and underscores allowed; maximum length is 16 characters)</param>
+    /// <param name="asDefault">If <c>true</c>, new key is marked as default</param>
+    public Task<JsonRpcResponse<ApiKeyResponseData>> PrivateCreateApiKey(string maxScope, string name, bool asDefault)
+    {
+      return SendAsync(
+        "private/create_api_key",
+        new { name, @default = asDefault, max_scope = maxScope },
+        new ObjectJsonConverter<ApiKeyResponseData>());
+    }
+
+    //TODO: Check this
+    /// <summary>
+    /// Disables api key with given id
+    /// </summary>
+    /// <param name="id">Id of key</param>
+    public Task<JsonRpcResponse<ApiKeyResponseData>> PrivateDisableApiKey(int id)
+    {
+      return SendAsync(
+        "private/disable_api_key",
+        new {id},
+        new ObjectJsonConverter<ApiKeyResponseData>());
+    }
+
+    //TODO: Check this
+    /// <summary>
+    /// Enables api key with given id
+    /// </summary>
+    /// <param name="id">Id of key</param>
+    public Task<JsonRpcResponse<ApiKeyResponseData>> PrivateEnableApiKey(int id)
+    {
+      return SendAsync(
+        "private/enable_api_key",
+        new {id},
+        new ObjectJsonConverter<ApiKeyResponseData>());
+    }
+
+    /// <summary>
+    /// Retrieves list of api keys
+    /// </summary>
+    public Task<JsonRpcResponse<ApiKeyResponseData[]>> PrivateListApiKeys()
+    {
+      return SendAsync(
+        "private/list_api_keys",
+        null,
+        new ObjectJsonConverter<ApiKeyResponseData[]>());
+    }
+
+    /// <summary>
+    /// Removes api key
+    /// </summary>
+    /// <param name="id">Id of key</param>
+    public Task<JsonRpcResponse<string>> PrivateRemoveApiKey(int id)
+    {
+      return SendAsync(
+        "private/remove_api_key",
+        new {id},
+        new ObjectJsonConverter<string>());
+    }
+
+    //TODO: Check this
+    /// <summary>
+    /// Resets secret in api key
+    /// </summary>
+    /// <param name="id">Id of key</param>
+    public Task<JsonRpcResponse<ApiKeyResponseData>> PrivateResetApiKey(int id)
+    {
+      return SendAsync(
+        "private/reset_api_key",
+        new {id},
+        new ObjectJsonConverter<ApiKeyResponseData>());
+    }
+
+    //TODO: Check this
+    /// <summary>
+    /// Sets key with given id as default one
+    /// </summary>
+    /// <param name="id">Id of key</param>
+    public Task<JsonRpcResponse<ApiKeyResponseData>> PrivateSetApiKeyAsDefault(int id)
+    {
+      return SendAsync(
+        "private/set_api_key_as_default",
+        new {id},
+        new ObjectJsonConverter<ApiKeyResponseData>());
+    }
+
+    #endregion
 
     #endregion
 
@@ -810,6 +996,7 @@ namespace DeriSock
 
     public Task<JsonRpcResponse<BuySellResponse>> PrivateBuyLimitAsync(string instrument, double amount, double price, string label)
     {
+      //TODO: check if private method works without access_token being sent
       return SendAsync(
         "private/buy",
         new
@@ -820,13 +1007,13 @@ namespace DeriSock
           label,
           price,
           time_in_force = "good_til_cancelled",
-          post_only = true,
-          access_token = AccessToken
+          post_only = true/*, access_token = AccessToken*/
         }, new ObjectJsonConverter<BuySellResponse>());
     }
 
     public Task<JsonRpcResponse<BuySellResponse>> PrivateSellLimitAsync(string instrument, double amount, double price, string label)
     {
+      //TODO: check if private method works without access_token being sent
       return SendAsync(
         "private/sell",
         new
@@ -837,8 +1024,7 @@ namespace DeriSock
           label,
           price,
           time_in_force = "good_til_cancelled",
-          post_only = true,
-          access_token = AccessToken
+          post_only = true/*, access_token = AccessToken*/
         }, new ObjectJsonConverter<BuySellResponse>());
     }
 
@@ -846,56 +1032,63 @@ namespace DeriSock
 
     public Task<JsonRpcResponse<JObject>> PrivateCancelOrderAsync(string orderId)
     {
+      //TODO: check if private method works without access_token being sent
       return SendAsync(
         "private/cancel",
-        new {order_id = orderId, access_token = AccessToken},
+        new { order_id = orderId/*, access_token = AccessToken*/},
         new ObjectJsonConverter<JObject>());
     }
 
     public Task<JsonRpcResponse<JObject>> PrivateCancelAllOrdersByInstrumentAsync(string instrument)
     {
+      //TODO: check if private method works without access_token being sent
       return SendAsync(
         "private/cancel_all_by_instrument",
-        new {instrument_name = instrument, access_token = AccessToken},
+        new { instrument_name = instrument/*, access_token = AccessToken*/},
         new ObjectJsonConverter<JObject>());
     }
 
     public Task<JsonRpcResponse<OrderItem[]>> PrivateGetOpenOrdersAsync(string instrument)
     {
+      //TODO: check if private method works without access_token being sent
       return SendAsync(
         "private/get_open_orders_by_instrument",
-        new {instrument_name = instrument, access_token = AccessToken},
+        new { instrument_name = instrument/*, access_token = AccessToken*/},
         new ObjectJsonConverter<OrderItem[]>());
     }
 
     public Task<JsonRpcResponse<OrderResponse>> PrivateGetOrderStateAsync(string orderId)
     {
+      //TODO: check if private method works without access_token being sent
       return SendAsync(
         "private/get_order_state",
-        new {order_id = orderId, access_token = AccessToken},
+        new { order_id = orderId/*, access_token = AccessToken*/},
         new ObjectJsonConverter<OrderResponse>());
     }
 
     public Task<JsonRpcResponse<AccountSummaryResponse>> PrivateGetAccountSummaryAsync(string currency, bool extended)
     {
+      //TODO: check if private method works without access_token being sent
       return SendAsync(
-        "private/get_account_summary", new {currency, extended, access_token = AccessToken},
+        "private/get_account_summary", new { currency, extended/*, access_token = AccessToken*/},
         new ObjectJsonConverter<AccountSummaryResponse>());
     }
 
     public Task<JsonRpcResponse<SettlementResponse>> PrivateGetSettlementHistoryByInstrumentAsync(string instrument, string type, int count)
     {
+      //TODO: check if private method works without access_token being sent
       return SendAsync(
         "private/get_settlement_history_by_instrument",
-        new {instrument_name = instrument, type, count, access_token = AccessToken},
+        new { instrument_name = instrument, type, count/*, access_token = AccessToken*/},
         new ObjectJsonConverter<SettlementResponse>());
     }
 
     public Task<JsonRpcResponse<SettlementResponse>> PrivateGetSettlementHistoryByCurrencyAsync(string currency, string type, int count)
     {
+      //TODO: check if private method works without access_token being sent
       return SendAsync(
         "private/get_settlement_history_by_currency",
-        new {currency, type, count, access_token = AccessToken},
+        new { currency, type, count/*, access_token = AccessToken*/},
         new ObjectJsonConverter<SettlementResponse>());
     }
 
@@ -909,7 +1102,7 @@ namespace DeriSock
     {
       return SendAsync(
         "public/get_order_book",
-        new {instrument_name = instrument, depth},
+        new { instrument_name = instrument, depth },
         new ObjectJsonConverter<BookResponse>());
     }
 
