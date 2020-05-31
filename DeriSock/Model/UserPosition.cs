@@ -1,8 +1,8 @@
-﻿namespace DeriSock.Response
+﻿namespace DeriSock.Model
 {
   using Newtonsoft.Json;
 
-  public class PositionResponseData
+  public class UserPosition
   {
     /// <summary>
     ///   Average price of trades that built this position

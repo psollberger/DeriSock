@@ -1,8 +1,8 @@
-﻿namespace DeriSock.Response
+﻿namespace DeriSock.Model
 {
   using Newtonsoft.Json;
 
-  public class SubaccountResponseData
+  public class SubAccount
   {
     /// <summary>
     ///   User email
@@ -35,7 +35,7 @@
     public string NotConfirmedEMail { get; set; }
 
     [JsonProperty("portfolio")]
-    public PortfolioItem Portfolio { get; set; }
+    public SubAccountPortfolios Portfolio { get; set; }
 
     /// <summary>
     ///   When <c>true</c>, receive all notification emails on the main email
@@ -60,41 +60,5 @@
 
     [JsonProperty("username")]
     public string Username { get; set; }
-
-    public class PortfolioItem
-    {
-      [JsonProperty("btc")]
-      public PortfolioItemEntry Btc { get; set; }
-
-      [JsonProperty("eth")]
-      public PortfolioItemEntry Eth { get; set; }
-    }
-
-    public class PortfolioItemEntry
-    {
-      [JsonProperty("available_funds")]
-      public double AvailableFunds { get; set; }
-
-      [JsonProperty("available_withdrawal_funds")]
-      public double AvailableWithdrawalFunds { get; set; }
-
-      [JsonProperty("balance")]
-      public double Balance { get; set; }
-
-      [JsonProperty("currency")]
-      public string Currency { get; set; }
-
-      [JsonProperty("equity")]
-      public double Equity { get; set; }
-
-      [JsonProperty("initial_margin")]
-      public double InitialMargin { get; set; }
-
-      [JsonProperty("maintenance_margin")]
-      public double MaintenanceMargin { get; set; }
-
-      [JsonProperty("margin_balance")]
-      public double MarginBalance { get; set; }
-    }
   }
 }

@@ -1,10 +1,10 @@
-﻿namespace DeriSock.Response
+﻿namespace DeriSock.Model
 {
   using System;
   using DeriSock.Extensions;
   using Newtonsoft.Json;
 
-  public class ApiKeyResponseData
+  public class ApiKeyInfo
   {
     /// <summary>
     ///   Client identifier used for authentication

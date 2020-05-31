@@ -1,8 +1,8 @@
-﻿namespace DeriSock.Response
+﻿namespace DeriSock.Model
 {
   using Newtonsoft.Json;
 
-  public class GetCancelOnDisconnectResponseData
+  public class CancelOnDisconnectInfo
   {
     [JsonProperty("enabled")]
     public bool Enabled { get; set; }

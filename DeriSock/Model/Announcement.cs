@@ -1,10 +1,10 @@
-﻿namespace DeriSock.Response
+﻿namespace DeriSock.Model
 {
   using System;
   using DeriSock.Extensions;
   using Newtonsoft.Json;
 
-  public class AnnouncementResponseData
+  public class Announcement
   {
     /// <summary>
     ///   The HTML body of the announcement

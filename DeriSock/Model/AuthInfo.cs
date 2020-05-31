@@ -1,8 +1,8 @@
-﻿namespace DeriSock.Response
+﻿namespace DeriSock.Model
 {
   using Newtonsoft.Json;
 
-  public class ForkTokenResponseData
+  public class AuthInfo
   {
     [JsonProperty("access_token")]
     public string AccessToken { get; set; }
@@ -22,6 +22,12 @@
     /// </summary>
     [JsonProperty("scope")]
     public string Scope { get; set; }
+
+    /// <summary>
+    ///   Copied from the input (if applicable)
+    /// </summary>
+    [JsonProperty("state")]
+    public string State { get; set; }
 
     /// <summary>
     ///   Authorization type, allowed value - <c>bearer</c>

@@ -12,7 +12,6 @@ namespace DeriSock
   using DeriSock.JsonRpc;
   using DeriSock.Model;
   using DeriSock.Request;
-  using DeriSock.Response;
   using Newtonsoft.Json.Linq;
   using Serilog;
   using Serilog.Events;
@@ -437,7 +436,7 @@ namespace DeriSock
     ///   </para>
     /// </summary>
     /// <param name="args"><see cref="AuthRequestParams" /> object containing the necessary values</param>
-    public async Task<JsonRpcResponse<AuthResponseData>> PublicAuth(AuthRequestParams args)
+    public async Task<JsonRpcResponse<AuthInfo>> PublicAuth(AuthRequestParams args)
     {
       Logger.Debug("Authenticate ({GrantType})", args?.GrantType);
 
@@ -513,7 +512,7 @@ namespace DeriSock
         reqParams = new {grant_type = "refresh_token", refresh_token = RefreshToken};
       }
 
-      var response = await Send("public/auth", reqParams, new ObjectJsonConverter<AuthResponseData>());
+      var response = await Send("public/auth", reqParams, new ObjectJsonConverter<AuthInfo>());
 
       var loginRes = response.ResultData;
 
@@ -533,12 +532,12 @@ namespace DeriSock
     /// </summary>
     /// <param name="refreshToken">Refresh token</param>
     /// <param name="subjectId">New subject id</param>
-    public Task<JsonRpcResponse<ExchangeTokenResponseData>> PublicExchangeToken(string refreshToken, int subjectId)
+    public Task<JsonRpcResponse<AuthInfo>> PublicExchangeToken(string refreshToken, int subjectId)
     {
       return Send(
         "public/exchange_token",
         new {refresh_token = refreshToken, subject_id = subjectId},
-        new ObjectJsonConverter<ExchangeTokenResponseData>());
+        new ObjectJsonConverter<AuthInfo>());
     }
 
     /// <summary>
@@ -546,12 +545,12 @@ namespace DeriSock
     /// </summary>
     /// <param name="refreshToken">Refresh token</param>
     /// <param name="sessionName">New session name</param>
-    public Task<JsonRpcResponse<ForkTokenResponseData>> PublicForkToken(string refreshToken, string sessionName)
+    public Task<JsonRpcResponse<AuthInfo>> PublicForkToken(string refreshToken, string sessionName)
     {
       return Send(
         "public/fork_token",
         new {refresh_token = refreshToken, session_name = sessionName},
-        new ObjectJsonConverter<ForkTokenResponseData>());
+        new ObjectJsonConverter<AuthInfo>());
     }
 
     /// <summary>
@@ -684,7 +683,7 @@ namespace DeriSock
     ///   Specifies if Cancel On Disconnect change should be applied/checked for the current connection or
     ///   the account (default - <c>connection</c>)
     /// </param>
-    public Task<JsonRpcResponse<GetCancelOnDisconnectResponseData>> PrivateGetCancelOnDisconnect()
+    public Task<JsonRpcResponse<CancelOnDisconnectInfo>> PrivateGetCancelOnDisconnect()
     {
       return PrivateGetCancelOnDisconnect("connection");
     }
@@ -696,13 +695,13 @@ namespace DeriSock
     ///   Specifies if Cancel On Disconnect change should be applied/checked for the current connection or
     ///   the account (default - <c>connection</c>)
     /// </param>
-    public Task<JsonRpcResponse<GetCancelOnDisconnectResponseData>> PrivateGetCancelOnDisconnect(string scope)
+    public Task<JsonRpcResponse<CancelOnDisconnectInfo>> PrivateGetCancelOnDisconnect(string scope)
     {
       //TODO: check if private method works without access_token being sent
       return Send(
         "private/get_cancel_on_disconnect",
         new {scope /*, access_token = AccessToken*/},
-        new ObjectJsonConverter<GetCancelOnDisconnectResponseData>());
+        new ObjectJsonConverter<CancelOnDisconnectInfo>());
     }
 
     #endregion
@@ -726,12 +725,12 @@ namespace DeriSock
     /// </summary>
     /// <param name="clientName">Client software name</param>
     /// <param name="clientVersion">Client software version</param>
-    public Task<JsonRpcResponse<HelloResponseData>> PublicHello(string clientName, string clientVersion)
+    public Task<JsonRpcResponse<ServerHello>> PublicHello(string clientName, string clientVersion)
     {
       return Send(
         "public/hello",
         new {client_name = clientName, client_version = clientVersion},
-        new ObjectJsonConverter<HelloResponseData>());
+        new ObjectJsonConverter<ServerHello>());
     }
 
     /// <summary>
@@ -742,12 +741,12 @@ namespace DeriSock
     ///   The value "exception" will trigger an error response. This may be useful for testing
     ///   wrapper libraries.
     /// </param>
-    public Task<JsonRpcResponse<TestResponseData>> PublicTest(string expectedResult)
+    public Task<JsonRpcResponse<ServerHello>> PublicTest(string expectedResult)
     {
       return Send(
         "public/test",
         new {expected_result = expectedResult},
-        new ObjectJsonConverter<TestResponseData>());
+        new ObjectJsonConverter<ServerHello>());
     }
 
     #endregion
@@ -759,12 +758,12 @@ namespace DeriSock
     /// </summary>
     /// <param name="currency">The currency symbol</param>
     /// <param name="extended">Include additional fields</param>
-    public Task<JsonRpcResponse<AccountSummaryResponseData>> PrivateGetAccountSummary(string currency, bool extended)
+    public Task<JsonRpcResponse<AccountSummary>> PrivateGetAccountSummary(string currency, bool extended)
     {
       return Send(
         "private/get_account_summary",
         new {currency, extended},
-        new ObjectJsonConverter<AccountSummaryResponseData>());
+        new ObjectJsonConverter<AccountSummary>());
     }
 
     /// <summary>
@@ -797,21 +796,21 @@ namespace DeriSock
     ///   Retrieve user position
     /// </summary>
     /// <param name="instrumentName">Instrument name</param>
-    public Task<JsonRpcResponse<PositionResponseData>> PrivateGetPosition(string instrumentName)
+    public Task<JsonRpcResponse<UserPosition>> PrivateGetPosition(string instrumentName)
     {
       return Send(
         "private/get_position",
         new {instrument_name = instrumentName},
-        new ObjectJsonConverter<PositionResponseData>());
+        new ObjectJsonConverter<UserPosition>());
     }
 
     /// <inheritdoc cref="PrivateGetPositions(string, string)" />
-    public Task<JsonRpcResponse<PositionResponseData[]>> PrivateGetPositions(string currency)
+    public Task<JsonRpcResponse<UserPosition[]>> PrivateGetPositions(string currency)
     {
       return Send(
         "private/get_positions",
         new {currency},
-        new ObjectJsonConverter<PositionResponseData[]>());
+        new ObjectJsonConverter<UserPosition[]>());
     }
 
     /// <summary>
@@ -819,36 +818,36 @@ namespace DeriSock
     /// </summary>
     /// <param name="currency"><c>BTC</c> or <c>ETH</c></param>
     /// <param name="kind">Kind filter on positions: <c>future</c> or <c>option</c></param>
-    public Task<JsonRpcResponse<PositionResponseData[]>> PrivateGetPositions(string currency, string kind)
+    public Task<JsonRpcResponse<UserPosition[]>> PrivateGetPositions(string currency, string kind)
     {
       return Send(
         "private/get_positions",
         new {currency, kind},
-        new ObjectJsonConverter<PositionResponseData[]>());
+        new ObjectJsonConverter<UserPosition[]>());
     }
 
     #region Announcements
 
     /// <inheritdoc cref="PublicGetAnnouncements(DateTime, int)" />
-    public Task<JsonRpcResponse<AnnouncementResponseData[]>> PublicGetAnnouncements()
+    public Task<JsonRpcResponse<Announcement[]>> PublicGetAnnouncements()
     {
       return Send(
         "public/get_announcements",
         null,
-        new ObjectJsonConverter<AnnouncementResponseData[]>());
+        new ObjectJsonConverter<Announcement[]>());
     }
 
     /// <inheritdoc cref="PublicGetAnnouncements(DateTime, int)" />
-    public Task<JsonRpcResponse<AnnouncementResponseData[]>> PublicGetAnnouncements(DateTime startTime)
+    public Task<JsonRpcResponse<Announcement[]>> PublicGetAnnouncements(DateTime startTime)
     {
       return Send(
         "public/get_announcements",
         new {start_timestamp = startTime.AsMilliseconds()},
-        new ObjectJsonConverter<AnnouncementResponseData[]>());
+        new ObjectJsonConverter<Announcement[]>());
     }
 
     /// <inheritdoc cref="PublicGetAnnouncements(DateTime, int)" />
-    public Task<JsonRpcResponse<AnnouncementResponseData[]>> PublicGetAnnouncements(int count)
+    public Task<JsonRpcResponse<Announcement[]>> PublicGetAnnouncements(int count)
     {
       if (count < 1 || count > 50)
       {
@@ -858,7 +857,7 @@ namespace DeriSock
       return Send(
         "public/get_announcements",
         new {count},
-        new ObjectJsonConverter<AnnouncementResponseData[]>());
+        new ObjectJsonConverter<Announcement[]>());
     }
 
     /// <summary>
@@ -867,7 +866,7 @@ namespace DeriSock
     /// </summary>
     /// <param name="startTime">Timestamp from which we want to retrieve announcements</param>
     /// <param name="count">Maximum count of returned announcements. Must be between 1 and 50</param>
-    public Task<JsonRpcResponse<AnnouncementResponseData[]>> PublicGetAnnouncements(DateTime startTime, int count)
+    public Task<JsonRpcResponse<Announcement[]>> PublicGetAnnouncements(DateTime startTime, int count)
     {
       if (count < 1 || count > 50)
       {
@@ -877,18 +876,18 @@ namespace DeriSock
       return Send(
         "public/get_announcements",
         new {start_timestamp = startTime.AsMilliseconds(), count},
-        new ObjectJsonConverter<AnnouncementResponseData[]>());
+        new ObjectJsonConverter<Announcement[]>());
     }
 
     /// <summary>
     ///   Retrieves announcements that have not been marked read by the user
     /// </summary>
-    public Task<JsonRpcResponse<AnnouncementResponseData[]>> PrivateGetNewAnnouncements()
+    public Task<JsonRpcResponse<Announcement[]>> PrivateGetNewAnnouncements()
     {
       return Send(
         "private/get_new_announcements",
         null,
-        new ObjectJsonConverter<AnnouncementResponseData[]>());
+        new ObjectJsonConverter<Announcement[]>());
     }
 
     /// <summary>
@@ -913,12 +912,12 @@ namespace DeriSock
     /// </summary>
     /// <param name="id">Id of key</param>
     /// <param name="name">Name of key (only letters, numbers and underscores allowed; maximum length is 16 characters)</param>
-    public Task<JsonRpcResponse<ApiKeyResponseData>> PrivateChangeApiKeyName(int id, string name)
+    public Task<JsonRpcResponse<ApiKeyInfo>> PrivateChangeApiKeyName(int id, string name)
     {
       return Send(
         "private/change_api_key_name",
         new {id, name},
-        new ObjectJsonConverter<ApiKeyResponseData>());
+        new ObjectJsonConverter<ApiKeyInfo>());
     }
 
     //TODO: Check this
@@ -927,42 +926,42 @@ namespace DeriSock
     /// </summary>
     /// <param name="id">Id of key</param>
     /// <param name="maxScope"></param>
-    public Task<JsonRpcResponse<ApiKeyResponseData>> PrivateChangeScopeInApiKey(int id, string maxScope)
+    public Task<JsonRpcResponse<ApiKeyInfo>> PrivateChangeScopeInApiKey(int id, string maxScope)
     {
       return Send(
         "private/change_scope_in_api_key",
         new {id, max_scope = maxScope},
-        new ObjectJsonConverter<ApiKeyResponseData>());
+        new ObjectJsonConverter<ApiKeyInfo>());
     }
 
     //TODO: Check this
     /// <inheritdoc cref="PrivateCreateApiKey(string, string, bool)" />
-    public Task<JsonRpcResponse<ApiKeyResponseData>> PrivateCreateApiKey(string maxScope)
+    public Task<JsonRpcResponse<ApiKeyInfo>> PrivateCreateApiKey(string maxScope)
     {
       return Send(
         "private/create_api_key",
         new {max_scope = maxScope},
-        new ObjectJsonConverter<ApiKeyResponseData>());
+        new ObjectJsonConverter<ApiKeyInfo>());
     }
 
     //TODO: Check this
     /// <inheritdoc cref="PrivateCreateApiKey(string, string, bool)" />
-    public Task<JsonRpcResponse<ApiKeyResponseData>> PrivateCreateApiKey(string maxScope, string name)
+    public Task<JsonRpcResponse<ApiKeyInfo>> PrivateCreateApiKey(string maxScope, string name)
     {
       return Send(
         "private/create_api_key",
         new {name, max_scope = maxScope},
-        new ObjectJsonConverter<ApiKeyResponseData>());
+        new ObjectJsonConverter<ApiKeyInfo>());
     }
 
     //TODO: Check this
     /// <inheritdoc cref="PrivateCreateApiKey(string, string, bool)" />
-    public Task<JsonRpcResponse<ApiKeyResponseData>> PrivateCreateApiKey(string maxScope, bool asDefault)
+    public Task<JsonRpcResponse<ApiKeyInfo>> PrivateCreateApiKey(string maxScope, bool asDefault)
     {
       return Send(
         "private/create_api_key",
         new {@default = asDefault, max_scope = maxScope},
-        new ObjectJsonConverter<ApiKeyResponseData>());
+        new ObjectJsonConverter<ApiKeyInfo>());
     }
 
     //TODO: Check this
@@ -972,12 +971,12 @@ namespace DeriSock
     /// <param name="maxScope"></param>
     /// <param name="name">Name of key (only letters, numbers and underscores allowed; maximum length is 16 characters)</param>
     /// <param name="asDefault">If <c>true</c>, new key is marked as default</param>
-    public Task<JsonRpcResponse<ApiKeyResponseData>> PrivateCreateApiKey(string maxScope, string name, bool asDefault)
+    public Task<JsonRpcResponse<ApiKeyInfo>> PrivateCreateApiKey(string maxScope, string name, bool asDefault)
     {
       return Send(
         "private/create_api_key",
         new {name, @default = asDefault, max_scope = maxScope},
-        new ObjectJsonConverter<ApiKeyResponseData>());
+        new ObjectJsonConverter<ApiKeyInfo>());
     }
 
     //TODO: Check this
@@ -985,12 +984,12 @@ namespace DeriSock
     ///   Disables api key with given id
     /// </summary>
     /// <param name="id">Id of key</param>
-    public Task<JsonRpcResponse<ApiKeyResponseData>> PrivateDisableApiKey(int id)
+    public Task<JsonRpcResponse<ApiKeyInfo>> PrivateDisableApiKey(int id)
     {
       return Send(
         "private/disable_api_key",
         new {id},
-        new ObjectJsonConverter<ApiKeyResponseData>());
+        new ObjectJsonConverter<ApiKeyInfo>());
     }
 
     //TODO: Check this
@@ -998,23 +997,23 @@ namespace DeriSock
     ///   Enables api key with given id
     /// </summary>
     /// <param name="id">Id of key</param>
-    public Task<JsonRpcResponse<ApiKeyResponseData>> PrivateEnableApiKey(int id)
+    public Task<JsonRpcResponse<ApiKeyInfo>> PrivateEnableApiKey(int id)
     {
       return Send(
         "private/enable_api_key",
         new {id},
-        new ObjectJsonConverter<ApiKeyResponseData>());
+        new ObjectJsonConverter<ApiKeyInfo>());
     }
 
     /// <summary>
     ///   Retrieves list of api keys
     /// </summary>
-    public Task<JsonRpcResponse<ApiKeyResponseData[]>> PrivateListApiKeys()
+    public Task<JsonRpcResponse<ApiKeyInfo[]>> PrivateListApiKeys()
     {
       return Send(
         "private/list_api_keys",
         null,
-        new ObjectJsonConverter<ApiKeyResponseData[]>());
+        new ObjectJsonConverter<ApiKeyInfo[]>());
     }
 
     /// <summary>
@@ -1034,12 +1033,12 @@ namespace DeriSock
     ///   Resets secret in api key
     /// </summary>
     /// <param name="id">Id of key</param>
-    public Task<JsonRpcResponse<ApiKeyResponseData>> PrivateResetApiKey(int id)
+    public Task<JsonRpcResponse<ApiKeyInfo>> PrivateResetApiKey(int id)
     {
       return Send(
         "private/reset_api_key",
         new {id},
-        new ObjectJsonConverter<ApiKeyResponseData>());
+        new ObjectJsonConverter<ApiKeyInfo>());
     }
 
     //TODO: Check this
@@ -1047,12 +1046,12 @@ namespace DeriSock
     ///   Sets key with given id as default one
     /// </summary>
     /// <param name="id">Id of key</param>
-    public Task<JsonRpcResponse<ApiKeyResponseData>> PrivateSetApiKeyAsDefault(int id)
+    public Task<JsonRpcResponse<ApiKeyInfo>> PrivateSetApiKeyAsDefault(int id)
     {
       return Send(
         "private/set_api_key_as_default",
         new {id},
-        new ObjectJsonConverter<ApiKeyResponseData>());
+        new ObjectJsonConverter<ApiKeyInfo>());
     }
 
     #endregion
@@ -1077,12 +1076,12 @@ namespace DeriSock
     /// <summary>
     ///   Create a new subaccount
     /// </summary>
-    public Task<JsonRpcResponse<SubaccountResponseData>> PrivateCreateSubaccount()
+    public Task<JsonRpcResponse<SubAccount>> PrivateCreateSubaccount()
     {
       return Send(
         "private/create_subaccount",
         null,
-        new ObjectJsonConverter<SubaccountResponseData>());
+        new ObjectJsonConverter<SubAccount>());
     }
 
     /// <summary>
@@ -1099,24 +1098,24 @@ namespace DeriSock
 
     //TODO: check this
     /// <inheritdoc cref="PrivateGetSubaccounts(bool)" />
-    public Task<JsonRpcResponse<SubaccountResponseData[]>> PrivateGetSubaccounts()
+    public Task<JsonRpcResponse<SubAccount[]>> PrivateGetSubaccounts()
     {
       return Send(
         "private/get_subaccounts",
         null,
-        new ObjectJsonConverter<SubaccountResponseData[]>());
+        new ObjectJsonConverter<SubAccount[]>());
     }
 
     //TODO: check this
     /// <summary>
     ///   Get information about subaccounts
     /// </summary>
-    public Task<JsonRpcResponse<SubaccountResponseData[]>> PrivateGetSubaccounts(bool withPortfolio)
+    public Task<JsonRpcResponse<SubAccount[]>> PrivateGetSubaccounts(bool withPortfolio)
     {
       return Send(
         "private/get_subaccounts",
         new {with_portfolio = withPortfolio},
-        new ObjectJsonConverter<SubaccountResponseData[]>());
+        new ObjectJsonConverter<SubAccount[]>());
     }
 
     //TODO: Check this
