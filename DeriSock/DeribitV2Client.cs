@@ -8,11 +8,11 @@ namespace DeriSock
   using System.Diagnostics;
   using System.Threading.Tasks;
   using DeriSock.Converter;
+  using DeriSock.Extensions;
   using DeriSock.JsonRpc;
   using DeriSock.Model;
   using DeriSock.Request;
   using DeriSock.Response;
-  using DeriSock.Utils;
   using Newtonsoft.Json.Linq;
   using Serilog;
   using Serilog.Events;
@@ -744,6 +744,57 @@ namespace DeriSock
     //TODO: Finish this
 
     #region Account management
+
+    /// <inheritdoc cref="PublicGetAnnouncements(DateTime, int)" />
+    public Task<JsonRpcResponse<Announcement[]>> PublicGetAnnouncements()
+    {
+      return SendAsync(
+        "public/get_announcements",
+        null,
+        new ObjectJsonConverter<Announcement[]>());
+    }
+
+    /// <inheritdoc cref="PublicGetAnnouncements(DateTime, int)" />
+    public Task<JsonRpcResponse<Announcement[]>> PublicGetAnnouncements(DateTime startTime)
+    {
+      return SendAsync(
+        "public/get_announcements",
+        new {start_timestamp = startTime.AsMilliseconds()},
+        new ObjectJsonConverter<Announcement[]>());
+    }
+
+    /// <inheritdoc cref="PublicGetAnnouncements(DateTime, int)" />
+    public Task<JsonRpcResponse<Announcement[]>> PublicGetAnnouncements(int count)
+    {
+      if (count < 1 || count > 50)
+      {
+        throw new ArgumentException("count must be between 1 and 50", nameof(count));
+      }
+
+      return SendAsync(
+        "public/get_announcements",
+        new {count},
+        new ObjectJsonConverter<Announcement[]>());
+    }
+
+    /// <summary>
+    ///   <para>Retrieves announcements.</para>
+    ///   <para>Default <c>startTime</c> value is current timestamp. Default <c>count</c> value is 5</para>
+    /// </summary>
+    /// <param name="startTime">Timestamp from which we want to retrieve announcements</param>
+    /// <param name="count">Maximum count of returned announcements. Must be between 1 and 50</param>
+    public Task<JsonRpcResponse<Announcement[]>> PublicGetAnnouncements(DateTime startTime, int count)
+    {
+      if (count < 1 || count > 50)
+      {
+        throw new ArgumentException("count must be between 1 and 50", nameof(count));
+      }
+
+      return SendAsync(
+        "public/get_announcements",
+        new {start_timestamp = startTime.AsMilliseconds(), count},
+        new ObjectJsonConverter<Announcement[]>());
+    }
 
     #endregion
 

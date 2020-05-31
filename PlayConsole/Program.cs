@@ -50,18 +50,24 @@ namespace PlayConsole
 
       while (!_client.IsConnected)
       {
-        await _client.ConnectAsync();
-
-        //var loginRes = await _client.PublicAuthAsync("KxEneYNT9VsK", "S3EL63RBXOJZSN4ACV5SWF2OLO337BKL", "Playground");
-        //var loginRes = await _client.PublicSignatureAuthAsync("KxEneYNT9VsK", "S3EL63RBXOJZSN4ACV5SWF2OLO337BKL", "Playground");
-
-        var sig = CryptoHelper.CreateSignature("S3EL63RBXOJZSN4ACV5SWF2OLO337BKL");
-        var loginRes = await _client.PublicAuthAsync(new AuthRequestParams
+        try
         {
-          GrantType = GrantType.Signature, ClientId = "KxEneYNT9VsK", Signature = sig, Scope = "expires:60"
-        });
+          await _client.ConnectAsync();
 
-        await _client.PublicSetHeartbeatAsync(10);
+          //var sig = CryptoHelper.CreateSignature("S3EL63RBXOJZSN4ACV5SWF2OLO337BKL");
+          //var loginRes = await _client.PublicAuthAsync(new AuthRequestParams
+          //{
+          //  GrantType = GrantType.Signature, ClientId = "KxEneYNT9VsK", Signature = sig, Scope = "expires:60"
+          //});
+
+          var res = await _client.PublicGetAnnouncements(50);
+
+          var blub = 4;
+        }
+        catch (Exception ex)
+        {
+          var uff = ex;
+        }
 
         while (_client.IsConnected)
         {
