@@ -1788,9 +1788,224 @@ namespace DeriSock
 
     #endregion
 
-    //TODO: Finish this
-
     #region Wallet
+
+    /// <summary>
+    ///   Cancel transfer
+    /// </summary>
+    /// <param name="currency">The currency symbol</param>
+    /// <param name="id">Id of transfer</param>
+    /// <param name="tfa">TFA code, required when TFA is enabled for current account</param>
+    public Task<JsonRpcResponse<TransferInfo>> PrivateCancelTransferById(string currency, long id, string tfa = default)
+    {
+      var args = new ExpandoObject();
+      args.TryAdd("currency", currency);
+      args.TryAdd("id", id);
+
+      if (tfa != default)
+      {
+        args.TryAdd("tfa", tfa);
+      }
+
+      return Send(
+        "private/cancel_transfer_by_id",
+        args,
+        new ObjectJsonConverter<TransferInfo>());
+    }
+
+    /// <summary>
+    ///   Cancels withdrawal request
+    /// </summary>
+    /// <param name="currency">The currency symbol</param>
+    /// <param name="id">The withdrawal id</param>
+    public Task<JsonRpcResponse<WithdrawalInfo>> PrivateCancelWithdrawal(string currency, long id)
+    {
+      return Send(
+        "private/cancel_withdrawal",
+        new {currency, id},
+        new ObjectJsonConverter<WithdrawalInfo>());
+    }
+
+    /// <summary>
+    ///   Creates deposit address in currency
+    /// </summary>
+    /// <param name="currency">The currency symbol</param>
+    public Task<JsonRpcResponse<DepositAddress>> PrivateCreateDepositAddress(string currency)
+    {
+      return Send(
+        "private/create_deposit_address",
+        new {currency},
+        new ObjectJsonConverter<DepositAddress>());
+    }
+
+    /// <summary>
+    ///   Retrieve deposit address for currency
+    /// </summary>
+    /// <param name="currency">The currency symbol</param>
+    public Task<JsonRpcResponse<DepositAddress>> PrivateGetCurrentDepositAddress(string currency)
+    {
+      return Send(
+        "private/get_current_deposit_address",
+        new {currency},
+        new ObjectJsonConverter<DepositAddress>());
+    }
+
+    /// <summary>
+    ///   Retrieve the latest users deposits
+    /// </summary>
+    /// <param name="currency">The currency symbol</param>
+    /// <param name="count">Number of requested items, default - <c>10</c></param>
+    /// <param name="offset">The offset for pagination, default - <c>0</c></param>
+    public Task<JsonRpcResponse<DepositCollection>> PrivateGetDeposits(string currency, int count = default, int offset = default)
+    {
+      var args = new ExpandoObject();
+      args.TryAdd("currency", currency);
+
+      if (count > 0)
+      {
+        args.TryAdd("count", count);
+      }
+
+      if (offset > 0)
+      {
+        args.TryAdd("offset", offset);
+      }
+
+      return Send(
+        "private/get_deposits",
+        args,
+        new ObjectJsonConverter<DepositCollection>());
+    }
+
+    /// <summary>
+    ///   Adds new entry to address book of given type
+    /// </summary>
+    /// <param name="currency">The currency symbol</param>
+    /// <param name="count">Number of requested items, default - <c>10</c></param>
+    /// <param name="offset">The offset for pagination, default - <c>0</c></param>
+    public Task<JsonRpcResponse<TransferCollection>> PrivateGetTransfers(string currency, int count = default, int offset = default)
+    {
+      var args = new ExpandoObject();
+      args.TryAdd("currency", currency);
+
+      if (count > 0)
+      {
+        args.TryAdd("count", count);
+      }
+
+      if (offset > 0)
+      {
+        args.TryAdd("offset", offset);
+      }
+
+      return Send(
+        "private/get_transfers",
+        args,
+        new ObjectJsonConverter<TransferCollection>());
+    }
+
+    /// <summary>
+    ///   Retrieve the latest users withdrawals
+    /// </summary>
+    /// <param name="currency">The currency symbol</param>
+    /// <param name="count">Number of requested items, default - <c>10</c></param>
+    /// <param name="offset">The offset for pagination, default - <c>0</c></param>
+    public Task<JsonRpcResponse<WithdrawalCollection>> PrivateGetWithdrawals(string currency, int count = default, int offset = default)
+    {
+      var args = new ExpandoObject();
+      args.TryAdd("currency", currency);
+
+      if (count > 0)
+      {
+        args.TryAdd("count", count);
+      }
+
+      if (offset > 0)
+      {
+        args.TryAdd("offset", offset);
+      }
+
+      return Send(
+        "private/get_withdrawals",
+        args,
+        new ObjectJsonConverter<WithdrawalCollection>());
+    }
+
+    /// <summary>
+    ///   Transfers funds to subaccount
+    /// </summary>
+    /// <param name="currency">The currency symbol</param>
+    /// <param name="amount">Amount of funds to be transferred</param>
+    /// <param name="destination">Id of destination subaccount. Can be found in <c>My Account >> Subaccounts</c> tab</param>
+    public Task<JsonRpcResponse<TransferInfo>> PrivateSubmitTransferToSubAccount(string currency, decimal amount, int destination)
+    {
+      return Send(
+        "private/submit_transfer_to_subaccount",
+        new {currency, amount, destination},
+        new ObjectJsonConverter<TransferInfo>());
+    }
+
+    /// <summary>
+    ///   Transfers funds to subaccount
+    /// </summary>
+    /// <param name="currency">The currency symbol</param>
+    /// <param name="amount">Amount of funds to be transferred</param>
+    /// <param name="destination">Destination wallet's address taken from address book</param>
+    /// <param name="tfa">TFA code, required when TFA is enabled for current account</param>
+    public Task<JsonRpcResponse<TransferInfo>> PrivateSubmitTransferToUser(string currency, decimal amount, string destination, string tfa = default)
+    {
+      var args = new ExpandoObject();
+      args.TryAdd("currency", currency);
+      args.TryAdd("amount", amount);
+      args.TryAdd("destination", destination);
+
+      if (tfa != default)
+      {
+        args.TryAdd("tfa", tfa);
+      }
+
+      return Send(
+        "private/submit_transfer_to_user",
+        args,
+        new ObjectJsonConverter<TransferInfo>());
+    }
+
+    /// <summary>
+    /// </summary>
+    /// <param name="currency">The currency symbol</param>
+    /// <param name="address">Address in current format, it must be in address book</param>
+    /// <param name="amount">Amount of funds to be transferred</param>
+    /// <param name="priority">
+    ///   <para>Withdrawal priority, optional for BTC, default: <c>high</c></para>
+    ///   <para>
+    ///     Possible values: <c>insane</c>, <c>extreme_high</c>, <c>very_high</c>, <c>high</c>, <c>mid</c>, <c>low</c>,
+    ///     <c>very_low</c>
+    ///   </para>
+    /// </param>
+    /// <param name="tfa">TFA code, required when TFA is enabled for current account</param>
+    public Task<JsonRpcResponse<WithdrawalInfo>> PrivateWithdraw(string currency, string address, decimal amount, string priority = default,
+      string tfa = default)
+    {
+      var args = new ExpandoObject();
+      args.TryAdd("currency", currency);
+      args.TryAdd("address", address);
+      args.TryAdd("amount", amount);
+
+      if (priority != default)
+      {
+        args.TryAdd("priority", priority);
+      }
+
+      if (tfa != default)
+      {
+        args.TryAdd("tfa", tfa);
+      }
+
+      return Send(
+        "private/withdraw",
+        args,
+        new ObjectJsonConverter<WithdrawalInfo>());
+    }
 
     #endregion
 

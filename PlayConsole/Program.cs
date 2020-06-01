@@ -62,7 +62,7 @@ namespace PlayConsole
             Signature = sig
           });
 
-          var res = await _client.PublicTicker("BTC-PERPETUAL");
+          var res = await _client.PrivateGetWithdrawals("BTC");
 
           var blub = 4;
           _client.PrivateLogout();

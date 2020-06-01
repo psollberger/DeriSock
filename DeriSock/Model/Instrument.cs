@@ -25,7 +25,7 @@
 
     /// <inheritdoc cref="CreationTimestamp" />
     [JsonIgnore]
-    public DateTime CreationTimestampDateTime => CreationTimestamp.AsDateTimeFromMilliseconds();
+    public DateTime CreationDateTime => CreationTimestamp.AsDateTimeFromMilliseconds();
 
     /// <summary>
     ///   The time when the instrument will expire (milliseconds)
@@ -35,7 +35,7 @@
 
     /// <inheritdoc cref="ExpirationTimestamp" />
     [JsonIgnore]
-    public DateTime ExpirationTimestampDateTime => ExpirationTimestamp.AsDateTimeFromMilliseconds();
+    public DateTime ExpirationDateTime => ExpirationTimestamp.AsDateTimeFromMilliseconds();
 
     /// <summary>
     ///   Unique instrument identifier

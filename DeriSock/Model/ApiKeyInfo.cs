@@ -61,6 +61,6 @@
 
     /// <inheritdoc cref="Timestamp" />
     [JsonIgnore]
-    public DateTime TimeStampDateTime => Timestamp.AsDateTimeFromMilliseconds();
+    public DateTime DateTime => Timestamp.AsDateTimeFromMilliseconds();
   }
 }

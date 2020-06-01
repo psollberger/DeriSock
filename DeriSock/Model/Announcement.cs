@@ -37,7 +37,7 @@
 
     /// <inheritdoc cref="PublicationTimestamp" />
     [JsonIgnore]
-    public DateTime PublicationTimestampDateTime => PublicationTimestamp.AsDateTimeFromMilliseconds();
+    public DateTime PublicationDateTime => PublicationTimestamp.AsDateTimeFromMilliseconds();
 
     /// <summary>
     ///   The title of the announcement

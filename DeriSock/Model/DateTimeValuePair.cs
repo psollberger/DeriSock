@@ -9,7 +9,7 @@
     public long Timestamp { get; set; }
 
     [JsonIgnore]
-    public DateTime TimestampDateTime => Timestamp.AsDateTimeFromMilliseconds();
+    public DateTime DateTime => Timestamp.AsDateTimeFromMilliseconds();
 
     [JsonProperty(Order = 2)]
     public decimal Value { get; set; }

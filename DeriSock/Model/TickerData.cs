@@ -140,7 +140,7 @@
 
     /// <inheritdoc cref="Timestamp" />
     [JsonIgnore]
-    public DateTime TimestampDateTime => Timestamp.AsDateTimeFromMilliseconds();
+    public DateTime DateTime => Timestamp.AsDateTimeFromMilliseconds();
 
     /// <summary>
     ///   Name of the underlying future, or index_price (options only)

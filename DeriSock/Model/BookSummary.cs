@@ -31,7 +31,7 @@
 
     /// <inheritdoc cref="CreationTimestamp" />
     [JsonIgnore]
-    public DateTime CreationTimestampDateTime => CreationTimestamp.AsDateTimeFromMilliseconds();
+    public DateTime CreationDateTime => CreationTimestamp.AsDateTimeFromMilliseconds();
 
     /// <summary>
     ///   Current funding (perpetual only)

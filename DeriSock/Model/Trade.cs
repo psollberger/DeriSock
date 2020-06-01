@@ -69,7 +69,7 @@
 
     /// <inheritdoc cref="Timestamp" />
     [JsonIgnore]
-    public DateTime TimestampDateTime => Timestamp.AsDateTimeFromMilliseconds();
+    public DateTime DateTime => Timestamp.AsDateTimeFromMilliseconds();
 
     /// <summary>
     ///   Unique (per currency) trade identifier

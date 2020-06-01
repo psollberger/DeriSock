@@ -205,7 +205,7 @@
 
     /// <inheritdoc cref="CreationTimestamp" />
     [JsonIgnore]
-    public DateTime CreationTimestampDateTime => CreationTimestamp.AsDateTimeFromMilliseconds();
+    public DateTime CreationDateTime => CreationTimestamp.AsDateTimeFromMilliseconds();
 
     /// <summary>
     ///   Session unrealized profit and loss
