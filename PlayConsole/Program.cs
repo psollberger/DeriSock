@@ -55,7 +55,7 @@ namespace PlayConsole
           await _client.Connect();
 
           var sig = CryptoHelper.CreateSignature("S3EL63RBXOJZSN4ACV5SWF2OLO337BKL");
-          var loginRes = await _client.PublicAuth(new AuthRequestParams
+          var loginRes = await _client.PublicAuth(new AuthParams
           {
             GrantType = GrantType.Signature,
             ClientId = "KxEneYNT9VsK",

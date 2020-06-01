@@ -2,7 +2,7 @@
 {
   using DeriSock.Utils;
 
-  public class AuthRequestParams
+  public class AuthParams
   {
     /// <summary>
     ///   Method of authentication

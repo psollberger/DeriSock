@@ -156,7 +156,7 @@ namespace DeriSock
           return;
         }
 
-        var result = PublicAuth(new AuthRequestParams {GrantType = "refresh_token"}).GetAwaiter().GetResult();
+        var result = PublicAuth(new AuthParams {GrantType = "refresh_token"}).GetAwaiter().GetResult();
         EnqueueAuthRefresh(result.ResultData.ExpiresIn);
       });
     }
@@ -431,12 +431,12 @@ namespace DeriSock
     ///   </para>
     ///   <para>
     ///     NOTE: The necessary values for client_signature are automatically calculated.
-    ///     Provide <see cref="AuthRequestParams.ClientId" /> and <see cref="AuthRequestParams.ClientSecret" />.
-    ///     Optional: Provide <see cref="AuthRequestParams.Data" /> for more random data for signature calculation
+    ///     Provide <see cref="AuthParams.ClientId" /> and <see cref="AuthParams.ClientSecret" />.
+    ///     Optional: Provide <see cref="AuthParams.Data" /> for more random data for signature calculation
     ///   </para>
     /// </summary>
-    /// <param name="args"><see cref="AuthRequestParams" /> object containing the necessary values</param>
-    public async Task<JsonRpcResponse<AuthInfo>> PublicAuth(AuthRequestParams args)
+    /// <param name="args"><see cref="AuthParams" /> object containing the necessary values</param>
+    public async Task<JsonRpcResponse<AuthInfo>> PublicAuth(AuthParams args)
     {
       Logger.Debug("Authenticate ({GrantType})", args?.GrantType);
 
@@ -1203,93 +1203,6 @@ namespace DeriSock
     //      time_in_force = "good_til_cancelled",
     //      post_only = true /*, access_token = AccessToken*/
     //    }, new ObjectJsonConverter<BuySellResponse>());
-    //}
-
-    //public Task<JsonRpcResponse<BuySellResponse>> PrivateSellLimit(string instrument, double amount, double price, string label)
-    //{
-    //  //TODO: check if private method works without access_token being sent
-    //  return Send(
-    //    "private/sell",
-    //    new
-    //    {
-    //      instrument_name = instrument,
-    //      amount,
-    //      type = "limit",
-    //      label,
-    //      price,
-    //      time_in_force = "good_til_cancelled",
-    //      post_only = true /*, access_token = AccessToken*/
-    //    }, new ObjectJsonConverter<BuySellResponse>());
-    //}
-
-    ////edit
-
-    //public Task<JsonRpcResponse<JObject>> PrivateCancelOrder(string orderId)
-    //{
-    //  //TODO: check if private method works without access_token being sent
-    //  return Send(
-    //    "private/cancel",
-    //    new {order_id = orderId /*, access_token = AccessToken*/},
-    //    new ObjectJsonConverter<JObject>());
-    //}
-
-    //public Task<JsonRpcResponse<JObject>> PrivateCancelAllOrdersByInstrument(string instrument)
-    //{
-    //  //TODO: check if private method works without access_token being sent
-    //  return Send(
-    //    "private/cancel_all_by_instrument",
-    //    new {instrument_name = instrument /*, access_token = AccessToken*/},
-    //    new ObjectJsonConverter<JObject>());
-    //}
-
-    //public Task<JsonRpcResponse<OrderItem[]>> PrivateGetOpenOrders(string instrument)
-    //{
-    //  //TODO: check if private method works without access_token being sent
-    //  return Send(
-    //    "private/get_open_orders_by_instrument",
-    //    new {instrument_name = instrument /*, access_token = AccessToken*/},
-    //    new ObjectJsonConverter<OrderItem[]>());
-    //}
-
-    //public Task<JsonRpcResponse<OrderResponse>> PrivateGetOrderState(string orderId)
-    //{
-    //  //TODO: check if private method works without access_token being sent
-    //  return Send(
-    //    "private/get_order_state",
-    //    new {order_id = orderId /*, access_token = AccessToken*/},
-    //    new ObjectJsonConverter<OrderResponse>());
-    //}
-
-    //public Task<JsonRpcResponse<SettlementResponse>> PrivateGetSettlementHistoryByInstrument(string instrument, string type, int count)
-    //{
-    //  //TODO: check if private method works without access_token being sent
-    //  return Send(
-    //    "private/get_settlement_history_by_instrument",
-    //    new {instrument_name = instrument, type, count /*, access_token = AccessToken*/},
-    //    new ObjectJsonConverter<SettlementResponse>());
-    //}
-
-    //public Task<JsonRpcResponse<SettlementResponse>> PrivateGetSettlementHistoryByCurrency(string currency, string type, int count)
-    //{
-    //  //TODO: check if private method works without access_token being sent
-    //  return Send(
-    //    "private/get_settlement_history_by_currency",
-    //    new {currency, type, count /*, access_token = AccessToken*/},
-    //    new ObjectJsonConverter<SettlementResponse>());
-    //}
-
-    //#endregion
-
-    ////TODO: Finish this
-
-    //#region Market data
-
-    //public Task<JsonRpcResponse<BookResponse>> PublicGetOrderBook(string instrument, int depth)
-    //{
-    //  return Send(
-    //    "public/get_order_book",
-    //    new {instrument_name = instrument, depth},
-    //    new ObjectJsonConverter<BookResponse>());
     //}
 
     #endregion
