@@ -1,6 +1,7 @@
-﻿namespace DeriSock.JsonRpc
+﻿namespace DeriSock.Model
 {
   using System;
+  using DeriSock.JsonRpc;
   using Newtonsoft.Json;
   using Newtonsoft.Json.Linq;
 
