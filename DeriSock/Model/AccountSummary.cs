@@ -1,7 +1,6 @@
 ﻿namespace DeriSock.Model
 {
   using System;
-  using DeriSock.Extensions;
   using Newtonsoft.Json;
 
   public class AccountSummary
@@ -10,13 +9,13 @@
     ///   Options summary gamma
     /// </summary>
     [JsonProperty("options_gamma")]
-    public double OptionsGamma { get; set; }
+    public decimal OptionsGamma { get; set; }
 
     /// <summary>
     ///   Projected maintenance margin (for portfolio margining users)
     /// </summary>
     [JsonProperty("projected_maintenance_margin")]
-    public double ProjectedMaintenanceMargin { get; set; }
+    public decimal ProjectedMaintenanceMargin { get; set; }
 
     /// <summary>
     ///   System generated user nickname (available when parameter <c>extended</c> is true)
@@ -28,7 +27,7 @@
     ///   The account's margin balance
     /// </summary>
     [JsonProperty("margin_balance")]
-    public double MarginBalance { get; set; }
+    public decimal MarginBalance { get; set; }
 
     /// <summary>
     ///   Whether two factor authentication is enabled (available when parameter <c>extended</c> is true)
@@ -40,7 +39,7 @@
     ///   Options value
     /// </summary>
     [JsonProperty("options_value")]
-    public double OptionsValue { get; set; }
+    public decimal OptionsValue { get; set; }
 
     /// <summary>
     ///   Account name (given by user) (available when parameter <c>extended</c> is true)
@@ -55,13 +54,13 @@
     ///   The account's current equity
     /// </summary>
     [JsonProperty("equity")]
-    public double Equity { get; set; }
+    public decimal Equity { get; set; }
 
     /// <summary>
     ///   Futures profit and loss
     /// </summary>
     [JsonProperty("futures_pl")]
-    public double FuturesPl { get; set; }
+    public decimal FuturesPl { get; set; }
 
     /// <summary>
     ///   User fees in case of any discounts (available when parameter <c>extended</c> is true and user has any discounts)
@@ -73,7 +72,7 @@
     ///   Options session unrealized profit and loss
     /// </summary>
     [JsonProperty("options_session_upl")]
-    public double OptionsSessionUpl { get; set; }
+    public decimal OptionsSessionUpl { get; set; }
 
     /// <summary>
     ///   Account id (available when parameter <c>extended</c> is true)
@@ -85,7 +84,7 @@
     ///   Options summary vega
     /// </summary>
     [JsonProperty("options_vega")]
-    public double OptionsVega { get; set; }
+    public decimal OptionsVega { get; set; }
 
     /// <summary>
     ///   Optional identifier of the referrer (of the affiliation program, and available when parameter <c>extended</c> is
@@ -99,7 +98,7 @@
     ///   Session funding
     /// </summary>
     [JsonProperty("session_funding")]
-    public double SessionFunding { get; set; }
+    public decimal SessionFunding { get; set; }
 
     /// <summary>
     ///   The selected currency
@@ -117,13 +116,13 @@
     ///   Futures session realized profit and loss
     /// </summary>
     [JsonProperty("futures_session_rpl")]
-    public double FuturesSessionRpl { get; set; }
+    public decimal FuturesSessionRpl { get; set; }
 
     /// <summary>
     ///   Options summary theta
     /// </summary>
     [JsonProperty("options_theta")]
-    public double OptionsTheta { get; set; }
+    public decimal OptionsTheta { get; set; }
 
     /// <summary>
     ///   <c>true</c> when portfolio margining is enabled for user
@@ -135,37 +134,37 @@
     ///   Session realized profit and loss
     /// </summary>
     [JsonProperty("session_rpl")]
-    public double SessionRpl { get; set; }
+    public decimal SessionRpl { get; set; }
 
     /// <summary>
     ///   The sum of position deltas
     /// </summary>
     [JsonProperty("delta_total")]
-    public double DeltaTotal { get; set; }
+    public decimal DeltaTotal { get; set; }
 
     /// <summary>
     ///   Options profit and loss
     /// </summary>
     [JsonProperty("options_pl")]
-    public double OptionsPl { get; set; }
+    public decimal OptionsPl { get; set; }
 
     /// <summary>
     ///   The account's available to withdrawal funds
     /// </summary>
     [JsonProperty("available_withdrawal_funds")]
-    public double AvailableWithdrawalFunds { get; set; }
+    public decimal AvailableWithdrawalFunds { get; set; }
 
     /// <summary>
     ///   The maintenance margin
     /// </summary>
     [JsonProperty("maintenance_margin")]
-    public double MaintenanceMargin { get; set; }
+    public decimal MaintenanceMargin { get; set; }
 
     /// <summary>
     ///   The account's initial margin
     /// </summary>
     [JsonProperty("initial_margin")]
-    public double InitialMargin { get; set; }
+    public decimal InitialMargin { get; set; }
 
     /// <summary>
     ///   <c>true</c> when the inter-user transfers are enabled for user (available when parameter <c>extended</c> is true)
@@ -177,19 +176,19 @@
     ///   Futures session unrealized profit and loss
     /// </summary>
     [JsonProperty("futures_session_upl")]
-    public double FuturesSessionUpl { get; set; }
+    public decimal FuturesSessionUpl { get; set; }
 
     /// <summary>
     ///   Options session realized profit and loss
     /// </summary>
     [JsonProperty("options_session_rpl")]
-    public double OptionsSessionRpl { get; set; }
+    public decimal OptionsSessionRpl { get; set; }
 
     /// <summary>
     ///   The account's available funds
     /// </summary>
     [JsonProperty("available_funds")]
-    public double AvailableFunds { get; set; }
+    public decimal AvailableFunds { get; set; }
 
     /// <summary>
     ///   User email (available when parameter <c>extended</c> is true)
@@ -212,31 +211,31 @@
     ///   Session unrealized profit and loss
     /// </summary>
     [JsonProperty("session_upl")]
-    public double SessionUpl { get; set; }
+    public decimal SessionUpl { get; set; }
 
     /// <summary>
     ///   Profit and loss
     /// </summary>
     [JsonProperty("total_pl")]
-    public double TotalPl { get; set; }
+    public decimal TotalPl { get; set; }
 
     /// <summary>
     ///   Options summary delta
     /// </summary>
     [JsonProperty("options_delta")]
-    public double OptionsDelta { get; set; }
+    public decimal OptionsDelta { get; set; }
 
     /// <summary>
     ///   The account's balance
     /// </summary>
     [JsonProperty("balance")]
-    public double Balance { get; set; }
+    public decimal Balance { get; set; }
 
     /// <summary>
     ///   Projected initial margin (for portfolio margining users)
     /// </summary>
     [JsonProperty("projected_initial_margin")]
-    public double ProjectedInitialMargin { get; set; }
+    public decimal ProjectedInitialMargin { get; set; }
 
     /// <summary>
     ///   The deposit address for the account (if available)
@@ -297,13 +296,13 @@
       ///   User fee as a maker
       /// </summary>
       [JsonProperty("maker_fee")]
-      public double MakerFee { get; set; }
+      public decimal MakerFee { get; set; }
 
       /// <summary>
       ///   User fee as a taker
       /// </summary>
       [JsonProperty("taker_fee")]
-      public double TakerFee { get; set; }
+      public decimal TakerFee { get; set; }
     }
   }
 }

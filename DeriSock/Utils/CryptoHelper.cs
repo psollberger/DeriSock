@@ -4,7 +4,6 @@
   using System.Linq;
   using System.Security.Cryptography;
   using System.Text;
-  using DeriSock.Extensions;
 
   public static class CryptoHelper
   {

@@ -1,8 +1,8 @@
-﻿namespace DeriSock.Extensions
+﻿namespace DeriSock
 {
   using System;
 
-  public static class LongExtensions
+  public static class HelperExtensions
   {
     private static readonly long _ticksPerMillisecond = TimeSpan.TicksPerMillisecond;
     private static readonly long _ticksPerMicrosecond = TimeSpan.TicksPerMillisecond / 1000;
@@ -32,11 +32,12 @@
     /// <summary>
     ///   Converts a <see cref="DateTime" /> into milliseconds since Unix epoch
     /// </summary>
-    /// <param name="utc"><see cref="DateTime" /> as UTC</param>
+    /// <param name="dateTime"><see cref="DateTime" /> as UTC</param>
     /// <returns></returns>
-    public static long AsMilliseconds(this DateTime utc)
+    public static long AsMilliseconds(this DateTime dateTime)
     {
-      return (long)utc.Subtract(DateTime.UnixEpoch).TotalMilliseconds;
+      dateTime = dateTime.ToUniversalTime();
+      return (long)dateTime.Subtract(DateTime.UnixEpoch).TotalMilliseconds;
     }
   }
 }

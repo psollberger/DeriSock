@@ -1,7 +1,6 @@
 ﻿namespace DeriSock.JsonRpc
 {
   using System;
-  using DeriSock.Extensions;
   using Newtonsoft.Json;
   using Newtonsoft.Json.Linq;
 

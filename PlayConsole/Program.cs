@@ -62,13 +62,17 @@ namespace PlayConsole
             Signature = sig
           });
 
-          var res = await _client.PrivateGetPositions("BTC", "option");
+          var res = await _client.PublicTicker("BTC-PERPETUAL");
 
           var blub = 4;
+          _client.PrivateLogout();
+          return 0;
         }
         catch (Exception ex)
         {
           var uff = ex;
+          _client.PrivateLogout();
+          return 0;
         }
 
         while (_client.IsConnected)
@@ -120,10 +124,10 @@ namespace PlayConsole
       return 0;
     }
 
-    private static void HandleBookResponse(BookResponse obj)
-    {
-      Log.Logger.Information($"HandleBookResponse: {obj}");
-    }
+    //private static void HandleBookResponse(BookResponse obj)
+    //{
+    //  Log.Logger.Information($"HandleBookResponse: {obj}");
+    //}
 
     private static void Console_CancelKeyPress(object sender, ConsoleCancelEventArgs e)
     {

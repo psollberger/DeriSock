@@ -6,9 +6,9 @@ namespace DeriSock
   using System.Collections.Concurrent;
   using System.Collections.Generic;
   using System.Diagnostics;
+  using System.Dynamic;
   using System.Threading.Tasks;
   using DeriSock.Converter;
-  using DeriSock.Extensions;
   using DeriSock.JsonRpc;
   using DeriSock.Model;
   using DeriSock.Request;
@@ -156,7 +156,7 @@ namespace DeriSock
           return;
         }
 
-        var result = PublicAuth(new AuthRequestParams {GrantType = "refresh_token"}).GetAwaiter().GetResult();
+        var result = PublicAuth(new AuthRequestParams { GrantType = "refresh_token" }).GetAwaiter().GetResult();
         EnqueueAuthRefresh(result.ResultData.ExpiresIn);
       });
     }
@@ -259,7 +259,7 @@ namespace DeriSock
           }
 
           defer = new TaskCompletionSource<bool>();
-          entry = new SubscriptionEntry {State = SubscriptionState.Subscribing, Callbacks = new List<Action<Notification>>(), CurrentAction = defer.Task};
+          entry = new SubscriptionEntry { State = SubscriptionState.Subscribing, Callbacks = new List<Action<Notification>>(), CurrentAction = defer.Task };
           _subscriptionMap[channel] = entry;
         }
 
@@ -268,10 +268,10 @@ namespace DeriSock
           //TODO: check if private subscribe works without access_token being sent
           var subscribeResponse = IsPrivateChannel(channel)
             ? await _client.Send(
-              "private/subscribe", new {channels = new[] {channel} /*, access_token = _client.AccessToken*/},
+              "private/subscribe", new { channels = new[] { channel } /*, access_token = _client.AccessToken*/},
               new ListJsonConverter<string>()).ConfigureAwait(false)
             : await _client.Send(
-                "public/subscribe", new {channels = new[] {channel}},
+                "public/subscribe", new { channels = new[] { channel } },
                 new ListJsonConverter<string>())
               .ConfigureAwait(false);
 
@@ -356,10 +356,10 @@ namespace DeriSock
           //TODO: check if private unsubscribe works without access_token being sent
           var unsubscribeResponse = IsPrivateChannel(channel)
             ? await _client.Send(
-              "private/unsubscribe", new {channels = new[] {channel} /*, access_token = _client.AccessToken*/},
+              "private/unsubscribe", new { channels = new[] { channel } /*, access_token = _client.AccessToken*/},
               new ListJsonConverter<string>())
             : await _client.Send(
-              "public/unsubscribe", new {channels = new[] {channel}},
+              "public/unsubscribe", new { channels = new[] { channel } },
               new ListJsonConverter<string>());
 
           //TODO: Handle possible error in response
@@ -509,7 +509,7 @@ namespace DeriSock
           throw new ArgumentNullException(nameof(RefreshToken));
         }
 
-        reqParams = new {grant_type = "refresh_token", refresh_token = RefreshToken};
+        reqParams = new { grant_type = "refresh_token", refresh_token = RefreshToken };
       }
 
       var response = await Send("public/auth", reqParams, new ObjectJsonConverter<AuthInfo>());
@@ -536,7 +536,7 @@ namespace DeriSock
     {
       return Send(
         "public/exchange_token",
-        new {refresh_token = refreshToken, subject_id = subjectId},
+        new { refresh_token = refreshToken, subject_id = subjectId },
         new ObjectJsonConverter<AuthInfo>());
     }
 
@@ -549,7 +549,7 @@ namespace DeriSock
     {
       return Send(
         "public/fork_token",
-        new {refresh_token = refreshToken, session_name = sessionName},
+        new { refresh_token = refreshToken, session_name = sessionName },
         new ObjectJsonConverter<AuthInfo>());
     }
 
@@ -589,7 +589,7 @@ namespace DeriSock
     /// <param name="interval">The heartbeat interval in seconds, but not less than 10</param>
     public Task<JsonRpcResponse<string>> PublicSetHeartbeat(int interval)
     {
-      return Send("public/set_heartbeat", new {interval}, new ObjectJsonConverter<string>());
+      return Send("public/set_heartbeat", new { interval }, new ObjectJsonConverter<string>());
     }
 
     /// <summary>
@@ -640,7 +640,7 @@ namespace DeriSock
       //TODO: check if private method works without access_token being sent
       return Send(
         "private/enable_cancel_on_disconnect",
-        new {scope /*, access_token = AccessToken*/},
+        new { scope /*, access_token = AccessToken*/},
         new ObjectJsonConverter<string>());
     }
 
@@ -672,7 +672,7 @@ namespace DeriSock
       //TODO: check if private method works without access_token being sent
       return Send(
         "private/disable_cancel_on_disconnect",
-        new {scope /*, access_token = AccessToken*/},
+        new { scope /*, access_token = AccessToken*/},
         new ObjectJsonConverter<string>());
     }
 
@@ -700,7 +700,7 @@ namespace DeriSock
       //TODO: check if private method works without access_token being sent
       return Send(
         "private/get_cancel_on_disconnect",
-        new {scope /*, access_token = AccessToken*/},
+        new { scope /*, access_token = AccessToken*/},
         new ObjectJsonConverter<CancelOnDisconnectInfo>());
     }
 
@@ -729,7 +729,7 @@ namespace DeriSock
     {
       return Send(
         "public/hello",
-        new {client_name = clientName, client_version = clientVersion},
+        new { client_name = clientName, client_version = clientVersion },
         new ObjectJsonConverter<ServerHello>());
     }
 
@@ -745,7 +745,7 @@ namespace DeriSock
     {
       return Send(
         "public/test",
-        new {expected_result = expectedResult},
+        new { expected_result = expectedResult },
         new ObjectJsonConverter<ServerHello>());
     }
 
@@ -762,7 +762,7 @@ namespace DeriSock
     {
       return Send(
         "private/get_account_summary",
-        new {currency, extended},
+        new { currency, extended },
         new ObjectJsonConverter<AccountSummary>());
     }
 
@@ -788,7 +788,7 @@ namespace DeriSock
     {
       return Send(
         "private/set_email_language",
-        new {language},
+        new { language },
         new ObjectJsonConverter<string>());
     }
 
@@ -800,29 +800,25 @@ namespace DeriSock
     {
       return Send(
         "private/get_position",
-        new {instrument_name = instrumentName},
+        new { instrument_name = instrumentName },
         new ObjectJsonConverter<UserPosition>());
     }
-
-    /// <inheritdoc cref="PrivateGetPositions(string, string)" />
-    public Task<JsonRpcResponse<UserPosition[]>> PrivateGetPositions(string currency)
-    {
-      return Send(
-        "private/get_positions",
-        new {currency},
-        new ObjectJsonConverter<UserPosition[]>());
-    }
-
+    
     /// <summary>
     ///   Retrieve user positions
     /// </summary>
     /// <param name="currency"><c>BTC</c> or <c>ETH</c></param>
     /// <param name="kind">Kind filter on positions: <c>future</c> or <c>option</c></param>
-    public Task<JsonRpcResponse<UserPosition[]>> PrivateGetPositions(string currency, string kind)
+    public Task<JsonRpcResponse<UserPosition[]>> PrivateGetPositions(string currency, string kind = default)
     {
+      var args = new ExpandoObject();
+      args.TryAdd("currency", currency);
+
+      if (kind != default) args.TryAdd("kind", kind);
+
       return Send(
         "private/get_positions",
-        new {currency, kind},
+        args,
         new ObjectJsonConverter<UserPosition[]>());
     }
 
@@ -842,7 +838,7 @@ namespace DeriSock
     {
       return Send(
         "public/get_announcements",
-        new {start_timestamp = startTime.AsMilliseconds()},
+        new { start_timestamp = startTime.AsMilliseconds() },
         new ObjectJsonConverter<Announcement[]>());
     }
 
@@ -856,7 +852,7 @@ namespace DeriSock
 
       return Send(
         "public/get_announcements",
-        new {count},
+        new { count },
         new ObjectJsonConverter<Announcement[]>());
     }
 
@@ -875,7 +871,7 @@ namespace DeriSock
 
       return Send(
         "public/get_announcements",
-        new {start_timestamp = startTime.AsMilliseconds(), count},
+        new { start_timestamp = startTime.AsMilliseconds(), count },
         new ObjectJsonConverter<Announcement[]>());
     }
 
@@ -898,7 +894,7 @@ namespace DeriSock
     {
       return Send(
         "private/set_announcement_as_read",
-        new {announcement_id = id},
+        new { announcement_id = id },
         new ObjectJsonConverter<string>());
     }
 
@@ -916,7 +912,7 @@ namespace DeriSock
     {
       return Send(
         "private/change_api_key_name",
-        new {id, name},
+        new { id, name },
         new ObjectJsonConverter<ApiKeyInfo>());
     }
 
@@ -930,7 +926,7 @@ namespace DeriSock
     {
       return Send(
         "private/change_scope_in_api_key",
-        new {id, max_scope = maxScope},
+        new { id, max_scope = maxScope },
         new ObjectJsonConverter<ApiKeyInfo>());
     }
 
@@ -940,7 +936,7 @@ namespace DeriSock
     {
       return Send(
         "private/create_api_key",
-        new {max_scope = maxScope},
+        new { max_scope = maxScope },
         new ObjectJsonConverter<ApiKeyInfo>());
     }
 
@@ -950,7 +946,7 @@ namespace DeriSock
     {
       return Send(
         "private/create_api_key",
-        new {name, max_scope = maxScope},
+        new { name, max_scope = maxScope },
         new ObjectJsonConverter<ApiKeyInfo>());
     }
 
@@ -960,7 +956,7 @@ namespace DeriSock
     {
       return Send(
         "private/create_api_key",
-        new {@default = asDefault, max_scope = maxScope},
+        new { @default = asDefault, max_scope = maxScope },
         new ObjectJsonConverter<ApiKeyInfo>());
     }
 
@@ -975,7 +971,7 @@ namespace DeriSock
     {
       return Send(
         "private/create_api_key",
-        new {name, @default = asDefault, max_scope = maxScope},
+        new { name, @default = asDefault, max_scope = maxScope },
         new ObjectJsonConverter<ApiKeyInfo>());
     }
 
@@ -988,7 +984,7 @@ namespace DeriSock
     {
       return Send(
         "private/disable_api_key",
-        new {id},
+        new { id },
         new ObjectJsonConverter<ApiKeyInfo>());
     }
 
@@ -1001,7 +997,7 @@ namespace DeriSock
     {
       return Send(
         "private/enable_api_key",
-        new {id},
+        new { id },
         new ObjectJsonConverter<ApiKeyInfo>());
     }
 
@@ -1024,7 +1020,7 @@ namespace DeriSock
     {
       return Send(
         "private/remove_api_key",
-        new {id},
+        new { id },
         new ObjectJsonConverter<string>());
     }
 
@@ -1037,7 +1033,7 @@ namespace DeriSock
     {
       return Send(
         "private/reset_api_key",
-        new {id},
+        new { id },
         new ObjectJsonConverter<ApiKeyInfo>());
     }
 
@@ -1050,7 +1046,7 @@ namespace DeriSock
     {
       return Send(
         "private/set_api_key_as_default",
-        new {id},
+        new { id },
         new ObjectJsonConverter<ApiKeyInfo>());
     }
 
@@ -1068,7 +1064,7 @@ namespace DeriSock
     {
       return Send(
         "private/change_subaccount_name",
-        new {sid, name},
+        new { sid, name },
         new ObjectJsonConverter<string>());
     }
 
@@ -1092,7 +1088,7 @@ namespace DeriSock
     {
       return Send(
         "private/disable_tfa_for_subaccount",
-        new {sid},
+        new { sid },
         new ObjectJsonConverter<string>());
     }
 
@@ -1114,7 +1110,7 @@ namespace DeriSock
     {
       return Send(
         "private/get_subaccounts",
-        new {with_portfolio = withPortfolio},
+        new { with_portfolio = withPortfolio },
         new ObjectJsonConverter<SubAccount[]>());
     }
 
@@ -1128,7 +1124,7 @@ namespace DeriSock
     {
       return Send(
         "private/set_email_for_subaccount",
-        new {sid, email},
+        new { sid, email },
         new ObjectJsonConverter<string>());
     }
 
@@ -1142,7 +1138,7 @@ namespace DeriSock
     {
       return Send(
         "private/set_password_for_subaccount",
-        new {sid, password},
+        new { sid, password },
         new ObjectJsonConverter<string>());
     }
 
@@ -1156,7 +1152,7 @@ namespace DeriSock
     {
       return Send(
         "private/toggle_notifications_from_subaccount",
-        new {sid, state},
+        new { sid, state },
         new ObjectJsonConverter<string>());
     }
 
@@ -1171,7 +1167,7 @@ namespace DeriSock
     {
       return Send(
         "private/toggle_subaccount_login",
-        new {sid, state = state ? "enable" : "disable"},
+        new { sid, state = state ? "enable" : "disable" },
         new ObjectJsonConverter<string>());
     }
 
@@ -1189,108 +1185,482 @@ namespace DeriSock
 
     #region Trading
 
-    public Task<JsonRpcResponse<BuySellResponse>> PrivateBuyLimit(string instrument, double amount, double price, string label)
-    {
-      //TODO: check if private method works without access_token being sent
-      return Send(
-        "private/buy",
-        new
-        {
-          instrument_name = instrument,
-          amount,
-          type = "limit",
-          label,
-          price,
-          time_in_force = "good_til_cancelled",
-          post_only = true /*, access_token = AccessToken*/
-        }, new ObjectJsonConverter<BuySellResponse>());
-    }
+    //public Task<JsonRpcResponse<BuySellResponse>> PrivateBuyLimit(string instrument, double amount, double price, string label)
+    //{
+    //  //TODO: check if private method works without access_token being sent
+    //  return Send(
+    //    "private/buy",
+    //    new
+    //    {
+    //      instrument_name = instrument,
+    //      amount,
+    //      type = "limit",
+    //      label,
+    //      price,
+    //      time_in_force = "good_til_cancelled",
+    //      post_only = true /*, access_token = AccessToken*/
+    //    }, new ObjectJsonConverter<BuySellResponse>());
+    //}
 
-    public Task<JsonRpcResponse<BuySellResponse>> PrivateSellLimit(string instrument, double amount, double price, string label)
-    {
-      //TODO: check if private method works without access_token being sent
-      return Send(
-        "private/sell",
-        new
-        {
-          instrument_name = instrument,
-          amount,
-          type = "limit",
-          label,
-          price,
-          time_in_force = "good_til_cancelled",
-          post_only = true /*, access_token = AccessToken*/
-        }, new ObjectJsonConverter<BuySellResponse>());
-    }
+    //public Task<JsonRpcResponse<BuySellResponse>> PrivateSellLimit(string instrument, double amount, double price, string label)
+    //{
+    //  //TODO: check if private method works without access_token being sent
+    //  return Send(
+    //    "private/sell",
+    //    new
+    //    {
+    //      instrument_name = instrument,
+    //      amount,
+    //      type = "limit",
+    //      label,
+    //      price,
+    //      time_in_force = "good_til_cancelled",
+    //      post_only = true /*, access_token = AccessToken*/
+    //    }, new ObjectJsonConverter<BuySellResponse>());
+    //}
 
-    //edit
+    ////edit
 
-    public Task<JsonRpcResponse<JObject>> PrivateCancelOrder(string orderId)
-    {
-      //TODO: check if private method works without access_token being sent
-      return Send(
-        "private/cancel",
-        new {order_id = orderId /*, access_token = AccessToken*/},
-        new ObjectJsonConverter<JObject>());
-    }
+    //public Task<JsonRpcResponse<JObject>> PrivateCancelOrder(string orderId)
+    //{
+    //  //TODO: check if private method works without access_token being sent
+    //  return Send(
+    //    "private/cancel",
+    //    new {order_id = orderId /*, access_token = AccessToken*/},
+    //    new ObjectJsonConverter<JObject>());
+    //}
 
-    public Task<JsonRpcResponse<JObject>> PrivateCancelAllOrdersByInstrument(string instrument)
-    {
-      //TODO: check if private method works without access_token being sent
-      return Send(
-        "private/cancel_all_by_instrument",
-        new {instrument_name = instrument /*, access_token = AccessToken*/},
-        new ObjectJsonConverter<JObject>());
-    }
+    //public Task<JsonRpcResponse<JObject>> PrivateCancelAllOrdersByInstrument(string instrument)
+    //{
+    //  //TODO: check if private method works without access_token being sent
+    //  return Send(
+    //    "private/cancel_all_by_instrument",
+    //    new {instrument_name = instrument /*, access_token = AccessToken*/},
+    //    new ObjectJsonConverter<JObject>());
+    //}
 
-    public Task<JsonRpcResponse<OrderItem[]>> PrivateGetOpenOrders(string instrument)
-    {
-      //TODO: check if private method works without access_token being sent
-      return Send(
-        "private/get_open_orders_by_instrument",
-        new {instrument_name = instrument /*, access_token = AccessToken*/},
-        new ObjectJsonConverter<OrderItem[]>());
-    }
+    //public Task<JsonRpcResponse<OrderItem[]>> PrivateGetOpenOrders(string instrument)
+    //{
+    //  //TODO: check if private method works without access_token being sent
+    //  return Send(
+    //    "private/get_open_orders_by_instrument",
+    //    new {instrument_name = instrument /*, access_token = AccessToken*/},
+    //    new ObjectJsonConverter<OrderItem[]>());
+    //}
 
-    public Task<JsonRpcResponse<OrderResponse>> PrivateGetOrderState(string orderId)
-    {
-      //TODO: check if private method works without access_token being sent
-      return Send(
-        "private/get_order_state",
-        new {order_id = orderId /*, access_token = AccessToken*/},
-        new ObjectJsonConverter<OrderResponse>());
-    }
+    //public Task<JsonRpcResponse<OrderResponse>> PrivateGetOrderState(string orderId)
+    //{
+    //  //TODO: check if private method works without access_token being sent
+    //  return Send(
+    //    "private/get_order_state",
+    //    new {order_id = orderId /*, access_token = AccessToken*/},
+    //    new ObjectJsonConverter<OrderResponse>());
+    //}
 
-    public Task<JsonRpcResponse<SettlementResponse>> PrivateGetSettlementHistoryByInstrument(string instrument, string type, int count)
-    {
-      //TODO: check if private method works without access_token being sent
-      return Send(
-        "private/get_settlement_history_by_instrument",
-        new {instrument_name = instrument, type, count /*, access_token = AccessToken*/},
-        new ObjectJsonConverter<SettlementResponse>());
-    }
+    //public Task<JsonRpcResponse<SettlementResponse>> PrivateGetSettlementHistoryByInstrument(string instrument, string type, int count)
+    //{
+    //  //TODO: check if private method works without access_token being sent
+    //  return Send(
+    //    "private/get_settlement_history_by_instrument",
+    //    new {instrument_name = instrument, type, count /*, access_token = AccessToken*/},
+    //    new ObjectJsonConverter<SettlementResponse>());
+    //}
 
-    public Task<JsonRpcResponse<SettlementResponse>> PrivateGetSettlementHistoryByCurrency(string currency, string type, int count)
-    {
-      //TODO: check if private method works without access_token being sent
-      return Send(
-        "private/get_settlement_history_by_currency",
-        new {currency, type, count /*, access_token = AccessToken*/},
-        new ObjectJsonConverter<SettlementResponse>());
-    }
+    //public Task<JsonRpcResponse<SettlementResponse>> PrivateGetSettlementHistoryByCurrency(string currency, string type, int count)
+    //{
+    //  //TODO: check if private method works without access_token being sent
+    //  return Send(
+    //    "private/get_settlement_history_by_currency",
+    //    new {currency, type, count /*, access_token = AccessToken*/},
+    //    new ObjectJsonConverter<SettlementResponse>());
+    //}
+
+    //#endregion
+
+    ////TODO: Finish this
+
+    //#region Market data
+
+    //public Task<JsonRpcResponse<BookResponse>> PublicGetOrderBook(string instrument, int depth)
+    //{
+    //  return Send(
+    //    "public/get_order_book",
+    //    new {instrument_name = instrument, depth},
+    //    new ObjectJsonConverter<BookResponse>());
+    //}
 
     #endregion
 
-    //TODO: Finish this
-
     #region Market data
 
-    public Task<JsonRpcResponse<BookResponse>> PublicGetOrderBook(string instrument, int depth)
+    /// <summary>
+    ///   <para>
+    ///     Retrieves the summary information such as open interest, 24h volume, etc. for all instruments for the currency
+    ///     (optionally filtered by kind)
+    ///   </para>
+    ///   <para>Valid values: <c>BTC</c>, <c>ETH</c></para>
+    /// </summary>
+    /// <param name="currency">The currency symbol</param>
+    /// <param name="kind">
+    ///   Instrument kind, if not provided instruments of all kinds are considered. Valid values:
+    ///   <c>future</c>, <c>option</c>
+    /// </param>
+    public Task<JsonRpcResponse<BookSummary[]>> PublicGetBookSummaryByCurrency(string currency, string kind = default)
+    {
+      var args = new ExpandoObject();
+      args.TryAdd("currency", currency);
+
+      if (kind != default) args.TryAdd("kind", kind);
+
+      return Send(
+        "public/get_book_summary_by_currency",
+        args,
+        new ObjectJsonConverter<BookSummary[]>());
+    }
+
+    /// <summary>
+    ///   Retrieves the summary information such as open interest, 24h volume, etc. for a specific instrument
+    /// </summary>
+    /// <param name="instrumentName">Instrument name</param>
+    public Task<JsonRpcResponse<BookSummary[]>> PublicGetBookSummaryByInstrument(string instrumentName)
     {
       return Send(
+        "public/get_book_summary_by_instrument",
+        new { instrument_name = instrumentName },
+        new ObjectJsonConverter<BookSummary[]>());
+    }
+
+    /// <summary>
+    ///   Retrieves contract size of provided instrument
+    /// </summary>
+    /// <param name="instrumentName">Instrument name</param>
+    public Task<JsonRpcResponse<InstrumentContractSize>> PublicGetContractSize(string instrumentName)
+    {
+      return Send(
+        "public/get_contract_size",
+        new { instrument_name = instrumentName },
+        new ObjectJsonConverter<InstrumentContractSize>());
+    }
+
+    /// <summary>
+    ///   Retrieves all crypto currencies supported by the API
+    /// </summary>
+    public Task<JsonRpcResponse<Currency[]>> PublicGetCurrencies()
+    {
+      return Send(
+        "public/get_currencies",
+        null,
+        new ObjectJsonConverter<Currency[]>());
+    }
+
+    /// <summary>
+    ///   Retrieve the latest user trades that have occurred for PERPETUAL instruments in a specific currency symbol and within
+    ///   given time range
+    /// </summary>
+    /// <param name="instrumentName">Instrument name</param>
+    /// <param name="length">Specifies time period. <c>8h</c> - 8 hours, <c>24h</c> - 24 hours, <c>1m</c> - 1 month</param>
+    public Task<JsonRpcResponse<PerpetualUserTrades>> PublicGetFundingChartData(string instrumentName, string length)
+    {
+      return Send(
+        "public/get_funding_chart_data",
+        new { instrument_name = instrumentName, length },
+        new ObjectJsonConverter<PerpetualUserTrades>());
+    }
+
+    /// <summary>
+    /// Retrieves hourly historical interest rate for requested instrument
+    /// </summary>
+    /// <param name="instrumentName">Instrument name</param>
+    /// <param name="startTime">The earliest timestamp to return result for</param>
+    /// <param name="endTime">The most recent timestamp to return result for</param>
+    public Task<JsonRpcResponse<InterestRate[]>> PublicGetFundingRateHistory(string instrumentName, DateTime startTime, DateTime endTime)
+    {
+      return Send(
+        "public/get_funding_rate_history",
+        new { instrument_name = instrumentName, start_timestamp = startTime.AsMilliseconds(), end_timestamp = endTime.AsMilliseconds() },
+        new ObjectJsonConverter<InterestRate[]>());
+    }
+
+    /// <summary>
+    /// Retrieves interest rate value for requested period
+    /// </summary>
+    /// <param name="instrumentName">Instrument name</param>
+    /// <param name="startTime">The earliest timestamp to return result for</param>
+    /// <param name="endTime">The most recent timestamp to return result for</param>
+    public Task<JsonRpcResponse<decimal>> PublicGetFundingRateValue(string instrumentName, DateTime startTime, DateTime endTime)
+    {
+      return Send(
+        "public/get_funding_rate_value",
+        new { instrument_name = instrumentName, start_timestamp = startTime.AsMilliseconds(), end_timestamp = endTime.AsMilliseconds() },
+        new ObjectJsonConverter<decimal>());
+    }
+
+    //TODO: How to parse this?
+    /// <summary>
+    /// Provides information about historical volatility for given crypto currency
+    /// </summary>
+    /// <param name="currency">The currency symbol</param>
+    public Task<JsonRpcResponse<JArray>> PublicGetHistoricalVolatility(string currency)
+    {
+      return Send(
+        "public/get_historical_volatility",
+        new { currency },
+        new ObjectJsonConverter<JArray>());
+    }
+
+    /// <summary>
+    /// Retrieves the current index price for the instruments, for the selected currency
+    /// </summary>
+    /// <param name="currency">The currency symbol. Valid values: <c>BTC</c>, <c>ETH</c></param>
+    public Task<JsonRpcResponse<IndexPrice>> PublicGetIndex(string currency)
+    {
+      return Send(
+        "public/get_index",
+        new { currency },
+        new ObjectJsonConverter<IndexPrice>());
+    }
+
+    /// <summary>
+    /// Retrieves available trading instruments. This method can be used to see which instruments are available for trading, or which instruments have existed historically
+    /// </summary>
+    /// <param name="currency">The currency symbol. Valid values: <c>BTC</c>, <c>ETH</c></param>
+    /// <param name="kind">Instrument kind, if not provided instruments of all kinds are considered. Valid values: <c>future</c>, <c>option</c></param>
+    /// <param name="expired">Set to true to show expired instruments instead of active ones</param>
+    public Task<JsonRpcResponse<Instrument[]>> PublicGetInstruments(string currency, string kind = default, bool? expired = default)
+    {
+      var args = new ExpandoObject();
+      args.TryAdd("currency", currency);
+
+      if (kind != default) args.TryAdd("kind", kind);
+      if (expired != default) args.TryAdd("expired", expired.Value);
+
+      return Send(
+        "public/get_instruments",
+        args,
+        new ObjectJsonConverter<Instrument[]>());
+    }
+
+    /// <summary>
+    /// Retrieves historical settlement, delivery and bankruptcy events coming from all instruments with given currency
+    /// </summary>
+    /// <param name="currency">The currency symbol. Valid values: <c>BTC</c>, <c>ETH</c></param>
+    /// <param name="type">Settlement type. Valid values: <c>settlement</c>, <c>delivery</c>, <c>bankruptcy</c></param>
+    /// <param name="count">Number of requested items, default - <c>20</c></param>
+    /// <param name="continuation">Continuation token for pagination</param>
+    /// <param name="searchStartTime">The latest timestamp to return result for</param>
+    public Task<JsonRpcResponse<PublicSettlementCollection>> PublicGetLastSettlementsByCurrency(string currency,
+      string type = default, int count = default, string continuation = default, DateTime searchStartTime = default)
+    {
+      var eo = new ExpandoObject();
+      eo.TryAdd("currency", currency);
+
+      if (type != default) eo.TryAdd("type", type);
+      if (count > 0) eo.TryAdd("count", count);
+      if (continuation != default) eo.TryAdd("continuation", continuation);
+      if (searchStartTime != default) eo.TryAdd("search_start_timestamp", searchStartTime.AsMilliseconds());
+
+      return Send(
+        "public/get_last_settlements_by_currency",
+        eo,
+        new ObjectJsonConverter<PublicSettlementCollection>());
+    }
+
+    /// <summary>
+    /// Retrieves historical settlement, delivery and bankruptcy events filtered by instrument name
+    /// </summary>
+    /// <param name="instrumentName">Instrument name</param>
+    /// <param name="type">Settlement type. Valid values: <c>settlement</c>, <c>delivery</c>, <c>bankruptcy</c></param>
+    /// <param name="count">Number of requested items, default - <c>20</c></param>
+    /// <param name="continuation">Continuation token for pagination</param>
+    /// <param name="searchStartTime">The latest timestamp to return result for</param>
+    public Task<JsonRpcResponse<PublicSettlementCollection>> PublicGetLastSettlementsByInstrument(string instrumentName,
+      string type = default, int count = default, string continuation = default, DateTime searchStartTime = default)
+    {
+      var args = new ExpandoObject();
+      args.TryAdd("instrument_name", instrumentName);
+
+      if (type != default) args.TryAdd("type", type);
+      if (count > 0) args.TryAdd("count", count);
+      if (continuation != default) args.TryAdd("continuation", continuation);
+      if (searchStartTime != default) args.TryAdd("search_start_timestamp", searchStartTime.AsMilliseconds());
+
+      return Send(
+        "public/get_last_settlements_by_instrument",
+        args,
+        new ObjectJsonConverter<PublicSettlementCollection>());
+    }
+
+    /// <summary>
+    /// Retrieve the latest trades that have occurred for instruments in a specific currency symbol
+    /// </summary>
+    /// <param name="currency">The currency symbol. Valid values: <c>BTC</c>, <c>ETH</c></param>
+    /// <param name="kind">Instrument kind, if not provided instruments of all kinds are considered. Valid values: <c>future</c>, <c>option</c></param>
+    /// <param name="startId">The ID number of the first trade to be returned</param>
+    /// <param name="endId">The ID number of the last trade to be returned</param>
+    /// <param name="count">Number of requested items, default - <c>10</c></param>
+    /// <param name="includeOld">Include trades older than a few recent days, default - <c>false</c></param>
+    /// <param name="sorting">Direction of results sorting (<c>"default"</c> value means no sorting, results will be returned in order in which they left the database. Valid values: <c>asc</c>, <c>desc</c>, <c>default</c></param>
+    public Task<JsonRpcResponse<TradeCollection>> PublicGetLastTradesByCurrency(string currency,
+      string kind = default, string startId = default, string endId = default, int count = default, bool includeOld = default, string sorting = default)
+    {
+      var args = new ExpandoObject();
+      args.TryAdd("currency", currency);
+
+      if (kind != default) args.TryAdd("kind", kind);
+      if (startId != default) args.TryAdd("start_id", startId);
+      if (endId != default) args.TryAdd("end_id", endId);
+      if (count > 0) args.TryAdd("count", count);
+      args.TryAdd("include_old", includeOld);
+      if (sorting != default) args.TryAdd("sorting", sorting);
+
+      return Send(
+        "public/get_last_trades_by_currency",
+        args,
+        new ObjectJsonConverter<TradeCollection>());
+    }
+
+    /// <summary>
+    /// Retrieve the latest trades that have occurred for instruments in a specific currency symbol
+    /// </summary>
+    /// <param name="currency">The currency symbol. Valid values: <c>BTC</c>, <c>ETH</c></param>
+    /// <param name="startTime">The earliest timestamp to return result for</param>
+    /// <param name="endTime">The most recent timestamp to return result for</param>
+    /// <param name="kind">Instrument kind, if not provided instruments of all kinds are considered. Valid values: <c>future</c>, <c>option</c></param>
+    /// <param name="count">Number of requested items, default - <c>10</c></param>
+    /// <param name="includeOld">Include trades older than a few recent days, default - <c>false</c></param>
+    /// <param name="sorting">Direction of results sorting (<c>"default"</c> value means no sorting, results will be returned in order in which they left the database. Valid values: <c>asc</c>, <c>desc</c>, <c>default</c></param>
+    public Task<JsonRpcResponse<TradeCollection>> PublicGetLastTradesByCurrencyAndTime(string currency, DateTime startTime, DateTime endTime,
+      string kind = default, int count = default, bool includeOld = default, string sorting = default)
+    {
+      var args = new ExpandoObject();
+      args.TryAdd("currency", currency);
+      args.TryAdd("start_timestamp", startTime.AsMilliseconds());
+      args.TryAdd("end_timestamp", endTime.AsMilliseconds());
+
+      if (kind != default) args.TryAdd("kind", kind);
+      if (count > 0) args.TryAdd("count", count);
+      args.TryAdd("include_old", includeOld);
+      if (sorting != default) args.TryAdd("sorting", sorting);
+
+      return Send(
+        "public/get_last_trades_by_currency_and_time",
+        args,
+        new ObjectJsonConverter<TradeCollection>());
+    }
+
+    /// <summary>
+    /// Retrieve the latest trades that have occurred for a specific instrument
+    /// </summary>
+    /// <param name="instrumentName">Instrument name</param>
+    /// <param name="startSeq">The sequence number of the first trade to be returned</param>
+    /// <param name="endSeq">The sequence number of the last trade to be returned</param>
+    /// <param name="count">Number of requested items, default - <c>10</c></param>
+    /// <param name="includeOld">Include trades older than a few recent days, default - <c>false</c></param>
+    /// <param name="sorting">Direction of results sorting (<c>"default"</c> value means no sorting, results will be returned in order in which they left the database. Valid values: <c>asc</c>, <c>desc</c>, <c>default</c></param>
+    public Task<JsonRpcResponse<TradeCollection>> PublicGetLastTradesByInstrument(string instrumentName,
+      long startSeq = default, long endSeq = default, int count = default, bool includeOld = default, string sorting = default)
+    {
+      var args = new ExpandoObject();
+      args.TryAdd("instrument_name", instrumentName);
+
+      if (startSeq != default) args.TryAdd("start_seq", startSeq);
+      if (endSeq != default) args.TryAdd("end_seq", endSeq);
+      if (count > 0) args.TryAdd("count", count);
+      args.TryAdd("include_old", includeOld);
+      if (sorting != default) args.TryAdd("sorting", sorting);
+
+      return Send(
+        "public/get_last_trades_by_instrument",
+        args,
+        new ObjectJsonConverter<TradeCollection>());
+    }
+
+    /// <summary>
+    /// Retrieve the latest trades that have occured for a specific instrument and within given time range
+    /// </summary>
+    /// <param name="instrumentName">Instrument name</param>
+    /// <param name="startTime">The earliest timestamp to return result for</param>
+    /// <param name="endTime">The most recent timestamp to return result for</param>
+    /// <param name="count">Number of requested items, default - <c>10</c></param>
+    /// <param name="includeOld">Include trades older than a few recent days, default - <c>false</c></param>
+    /// <param name="sorting">Direction of results sorting (<c>"default"</c> value means no sorting, results will be returned in order in which they left the database. Valid values: <c>asc</c>, <c>desc</c>, <c>default</c></param>
+    public Task<JsonRpcResponse<TradeCollection>> PublicGetLastTradesByInstrumentAndTime(
+      string instrumentName, DateTime startTime, DateTime endTime,
+      int count = default, bool includeOld = default, string sorting = default)
+    {
+      var args = new ExpandoObject();
+      args.TryAdd("instrument_name", instrumentName);
+      args.TryAdd("start_timestamp", startTime.AsMilliseconds());
+      args.TryAdd("end_timestamp", endTime.AsMilliseconds());
+
+      if (count > 0) args.TryAdd("count", count);
+      args.TryAdd("include_old", includeOld);
+      if (sorting != default) args.TryAdd("sorting", sorting);
+
+      return Send(
+        "public/get_last_trades_by_instrument_and_time",
+        args,
+        new ObjectJsonConverter<TradeCollection>());
+    }
+
+    /// <summary>
+    /// Retrieves the order book, along with other market values for a given instrument
+    /// </summary>
+    /// <param name="instrumentName">Instrument name</param>
+    /// <param name="depth">The number of entries to return for bids and asks</param>
+    public Task<JsonRpcResponse<OrderBook>> PublicGetOrderBook(string instrumentName, int depth = default)
+    {
+      var args = new ExpandoObject();
+      args.TryAdd("instrument_name", instrumentName);
+
+      if (depth > 0) args.TryAdd("depth", depth);
+
+      return Send(
         "public/get_order_book",
-        new {instrument_name = instrument, depth},
-        new ObjectJsonConverter<BookResponse>());
+        args,
+        new ObjectJsonConverter<OrderBook>());
+    }
+
+    /// <summary>
+    /// Retrieves aggregated 24h trade volumes for different instrument types and currencies
+    /// </summary>
+    public Task<JsonRpcResponse<TradeVolume[]>> PublicGetTradeVolumes()
+    {
+      return Send(
+        "public/get_trade_volumes",
+        null,
+        new ObjectJsonConverter<TradeVolume[]>());
+    }
+
+    /// <summary>
+    /// Publicly available market data used to generate a TradingView candle chart
+    /// </summary>
+    /// <param name="instrumentName">Instrument name</param>
+    /// <param name="startTime">The earliest timestamp to return result for</param>
+    /// <param name="endTime">The most recent timestamp to return result for</param>
+    /// <param name="resolution">
+    /// <para>Chart bars resolution given in full minutes or keyword <c>1D</c> (only some specific resolutions are supported)</para>
+    /// <para>Supported resolutions: <c>1</c>, <c>3</c>, <c>5</c>, <c>10</c>, <c>15</c>, <c>30</c>, <c>60</c>, <c>120</c>, <c>180</c>, <c>360</c>, <c>720</c>, <c>1D</c></para>
+    /// </param>
+    public Task<JsonRpcResponse<TradingViewMarketData>> PublicGetTradingViewData(string instrumentName, DateTime startTime, DateTime endTime, string resolution)
+    {
+      return Send(
+        "public/get_tradingview_chart_data",
+        new { instrument_name = instrumentName, start_timestamp = startTime.AsMilliseconds(), end_timestamp = endTime.AsMilliseconds(), resolution },
+        new ObjectJsonConverter<TradingViewMarketData>());
+    }
+
+    /// <summary>
+    /// Get ticker for an instrument
+    /// </summary>
+    /// <param name="instrumentName">Instrument name</param>
+    /// <returns></returns>
+    public Task<JsonRpcResponse<TickerData>> PublicTicker(string instrumentName)
+    {
+      return Send(
+        "public/ticker",
+        new { instrument_name = instrumentName },
+        new ObjectJsonConverter<TickerData>());
     }
 
     #endregion
@@ -1305,48 +1675,48 @@ namespace DeriSock
 
     #region Subscriptions
 
-    public Task<bool> PublicSubscribeBook(string instrument, int group, int depth, Action<BookResponse> callback)
-    {
-      var groupName = group == 0 ? "none" : group.ToString();
-      return _subscriptionManager.Subscribe(
-        $"book.{instrument}.{groupName}.{depth}.100ms",
-        n =>
-        {
-          callback(n.Data.ToObject<BookResponse>());
-        });
-    }
+    //public Task<bool> PublicSubscribeBook(string instrument, int group, int depth, Action<BookResponse> callback)
+    //{
+    //  var groupName = group == 0 ? "none" : group.ToString();
+    //  return _subscriptionManager.Subscribe(
+    //    $"book.{instrument}.{groupName}.{depth}.100ms",
+    //    n =>
+    //    {
+    //      callback(n.Data.ToObject<BookResponse>());
+    //    });
+    //}
 
-    public Task<bool> PrivateSubscribeOrders(string instrument, Action<OrderResponse> callback)
-    {
-      return _subscriptionManager.Subscribe(
-        "user.orders." + instrument + ".raw",
-        n =>
-        {
-          var orderResponse = n.Data.ToObject<OrderResponse>();
-          orderResponse.timestamp = n.Timestamp;
-          callback(orderResponse);
-        });
-    }
+    //public Task<bool> PrivateSubscribeOrders(string instrument, Action<OrderResponse> callback)
+    //{
+    //  return _subscriptionManager.Subscribe(
+    //    "user.orders." + instrument + ".raw",
+    //    n =>
+    //    {
+    //      var orderResponse = n.Data.ToObject<OrderResponse>();
+    //      orderResponse.timestamp = n.Timestamp;
+    //      callback(orderResponse);
+    //    });
+    //}
 
-    public Task<bool> PrivateSubscribePortfolio(string currency, Action<PortfolioResponse> callback)
-    {
-      return _subscriptionManager.Subscribe(
-        $"user.portfolio.{currency.ToLower()}",
-        n =>
-        {
-          callback(n.Data.ToObject<PortfolioResponse>());
-        });
-    }
+    //public Task<bool> PrivateSubscribePortfolio(string currency, Action<PortfolioResponse> callback)
+    //{
+    //  return _subscriptionManager.Subscribe(
+    //    $"user.portfolio.{currency.ToLower()}",
+    //    n =>
+    //    {
+    //      callback(n.Data.ToObject<PortfolioResponse>());
+    //    });
+    //}
 
-    public Task<bool> PublicSubscribeTicker(string instrument, string interval, Action<TickerResponse> callback)
-    {
-      return _subscriptionManager.Subscribe(
-        $"ticker.{instrument}.{interval}",
-        n =>
-        {
-          callback(n.Data.ToObject<TickerResponse>());
-        });
-    }
+    //public Task<bool> PublicSubscribeTicker(string instrument, string interval, Action<TickerResponse> callback)
+    //{
+    //  return _subscriptionManager.Subscribe(
+    //    $"ticker.{instrument}.{interval}",
+    //    n =>
+    //    {
+    //      callback(n.Data.ToObject<TickerResponse>());
+    //    });
+    //}
 
     #endregion
 
