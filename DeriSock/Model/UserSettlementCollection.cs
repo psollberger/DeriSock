@@ -2,18 +2,15 @@
 {
   using Newtonsoft.Json;
 
-  public class PublicSettlementCollection
+  public class UserSettlementCollection
   {
     /// <summary>
-    ///   Continuation token for pagination.
+    ///   Continuation token for pagination
     /// </summary>
     [JsonProperty("continuation")]
     public string Continuation { get; set; }
 
-    /// <summary>
-    ///   of object
-    /// </summary>
     [JsonProperty("settlements")]
-    public PublicSettlement[] Settlements { get; set; }
+    public UserSettlement[] Settlements { get; set; }
   }
 }

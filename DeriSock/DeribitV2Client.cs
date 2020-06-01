@@ -1465,7 +1465,7 @@ namespace DeriSock
     /// <param name="count">Number of requested items, default - <c>20</c></param>
     /// <param name="continuation">Continuation token for pagination</param>
     /// <param name="searchStartTime">The latest timestamp to return result for</param>
-    public Task<JsonRpcResponse<PublicSettlementCollection>> PublicGetLastSettlementsByCurrency(string currency,
+    public Task<JsonRpcResponse<MarketSettlementCollection>> PublicGetLastSettlementsByCurrency(string currency,
       string type = default, int count = default, string continuation = default, DateTime searchStartTime = default)
     {
       var eo = new ExpandoObject();
@@ -1494,7 +1494,7 @@ namespace DeriSock
       return Send(
         "public/get_last_settlements_by_currency",
         eo,
-        new ObjectJsonConverter<PublicSettlementCollection>());
+        new ObjectJsonConverter<MarketSettlementCollection>());
     }
 
     /// <summary>
@@ -1505,7 +1505,7 @@ namespace DeriSock
     /// <param name="count">Number of requested items, default - <c>20</c></param>
     /// <param name="continuation">Continuation token for pagination</param>
     /// <param name="searchStartTime">The latest timestamp to return result for</param>
-    public Task<JsonRpcResponse<PublicSettlementCollection>> PublicGetLastSettlementsByInstrument(string instrumentName,
+    public Task<JsonRpcResponse<MarketSettlementCollection>> PublicGetLastSettlementsByInstrument(string instrumentName,
       string type = default, int count = default, string continuation = default, DateTime searchStartTime = default)
     {
       var args = new ExpandoObject();
@@ -1534,7 +1534,7 @@ namespace DeriSock
       return Send(
         "public/get_last_settlements_by_instrument",
         args,
-        new ObjectJsonConverter<PublicSettlementCollection>());
+        new ObjectJsonConverter<MarketSettlementCollection>());
     }
 
     /// <summary>
@@ -1553,7 +1553,7 @@ namespace DeriSock
     ///   Direction of results sorting (<c>"default"</c> value means no sorting, results will be returned
     ///   in order in which they left the database. Valid values: <c>asc</c>, <c>desc</c>, <c>default</c>
     /// </param>
-    public Task<JsonRpcResponse<TradeCollection>> PublicGetLastTradesByCurrency(string currency,
+    public Task<JsonRpcResponse<MarketTradeCollection>> PublicGetLastTradesByCurrency(string currency,
       string kind = default, string startId = default, string endId = default, int count = default, bool includeOld = default, string sorting = default)
     {
       var args = new ExpandoObject();
@@ -1588,7 +1588,7 @@ namespace DeriSock
       return Send(
         "public/get_last_trades_by_currency",
         args,
-        new ObjectJsonConverter<TradeCollection>());
+        new ObjectJsonConverter<MarketTradeCollection>());
     }
 
     /// <summary>
@@ -1607,7 +1607,7 @@ namespace DeriSock
     ///   Direction of results sorting (<c>"default"</c> value means no sorting, results will be returned
     ///   in order in which they left the database. Valid values: <c>asc</c>, <c>desc</c>, <c>default</c>
     /// </param>
-    public Task<JsonRpcResponse<TradeCollection>> PublicGetLastTradesByCurrencyAndTime(string currency, DateTime startTime, DateTime endTime,
+    public Task<JsonRpcResponse<MarketTradeCollection>> PublicGetLastTradesByCurrencyAndTime(string currency, DateTime startTime, DateTime endTime,
       string kind = default, int count = default, bool includeOld = default, string sorting = default)
     {
       var args = new ExpandoObject();
@@ -1634,7 +1634,7 @@ namespace DeriSock
       return Send(
         "public/get_last_trades_by_currency_and_time",
         args,
-        new ObjectJsonConverter<TradeCollection>());
+        new ObjectJsonConverter<MarketTradeCollection>());
     }
 
     /// <summary>
@@ -1649,7 +1649,7 @@ namespace DeriSock
     ///   Direction of results sorting (<c>"default"</c> value means no sorting, results will be returned
     ///   in order in which they left the database. Valid values: <c>asc</c>, <c>desc</c>, <c>default</c>
     /// </param>
-    public Task<JsonRpcResponse<TradeCollection>> PublicGetLastTradesByInstrument(string instrumentName,
+    public Task<JsonRpcResponse<MarketTradeCollection>> PublicGetLastTradesByInstrument(string instrumentName,
       long startSeq = default, long endSeq = default, int count = default, bool includeOld = default, string sorting = default)
     {
       var args = new ExpandoObject();
@@ -1679,7 +1679,7 @@ namespace DeriSock
       return Send(
         "public/get_last_trades_by_instrument",
         args,
-        new ObjectJsonConverter<TradeCollection>());
+        new ObjectJsonConverter<MarketTradeCollection>());
     }
 
     /// <summary>
@@ -1694,7 +1694,7 @@ namespace DeriSock
     ///   Direction of results sorting (<c>"default"</c> value means no sorting, results will be returned
     ///   in order in which they left the database. Valid values: <c>asc</c>, <c>desc</c>, <c>default</c>
     /// </param>
-    public Task<JsonRpcResponse<TradeCollection>> PublicGetLastTradesByInstrumentAndTime(
+    public Task<JsonRpcResponse<MarketTradeCollection>> PublicGetLastTradesByInstrumentAndTime(
       string instrumentName, DateTime startTime, DateTime endTime,
       int count = default, bool includeOld = default, string sorting = default)
     {
@@ -1717,7 +1717,7 @@ namespace DeriSock
       return Send(
         "public/get_last_trades_by_instrument_and_time",
         args,
-        new ObjectJsonConverter<TradeCollection>());
+        new ObjectJsonConverter<MarketTradeCollection>());
     }
 
     /// <summary>

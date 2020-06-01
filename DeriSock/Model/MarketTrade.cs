@@ -3,7 +3,7 @@
   using System;
   using Newtonsoft.Json;
 
-  public class Trade
+  public class MarketTrade
   {
     /// <summary>
     ///   Trade amount. For perpetual and futures - in USD units, for options it is amount of corresponding cryptocurrency

@@ -2,12 +2,12 @@
 {
   using Newtonsoft.Json;
 
-  public class TradeCollection
+  public class MarketTradeCollection
   {
     [JsonProperty("has_more")]
     public bool HasMore { get; set; }
 
     [JsonProperty("trades")]
-    public Trade[] Trades { get; set; }
+    public MarketTrade[] Trades { get; set; }
   }
 }

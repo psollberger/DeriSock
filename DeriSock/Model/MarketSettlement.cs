@@ -3,7 +3,7 @@
   using System;
   using Newtonsoft.Json;
 
-  public class PublicSettlement
+  public class MarketSettlement
   {
     /// <summary>
     ///   funded amount (bankruptcy only)
