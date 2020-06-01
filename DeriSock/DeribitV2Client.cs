@@ -1188,21 +1188,435 @@ namespace DeriSock
 
     #region Trading
 
-    //public Task<JsonRpcResponse<BuySellResponse>> PrivateBuyLimit(string instrument, double amount, double price, string label)
+    /// <summary>
+    ///   Places a buy order for an instrument
+    /// </summary>
+    /// <param name="args">The arguments to the method</param>
+    public Task<JsonRpcResponse<UserOrderTrades>> PrivateBuy(BuyParams args)
+    {
+      return Send(
+        "private/buy",
+        args.ToArgs(),
+        new ObjectJsonConverter<UserOrderTrades>());
+    }
+
+    /// <summary>
+    ///   Places a sell order for an instrument
+    /// </summary>
+    /// <param name="args">The arguments to the method</param>
+    public Task<JsonRpcResponse<UserOrderTrades>> PrivateSell(SellParams args)
+    {
+      return Send(
+        "private/sell",
+        args.ToArgs(),
+        new ObjectJsonConverter<UserOrderTrades>());
+    }
+
+    /// <summary>
+    ///   Change price, amount and/or other properties of an order
+    /// </summary>
+    /// <param name="args">The arguments to the method</param>
+    public Task<JsonRpcResponse<UserOrderTrades>> PrivateEdit(EditParams args)
+    {
+      return Send(
+        "private/edit",
+        args.ToArgs(),
+        new ObjectJsonConverter<UserOrderTrades>());
+    }
+
+    /// <summary>
+    ///   Cancel an order, specified by order id
+    /// </summary>
+    /// <param name="orderId">The order id</param>
+    public Task<JsonRpcResponse<UserOrder>> PrivateCancel(string orderId)
+    {
+      return Send(
+        "private/cancel",
+        new {order_id = orderId},
+        new ObjectJsonConverter<UserOrder>());
+    }
+
+    /// <summary>
+    ///   This method cancels all users orders and stop orders within all currencies and instrument kinds
+    /// </summary>
+    public Task<JsonRpcResponse<int>> PrivateCancelAll()
+    {
+      return Send(
+        "private/cancel_all",
+        null,
+        new ObjectJsonConverter<int>());
+    }
+
+    /// <summary>
+    ///   Cancels all orders by currency, optionally filtered by instrument kind and/or order type
+    /// </summary>
+    /// <param name="currency">The currency symbol</param>
+    /// <param name="kind">
+    ///   <para>Instrument kind, if not provided instruments of all kinds are considered.</para>
+    ///   <para>Enum: <c>future</c>, <c>option</c></para>
+    /// </param>
+    /// <param name="type">
+    ///   <para>Order type, default - <c>all</c></para>
+    ///   <para>Enum: <c>all</c>, <c>limit</c> or <c>stop</c></para>
+    /// </param>
+    public Task<JsonRpcResponse<int>> PrivateCancelAllByCurrency(string currency, string kind = default, string type = default)
+    {
+      var args = new ExpandoObject();
+      args.TryAdd("currency", currency);
+
+      if (kind != default)
+      {
+        args.TryAdd("kind", kind);
+      }
+
+      if (type != default)
+      {
+        args.TryAdd("type", type);
+      }
+
+      return Send(
+        "private/cancel_all_by_currency",
+        args,
+        new ObjectJsonConverter<int>());
+    }
+
+    /// <summary>
+    ///   Cancels all orders by instrument, optionally filtered by order type
+    /// </summary>
+    /// <param name="instrumentName">Instrument name</param>
+    /// <param name="type">
+    ///   <para>Order type, default - <c>all</c></para>
+    ///   <para>Enum: <c>all</c>, <c>limit</c>, <c>stop</c></para>
+    /// </param>
+    public Task<JsonRpcResponse<int>> PrivateCancelAllByInstrument(string instrumentName, string type = default)
+    {
+      var args = new ExpandoObject();
+      args.TryAdd("instrument_name", instrumentName);
+
+      if (type != default)
+      {
+        args.TryAdd("type", type);
+      }
+
+      return Send(
+        "private/cancel_all_by_instrument",
+        args,
+        new ObjectJsonConverter<int>());
+    }
+
+    /// <summary>
+    ///   Cancels orders by label. All user's orders (stop orders too), with given label are canceled in all currencies
+    /// </summary>
+    /// <param name="label">User defined label for the order (maximum 64 characters)</param>
+    public Task<JsonRpcResponse<int>> PrivateCancelByLabel(string label)
+    {
+      return Send(
+        "private/cancel_by_label",
+        new {label},
+        new ObjectJsonConverter<int>());
+    }
+
+    /// <summary>
+    ///   Makes closing position reduce only order
+    /// </summary>
+    /// <param name="instrumentName">Instrument name</param>
+    /// <param name="type">
+    ///   <para>The order type</para>
+    ///   <para>Enum: <c>limit</c>, <c>market</c></para>
+    /// </param>
+    /// <param name="price">Optional price for limit order</param>
+    public Task<JsonRpcResponse<UserOrderTrades>> PrivateClosePosition(string instrumentName, string type, decimal price = default)
+    {
+      var args = new ExpandoObject();
+      args.TryAdd("instrument_name", instrumentName);
+      args.TryAdd("type", type);
+
+      if (price != default)
+      {
+        args.TryAdd("price", price);
+      }
+
+      return Send(
+        "private/close_position",
+        args,
+        new ObjectJsonConverter<UserOrderTrades>());
+    }
+
+    /// <summary>
+    ///   Get margins for given instrument, amount and price
+    /// </summary>
+    /// <param name="instrumentName">Instrument name</param>
+    /// <param name="amount">
+    ///   Amount, integer for future, float for option. For perpetual and futures the amount is in USD
+    ///   units, for options it is amount of corresponding crypto currency contracts, e.g., BTC or ETH
+    /// </param>
+    /// <param name="price">Price</param>
+    public Task<JsonRpcResponse<UserMargin>> PrivateGetMargins(string instrumentName, decimal amount, decimal price)
+    {
+      return Send(
+        "private/get_margins",
+        new {instrument_name = instrumentName, amount, price},
+        new ObjectJsonConverter<UserMargin>());
+    }
+
+    /// <summary>
+    ///   Retrieves list of user's open orders
+    /// </summary>
+    /// <param name="currency">The currency symbol</param>
+    /// <param name="kind">
+    ///   <para>Instrument kind, if not provided instruments of all kinds are considered.</para>
+    ///   <para>Enum: <c>future</c>, <c>option</c></para>
+    /// </param>
+    /// <param name="type">
+    ///   <para>Order type, default - <c>all</c></para>
+    ///   <para>Enum: <c>all</c>, <c>limit</c>, <c>stop_all</c>, <c>stop_limit</c>, <c>stop_market</c></para>
+    /// </param>
+    public Task<JsonRpcResponse<UserOrder[]>> PrivateGetOpenOrdersByCurrency(string currency, string kind = default, string type = default)
+    {
+      var args = new ExpandoObject();
+      args.TryAdd("currency", currency);
+
+      if (kind != default)
+      {
+        args.TryAdd("kind", kind);
+      }
+
+      if (type != default)
+      {
+        args.TryAdd("type", type);
+      }
+
+      return Send(
+        "private/get_open_orders_by_currency",
+        args,
+        new ObjectJsonConverter<UserOrder[]>());
+    }
+
+    /// <summary>
+    ///   Retrieves list of user's open orders within given instrument
+    /// </summary>
+    /// <param name="instrumentName">Instrument name</param>
+    /// <param name="type">
+    ///   <para>Order type, default - <c>all</c></para>
+    ///   <para>Enum: <c>all</c>, <c>limit</c>, <c>stop_all</c>, <c>stop_limit</c>, <c>stop_market</c></para>
+    /// </param>
+    public Task<JsonRpcResponse<UserOrder[]>> PrivateGetOpenOrdersByInstrument(string instrumentName, string type = default)
+    {
+      var args = new ExpandoObject();
+      args.TryAdd("instrument_name", instrumentName);
+
+      if (type != default)
+      {
+        args.TryAdd("type", type);
+      }
+
+      return Send(
+        "private/get_open_orders_by_instrument",
+        args,
+        new ObjectJsonConverter<UserOrder[]>());
+    }
+
+    /// <summary>
+    ///   Retrieves history of orders that have been partially or fully filled
+    /// </summary>
+    /// <param name="currency">The currency symbol</param>
+    /// <param name="kind">
+    ///   <para>Instrument kind, if not provided instruments of all kinds are considered.</para>
+    ///   <para>Enum: <c>future</c>, <c>option</c></para>
+    /// </param>
+    /// <param name="count">Number of requested items, default - <c>20</c></param>
+    /// <param name="offset">The offset for pagination, default - <c>0</c></param>
+    /// <param name="includeOld">Include in result orders oder than 2 days, default - <c>false</c></param>
+    /// <param name="includeUnfilled">Include in result fully unfilled closed orders, default - <c>false</c></param>
+    public Task<JsonRpcResponse<UserOrder[]>> PrivateGetOrderHistoryByCurrency(string currency,
+      string kind = default, int count = default, int offset = default, bool? includeOld = null, bool? includeUnfilled = null)
+    {
+      var args = new ExpandoObject();
+      args.TryAdd("currency", currency);
+
+      if (kind != default)
+      {
+        args.TryAdd("kind", kind);
+      }
+
+      if (count > 0)
+      {
+        args.TryAdd("count", count);
+      }
+
+      if (offset > 0)
+      {
+        args.TryAdd("offset", offset);
+      }
+
+      if (includeOld.HasValue)
+      {
+        args.TryAdd("include_old", includeOld.Value);
+      }
+
+      if (includeUnfilled.HasValue)
+      {
+        args.TryAdd("include_unfilled", includeUnfilled.Value);
+      }
+
+      return Send(
+        "private/get_order_history_by_currency",
+        args,
+        new ObjectJsonConverter<UserOrder[]>());
+    }
+
+    /// <summary>
+    ///   Retrieves history of orders that have been partially or fully filled
+    /// </summary>
+    /// <param name="instrumentName">Instrument name</param>
+    /// <param name="count">Number of requested items, default - <c>20</c></param>
+    /// <param name="offset">The offset for pagination, default - <c>0</c></param>
+    /// <param name="includeOld">Include in result orders oder than 2 days, default - <c>false</c></param>
+    /// <param name="includeUnfilled">Include in result fully unfilled closed orders, default - <c>false</c></param>
+    public Task<JsonRpcResponse<UserOrder[]>> PrivateGetOrderHistoryByInstrument(string instrumentName,
+      int count = default, int offset = default, bool? includeOld = null, bool? includeUnfilled = null)
+    {
+      var args = new ExpandoObject();
+      args.TryAdd("instrument_name", instrumentName);
+
+      if (count > 0)
+      {
+        args.TryAdd("count", count);
+      }
+
+      if (offset > 0)
+      {
+        args.TryAdd("offset", offset);
+      }
+
+      if (includeOld.HasValue)
+      {
+        args.TryAdd("include_old", includeOld.Value);
+      }
+
+      if (includeUnfilled.HasValue)
+      {
+        args.TryAdd("include_unfilled", includeUnfilled.Value);
+      }
+
+      return Send(
+        "private/get_order_history_by_instrument",
+        args,
+        new ObjectJsonConverter<UserOrder[]>());
+    }
+
+    /// <summary>
+    ///   Retrieves initial margins of given orders
+    /// </summary>
+    /// <param name="ids">IDs of orders</param>
+    public Task<JsonRpcResponse<UserOrderMargin[]>> PrivateGetOrderMarginByIDs(params string[] ids)
+    {
+      return Send(
+        "private/get_order_margin_by_ids",
+        new {ids},
+        new ObjectJsonConverter<UserOrderMargin[]>());
+    }
+
+    /// <summary>
+    ///   Retrieve the current state of an order
+    /// </summary>
+    /// <param name="orderId"></param>
+    public Task<JsonRpcResponse<UserOrder>> PrivateGetOrderState(string orderId)
+    {
+      return Send(
+        "private/get_order_state",
+        new {order_id = orderId},
+        new ObjectJsonConverter<UserOrder>());
+    }
+
+    /// <summary>
+    ///   Retrieves detailed log of the user's stop-orders
+    /// </summary>
+    /// <param name="currency">The currency symbol</param>
+    /// <param name="instrumentName">Instrument name</param>
+    /// <param name="count">Number of requested items, default - <c>20</c></param>
+    /// <param name="continuation">Continuation token for pagination</param>
+    public Task<JsonRpcResponse<UserStopOrderCollection>> PrivateGetStopOrderHistory(string currency,
+      string instrumentName = default, int count = default, string continuation = default)
+    {
+      var args = new ExpandoObject();
+      args.TryAdd("currency", currency);
+
+      if (instrumentName != default)
+      {
+        args.TryAdd("instrument_name", instrumentName);
+      }
+
+      if (count > 0)
+      {
+        args.TryAdd("count", count);
+      }
+
+      if (continuation != default)
+      {
+        args.TryAdd("continuation", continuation);
+      }
+
+      return Send(
+        "private/get_stop_order_history",
+        args,
+        new ObjectJsonConverter<UserStopOrderCollection>());
+    }
+
+    //public Task<JsonRpcResponse<>> Private()
     //{
-    //  //TODO: check if private method works without access_token being sent
     //  return Send(
-    //    "private/buy",
-    //    new
-    //    {
-    //      instrument_name = instrument,
-    //      amount,
-    //      type = "limit",
-    //      label,
-    //      price,
-    //      time_in_force = "good_til_cancelled",
-    //      post_only = true /*, access_token = AccessToken*/
-    //    }, new ObjectJsonConverter<BuySellResponse>());
+    //    "private/",
+    //    ,
+    //    new ObjectJsonConverter<>());
+    //}
+
+    //public Task<JsonRpcResponse<>> Private()
+    //{
+    //  return Send(
+    //    "private/",
+    //    ,
+    //    new ObjectJsonConverter<>());
+    //}
+
+    //public Task<JsonRpcResponse<>> Private()
+    //{
+    //  return Send(
+    //    "private/",
+    //    ,
+    //    new ObjectJsonConverter<>());
+    //}
+
+    //public Task<JsonRpcResponse<>> Private()
+    //{
+    //  return Send(
+    //    "private/",
+    //    ,
+    //    new ObjectJsonConverter<>());
+    //}
+
+    //public Task<JsonRpcResponse<>> Private()
+    //{
+    //  return Send(
+    //    "private/",
+    //    ,
+    //    new ObjectJsonConverter<>());
+    //}
+
+    //public Task<JsonRpcResponse<>> Private()
+    //{
+    //  return Send(
+    //    "private/",
+    //    ,
+    //    new ObjectJsonConverter<>());
+    //}
+
+    //public Task<JsonRpcResponse<>> Private()
+    //{
+    //  return Send(
+    //    "private/",
+    //    ,
+    //    new ObjectJsonConverter<>());
     //}
 
     #endregion
@@ -1467,7 +1881,7 @@ namespace DeriSock
     ///   in order in which they left the database. Valid values: <c>asc</c>, <c>desc</c>, <c>default</c>
     /// </param>
     public Task<JsonRpcResponse<MarketTradeCollection>> PublicGetLastTradesByCurrency(string currency,
-      string kind = default, string startId = default, string endId = default, int count = default, bool includeOld = default, string sorting = default)
+      string kind = default, string startId = default, string endId = default, int count = default, bool? includeOld = null, string sorting = default)
     {
       var args = new ExpandoObject();
       args.TryAdd("currency", currency);
@@ -1492,7 +1906,11 @@ namespace DeriSock
         args.TryAdd("count", count);
       }
 
-      args.TryAdd("include_old", includeOld);
+      if (includeOld.HasValue)
+      {
+        args.TryAdd("include_old", includeOld.Value);
+      }
+
       if (sorting != default)
       {
         args.TryAdd("sorting", sorting);
@@ -1521,7 +1939,7 @@ namespace DeriSock
     ///   in order in which they left the database. Valid values: <c>asc</c>, <c>desc</c>, <c>default</c>
     /// </param>
     public Task<JsonRpcResponse<MarketTradeCollection>> PublicGetLastTradesByCurrencyAndTime(string currency, DateTime startTime, DateTime endTime,
-      string kind = default, int count = default, bool includeOld = default, string sorting = default)
+      string kind = default, int count = default, bool? includeOld = null, string sorting = default)
     {
       var args = new ExpandoObject();
       args.TryAdd("currency", currency);
@@ -1538,7 +1956,11 @@ namespace DeriSock
         args.TryAdd("count", count);
       }
 
-      args.TryAdd("include_old", includeOld);
+      if (includeOld.HasValue)
+      {
+        args.TryAdd("include_old", includeOld.Value);
+      }
+
       if (sorting != default)
       {
         args.TryAdd("sorting", sorting);
@@ -1563,7 +1985,7 @@ namespace DeriSock
     ///   in order in which they left the database. Valid values: <c>asc</c>, <c>desc</c>, <c>default</c>
     /// </param>
     public Task<JsonRpcResponse<MarketTradeCollection>> PublicGetLastTradesByInstrument(string instrumentName,
-      long startSeq = default, long endSeq = default, int count = default, bool includeOld = default, string sorting = default)
+      long startSeq = default, long endSeq = default, int count = default, bool? includeOld = null, string sorting = default)
     {
       var args = new ExpandoObject();
       args.TryAdd("instrument_name", instrumentName);
@@ -1583,7 +2005,11 @@ namespace DeriSock
         args.TryAdd("count", count);
       }
 
-      args.TryAdd("include_old", includeOld);
+      if (includeOld.HasValue)
+      {
+        args.TryAdd("include_old", includeOld);
+      }
+
       if (sorting != default)
       {
         args.TryAdd("sorting", sorting);
@@ -1609,7 +2035,7 @@ namespace DeriSock
     /// </param>
     public Task<JsonRpcResponse<MarketTradeCollection>> PublicGetLastTradesByInstrumentAndTime(
       string instrumentName, DateTime startTime, DateTime endTime,
-      int count = default, bool includeOld = default, string sorting = default)
+      int count = default, bool? includeOld = null, string sorting = default)
     {
       var args = new ExpandoObject();
       args.TryAdd("instrument_name", instrumentName);
@@ -1621,7 +2047,11 @@ namespace DeriSock
         args.TryAdd("count", count);
       }
 
-      args.TryAdd("include_old", includeOld);
+      if (includeOld.HasValue)
+      {
+        args.TryAdd("include_old", includeOld.Value);
+      }
+
       if (sorting != default)
       {
         args.TryAdd("sorting", sorting);
