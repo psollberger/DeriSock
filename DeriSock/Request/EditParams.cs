@@ -3,7 +3,7 @@
   using System.Collections.Generic;
   using System.Dynamic;
 
-  public class EditOrderParams
+  public class EditParams
   {
     /// <summary>
     /// The order id
