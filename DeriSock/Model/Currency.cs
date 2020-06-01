@@ -1,6 +1,5 @@
 ﻿namespace DeriSock.Model
 {
-  using System.IO;
   using Newtonsoft.Json;
 
   public class Currency

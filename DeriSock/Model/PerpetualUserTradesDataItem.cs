@@ -23,7 +23,7 @@
     [JsonProperty("timestamp")]
     public long Timestamp { get; set; }
 
-    /// <inheritdoc cref="Timestamp"/>
+    /// <inheritdoc cref="Timestamp" />
     [JsonIgnore]
     public DateTime TimestampDateTime => Timestamp.AsDateTimeFromMilliseconds();
   }

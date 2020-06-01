@@ -6,55 +6,55 @@
   public class TickerData
   {
     /// <summary>
-    /// (Only for option) implied volatility for best ask
+    ///   (Only for option) implied volatility for best ask
     /// </summary>
     [JsonProperty("ask_iv")]
     public decimal AskIv { get; set; }
 
     /// <summary>
-    /// It represents the requested order size of all best asks
+    ///   It represents the requested order size of all best asks
     /// </summary>
     [JsonProperty("best_ask_amount")]
     public decimal BestAskAmount { get; set; }
 
     /// <summary>
-    /// The current best ask price, null if there aren't any asks
+    ///   The current best ask price, null if there aren't any asks
     /// </summary>
     [JsonProperty("best_ask_price")]
     public decimal BestAskPrice { get; set; }
 
     /// <summary>
-    /// It represents the requested order size of all best bids
+    ///   It represents the requested order size of all best bids
     /// </summary>
     [JsonProperty("best_bid_amount")]
     public decimal NestBidAmount { get; set; }
 
     /// <summary>
-    /// The current best bid price, null if there aren't any bids
+    ///   The current best bid price, null if there aren't any bids
     /// </summary>
     [JsonProperty("best_bid_price")]
     public decimal BestBidPrice { get; set; }
 
     /// <summary>
-    /// (Only for option) implied volatility for best bid
+    ///   (Only for option) implied volatility for best bid
     /// </summary>
     [JsonProperty("bid_iv")]
     public decimal BidIv { get; set; }
 
     /// <summary>
-    /// Current funding (perpetual only)
+    ///   Current funding (perpetual only)
     /// </summary>
     [JsonProperty("current_funding")]
     public decimal CurrentFunding { get; set; }
 
     /// <summary>
-    /// The settlement price for the instrument. Only when state = closed
+    ///   The settlement price for the instrument. Only when state = closed
     /// </summary>
     [JsonProperty("delivery_price")]
     public decimal DeliveryPrice { get; set; }
 
     /// <summary>
-    /// Funding 8h (perpetual only)
+    ///   Funding 8h (perpetual only)
     /// </summary>
     [JsonProperty("funding_8h")]
     public decimal Funding8H { get; set; }
@@ -63,67 +63,68 @@
     public Greeks Greeks { get; set; }
 
     /// <summary>
-    /// Current index price
+    ///   Current index price
     /// </summary>
     [JsonProperty("index_price")]
     public decimal IndexPrice { get; set; }
 
     /// <summary>
-    /// Unique instrument identifier
+    ///   Unique instrument identifier
     /// </summary>
     [JsonProperty("instrument_name")]
     public string InstrumentName { get; set; }
 
     /// <summary>
-    /// Interest rate used in implied volatility calculations (options only)
+    ///   Interest rate used in implied volatility calculations (options only)
     /// </summary>
     [JsonProperty("interest_rate")]
     public decimal InterestRate { get; set; }
 
     /// <summary>
-    /// The price for the last trade
+    ///   The price for the last trade
     /// </summary>
     [JsonProperty("last_price")]
     public decimal LastPrice { get; set; }
 
     /// <summary>
-    /// (Only for option) implied volatility for mark price
+    ///   (Only for option) implied volatility for mark price
     /// </summary>
     [JsonProperty("mark_iv")]
     public decimal MarkIv { get; set; }
 
     /// <summary>
-    /// The mark price for the instrument
+    ///   The mark price for the instrument
     /// </summary>
     [JsonProperty("mark_price")]
     public decimal MarkPrice { get; set; }
 
     /// <summary>
-    /// The maximum price for the future. Any buy orders you submit higher than this price, will be clamped to this maximum.
+    ///   The maximum price for the future. Any buy orders you submit higher than this price, will be clamped to this maximum.
     /// </summary>
     [JsonProperty("max_price")]
     public decimal MaxPrice { get; set; }
 
     /// <summary>
-    /// The minimum price for the future. Any sell orders you submit lower than this price will be clamped to this minimum.
+    ///   The minimum price for the future. Any sell orders you submit lower than this price will be clamped to this minimum.
     /// </summary>
     [JsonProperty("min_price")]
     public decimal MinPrice { get; set; }
 
     /// <summary>
-    /// The total amount of outstanding contracts in the corresponding amount units. For perpetual and futures the amount is in USD units, for options it is amount of corresponding cryptocurrency contracts, e.g., BTC or ETH.
+    ///   The total amount of outstanding contracts in the corresponding amount units. For perpetual and futures the amount is
+    ///   in USD units, for options it is amount of corresponding cryptocurrency contracts, e.g., BTC or ETH.
     /// </summary>
     [JsonProperty("open_interest")]
     public decimal OpenInterest { get; set; }
 
     /// <summary>
-    /// The settlement price for the instrument. Only when state = open
+    ///   The settlement price for the instrument. Only when state = open
     /// </summary>
     [JsonProperty("settlement_price")]
     public decimal SettlementPrice { get; set; }
 
     /// <summary>
-    /// The state of the order book. Possible values are open and closed.
+    ///   The state of the order book. Possible values are open and closed.
     /// </summary>
     [JsonProperty("state")]
     public string State { get; set; }
@@ -132,23 +133,23 @@
     public Statistics Stats { get; set; }
 
     /// <summary>
-    /// The timestamp (milliseconds since the Unix epoch)
+    ///   The timestamp (milliseconds since the Unix epoch)
     /// </summary>
     [JsonProperty("timestamp")]
     public long Timestamp { get; set; }
 
-    /// <inheritdoc cref="Timestamp"/>
+    /// <inheritdoc cref="Timestamp" />
     [JsonIgnore]
     public DateTime TimestampDateTime => Timestamp.AsDateTimeFromMilliseconds();
 
     /// <summary>
-    /// Name of the underlying future, or index_price (options only)
+    ///   Name of the underlying future, or index_price (options only)
     /// </summary>
     [JsonProperty("underlying_index")]
     public decimal UnderlyingIndex { get; set; }
 
     /// <summary>
-    /// Underlying price for implied volatility calculations (options only)
+    ///   Underlying price for implied volatility calculations (options only)
     /// </summary>
     [JsonProperty("underlying_price")]
     public decimal UnderlyingPrice { get; set; }

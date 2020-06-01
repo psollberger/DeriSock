@@ -29,7 +29,7 @@
     [JsonProperty("creation_timestamp")]
     public long CreationTimestamp { get; set; }
 
-    /// <inheritdoc cref="CreationTimestamp"/>
+    /// <inheritdoc cref="CreationTimestamp" />
     [JsonIgnore]
     public DateTime CreationTimestampDateTime => CreationTimestamp.AsDateTimeFromMilliseconds();
 
