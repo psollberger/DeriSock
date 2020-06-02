@@ -1184,8 +1184,6 @@ namespace DeriSock
 
     #endregion
 
-    //TODO: Finish this
-
     #region Trading
 
     /// <summary>
@@ -1563,61 +1561,320 @@ namespace DeriSock
         new ObjectJsonConverter<UserStopOrderCollection>());
     }
 
-    //public Task<JsonRpcResponse<>> Private()
-    //{
-    //  return Send(
-    //    "private/",
-    //    ,
-    //    new ObjectJsonConverter<>());
-    //}
+    /// <summary>
+    ///   Retrieve the latest user trades that have occurred for instruments in a specific currency symbol
+    /// </summary>
+    /// <param name="currency">The currency symbol</param>
+    /// <param name="kind">
+    ///   <para>Instrument kind, if not provided instruments of all kinds are considered.</para>
+    ///   <para>Enum: <c>future</c>, <c>option</c></para>
+    /// </param>
+    /// <param name="startId">The ID number of the first trade to be returned</param>
+    /// <param name="endId">The ID number of the last trade to be returned</param>
+    /// <param name="count">Number of requested items, default - <c>10</c></param>
+    /// <param name="includeOld">Include trades older than a few recent days, default - <c>false</c></param>
+    /// <param name="sorting">
+    ///   <para>
+    ///     Direction of results sorting (<c>"default"</c> value means no sorting, results will be returned
+    ///     in order in which they left the database)
+    ///   </para>
+    ///   <para>Enum: <c>asc</c>, <c>desc</c>, <c>default</c></para>
+    /// </param>
+    public Task<JsonRpcResponse<UserTrade[]>> PrivateGetUserTradesByCurrency(string currency,
+      string kind = default, string startId = default, string endId = default, int count = default, bool? includeOld = null, string sorting = default)
+    {
+      var args = new ExpandoObject();
+      args.TryAdd("currency", currency);
 
-    //public Task<JsonRpcResponse<>> Private()
-    //{
-    //  return Send(
-    //    "private/",
-    //    ,
-    //    new ObjectJsonConverter<>());
-    //}
+      if (kind != default)
+      {
+        args.TryAdd("kind", kind);
+      }
 
-    //public Task<JsonRpcResponse<>> Private()
-    //{
-    //  return Send(
-    //    "private/",
-    //    ,
-    //    new ObjectJsonConverter<>());
-    //}
+      if (startId != default)
+      {
+        args.TryAdd("start_id", startId);
+      }
 
-    //public Task<JsonRpcResponse<>> Private()
-    //{
-    //  return Send(
-    //    "private/",
-    //    ,
-    //    new ObjectJsonConverter<>());
-    //}
+      if (endId != default)
+      {
+        args.TryAdd("end_id", endId);
+      }
 
-    //public Task<JsonRpcResponse<>> Private()
-    //{
-    //  return Send(
-    //    "private/",
-    //    ,
-    //    new ObjectJsonConverter<>());
-    //}
+      if (count > 0)
+      {
+        args.TryAdd("count", count);
+      }
 
-    //public Task<JsonRpcResponse<>> Private()
-    //{
-    //  return Send(
-    //    "private/",
-    //    ,
-    //    new ObjectJsonConverter<>());
-    //}
+      if (includeOld.HasValue)
+      {
+        args.TryAdd("include_old", includeOld.Value);
+      }
 
-    //public Task<JsonRpcResponse<>> Private()
-    //{
-    //  return Send(
-    //    "private/",
-    //    ,
-    //    new ObjectJsonConverter<>());
-    //}
+      if (sorting != default)
+      {
+        args.TryAdd("sorting", sorting);
+      }
+
+      return Send(
+        "private/get_user_trades_by_currency",
+        args,
+        new ObjectJsonConverter<UserTrade[]>());
+    }
+
+    /// <summary>
+    ///   Retrieve the latest user trades that have occurred for instruments in a specific currency symbol and within given
+    ///   time range
+    /// </summary>
+    /// <param name="currency">The currency symbol</param>
+    /// <param name="kind">
+    ///   <para>Instrument kind, if not provided instruments of all kinds are considered.</para>
+    ///   <para>Enum: <c>future</c>, <c>option</c></para>
+    /// </param>
+    /// <param name="startTime">The earliest timestamp to return result for</param>
+    /// <param name="endTime">The most recent timestamp to return result for</param>
+    /// <param name="count">Number of requested items, default - <c>10</c></param>
+    /// <param name="includeOld">Include trades older than a few recent days, default - <c>false</c></param>
+    /// <param name="sorting">
+    ///   <para>
+    ///     Direction of results sorting (<c>"default"</c> value means no sorting, results will be returned
+    ///     in order in which they left the database)
+    ///   </para>
+    ///   <para>Enum: <c>asc</c>, <c>desc</c>, <c>default</c></para>
+    /// </param>
+    public Task<JsonRpcResponse<UserTrade[]>> PrivateGetUserTradesByCurrencyAndTime(string currency,
+      string kind = default, DateTime startTime = default, DateTime endTime = default, int count = default, bool? includeOld = null, string sorting = default)
+    {
+      var args = new ExpandoObject();
+      args.TryAdd("currency", currency);
+
+      if (kind != default)
+      {
+        args.TryAdd("kind", kind);
+      }
+
+      if (startTime != default)
+      {
+        args.TryAdd("start_timestamp", startTime.AsMilliseconds());
+      }
+
+      if (endTime != default)
+      {
+        args.TryAdd("end_timestamp", endTime.AsMilliseconds());
+      }
+
+      if (count > 0)
+      {
+        args.TryAdd("count", count);
+      }
+
+      if (includeOld.HasValue)
+      {
+        args.TryAdd("include_old", includeOld.Value);
+      }
+
+      if (sorting != default)
+      {
+        args.TryAdd("sorting", sorting);
+      }
+
+      return Send(
+        "private/get_user_trades_by_currency_and_time",
+        args,
+        new ObjectJsonConverter<UserTrade[]>());
+    }
+
+    /// <summary>
+    ///   Retrieve the latest user trades that have occurred for a specific instrument
+    /// </summary>
+    /// <param name="instrumentName">Instrument name</param>
+    /// <param name="startSeq">The sequence number of the first trade to be returned</param>
+    /// <param name="endSeq">The sequence number of the last trade to be returned</param>
+    /// <param name="count">Number of requested items, default - <c>10</c></param>
+    /// <param name="includeOld">Include trades older than a few recent days, default - <c>false</c></param>
+    /// <param name="sorting">
+    ///   <para>
+    ///     Direction of results sorting (<c>"default"</c> value means no sorting, results will be returned
+    ///     in order in which they left the database)
+    ///   </para>
+    ///   <para>Enum: <c>asc</c>, <c>desc</c>, <c>default</c></para>
+    /// </param>
+    public Task<JsonRpcResponse<UserTrade[]>> PrivateGetUserTradesByInstrument(string instrumentName,
+      long startSeq = default, long endSeq = default, int count = default, bool? includeOld = null, string sorting = default)
+    {
+      var args = new ExpandoObject();
+      args.TryAdd("instrument_name", instrumentName);
+
+      if (startSeq != default)
+      {
+        args.TryAdd("start_seq", startSeq);
+      }
+
+      if (endSeq != default)
+      {
+        args.TryAdd("end_seq", endSeq);
+      }
+
+      if (count > 0)
+      {
+        args.TryAdd("count", count);
+      }
+
+      if (includeOld.HasValue)
+      {
+        args.TryAdd("include_old", includeOld.Value);
+      }
+
+      if (sorting != default)
+      {
+        args.TryAdd("sorting", sorting);
+      }
+
+      return Send(
+        "private/get_user_trades_by_instrument",
+        args,
+        new ObjectJsonConverter<UserTrade[]>());
+    }
+
+    /// <summary>
+    ///   Retrieve the latest user trades that have occurred for a specific instrument and within given time range
+    /// </summary>
+    /// <param name="instrumentName">Instrument name</param>
+    /// <param name="startTime">The earliest timestamp to return result for</param>
+    /// <param name="endTime">The most recent timestamp to return result for</param>
+    /// <param name="count">Number of requested items, default - <c>10</c></param>
+    /// <param name="includeOld">Include trades older than a few recent days, default - <c>false</c></param>
+    /// <param name="sorting">
+    ///   <para>
+    ///     Direction of results sorting (<c>"default"</c> value means no sorting, results will be returned
+    ///     in order in which they left the database)
+    ///   </para>
+    ///   <para>Enum: <c>asc</c>, <c>desc</c>, <c>default</c></para>
+    /// </param>
+    public Task<JsonRpcResponse<UserTrade[]>> PrivateGetUserTradesByInstrumentAndTime(string instrumentName,
+      DateTime startTime = default, DateTime endTime = default, int count = default, bool? includeOld = null, string sorting = default)
+    {
+      var args = new ExpandoObject();
+      args.TryAdd("instrument_name", instrumentName);
+
+      if (startTime != default)
+      {
+        args.TryAdd("start_timestamp", startTime.AsMilliseconds());
+      }
+
+      if (endTime != default)
+      {
+        args.TryAdd("end_timestamp", endTime.AsMilliseconds());
+      }
+
+      if (count > 0)
+      {
+        args.TryAdd("count", count);
+      }
+
+      if (includeOld.HasValue)
+      {
+        args.TryAdd("include_old", includeOld.Value);
+      }
+
+      if (sorting != default)
+      {
+        args.TryAdd("sorting", sorting);
+      }
+
+      return Send(
+        "private/get_user_trades_by_instrument_and_time",
+        args,
+        new ObjectJsonConverter<UserTrade[]>());
+    }
+
+    /// <summary>
+    ///   Retrieves the list of user trades that was created for given order
+    /// </summary>
+    /// <param name="orderId">The order id</param>
+    /// <param name="sorting">
+    ///   <para>
+    ///     Direction of results sorting (<c>"default"</c> value means no sorting, results will be returned
+    ///     in order in which they left the database)
+    ///   </para>
+    ///   <para>Enum: <c>asc</c>, <c>desc</c>, <c>default</c></para>
+    /// </param>
+    public Task<JsonRpcResponse<UserTrade[]>> PrivateGetUserTradesByOrder(string orderId, string sorting = default)
+    {
+      var args = new ExpandoObject();
+      args.TryAdd("order_id", orderId);
+
+      if (sorting != default)
+      {
+        args.TryAdd("sorting", sorting);
+      }
+
+      return Send(
+        "private/get_user_trades_by_order",
+        args,
+        new ObjectJsonConverter<UserTrade[]>());
+    }
+
+    /// <summary>
+    ///   Retrieves public settlement, delivery and bankruptcy events filtered by instrument name
+    /// </summary>
+    /// <param name="instrumentName">Instrument name</param>
+    /// <param name="type">
+    ///   <para>Settlement type</para>
+    ///   <para>Enum: <c>settlement</c>, <c>delivery</c>, <c>bankruptcy</c></para>
+    /// </param>
+    /// <param name="count">Number of requested items, default - <c>20</c></param>
+    public Task<JsonRpcResponse<UserSettlementCollection>> PrivateGetSettlementHistoryByInstrument(string instrumentName,
+      string type = default, int count = default)
+    {
+      var args = new ExpandoObject();
+      args.TryAdd("instrument_name", instrumentName);
+
+      if (type != default)
+      {
+        args.TryAdd("type", type);
+      }
+
+      if (count > 0)
+      {
+        args.TryAdd("count", count);
+      }
+
+      return Send(
+        "private/get_settlement_history_by_instrument",
+        args,
+        new ObjectJsonConverter<UserSettlementCollection>());
+    }
+
+    /// <summary>
+    ///   Retrieves settlement, delivery and bankruptcy events that have affected your account
+    /// </summary>
+    /// <param name="currency">The currency symbol</param>
+    /// <param name="type">
+    ///   <para>Settlement type</para>
+    ///   <para>Enum: <c>settlement</c>, <c>delivery</c>, <c>bankruptcy</c></para>
+    /// </param>
+    /// <param name="count">Number of requested items, default - <c>20</c></param>
+    public Task<JsonRpcResponse<UserSettlementCollection>> PrivateGetSettlementHistoryByCurrency(string currency, string type = default, int count = default)
+    {
+      var args = new ExpandoObject();
+      args.TryAdd("currency", currency);
+
+      if (type != default)
+      {
+        args.TryAdd("type", type);
+      }
+
+      if (count > 0)
+      {
+        args.TryAdd("count", count);
+      }
+
+      return Send(
+        "private/get_settlement_history_by_currency",
+        args,
+        new ObjectJsonConverter<UserSettlementCollection>());
+    }
 
     #endregion
 
@@ -1877,8 +2134,11 @@ namespace DeriSock
     /// <param name="count">Number of requested items, default - <c>10</c></param>
     /// <param name="includeOld">Include trades older than a few recent days, default - <c>false</c></param>
     /// <param name="sorting">
-    ///   Direction of results sorting (<c>"default"</c> value means no sorting, results will be returned
-    ///   in order in which they left the database. Valid values: <c>asc</c>, <c>desc</c>, <c>default</c>
+    ///   <para>
+    ///     Direction of results sorting (<c>"default"</c> value means no sorting, results will be returned
+    ///     in order in which they left the database)
+    ///   </para>
+    ///   <para>Enum: <c>asc</c>, <c>desc</c>, <c>default</c></para>
     /// </param>
     public Task<JsonRpcResponse<MarketTradeCollection>> PublicGetLastTradesByCurrency(string currency,
       string kind = default, string startId = default, string endId = default, int count = default, bool? includeOld = null, string sorting = default)
@@ -1935,8 +2195,11 @@ namespace DeriSock
     /// <param name="count">Number of requested items, default - <c>10</c></param>
     /// <param name="includeOld">Include trades older than a few recent days, default - <c>false</c></param>
     /// <param name="sorting">
-    ///   Direction of results sorting (<c>"default"</c> value means no sorting, results will be returned
-    ///   in order in which they left the database. Valid values: <c>asc</c>, <c>desc</c>, <c>default</c>
+    ///   <para>
+    ///     Direction of results sorting (<c>"default"</c> value means no sorting, results will be returned
+    ///     in order in which they left the database)
+    ///   </para>
+    ///   <para>Enum: <c>asc</c>, <c>desc</c>, <c>default</c></para>
     /// </param>
     public Task<JsonRpcResponse<MarketTradeCollection>> PublicGetLastTradesByCurrencyAndTime(string currency, DateTime startTime, DateTime endTime,
       string kind = default, int count = default, bool? includeOld = null, string sorting = default)
@@ -1981,8 +2244,11 @@ namespace DeriSock
     /// <param name="count">Number of requested items, default - <c>10</c></param>
     /// <param name="includeOld">Include trades older than a few recent days, default - <c>false</c></param>
     /// <param name="sorting">
-    ///   Direction of results sorting (<c>"default"</c> value means no sorting, results will be returned
-    ///   in order in which they left the database. Valid values: <c>asc</c>, <c>desc</c>, <c>default</c>
+    ///   <para>
+    ///     Direction of results sorting (<c>"default"</c> value means no sorting, results will be returned
+    ///     in order in which they left the database)
+    ///   </para>
+    ///   <para>Enum: <c>asc</c>, <c>desc</c>, <c>default</c></para>
     /// </param>
     public Task<JsonRpcResponse<MarketTradeCollection>> PublicGetLastTradesByInstrument(string instrumentName,
       long startSeq = default, long endSeq = default, int count = default, bool? includeOld = null, string sorting = default)
@@ -2030,8 +2296,11 @@ namespace DeriSock
     /// <param name="count">Number of requested items, default - <c>10</c></param>
     /// <param name="includeOld">Include trades older than a few recent days, default - <c>false</c></param>
     /// <param name="sorting">
-    ///   Direction of results sorting (<c>"default"</c> value means no sorting, results will be returned
-    ///   in order in which they left the database. Valid values: <c>asc</c>, <c>desc</c>, <c>default</c>
+    ///   <para>
+    ///     Direction of results sorting (<c>"default"</c> value means no sorting, results will be returned
+    ///     in order in which they left the database)
+    ///   </para>
+    ///   <para>Enum: <c>asc</c>, <c>desc</c>, <c>default</c></para>
     /// </param>
     public Task<JsonRpcResponse<MarketTradeCollection>> PublicGetLastTradesByInstrumentAndTime(
       string instrumentName, DateTime startTime, DateTime endTime,
@@ -2120,7 +2389,6 @@ namespace DeriSock
     ///   Get ticker for an instrument
     /// </summary>
     /// <param name="instrumentName">Instrument name</param>
-    /// <returns></returns>
     public Task<JsonRpcResponse<TickerData>> PublicTicker(string instrumentName)
     {
       return Send(
