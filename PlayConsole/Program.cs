@@ -1,12 +1,10 @@
 ﻿using System.Diagnostics;
-using Microsoft.OpenApi.Models;
-
-[assembly: DebuggerDisplay(@"\{Name = {Name} Description = {Description}}", Target = typeof(OpenApiTag))]
 
 namespace PlayConsole
 {
   using System;
   using System.IO;
+  using System.Reflection;
   using System.Threading;
   using System.Threading.Tasks;
   using DeriSock;
@@ -15,6 +13,7 @@ namespace PlayConsole
   using DeriSock.Model;
   using DeriSock.Request;
   using DeriSock.Utils;
+  using Microsoft.Extensions.Configuration;
   using Newtonsoft.Json;
   using Serilog;
   using Serilog.Events;
@@ -26,9 +25,19 @@ namespace PlayConsole
     public static async Task<int> Main(string[] args)
     {
       Console.CancelKeyPress += Console_CancelKeyPress;
-
       Console.Title = "Deribit Development Playground";
 
+      var confRoot = new ConfigurationBuilder()
+        //.SetBasePath(Directory.GetCurrentDirectory())
+        //.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+        .AddUserSecrets(Assembly.GetExecutingAssembly(), false, false)
+        .Build();
+
+      var apiSettings = confRoot.GetSection("api_master");
+
+      var clientId = apiSettings["ClientId"];
+      var clientSecret = apiSettings["ClientSecret"];
+      
       const string logFilePath = @"D:\Temp\Serilog\test-log-.txt";
       Directory.CreateDirectory(Path.GetDirectoryName(logFilePath));
 
@@ -54,15 +63,15 @@ namespace PlayConsole
         {
           await _client.Connect();
 
-          var sig = CryptoHelper.CreateSignature("S3EL63RBXOJZSN4ACV5SWF2OLO337BKL");
+          var sig = CryptoHelper.CreateSignature(clientSecret);
           var loginRes = await _client.PublicAuth(new AuthParams
           {
             GrantType = GrantType.Signature,
-            ClientId = "KxEneYNT9VsK",
+            ClientId = clientId,
             Signature = sig
           });
 
-          var res = await _client.PrivateGetWithdrawals("BTC");
+          var res = await _client.PrivateGetOrderMarginByIDs("1", "2", "3");
 
           var blub = 4;
           _client.PrivateLogout();
