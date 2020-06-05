@@ -69,13 +69,13 @@ namespace DeriSock
       RefreshToken = null;
     }
 
-    private async Task<JsonRpcResponse<T>> Send<T>(string method, object @params, IJsonConverter<T> converter)
+    protected virtual async Task<JsonRpcResponse<T>> Send<T>(string method, object @params, IJsonConverter<T> converter)
     {
       var response = await _client.Send(method, @params).ConfigureAwait(false);
       return response.CreateTyped(converter.Convert(response.Result));
     }
 
-    private void OnServerRequest(object sender, JsonRpcRequest request)
+    protected virtual void OnServerRequest(object sender, JsonRpcRequest request)
     {
       if (string.Equals(request.Method, "subscription"))
       {
@@ -91,7 +91,7 @@ namespace DeriSock
       }
     }
 
-    private void OnHeartbeat(Heartbeat heartbeat)
+    protected virtual void OnHeartbeat(Heartbeat heartbeat)
     {
       if (Logger?.IsEnabled(LogEventLevel.Debug) ?? false)
       {
@@ -104,7 +104,7 @@ namespace DeriSock
       }
     }
 
-    private void OnNotification(Notification notification)
+    protected virtual void OnNotification(Notification notification)
     {
       if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
       {
@@ -141,7 +141,7 @@ namespace DeriSock
       }
     }
 
-    private void EnqueueAuthRefresh(int expiresIn)
+    protected virtual void EnqueueAuthRefresh(int expiresIn)
     {
       var expireTimeSpan = TimeSpan.FromSeconds(expiresIn);
       if (expireTimeSpan.TotalMilliseconds > Int32.MaxValue)
@@ -161,7 +161,7 @@ namespace DeriSock
       });
     }
 
-    private class SubscriptionManager
+    protected class SubscriptionManager
     {
       private readonly DeribitV2Client _client;
       private readonly ConcurrentDictionary<string, SubscriptionEntry> _subscriptionMap;
@@ -2624,16 +2624,33 @@ namespace DeriSock
 
     #region Subscriptions
 
-    //public Task<bool> PublicSubscribeBook(string instrument, int group, int depth, Action<BookResponse> callback)
-    //{
-    //  var groupName = group == 0 ? "none" : group.ToString();
-    //  return _subscriptionManager.Subscribe(
-    //    $"book.{instrument}.{groupName}.{depth}.100ms",
-    //    n =>
-    //    {
-    //      callback(n.Data.ToObject<BookResponse>());
-    //    });
-    //}
+    /// <summary>
+    /// General announcements concerning the Deribit platform.
+    /// </summary>
+    public Task<bool> SubscribeAnnouncements(Action<AnnouncementNotification> callback)
+    {
+      return _subscriptionManager.Subscribe("announcements", n =>
+      {
+        callback(n.Data.ToObject<AnnouncementNotification>());
+      });
+    }
+
+    /// <summary>
+    /// <para>Notifies about changes to the order book for a certain instrument.</para>
+    /// <para>Notifications are sent once per specified interval, with prices grouped by (rounded to) the specified group, showing the complete order book to the specified depth (number of price levels).</para>
+    /// <para>The 'asks' and the 'bids' elements in the response are both a 'list of lists'. Each element in the outer list is a list of exactly two elements: price and amount.</para>
+    /// <para>price is a price level (USD per BTC, rounded as specified by the 'group' parameter for the subscription).</para>
+    /// <para>amount indicates the amount of all orders at price level. For perpetual and futures the amount is in USD units, for options it is amount of corresponding cryptocurrency contracts, e.g., BTC or ETH.</para>
+    /// </summary>
+    public Task<bool> SubscribeBookGroup(BookGroupSubscriptionParams args, Action<BookGroupNotification> callback)
+    {
+      return _subscriptionManager.Subscribe(
+        args.ToChannelName(),
+        n =>
+        {
+          callback(n.Data.ToObject<BookGroupNotification>());
+        });
+    }
 
     //public Task<bool> PrivateSubscribeOrders(string instrument, Action<OrderResponse> callback)
     //{
