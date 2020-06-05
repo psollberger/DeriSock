@@ -59,40 +59,5 @@
     ///   Stop price, required for stop limit orders (Only for stop orders)
     /// </summary>
     public decimal? StopPrice { get; set; }
-
-    public object ToArgs()
-    {
-      var args = new ExpandoObject();
-      args.TryAdd("order_id", OrderId);
-      args.TryAdd("amount", Amount);
-      args.TryAdd("price", Price);
-
-      if (PostOnly.HasValue)
-      {
-        args.TryAdd("post_only", PostOnly);
-      }
-
-      if (ReduceOnly.HasValue)
-      {
-        args.TryAdd("reduce_only", ReduceOnly);
-      }
-
-      if (RejectPostOnly.HasValue)
-      {
-        args.TryAdd("reject_post_only", RejectPostOnly);
-      }
-
-      if (Advanced != default)
-      {
-        args.TryAdd("advanced", Advanced);
-      }
-
-      if (StopPrice.HasValue)
-      {
-        args.TryAdd("stop_price", StopPrice);
-      }
-      
-      return args;
-    }
   }
 }

@@ -1190,11 +1190,70 @@ namespace DeriSock
     ///   Places a buy order for an instrument
     /// </summary>
     /// <param name="args">The arguments to the method</param>
-    public Task<JsonRpcResponse<UserOrderTrades>> PrivateBuy(BuyParams args)
+    public Task<JsonRpcResponse<UserOrderTrades>> PrivateBuy(BuyParams @params)
     {
+      var args = new ExpandoObject();
+      args.TryAdd("instrument_name", @params.InstrumentName);
+      args.TryAdd("amount", @params.Amount);
+
+      if (@params.Type != default)
+      {
+        args.TryAdd("type", @params.Type);
+      }
+
+      if (@params.Label != default)
+      {
+        args.TryAdd("label", @params.Label);
+      }
+
+      if (@params.Price.HasValue)
+      {
+        args.TryAdd("price", @params.Price);
+      }
+
+      if (@params.TimeInForce != default)
+      {
+        args.TryAdd("time_in_force", @params.TimeInForce);
+      }
+
+      if (@params.MaxShow.HasValue)
+      {
+        args.TryAdd("max_show", @params.MaxShow);
+      }
+
+      if (@params.PostOnly.HasValue)
+      {
+        args.TryAdd("post_only", @params.PostOnly);
+      }
+
+      if (@params.RejectPostOnly.HasValue)
+      {
+        args.TryAdd("reject_post_only", @params.RejectPostOnly);
+      }
+
+      if (@params.ReduceOnly.HasValue)
+      {
+        args.TryAdd("reduce_only", @params.ReduceOnly);
+      }
+
+      if (@params.StopPrice.HasValue)
+      {
+        args.TryAdd("stop_price", @params.StopPrice);
+      }
+
+      if (@params.Trigger != default)
+      {
+        args.TryAdd("trigger", @params.Trigger);
+      }
+
+      if (@params.Advanced != default)
+      {
+        args.TryAdd("advanced", @params.Advanced);
+      }
+
       return Send(
         "private/buy",
-        args.ToArgs(),
+        args,
         new ObjectJsonConverter<UserOrderTrades>());
     }
 
@@ -1202,11 +1261,70 @@ namespace DeriSock
     ///   Places a sell order for an instrument
     /// </summary>
     /// <param name="args">The arguments to the method</param>
-    public Task<JsonRpcResponse<UserOrderTrades>> PrivateSell(SellParams args)
+    public Task<JsonRpcResponse<UserOrderTrades>> PrivateSell(SellParams @params)
     {
+      var args = new ExpandoObject();
+      args.TryAdd("instrument_name", @params.InstrumentName);
+      args.TryAdd("amount", @params.Amount);
+
+      if (@params.Type != default)
+      {
+        args.TryAdd("type", @params.Type);
+      }
+
+      if (@params.Label != default)
+      {
+        args.TryAdd("label", @params.Label);
+      }
+
+      if (@params.Price.HasValue)
+      {
+        args.TryAdd("price", @params.Price);
+      }
+
+      if (@params.TimeInForce != default)
+      {
+        args.TryAdd("time_in_force", @params.TimeInForce);
+      }
+
+      if (@params.MaxShow.HasValue)
+      {
+        args.TryAdd("max_show", @params.MaxShow);
+      }
+
+      if (@params.PostOnly.HasValue)
+      {
+        args.TryAdd("post_only", @params.PostOnly);
+      }
+
+      if (@params.RejectPostOnly.HasValue)
+      {
+        args.TryAdd("reject_post_only", @params.RejectPostOnly);
+      }
+
+      if (@params.ReduceOnly.HasValue)
+      {
+        args.TryAdd("reduce_only", @params.ReduceOnly);
+      }
+
+      if (@params.StopPrice.HasValue)
+      {
+        args.TryAdd("stop_price", @params.StopPrice);
+      }
+
+      if (@params.Trigger != default)
+      {
+        args.TryAdd("trigger", @params.Trigger);
+      }
+
+      if (@params.Advanced != default)
+      {
+        args.TryAdd("advanced", @params.Advanced);
+      }
+
       return Send(
         "private/sell",
-        args.ToArgs(),
+        args,
         new ObjectJsonConverter<UserOrderTrades>());
     }
 
@@ -1214,11 +1332,41 @@ namespace DeriSock
     ///   Change price, amount and/or other properties of an order
     /// </summary>
     /// <param name="args">The arguments to the method</param>
-    public Task<JsonRpcResponse<UserOrderTrades>> PrivateEdit(EditParams args)
+    public Task<JsonRpcResponse<UserOrderTrades>> PrivateEdit(EditParams @params)
     {
+      var args = new ExpandoObject();
+      args.TryAdd("order_id", @params.OrderId);
+      args.TryAdd("amount", @params.Amount);
+      args.TryAdd("price", @params.Price);
+
+      if (@params.PostOnly.HasValue)
+      {
+        args.TryAdd("post_only", @params.PostOnly);
+      }
+
+      if (@params.ReduceOnly.HasValue)
+      {
+        args.TryAdd("reduce_only", @params.ReduceOnly);
+      }
+
+      if (@params.RejectPostOnly.HasValue)
+      {
+        args.TryAdd("reject_post_only", @params.RejectPostOnly);
+      }
+
+      if (@params.Advanced != default)
+      {
+        args.TryAdd("advanced", @params.Advanced);
+      }
+
+      if (@params.StopPrice.HasValue)
+      {
+        args.TryAdd("stop_price", @params.StopPrice);
+      }
+
       return Send(
         "private/edit",
-        args.ToArgs(),
+        args,
         new ObjectJsonConverter<UserOrderTrades>());
     }
 
