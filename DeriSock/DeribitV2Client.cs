@@ -172,20 +172,22 @@ namespace DeriSock
         _subscriptionMap = new ConcurrentDictionary<string, SubscriptionEntry>();
       }
 
-      public async Task<bool> Subscribe(string channel, Action<Notification> callback)
+      public async Task<bool> Subscribe(ISubscriptionChannel channel, Action<Notification> callback)
       {
         if (callback == null)
         {
           return false;
         }
 
-        var entryFound = _subscriptionMap.TryGetValue(channel, out var entry);
+        var channelName = channel.ToChannelName();
+
+        var entryFound = _subscriptionMap.TryGetValue(channelName, out var entry);
 
         if (entryFound && entry.State == SubscriptionState.Subscribing)
         {
           if (_client.Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
           {
-            _client.Logger.Verbose("Already subscribing: Wait for action completion ({Channel})", channel);
+            _client.Logger.Verbose("Already subscribing: Wait for action completion ({Channel})", channelName);
           }
 
           //TODO: entry.CurrentAction could be null due to threading (already completed?)
@@ -194,14 +196,14 @@ namespace DeriSock
 
           if (_client.Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
           {
-            _client.Logger.Verbose("Already subscribing: Action result: {Result} ({Channel})", result, channel);
+            _client.Logger.Verbose("Already subscribing: Action result: {Result} ({Channel})", result, channelName);
           }
 
           if (!result || entry.State != SubscriptionState.Subscribed)
           {
             if (_client.Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
             {
-              _client.Logger.Verbose("Already subscribing: Action failed or subscription not successful ({Channel})", channel);
+              _client.Logger.Verbose("Already subscribing: Action failed or subscription not successful ({Channel})", channelName);
             }
 
             return false;
@@ -209,7 +211,7 @@ namespace DeriSock
 
           if (_client.Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
           {
-            _client.Logger.Verbose("Already subscribing: Adding callback ({Channel})", channel);
+            _client.Logger.Verbose("Already subscribing: Adding callback ({Channel})", channelName);
           }
 
           entry.Callbacks.Add(callback);
@@ -220,7 +222,7 @@ namespace DeriSock
         {
           if (_client.Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
           {
-            _client.Logger.Verbose("Subscription for channel already exists. Adding callback to list ({Channel})", channel);
+            _client.Logger.Verbose("Subscription for channel already exists. Adding callback to list ({Channel})", channelName);
           }
 
           entry.Callbacks.Add(callback);
@@ -231,7 +233,7 @@ namespace DeriSock
         {
           if (_client.Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
           {
-            _client.Logger.Verbose("Currently unsubscribing from Channel. Abort Subscribe ({Channel})", channel);
+            _client.Logger.Verbose("Currently unsubscribing from Channel. Abort Subscribe ({Channel})", channelName);
           }
 
           return false;
@@ -243,7 +245,7 @@ namespace DeriSock
         {
           if (_client.Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
           {
-            _client.Logger.Verbose("Unsubscribed from channel. Re-Subscribing ({Channel})", channel);
+            _client.Logger.Verbose("Unsubscribed from channel. Re-Subscribing ({Channel})", channelName);
           }
 
           defer = new TaskCompletionSource<bool>();
@@ -255,23 +257,23 @@ namespace DeriSock
         {
           if (_client.Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
           {
-            _client.Logger.Verbose("Subscription for channel not found. Subscribing ({Channel})", channel);
+            _client.Logger.Verbose("Subscription for channel not found. Subscribing ({Channel})", channelName);
           }
 
           defer = new TaskCompletionSource<bool>();
           entry = new SubscriptionEntry {State = SubscriptionState.Subscribing, Callbacks = new List<Action<Notification>>(), CurrentAction = defer.Task};
-          _subscriptionMap[channel] = entry;
+          _subscriptionMap[channelName] = entry;
         }
 
         try
         {
           //TODO: check if private subscribe works without access_token being sent
-          var subscribeResponse = IsPrivateChannel(channel)
+          var subscribeResponse = IsPrivateChannel(channelName)
             ? await _client.Send(
-              "private/subscribe", new {channels = new[] {channel} /*, access_token = _client.AccessToken*/},
+              "private/subscribe", new {channels = new[] {channelName} /*, access_token = _client.AccessToken*/},
               new ListJsonConverter<string>()).ConfigureAwait(false)
             : await _client.Send(
-                "public/subscribe", new {channels = new[] {channel}},
+                "public/subscribe", new {channels = new[] {channelName}},
                 new ListJsonConverter<string>())
               .ConfigureAwait(false);
 
@@ -279,11 +281,11 @@ namespace DeriSock
 
           var response = subscribeResponse.ResultData;
 
-          if (response.Count != 1 || response[0] != channel)
+          if (response.Count != 1 || response[0] != channelName)
           {
             if (_client.Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
             {
-              _client.Logger.Verbose("Invalid subscribe result: {@Response} {Channel}", response, channel);
+              _client.Logger.Verbose("Invalid subscribe result: {@Response} {Channel}", response, channelName);
             }
 
             Debug.Assert(defer != null, nameof(defer) + " != null");
@@ -293,7 +295,7 @@ namespace DeriSock
           {
             if (_client.Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
             {
-              _client.Logger.Verbose("Successfully subscribed. Adding callback ({Channel})", channel);
+              _client.Logger.Verbose("Successfully subscribed. Adding callback ({Channel})", channelName);
             }
 
             entry.State = SubscriptionState.Subscribed;
@@ -312,9 +314,11 @@ namespace DeriSock
         return await defer.Task;
       }
 
-      public async Task<bool> Unsubscribe(string channel, Action<Notification> callback)
+      public async Task<bool> Unsubscribe(ISubscriptionChannel channel, Action<Notification> callback)
       {
-        if (!_subscriptionMap.TryGetValue(channel, out var entry))
+        var channelName = channel.ToChannelName();
+
+        if (!_subscriptionMap.TryGetValue(channelName, out var entry))
         {
           return false;
         }
@@ -354,19 +358,19 @@ namespace DeriSock
         try
         {
           //TODO: check if private unsubscribe works without access_token being sent
-          var unsubscribeResponse = IsPrivateChannel(channel)
+          var unsubscribeResponse = IsPrivateChannel(channelName)
             ? await _client.Send(
-              "private/unsubscribe", new {channels = new[] {channel} /*, access_token = _client.AccessToken*/},
+              "private/unsubscribe", new {channels = new[] {channelName} /*, access_token = _client.AccessToken*/},
               new ListJsonConverter<string>())
             : await _client.Send(
-              "public/unsubscribe", new {channels = new[] {channel}},
+              "public/unsubscribe", new {channels = new[] {channelName}},
               new ListJsonConverter<string>());
 
           //TODO: Handle possible error in response
 
           var response = unsubscribeResponse.ResultData;
 
-          if (response.Count != 1 || response[0] != channel)
+          if (response.Count != 1 || response[0] != channelName)
           {
             defer.SetResult(false);
           }
@@ -2777,7 +2781,7 @@ namespace DeriSock
     /// </summary>
     public Task<bool> SubscribeAnnouncements(Action<AnnouncementNotification> callback)
     {
-      return _subscriptionManager.Subscribe("announcements", n =>
+      return _subscriptionManager.Subscribe(new AnnouncementsSubscriptionParams(), n =>
       {
         callback(n.Data.ToObject<AnnouncementNotification>());
       });
@@ -2790,10 +2794,10 @@ namespace DeriSock
     /// <para>price is a price level (USD per BTC, rounded as specified by the 'group' parameter for the subscription).</para>
     /// <para>amount indicates the amount of all orders at price level. For perpetual and futures the amount is in USD units, for options it is amount of corresponding cryptocurrency contracts, e.g., BTC or ETH.</para>
     /// </summary>
-    public Task<bool> SubscribeBookGroup(BookGroupSubscriptionParams args, Action<BookGroupNotification> callback)
+    public Task<bool> SubscribeBookGroup(BookGroupSubscriptionParams @params, Action<BookGroupNotification> callback)
     {
       return _subscriptionManager.Subscribe(
-        args.ToChannelName(),
+        @params,
         n =>
         {
           callback(n.Data.ToObject<BookGroupNotification>());

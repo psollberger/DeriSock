@@ -2,7 +2,7 @@
 {
   using Newtonsoft.Json;
 
-  public class BookGroupSubscriptionParams
+  public class BookGroupSubscriptionParams : ISubscriptionChannel
   {
     /// <summary>
     /// Instrument name
