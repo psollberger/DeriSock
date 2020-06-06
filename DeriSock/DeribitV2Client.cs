@@ -2983,6 +2983,15 @@ namespace DeriSock
         });
     }
 
+    /// <summary>
+    /// Provides information about current user portfolio
+    /// </summary>
+    public Task<bool> SubscribeUserPortfolio(UserPortfolioSubscriptionParams @params, Action<UserPortfolioNotification> callback)
+    {
+      return _subscriptionManager.Subscribe(@params,
+        n => callback(n.Data.ToObject<UserPortfolioNotification>()));
+    }
+
     #endregion
 
     #endregion
