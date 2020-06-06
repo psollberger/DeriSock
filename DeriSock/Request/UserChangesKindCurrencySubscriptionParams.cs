@@ -5,8 +5,8 @@
   public class UserChangesKindCurrencySubscriptionParams : ISubscriptionChannel
   {
     /// <summary>
-    ///   <para>Instrument kind</para>
-    ///   <para>Enum: <c>future</c>, <c>option</c></para>
+    ///   <para>Instrument kind or <c>any</c> for all</para>
+    ///   <para>Enum: <c>future</c>, <c>option</c>, <c>any</c></para>
     /// </summary>
     [JsonProperty("kind")]
     public string Kind { get; set; }

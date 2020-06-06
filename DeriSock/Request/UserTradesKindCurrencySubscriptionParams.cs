@@ -2,7 +2,7 @@
 {
   using Newtonsoft.Json;
 
-  public class UserOrdersKindCurrencySubscriptionParams : ISubscriptionChannel
+  public class UserTradesKindCurrencySubscriptionParams : ISubscriptionChannel
   {
     /// <summary>
     ///   <para>Instrument kind or <c>any</c> for all</para>
@@ -30,7 +30,7 @@
 
     public string ToChannelName()
     {
-      return $"user.orders.{Kind}.{Currency}.{Interval}";
+      return $"user.trades.{Kind}.{Currency}.{Interval}";
     }
   }
 }

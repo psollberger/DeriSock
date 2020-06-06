@@ -2770,8 +2770,6 @@ namespace DeriSock
 
     #endregion
 
-    //TODO: Finish this
-
     #region Subscriptions
 
     /// <summary>
@@ -2984,12 +2982,30 @@ namespace DeriSock
     }
 
     /// <summary>
-    /// Provides information about current user portfolio
+    ///   Provides information about current user portfolio
     /// </summary>
     public Task<bool> SubscribeUserPortfolio(UserPortfolioSubscriptionParams @params, Action<UserPortfolioNotification> callback)
     {
       return _subscriptionManager.Subscribe(@params,
         n => callback(n.Data.ToObject<UserPortfolioNotification>()));
+    }
+
+    /// <summary>
+    ///   Get notifications about user's trades in an instrument
+    /// </summary>
+    public Task<bool> SubscribeUserTradesInstrument(UserTradesInstrumentSubscriptionParams @params, Action<UserTrade[]> callback)
+    {
+      return _subscriptionManager.Subscribe(@params,
+        n => callback(n.Data.ToObject<UserTrade[]>()));
+    }
+
+    /// <summary>
+    ///   Get notifications about user's trades in any instrument of a given kind and given currency
+    /// </summary>
+    public Task<bool> SubscribeUserTradesKindCurrency(UserTradesKindCurrencySubscriptionParams @params, Action<UserTrade[]> callback)
+    {
+      return _subscriptionManager.Subscribe(@params,
+        n => callback(n.Data.ToObject<UserTrade[]>()));
     }
 
     #endregion
