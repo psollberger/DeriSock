@@ -2875,6 +2875,15 @@ namespace DeriSock
         n => callback(n.Data.ToObject<EstimatedExpirationPriceNotification>()));
     }
 
+    /// <summary>
+    /// Provides information about options markprices
+    /// </summary>
+    public Task<bool> SubscribeMarkPriceOptions(MarkPriceOptionsSubscriptionParams @params, Action<MarkPriceOptionsNotification[]> callback)
+    {
+      return _subscriptionManager.Subscribe(@params,
+        n => callback(n.Data.ToObject<MarkPriceOptionsNotification[]>()));
+    }
+
     //public Task<bool> PrivateSubscribeOrders(string instrument, Action<OrderResponse> callback)
     //{
     //  return _subscriptionManager.Subscribe(
