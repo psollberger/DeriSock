@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace PlayConsole
+﻿namespace PlayConsole
 {
   using System;
   using System.IO;
@@ -37,7 +35,7 @@ namespace PlayConsole
 
       var clientId = apiSettings["ClientId"];
       var clientSecret = apiSettings["ClientSecret"];
-      
+
       const string logFilePath = @"D:\Temp\Serilog\test-log-.txt";
       Directory.CreateDirectory(Path.GetDirectoryName(logFilePath));
 
@@ -64,18 +62,11 @@ namespace PlayConsole
           await _client.Connect();
 
           var sig = CryptoHelper.CreateSignature(clientSecret);
-          var loginRes = await _client.PublicAuth(new AuthParams
-          {
-            GrantType = GrantType.Signature,
-            ClientId = clientId,
-            Signature = sig
-          });
+          var loginRes = await _client.PublicAuth(new AuthParams {GrantType = GrantType.Signature, ClientId = clientId, Signature = sig});
 
-          var res = await _client.PrivateGetOrderMarginByIDs("1", "2", "3");
+          var res = await _client.PublicGetOrderBook("BTC-PERPETUAL");
 
           var blub = 4;
-          _client.PrivateLogout();
-          return 0;
         }
         catch (Exception ex)
         {

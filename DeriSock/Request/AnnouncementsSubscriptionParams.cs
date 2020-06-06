@@ -2,6 +2,9 @@
 {
   public class AnnouncementsSubscriptionParams : ISubscriptionChannel
   {
-    public string ToChannelName() => "announcements";
+    public string ToChannelName()
+    {
+      return "announcements";
+    }
   }
 }

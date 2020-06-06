@@ -1,12 +1,9 @@
 ﻿namespace DeriSock.Request
 {
-  using System.Collections.Generic;
-  using System.Dynamic;
-
   public class EditParams
   {
     /// <summary>
-    /// The order id
+    ///   The order id
     /// </summary>
     public string OrderId { get; set; }
 
@@ -48,9 +45,12 @@
     ///   <para>Only valid in combination with "post_only" set to true</para>
     /// </summary>
     public bool? RejectPostOnly { get; set; }
-    
+
     /// <summary>
-    ///   <para>Advanced option order type. If you have posted an advanced option order, it is necessary to re-supply this parameter when editing it (Only for options)</para>
+    ///   <para>
+    ///     Advanced option order type. If you have posted an advanced option order, it is necessary to re-supply this
+    ///     parameter when editing it (Only for options)
+    ///   </para>
     ///   <para>Enum: <c>usd</c>, <c>implv</c></para>
     /// </summary>
     public string Advanced { get; set; }

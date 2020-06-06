@@ -12,7 +12,6 @@ namespace DeriSock
   using DeriSock.JsonRpc;
   using DeriSock.Model;
   using DeriSock.Request;
-  using Newtonsoft.Json.Linq;
   using Serilog;
   using Serilog.Events;
 
@@ -2776,7 +2775,7 @@ namespace DeriSock
     #region Subscriptions
 
     /// <summary>
-    /// General announcements concerning the Deribit platform.
+    ///   General announcements concerning the Deribit platform.
     /// </summary>
     public Task<bool> SubscribeAnnouncements(Action<AnnouncementNotification> callback)
     {
@@ -2787,11 +2786,20 @@ namespace DeriSock
     }
 
     /// <summary>
-    /// <para>Notifies about changes to the order book for a certain instrument.</para>
-    /// <para>Notifications are sent once per specified interval, with prices grouped by (rounded to) the specified group, showing the complete order book to the specified depth (number of price levels).</para>
-    /// <para>The 'asks' and the 'bids' elements in the response are both a 'list of lists'. Each element in the outer list is a list of exactly two elements: price and amount.</para>
-    /// <para>price is a price level (USD per BTC, rounded as specified by the 'group' parameter for the subscription).</para>
-    /// <para>amount indicates the amount of all orders at price level. For perpetual and futures the amount is in USD units, for options it is amount of corresponding cryptocurrency contracts, e.g., BTC or ETH.</para>
+    ///   <para>Notifies about changes to the order book for a certain instrument.</para>
+    ///   <para>
+    ///     Notifications are sent once per specified interval, with prices grouped by (rounded to) the specified group,
+    ///     showing the complete order book to the specified depth (number of price levels).
+    ///   </para>
+    ///   <para>
+    ///     The 'asks' and the 'bids' elements in the response are both a 'list of lists'. Each element in the outer list
+    ///     is a list of exactly two elements: price and amount.
+    ///   </para>
+    ///   <para>price is a price level (USD per BTC, rounded as specified by the 'group' parameter for the subscription).</para>
+    ///   <para>
+    ///     amount indicates the amount of all orders at price level. For perpetual and futures the amount is in USD units,
+    ///     for options it is amount of corresponding cryptocurrency contracts, e.g., BTC or ETH.
+    ///   </para>
     /// </summary>
     public Task<bool> SubscribeBookGroup(BookGroupSubscriptionParams @params, Action<BookGroupNotification> callback)
     {
@@ -2804,11 +2812,25 @@ namespace DeriSock
     }
 
     /// <summary>
-    /// <para>Notifies about changes to the order book for a certain instrument.</para>
-    /// <para>The first notification will contain the whole book (bid and ask amounts for all prices). After that there will only be information about changes to individual price levels.</para>
-    /// <para>The first notification will contain the amounts for all price levels (list of <c>['new', price, amount]</c> tuples). All following notifications will contain a list of tuples with action, price level and new amount (<c>[action, price, amount]</c>). Action can be either <c>new</c>, <c>change</c> or <c>delete</c>.</para>
-    /// <para>Each notification will contain a <c>change_id</c> field, and each message except for the first one will contain a field <c>prev_change_id</c>. If <c>prev_change_id</c> is equal to the <c>change_id</c> of the previous message, this means that no messages have been missed.</para>
-    /// <para>The amount for perpetual and futures is in USD units, for options it is in corresponding cryptocurrency contracts, e.g., BTC or ETH.</para>
+    ///   <para>Notifies about changes to the order book for a certain instrument.</para>
+    ///   <para>
+    ///     The first notification will contain the whole book (bid and ask amounts for all prices). After that there will
+    ///     only be information about changes to individual price levels.
+    ///   </para>
+    ///   <para>
+    ///     The first notification will contain the amounts for all price levels (list of <c>['new', price, amount]</c>
+    ///     tuples). All following notifications will contain a list of tuples with action, price level and new amount (
+    ///     <c>[action, price, amount]</c>). Action can be either <c>new</c>, <c>change</c> or <c>delete</c>.
+    ///   </para>
+    ///   <para>
+    ///     Each notification will contain a <c>change_id</c> field, and each message except for the first one will contain
+    ///     a field <c>prev_change_id</c>. If <c>prev_change_id</c> is equal to the <c>change_id</c> of the previous message,
+    ///     this means that no messages have been missed.
+    ///   </para>
+    ///   <para>
+    ///     The amount for perpetual and futures is in USD units, for options it is in corresponding cryptocurrency
+    ///     contracts, e.g., BTC or ETH.
+    ///   </para>
     /// </summary>
     public Task<bool> SubscribeBookChange(BookChangeSubscriptionParams @params, Action<BookChangeNotification> callback)
     {

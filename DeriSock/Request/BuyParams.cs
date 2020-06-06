@@ -1,8 +1,5 @@
 ﻿namespace DeriSock.Request
 {
-  using System.Collections.Generic;
-  using System.Dynamic;
-
   public class BuyParams
   {
     /// <summary>

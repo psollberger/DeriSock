@@ -3,7 +3,6 @@
   using System;
   using System.Collections.Generic;
   using System.Threading.Tasks;
-  using DeriSock.JsonRpc;
   using DeriSock.Model;
 
   public class SubscriptionEntry
