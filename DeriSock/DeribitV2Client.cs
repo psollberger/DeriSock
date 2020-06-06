@@ -2893,6 +2893,15 @@ namespace DeriSock
         n => callback(n.Data.ToObject<PerpetualInterestRateNotification>()));
     }
 
+    /// <summary>
+    /// Information about platform state
+    /// </summary>
+    public Task<bool> SubscribePlatformState(Action<PlatformStateNotification> callback)
+    {
+      return _subscriptionManager.Subscribe(new PlatformStateSubscriptionParams(),
+        n => callback(n.Data.ToObject<PlatformStateNotification>()));
+    }
+
     //public Task<bool> PrivateSubscribeOrders(string instrument, Action<OrderResponse> callback)
     //{
     //  return _subscriptionManager.Subscribe(
