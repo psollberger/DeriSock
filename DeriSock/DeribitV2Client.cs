@@ -2922,6 +2922,24 @@ namespace DeriSock
         n => callback(n.Data.ToObject<TickerNotification>()));
     }
 
+    /// <summary>
+    ///   Get notifications about trades for an instrument
+    /// </summary>
+    public Task<bool> SubscribeTradesInstrument(TradesInstrumentSubscriptionParams @params, Action<TradesNotification[]> callback)
+    {
+      return _subscriptionManager.Subscribe(@params,
+        n => callback(n.Data.ToObject<TradesNotification[]>()));
+    }
+
+    /// <summary>
+    ///   Get notifications about trades in any instrument of a given kind and given currency
+    /// </summary>
+    public Task<bool> SubscribeTradesKindCurrency(TradesKindCurrencySubscriptionParams @params, Action<TradesNotification[]> callback)
+    {
+      return _subscriptionManager.Subscribe(@params,
+        n => callback(n.Data.ToObject<TradesNotification[]>()));
+    }
+
     //public Task<bool> PrivateSubscribeOrders(string instrument, Action<OrderResponse> callback)
     //{
     //  return _subscriptionManager.Subscribe(
