@@ -62,9 +62,17 @@
           await _client.Connect();
 
           var sig = CryptoHelper.CreateSignature(clientSecret);
-          var loginRes = await _client.PublicAuth(new AuthParams {GrantType = GrantType.Signature, ClientId = clientId, Signature = sig});
+          var loginRes = await _client.PublicAuth(new AuthParams { GrantType = GrantType.Signature, ClientId = clientId, Signature = sig });
 
-          var res = await _client.PublicGetOrderBook("BTC-PERPETUAL");
+          await _client.SubscribeUserTradesInstrument(new UserTradesInstrumentSubscriptionParams()
+            {
+              InstrumentName = "BTC-PERPETUAL",
+              Interval = "raw"
+            },
+            o =>
+            {
+              Log.Logger.Information("Event received");
+            });
 
           var blub = 4;
         }
