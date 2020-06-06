@@ -32,9 +32,6 @@
     [JsonProperty("interval")]
     public string Interval { get; set; } = "100ms";
 
-    public string ToChannelName()
-    {
-      return $"book.{InstrumentName}.{Group}.{Depth}.{Interval}";
-    }
+    public string ToChannelName() => $"book.{InstrumentName}.{Group}.{Depth}.{Interval}";
   }
 }

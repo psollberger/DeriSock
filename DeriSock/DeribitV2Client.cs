@@ -2804,6 +2804,23 @@ namespace DeriSock
         });
     }
 
+    /// <summary>
+    /// <para>Notifies about changes to the order book for a certain instrument.</para>
+    /// <para>The first notification will contain the whole book (bid and ask amounts for all prices). After that there will only be information about changes to individual price levels.</para>
+    /// <para>The first notification will contain the amounts for all price levels (list of <c>['new', price, amount]</c> tuples). All following notifications will contain a list of tuples with action, price level and new amount (<c>[action, price, amount]</c>). Action can be either <c>new</c>, <c>change</c> or <c>delete</c>.</para>
+    /// <para>Each notification will contain a <c>change_id</c> field, and each message except for the first one will contain a field <c>prev_change_id</c>. If <c>prev_change_id</c> is equal to the <c>change_id</c> of the previous message, this means that no messages have been missed.</para>
+    /// <para>The amount for perpetual and futures is in USD units, for options it is in corresponding cryptocurrency contracts, e.g., BTC or ETH.</para>
+    /// </summary>
+    public Task<bool> SubscribeBookChange(BookChangeSubscriptionParams @params, Action<BookChangeNotification> callback)
+    {
+      return _subscriptionManager.Subscribe(
+        @params,
+        n =>
+        {
+          callback(n.Data.ToObject<BookChangeNotification>());
+        });
+    }
+
     //public Task<bool> PrivateSubscribeOrders(string instrument, Action<OrderResponse> callback)
     //{
     //  return _subscriptionManager.Subscribe(
