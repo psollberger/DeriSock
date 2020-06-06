@@ -2941,7 +2941,7 @@ namespace DeriSock
     }
 
     /// <summary>
-    /// Get notifications about user's updates related to order, trades, etc. in an instrument.
+    ///   Get notifications about user's updates related to order, trades, etc. in an instrument.
     /// </summary>
     public Task<bool> SubscribeUserChangesInstrument(UserChangesInstrumentSubscriptionParams @params, Action<UserChangesNotification> callback)
     {
@@ -2950,12 +2950,37 @@ namespace DeriSock
     }
 
     /// <summary>
-    /// Get notifications about changes in user's updates related to orders, trades, etc. in instruments of a given kind and currency.
+    ///   Get notifications about changes in user's updates related to orders, trades, etc. in instruments of a given kind and
+    ///   currency.
     /// </summary>
     public Task<bool> SubscribeUserChangesKindCurrency(UserChangesKindCurrencySubscriptionParams @params, Action<UserChangesNotification> callback)
     {
       return _subscriptionManager.Subscribe(@params,
         n => callback(n.Data.ToObject<UserChangesNotification>()));
+    }
+
+    /// <summary>
+    ///   Get notifications about changes in user's orders for given instrument
+    /// </summary>
+    public Task<bool> SubscribeUserOrdersInstrument(UserOrdersInstrumentSubscriptionParams @params, Action<UserOrder[]> callback)
+    {
+      return _subscriptionManager.Subscribe(@params,
+        n =>
+        {
+          callback(@params.Interval.Equals("raw") ? new[] {n.Data.ToObject<UserOrder>()} : n.Data.ToObject<UserOrder[]>());
+        });
+    }
+
+    /// <summary>
+    ///   Get notifications about changes in user's orders in instrument of a given kind and currency
+    /// </summary>
+    public Task<bool> SubscribeUserOrdersKindCurrency(UserOrdersKindCurrencySubscriptionParams @params, Action<UserOrder[]> callback)
+    {
+      return _subscriptionManager.Subscribe(@params,
+        n =>
+        {
+          callback(@params.Interval.Equals("raw") ? new[] {n.Data.ToObject<UserOrder>()} : n.Data.ToObject<UserOrder[]>());
+        });
     }
 
     #endregion
