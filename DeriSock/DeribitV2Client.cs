@@ -2913,6 +2913,15 @@ namespace DeriSock
         n => callback(n.Data.ToObject<QuoteNotification>()));
     }
 
+    /// <summary>
+    ///   Key information about the instrument
+    /// </summary>
+    public Task<bool> SubscribeTicker(TickerSubscriptionParams @params, Action<TickerNotification> callback)
+    {
+      return _subscriptionManager.Subscribe(@params,
+        n => callback(n.Data.ToObject<TickerNotification>()));
+    }
+
     //public Task<bool> PrivateSubscribeOrders(string instrument, Action<OrderResponse> callback)
     //{
     //  return _subscriptionManager.Subscribe(
