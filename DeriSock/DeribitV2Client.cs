@@ -1181,9 +1181,125 @@ namespace DeriSock
 
     #endregion
 
-    //TODO: Finish this
-
     #region Block Trade
+
+    //TODO: Check this
+    /// <summary>
+    ///   <para>Creates block trade</para>
+    ///   <para>
+    ///     The whole request have to be exact the same as in <c>private/verify_block_trade</c>, only role field should be
+    ///     set appropriately - it basically means that both sides have to agree on the same timestamp, nonce, trades fields
+    ///     and server will assure that role field is different between sides (each party accepted own role).
+    ///   </para>
+    ///   <para>
+    ///     Using the same timestamp and nonce by both sides in <c>private/verify_block_trade</c> assures that even if
+    ///     unintentionally both sides execute given block trade with valid <c>counterparty_signature</c>, the given block
+    ///     trade will be executed only once.
+    ///   </para>
+    /// </summary>
+    public Task<JsonRpcResponse<BlockTrade>> PrivateExecuteBlockTrade(BlockTradeParams @params)
+    {
+      var args = new ExpandoObject();
+      args.TryAdd("timestamp", @params.Timestamp);
+      args.TryAdd("nonce", @params.Nonce);
+      args.TryAdd("role", @params.Role);
+      args.TryAdd("trades", @params.Trades);
+      args.TryAdd("counterparty_signature", @params.CounterpartySignature);
+
+      if (@params.Currency != default)
+      {
+        args.TryAdd("currency", @params.Currency);
+      }
+
+      return Send(
+        "private/execute_block_trade",
+        args,
+        new ObjectJsonConverter<BlockTrade>());
+    }
+
+    /// <summary>
+    ///   Returns information about users block trade
+    /// </summary>
+    /// <param name="id">Block trade id</param>
+    public Task<JsonRpcResponse<BlockTrade>> PrivateGetBlockTrade(string id)
+    {
+      return Send(
+        "private/get_block_trade",
+        new {id},
+        new ObjectJsonConverter<BlockTrade>());
+    }
+
+    /// <summary>
+    ///   Returns list of last users block trades
+    /// </summary>
+    /// <param name="currency">The currency symbol</param>
+    /// <param name="count">Number of requested items, default - <c>20</c></param>
+    /// <param name="startId">The id of the newest block trade to be returned</param>
+    /// <param name="endId">
+    ///   The id of the oldest block trade to be returned, <paramref name="startId" /> is required with
+    ///   <paramref name="endId" />
+    /// </param>
+    public Task<JsonRpcResponse<BlockTrade[]>> PrivateGetLastBlockTradesByCurrency(string currency,
+      int count = default, string startId = default, string endId = default)
+    {
+      var args = new ExpandoObject();
+      args.TryAdd("currency", currency);
+
+      if (count > 0)
+      {
+        args.TryAdd("count", count);
+      }
+
+      if (startId != default)
+      {
+        args.TryAdd("start_id", startId);
+      }
+
+      if (endId != default)
+      {
+        args.TryAdd("end_id", endId);
+      }
+
+      return Send(
+        "private/get_last_block_trades_by_currency",
+        args,
+        new ObjectJsonConverter<BlockTrade[]>());
+    }
+
+    /// <summary>
+    ///   User at any time (before the private/execute_block_trade is called) can invalidate its own signature effectively
+    ///   cancelling block trade
+    /// </summary>
+    /// <param name="signature">Signature of block trade that will be invalidated</param>
+    public Task<JsonRpcResponse<string>> PrivateInvalidateBlockTradeSignature(string signature)
+    {
+      return Send(
+        "private/invalidate_block_trade_signature",
+        new {signature},
+        new ObjectJsonConverter<string>());
+    }
+
+    /// <summary>
+    ///   Verifies and creates block trade signature
+    /// </summary>
+    public Task<JsonRpcResponse<BlockTradeSignature>> PrivateVerifyBlockTrade(BlockTradeParams @params)
+    {
+      var args = new ExpandoObject();
+      args.TryAdd("timestamp", @params.Timestamp);
+      args.TryAdd("nonce", @params.Nonce);
+      args.TryAdd("role", @params.Role);
+      args.TryAdd("trades", @params.Trades);
+
+      if (@params.Currency != default)
+      {
+        args.TryAdd("currency", @params.Currency);
+      }
+
+      return Send(
+        "private/verify_block_trade",
+        args,
+        new ObjectJsonConverter<BlockTradeSignature>());
+    }
 
     #endregion
 
@@ -1192,7 +1308,6 @@ namespace DeriSock
     /// <summary>
     ///   Places a buy order for an instrument
     /// </summary>
-    /// <param name="args">The arguments to the method</param>
     public Task<JsonRpcResponse<UserOrderTrades>> PrivateBuy(BuyParams @params)
     {
       var args = new ExpandoObject();
@@ -1263,7 +1378,6 @@ namespace DeriSock
     /// <summary>
     ///   Places a sell order for an instrument
     /// </summary>
-    /// <param name="args">The arguments to the method</param>
     public Task<JsonRpcResponse<UserOrderTrades>> PrivateSell(SellParams @params)
     {
       var args = new ExpandoObject();
@@ -1334,7 +1448,6 @@ namespace DeriSock
     /// <summary>
     ///   Change price, amount and/or other properties of an order
     /// </summary>
-    /// <param name="args">The arguments to the method</param>
     public Task<JsonRpcResponse<UserOrderTrades>> PrivateEdit(EditParams @params)
     {
       var args = new ExpandoObject();
