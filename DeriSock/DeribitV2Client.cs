@@ -2884,6 +2884,15 @@ namespace DeriSock
         n => callback(n.Data.ToObject<MarkPriceOptionsNotification[]>()));
     }
 
+    /// <summary>
+    /// Provide current interest rate - but only for <c>perpetual</c> instruments. Other types won't generate any notification.
+    /// </summary>
+    public Task<bool> SubscribePerpetualInterestRate(PerpetualInterestRateSubscriptionParams @params, Action<PerpetualInterestRateNotification> callback)
+    {
+      return _subscriptionManager.Subscribe(@params,
+        n => callback(n.Data.ToObject<PerpetualInterestRateNotification>()));
+    }
+
     //public Task<bool> PrivateSubscribeOrders(string instrument, Action<OrderResponse> callback)
     //{
     //  return _subscriptionManager.Subscribe(
