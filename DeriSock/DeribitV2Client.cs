@@ -2779,10 +2779,8 @@ namespace DeriSock
     /// </summary>
     public Task<bool> SubscribeAnnouncements(Action<AnnouncementNotification> callback)
     {
-      return _subscriptionManager.Subscribe(new AnnouncementsSubscriptionParams(), n =>
-      {
-        callback(n.Data.ToObject<AnnouncementNotification>());
-      });
+      return _subscriptionManager.Subscribe(new AnnouncementsSubscriptionParams(),
+        n => callback(n.Data.ToObject<AnnouncementNotification>()));
     }
 
     /// <summary>
@@ -2803,12 +2801,8 @@ namespace DeriSock
     /// </summary>
     public Task<bool> SubscribeBookGroup(BookGroupSubscriptionParams @params, Action<BookGroupNotification> callback)
     {
-      return _subscriptionManager.Subscribe(
-        @params,
-        n =>
-        {
-          callback(n.Data.ToObject<BookGroupNotification>());
-        });
+      return _subscriptionManager.Subscribe(@params,
+        n => callback(n.Data.ToObject<BookGroupNotification>()));
     }
 
     /// <summary>
@@ -2834,12 +2828,24 @@ namespace DeriSock
     /// </summary>
     public Task<bool> SubscribeBookChange(BookChangeSubscriptionParams @params, Action<BookChangeNotification> callback)
     {
-      return _subscriptionManager.Subscribe(
-        @params,
-        n =>
-        {
-          callback(n.Data.ToObject<BookChangeNotification>());
-        });
+      return _subscriptionManager.Subscribe(@params,
+        n => callback(n.Data.ToObject<BookChangeNotification>()));
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Publicly available market data used to generate a TradingView candle chart. During single resolution period,
+    ///     many events can be sent, each with updated values for the recent period.
+    ///   </para>
+    ///   <para>
+    ///     NOTICE: When there is no trade during the requested resolution period (e.g. 1 minute), then filling sample is
+    ///     generated which uses data from the last available trade candle (open and close values).
+    ///   </para>
+    /// </summary>
+    public Task<bool> SubscribeChartTrades(ChartTradesSubscriptionParams @params, Action<ChartTradesNotification> callback)
+    {
+      return _subscriptionManager.Subscribe(@params,
+        n => callback(n.Data.ToObject<ChartTradesNotification>()));
     }
 
     //public Task<bool> PrivateSubscribeOrders(string instrument, Action<OrderResponse> callback)
