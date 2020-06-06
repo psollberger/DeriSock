@@ -1,15 +1,17 @@
 # DeriSock
+
 This is a Deribit API v2.0.0 C# .Net Core Client Library
 
 ## What is this for?
-This client library let's you connect with the Deribit API using a WebSocket connection.
 
-It is entirely made with asynchronous methods in mind.
-
-It supports all methods and subscriptions found on https://docs.deribit.com
+This client library let's you connect with the Deribit API using a WebSocket connection.  
+It is entirely made with asynchronous methods in mind.  
+All methods and subscriptions found on https://docs.deribit.com are supported.
 
 ## How do I use it?
+
 Usage is quite simple. To obtain the current best bid price you simply do the following:
+
 ```csharp
 var client = new DeribitV2Client(DeribitEndpointType.Testnet);
 await client.Connect();
@@ -20,10 +22,12 @@ var bestBidPrice = response.ResultData.BestBidPrice;
 await client.Disconnect();
 ```
 
-### Authentication
+## Authentication
+
 The library supports authentication via credentials and signature
 
-#### Authentication using Credentials
+### Authentication using Credentials
+
 ```csharp
 var authInfo = await client.PublicAuth(new AuthParams
 {
@@ -33,7 +37,8 @@ var authInfo = await client.PublicAuth(new AuthParams
 });
 ```
 
-#### Authentication using Signature
+### Authentication using Signature
+
 ```csharp
 var signatureData = CryptoHelper.CreateSignature("<client secret>", "<optional data>");
 var authInfo = await client.PublicAuth(new AuthParams
@@ -44,10 +49,18 @@ var authInfo = await client.PublicAuth(new AuthParams
 });
 ```
 
-### Subscriptions
-The library supports all subscriptions.
+### Logout
 
-Here is an example of a subscription:
+When authenticated, you can logout like this (this is the only synchroneous method):
+
+```csharp
+client.PrivateLogout();
+```
+
+**Note:** The server will automatically close the connection when you logout
+
+## Subscriptions
+
 ```csharp
 var success = await client.SubscribeBookChange(new BookChangeSubscriptionParams
 {
