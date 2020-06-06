@@ -2866,6 +2866,15 @@ namespace DeriSock
         n => callback(n.Data.ToObject<DeribitPriceRankingNotification[]>()));
     }
 
+    /// <summary>
+    /// Returns calculated (estimated) ending price for given index
+    /// </summary>
+    public Task<bool> SubscribeEstimatedExpirationPrice(EstimatedExpirationPriceSubscriptionParams @params, Action<EstimatedExpirationPriceNotification> callback)
+    {
+      return _subscriptionManager.Subscribe(@params,
+        n => callback(n.Data.ToObject<EstimatedExpirationPriceNotification>()));
+    }
+
     //public Task<bool> PrivateSubscribeOrders(string instrument, Action<OrderResponse> callback)
     //{
     //  return _subscriptionManager.Subscribe(
