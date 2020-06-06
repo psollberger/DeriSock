@@ -2849,7 +2849,7 @@ namespace DeriSock
     }
 
     /// <summary>
-    /// Provides information about current value (price) for Deribit Index
+    ///   Provides information about current value (price) for Deribit Index
     /// </summary>
     public Task<bool> SubscribeDeribitPriceIndex(DeribitPriceIndexSubscriptionParams @params, Action<DeribitPriceIndexNotification> callback)
     {
@@ -2858,7 +2858,7 @@ namespace DeriSock
     }
 
     /// <summary>
-    /// Provides information about current value (price) for stock exchanges used to calculate Deribit Index
+    ///   Provides information about current value (price) for stock exchanges used to calculate Deribit Index
     /// </summary>
     public Task<bool> SubscribeDeribitPriceRanking(DeribitPriceRankingSubscriptionParams @params, Action<DeribitPriceRankingNotification[]> callback)
     {
@@ -2867,16 +2867,17 @@ namespace DeriSock
     }
 
     /// <summary>
-    /// Returns calculated (estimated) ending price for given index
+    ///   Returns calculated (estimated) ending price for given index
     /// </summary>
-    public Task<bool> SubscribeEstimatedExpirationPrice(EstimatedExpirationPriceSubscriptionParams @params, Action<EstimatedExpirationPriceNotification> callback)
+    public Task<bool> SubscribeEstimatedExpirationPrice(EstimatedExpirationPriceSubscriptionParams @params,
+      Action<EstimatedExpirationPriceNotification> callback)
     {
       return _subscriptionManager.Subscribe(@params,
         n => callback(n.Data.ToObject<EstimatedExpirationPriceNotification>()));
     }
 
     /// <summary>
-    /// Provides information about options markprices
+    ///   Provides information about options markprices
     /// </summary>
     public Task<bool> SubscribeMarkPriceOptions(MarkPriceOptionsSubscriptionParams @params, Action<MarkPriceOptionsNotification[]> callback)
     {
@@ -2885,7 +2886,8 @@ namespace DeriSock
     }
 
     /// <summary>
-    /// Provide current interest rate - but only for <c>perpetual</c> instruments. Other types won't generate any notification.
+    ///   Provide current interest rate - but only for <c>perpetual</c> instruments. Other types won't generate any
+    ///   notification.
     /// </summary>
     public Task<bool> SubscribePerpetualInterestRate(PerpetualInterestRateSubscriptionParams @params, Action<PerpetualInterestRateNotification> callback)
     {
@@ -2894,12 +2896,21 @@ namespace DeriSock
     }
 
     /// <summary>
-    /// Information about platform state
+    ///   Information about platform state
     /// </summary>
     public Task<bool> SubscribePlatformState(Action<PlatformStateNotification> callback)
     {
       return _subscriptionManager.Subscribe(new PlatformStateSubscriptionParams(),
         n => callback(n.Data.ToObject<PlatformStateNotification>()));
+    }
+
+    /// <summary>
+    ///   Best bid/ask price and size
+    /// </summary>
+    public Task<bool> SubscribeQuote(QuoteSubscriptionParams @params, Action<QuoteNotification> callback)
+    {
+      return _subscriptionManager.Subscribe(@params,
+        n => callback(n.Data.ToObject<QuoteNotification>()));
     }
 
     //public Task<bool> PrivateSubscribeOrders(string instrument, Action<OrderResponse> callback)
