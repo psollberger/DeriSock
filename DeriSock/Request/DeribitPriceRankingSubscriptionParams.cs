@@ -2,7 +2,7 @@
 {
   using Newtonsoft.Json;
 
-  public class DeribitPriceIndexSubscriptionParams : ISubscriptionChannel
+  public class DeribitPriceRankingSubscriptionParams : ISubscriptionChannel
   {
     /// <summary>
     ///   <para>Index identifier, matches (base) crypto currency with quote currency</para>
@@ -13,7 +13,7 @@
 
     public string ToChannelName()
     {
-      return $"deribit_price_index.{IndexName}";
+      return $"deribit_price_ranking.{IndexName}";
     }
   }
 }

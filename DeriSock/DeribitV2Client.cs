@@ -2857,6 +2857,15 @@ namespace DeriSock
         n => callback(n.Data.ToObject<DeribitPriceIndexNotification>()));
     }
 
+    /// <summary>
+    /// Provides information about current value (price) for stock exchanges used to calculate Deribit Index
+    /// </summary>
+    public Task<bool> SubscribeDeribitPriceRanking(DeribitPriceRankingSubscriptionParams @params, Action<DeribitPriceRankingNotification[]> callback)
+    {
+      return _subscriptionManager.Subscribe(@params,
+        n => callback(n.Data.ToObject<DeribitPriceRankingNotification[]>()));
+    }
+
     //public Task<bool> PrivateSubscribeOrders(string instrument, Action<OrderResponse> callback)
     //{
     //  return _subscriptionManager.Subscribe(
