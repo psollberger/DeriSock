@@ -1,8 +1,8 @@
-namespace DeriSock.Converter
+﻿namespace DeriSock.Converter
 {
   using Newtonsoft.Json.Linq;
 
-  public class ObjectJsonConverter<T> : IJsonConverter<T> where T : class
+  public class ObjectJsonConverter<T> : IJsonConverter<T>
   {
     public T Convert(JToken value)
     {
