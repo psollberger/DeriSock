@@ -2137,17 +2137,16 @@ namespace DeriSock
         new ObjectJsonConverter<decimal>());
     }
 
-    //TODO: How to parse this?
     /// <summary>
     ///   Provides information about historical volatility for given crypto currency
     /// </summary>
     /// <param name="currency">The currency symbol</param>
-    public Task<JsonRpcResponse<JArray>> PublicGetHistoricalVolatility(string currency)
+    public Task<JsonRpcResponse<VolatilityItem[]>> PublicGetHistoricalVolatility(string currency)
     {
       return Send(
         "public/get_historical_volatility",
         new {currency},
-        new ObjectJsonConverter<JArray>());
+        new ObjectJsonConverter<VolatilityItem[]>());
     }
 
     /// <summary>

@@ -1,8 +1,6 @@
 ﻿namespace DeriSock.Model
 {
   using System;
-  using System.Collections.Generic;
-  using System.Linq;
   using Newtonsoft.Json;
   using Newtonsoft.Json.Linq;
 
@@ -13,14 +11,12 @@
     ///   following notifications will contain a list of tuples with action, price level and new amount ([action, price,
     ///   amount]). Action can be new, change or delete.
     /// </summary>
-    [JsonConverter(typeof(ActionItemConverter))]
     [JsonProperty("asks")]
-    public List<ActionItem> Asks { get; set; }
+    public ActionItem[] Asks { get; set; }
 
     /// <inheritdoc cref="Asks" />
-    [JsonConverter(typeof(ActionItemConverter))]
     [JsonProperty("bids")]
-    public List<ActionItem> Bids { get; set; }
+    public ActionItem[] Bids { get; set; }
 
     /// <summary>
     ///   Identifier of the notification
@@ -57,6 +53,7 @@
     [JsonProperty("type")]
     public string Type { get; set; }
 
+    [JsonConverter(typeof(ActionItemConverter))]
     public class ActionItem
     {
       public string Action { get; set; }
@@ -64,23 +61,22 @@
       public decimal Amount { get; set; }
     }
 
-    public class ActionItemConverter : JsonConverter<List<ActionItem>>
+    public class ActionItemConverter : JsonConverter<ActionItem>
     {
       public override bool CanWrite => false;
 
-      public override void WriteJson(JsonWriter writer, List<ActionItem> value, JsonSerializer serializer)
+      public override void WriteJson(JsonWriter writer, ActionItem value, JsonSerializer serializer)
       {
         throw new NotSupportedException();
       }
 
-      public override List<ActionItem> ReadJson(JsonReader reader, Type objectType, List<ActionItem> existingValue, bool hasExistingValue,
+      public override ActionItem ReadJson(
+        JsonReader reader, Type objectType,
+        ActionItem existingValue, bool hasExistingValue,
         JsonSerializer serializer)
       {
         var arr = JArray.Load(reader);
-        var result = new List<ActionItem>(arr.Count);
-        result.AddRange(arr.Select(item =>
-          new ActionItem {Action = item[0].Value<string>(), Price = item[1].Value<decimal>(), Amount = item[2].Value<decimal>()}));
-        return result;
+        return new ActionItem {Action = arr[0].Value<string>(), Price = arr[1].Value<decimal>(), Amount = arr[2].Value<decimal>()};
       }
     }
   }

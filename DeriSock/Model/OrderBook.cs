@@ -12,12 +12,11 @@
     [JsonProperty("ask_iv")]
     public decimal AskIv { get; set; }
 
-    //TODO: How to parse?
     /// <summary>
     ///   of [price, amount]	List of asks
     /// </summary>
     [JsonProperty("asks")]
-    public JArray Asks { get; set; }
+    public PriceItem[] Asks { get; set; }
 
     /// <summary>
     ///   It represents the requested order size of all best asks
@@ -49,12 +48,11 @@
     [JsonProperty("bid_iv")]
     public decimal BidIv { get; set; }
 
-    //TODO: How to parse?
     /// <summary>
     ///   of [price, amount]	List of bids
     /// </summary>
     [JsonProperty("bids")]
-    public JArray Bids { get; set; }
+    public PriceItem[] Bids { get; set; }
 
     /// <summary>
     ///   Current funding (perpetual only)
@@ -168,5 +166,31 @@
     /// </summary>
     [JsonProperty("underlying_price")]
     public decimal UnderlyingPrice { get; set; }
+
+    [JsonConverter(typeof(PriceItemConverter))]
+    public class PriceItem
+    {
+      public decimal Price { get; set; }
+      public decimal Amount { get; set; }
+    }
+
+    public class PriceItemConverter : JsonConverter<PriceItem>
+    {
+      public override bool CanWrite => false;
+
+      public override void WriteJson(JsonWriter writer, PriceItem value, JsonSerializer serializer)
+      {
+        throw new NotSupportedException();
+      }
+
+      public override PriceItem ReadJson(
+        JsonReader reader, Type objectType,
+        PriceItem existingValue, bool hasExistingValue,
+        JsonSerializer serializer)
+      {
+        var arr = JArray.Load(reader);
+        return new PriceItem {Price = arr[0].Value<decimal>(), Amount = arr[1].Value<decimal>()};
+      }
+    }
   }
 }
