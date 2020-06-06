@@ -2940,37 +2940,23 @@ namespace DeriSock
         n => callback(n.Data.ToObject<TradesNotification[]>()));
     }
 
-    //public Task<bool> PrivateSubscribeOrders(string instrument, Action<OrderResponse> callback)
-    //{
-    //  return _subscriptionManager.Subscribe(
-    //    "user.orders." + instrument + ".raw",
-    //    n =>
-    //    {
-    //      var orderResponse = n.Data.ToObject<OrderResponse>();
-    //      orderResponse.timestamp = n.Timestamp;
-    //      callback(orderResponse);
-    //    });
-    //}
+    /// <summary>
+    /// Get notifications about user's updates related to order, trades, etc. in an instrument.
+    /// </summary>
+    public Task<bool> SubscribeUserChangesInstrument(UserChangesInstrumentSubscriptionParams @params, Action<UserChangesNotification> callback)
+    {
+      return _subscriptionManager.Subscribe(@params,
+        n => callback(n.Data.ToObject<UserChangesNotification>()));
+    }
 
-    //public Task<bool> PrivateSubscribePortfolio(string currency, Action<PortfolioResponse> callback)
-    //{
-    //  return _subscriptionManager.Subscribe(
-    //    $"user.portfolio.{currency.ToLower()}",
-    //    n =>
-    //    {
-    //      callback(n.Data.ToObject<PortfolioResponse>());
-    //    });
-    //}
-
-    //public Task<bool> PublicSubscribeTicker(string instrument, string interval, Action<TickerResponse> callback)
-    //{
-    //  return _subscriptionManager.Subscribe(
-    //    $"ticker.{instrument}.{interval}",
-    //    n =>
-    //    {
-    //      callback(n.Data.ToObject<TickerResponse>());
-    //    });
-    //}
+    /// <summary>
+    /// Get notifications about changes in user's updates related to orders, trades, etc. in instruments of a given kind and currency.
+    /// </summary>
+    public Task<bool> SubscribeUserChangesKindCurrency(UserChangesKindCurrencySubscriptionParams @params, Action<UserChangesNotification> callback)
+    {
+      return _subscriptionManager.Subscribe(@params,
+        n => callback(n.Data.ToObject<UserChangesNotification>()));
+    }
 
     #endregion
 
