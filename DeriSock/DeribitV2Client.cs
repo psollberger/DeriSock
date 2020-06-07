@@ -7,6 +7,7 @@ namespace DeriSock
   using System.Collections.Generic;
   using System.Diagnostics;
   using System.Dynamic;
+  using System.Net.WebSockets;
   using System.Threading.Tasks;
   using DeriSock.Converter;
   using DeriSock.JsonRpc;
@@ -25,15 +26,17 @@ namespace DeriSock
     private readonly SubscriptionManager _subscriptionManager;
     protected readonly ILogger Logger = Log.Logger;
 
+    public event EventHandler Connected;
+    public event EventHandler<JsonRpcDisconnectEventArgs> Disconnected;
+
     public string AccessToken { get; private set; }
 
     public string RefreshToken { get; private set; }
 
-    public bool ClosedByError => _client?.ClosedByError ?? false;
-    public bool ClosedByClient => _client?.ClosedByClient ?? false;
-    public bool ClosedByHost => _client?.ClosedByHost ?? false;
-
-    public bool IsConnected => (_client?.SocketAvailable ?? false) && !(ClosedByHost || ClosedByClient || ClosedByError);
+    public WebSocketState State => _client.State;
+    public WebSocketCloseStatus? CloseStatus => _client.CloseStatus;
+    public string CloseStatusDescription => _client.CloseStatusDescription;
+    public Exception Error => _client.Error;
 
     public DeribitV2Client(DeribitEndpointType endpointType)
     {
@@ -49,7 +52,9 @@ namespace DeriSock
           throw new ArgumentOutOfRangeException(nameof(endpointType), endpointType, "Unsupported endpoint type");
       }
 
-      _client.Request += OnServerRequest;
+      _client.Connected += OnServerConnected;
+      _client.Disconnected += OnServerDisconnected;
+      _client.RequestReceived += OnServerRequest;
       _subscriptionManager = new SubscriptionManager(this);
     }
 
@@ -72,6 +77,16 @@ namespace DeriSock
     {
       var response = await _client.Send(method, @params).ConfigureAwait(false);
       return response.CreateTyped(converter.Convert(response.Result));
+    }
+
+    protected virtual void OnServerConnected(object sender, EventArgs e)
+    {
+      Connected?.Invoke(this, e);
+    }
+
+    protected virtual void OnServerDisconnected(object sender, JsonRpcDisconnectEventArgs e)
+    {
+      Disconnected?.Invoke(this, e);
     }
 
     protected virtual void OnServerRequest(object sender, JsonRpcRequest request)
@@ -150,7 +165,7 @@ namespace DeriSock
 
       _ = Task.Delay(expireTimeSpan.Subtract(TimeSpan.FromSeconds(5))).ContinueWith(t =>
       {
-        if (!IsConnected)
+        if (_client.State != WebSocketState.Open)
         {
           return;
         }
