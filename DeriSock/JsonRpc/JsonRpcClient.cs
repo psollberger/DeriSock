@@ -2,6 +2,7 @@
 {
   using System;
   using System.Collections.Concurrent;
+  using System.Diagnostics;
   using System.Net.WebSockets;
   using System.Text;
   using System.Threading;
@@ -11,9 +12,7 @@
   using Newtonsoft.Json.Linq;
   using Serilog;
   using Serilog.Events;
-  using RequestDictionary = System.Collections.Concurrent.ConcurrentDictionary<int, System.Threading.Tasks.TaskCompletionSource<JsonRpcResponse>>;
 
-  //TODO: Create OnDisconnect Event or something to let consumers know the connection was closed. Maybe put ClosedBy* properties into DisconnectReason Enum or something
   public class JsonRpcClient : IJsonRpcClient
   {
     protected readonly ILogger Logger = Log.Logger;
@@ -30,29 +29,27 @@
       RequestMgr = new RequestManager(this);
     }
 
-    public event EventHandler<JsonRpcRequest> Request;
-
-    public bool SocketAvailable => Socket != null;
-    public bool IsConnected => SocketAvailable && !(ClosedByHost || ClosedByClient || ClosedByError);
-    public bool ClosedByError { get; private set; }
-    public bool ClosedByClient { get; private set; }
-    public bool ClosedByHost { get; private set; }
+    public event EventHandler Connected;
+    public event EventHandler<JsonRpcDisconnectEventArgs> Disconnected;
+    public event EventHandler<JsonRpcRequest> RequestReceived;
 
     public Uri ServerUri { get; }
 
+    public WebSocketState State => Socket?.State ?? WebSocketState.Closed;
+    public WebSocketCloseStatus? CloseStatus { get; protected set; }
+    public string CloseStatusDescription { get; protected set; }
+    public Exception Error { get; protected set; }
+    
     /// <inheritdoc />
     public virtual async Task Connect()
     {
-      if (IsConnected)
+      if (Socket != null)
       {
         throw new JsonRpcAlreadyConnectedException();
       }
 
       Socket?.Dispose();
       RequestMgr.Reset();
-      ClosedByClient = false;
-      ClosedByError = false;
-      ClosedByHost = false;
 
       ReceiveCancellationTokenSource = new CancellationTokenSource();
 
@@ -74,20 +71,13 @@
         throw;
       }
 
-      if (Logger?.IsEnabled(LogEventLevel.Information) ?? false)
-      {
-        Logger.Information("Connected. Start collecting messages");
-      }
-
-      //Start processing Threads
-      ProcessReceiveThread = new Thread(CollectMessages) {Name = "ProcessReceive"};
-      ProcessReceiveThread.Start();
+      InternalOnConnected();
     }
 
     /// <inheritdoc />
     public virtual async Task Disconnect()
     {
-      if (!IsConnected || Socket.State != WebSocketState.Open)
+      if (Socket == null || Socket.State != WebSocketState.Open)
       {
         throw new JsonRpcNotConnectedException();
       }
@@ -103,16 +93,11 @@
 
       if (Socket.State == WebSocketState.Open)
       {
-        await Socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing Connection", CancellationToken.None);
+        await Socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "user close", CancellationToken.None);
       }
 
-      Socket.Dispose();
+      Socket?.Dispose();
       Socket = null;
-
-      if (Logger?.IsEnabled(LogEventLevel.Information) ?? false)
-      {
-        Logger.Information("Disconnected");
-      }
     }
 
     /// <inheritdoc />
@@ -154,9 +139,19 @@
       return taskSource.Task;
     }
 
-    protected virtual void OnRequest(JsonRpcRequest request)
+    protected virtual void OnConnected()
     {
-      Request?.Invoke(this, request);
+      Connected?.Invoke(this, EventArgs.Empty);
+    }
+
+    protected virtual void OnDisconnected(JsonRpcDisconnectEventArgs args)
+    {
+      Disconnected?.Invoke(this, args);
+    }
+
+    protected virtual void OnRequestReceived(JsonRpcRequest request)
+    {
+      RequestReceived?.Invoke(this, request);
     }
 
     protected virtual void CollectMessages()
@@ -195,10 +190,12 @@
             {
               if (Logger?.IsEnabled(LogEventLevel.Debug) ?? false)
               {
-                Logger.Debug("ProcessReceive: The host closed the connection ({StatusDescription})", receiveResult.CloseStatusDescription);
+                Logger.Debug("ProcessReceive: The host closed the connection ({Status}: {StatusDescription})", receiveResult.CloseStatus, receiveResult.CloseStatusDescription);
               }
 
-              OnConnectionClosed(!string.Equals(receiveResult.CloseStatusDescription, "logout"));
+              InternalOnDisconnected(new JsonRpcDisconnectEventArgs(
+                receiveResult.CloseStatus ?? WebSocketCloseStatus.Empty,
+                receiveResult.CloseStatusDescription, null));
               break;
             }
 
@@ -222,7 +219,7 @@
 
             if (!string.IsNullOrEmpty(message))
             {
-              OnMessageReceived(message);
+              InternalOnMessageReceived(message);
             }
 
             msgBuilder.Clear();
@@ -234,13 +231,13 @@
               Logger?.Debug("ProcessReceive: Valid manual cancellation");
             }
 
-            OnConnectionClosed(false);
+            InternalOnDisconnected(new JsonRpcDisconnectEventArgs(WebSocketCloseStatus.NormalClosure, "user close", null));
             break;
           }
           catch (Exception ex)
           {
             Logger?.Error(ex, "ProcessReceive: Connection closed by unknown error");
-            OnConnectionError(ex);
+            InternalOnDisconnected(new JsonRpcDisconnectEventArgs(WebSocketCloseStatus.Empty, "user error", ex));
             break;
           }
         }
@@ -251,7 +248,46 @@
       }
     }
 
-    protected virtual void OnMessageReceived(string message)
+    protected virtual void InternalOnConnected()
+    {
+      if (Logger?.IsEnabled(LogEventLevel.Information) ?? false)
+      {
+        Logger.Information("Connected. Start collecting messages");
+      }
+
+      //Start processing Threads
+      ProcessReceiveThread = new Thread(CollectMessages) {Name = "ProcessReceive"};
+      ProcessReceiveThread.Start();
+
+      Task.Factory.StartNew(OnConnected);
+    }
+
+    protected virtual void InternalOnDisconnected(JsonRpcDisconnectEventArgs args)
+    {
+      if (Logger?.IsEnabled(LogEventLevel.Debug) ?? false)
+      {
+        Logger.Debug("Disconnected");
+      }
+
+      CloseStatus = args.CloseStatus;
+      CloseStatusDescription = args.CloseStatusDescription;
+      Error = args.Exception;
+
+      if (args.Exception != null)
+      {
+        Socket.CloseAsync(args.CloseStatus, args.CloseStatusDescription, CancellationToken.None).GetAwaiter().GetResult();
+      }
+
+      Socket?.Dispose();
+      Socket = null;
+
+      Task.Factory.StartNew(a =>
+      {
+        OnDisconnected((JsonRpcDisconnectEventArgs)a);
+      }, args);
+    }
+
+    protected virtual void InternalOnMessageReceived(string message)
     {
       var jObject = (JObject)JsonConvert.DeserializeObject(message);
       if (jObject == null)
@@ -261,27 +297,29 @@
 
       if (jObject.TryGetValue("method", out _))
       {
-        OnRequest(message, jObject);
+        InternalOnRequestReceived(message, jObject);
       }
       else
       {
-        OnResponse(message, jObject);
+        InternalOnResponseReceived(message, jObject);
       }
     }
 
-    protected virtual void OnRequest(string message, JObject requestObject)
+    protected virtual void InternalOnRequestReceived(string message, JObject requestObject)
     {
       var request = requestObject.ToObject<JsonRpcRequest>();
+      Debug.Assert(request != null, nameof(request) + " != null");
       request.Original = requestObject;
       Task.Factory.StartNew(req =>
       {
-        OnRequest((JsonRpcRequest)req);
+        OnRequestReceived((JsonRpcRequest)req);
       }, request);
     }
 
-    protected virtual void OnResponse(string message, JObject responseObject)
+    protected virtual void InternalOnResponseReceived(string message, JObject responseObject)
     {
       var response = responseObject.ToObject<JsonRpcResponse>();
+      Debug.Assert(response != null, nameof(response) + " != null");
       response.Original = message;
 
       if (response.Id > 0)
@@ -309,19 +347,6 @@
           }
         }, response);
       }
-    }
-
-    protected virtual void OnConnectionClosed(bool closedByHost)
-    {
-      ClosedByHost = closedByHost;
-      ClosedByClient = !closedByHost;
-    }
-
-    protected virtual void OnConnectionError(Exception ex)
-    {
-      ClosedByHost = false;
-      ClosedByClient = false;
-      ClosedByError = true;
     }
 
     protected class RequestManager

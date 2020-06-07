@@ -1,17 +1,24 @@
 ﻿namespace DeriSock.JsonRpc
 {
   using System;
+  using System.Net.WebSockets;
   using System.Threading.Tasks;
 
   public interface IJsonRpcClient
   {
+    event EventHandler Connected;
+    event EventHandler<JsonRpcDisconnectEventArgs> Disconnected;
+    event EventHandler<JsonRpcRequest> RequestReceived;
+
     Uri ServerUri { get; }
-    bool SocketAvailable { get; }
-    bool IsConnected { get; }
-    bool ClosedByError { get; }
-    bool ClosedByClient { get; }
-    bool ClosedByHost { get; }
-    event EventHandler<JsonRpcRequest> Request;
+
+    WebSocketState State { get; }
+
+    WebSocketCloseStatus? CloseStatus { get; }
+
+    string CloseStatusDescription { get; }
+
+    Exception Error { get; }
 
     /// <summary>
     ///   Connects to the server using the <see cref="JsonRpcClient.ServerUri" /> and starts processing received messages

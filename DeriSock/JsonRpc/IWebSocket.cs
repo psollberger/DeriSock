@@ -8,6 +8,8 @@
   public interface IWebSocket : IDisposable
   {
     WebSocketState State { get; }
+    WebSocketCloseStatus? CloseStatus { get; }
+    string CloseStatusDescription { get; }
 
     Task ConnectAsync(Uri uri, CancellationToken cancellationToken);
 

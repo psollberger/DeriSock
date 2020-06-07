@@ -15,6 +15,8 @@
     }
 
     public WebSocketState State => _socket.State;
+    public WebSocketCloseStatus? CloseStatus => _socket.CloseStatus;
+    public string CloseStatusDescription => _socket.CloseStatusDescription;
 
     public void Dispose()
     {
