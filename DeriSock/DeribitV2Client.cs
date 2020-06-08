@@ -3,7 +3,6 @@
 namespace DeriSock
 {
   using System;
-  using System.Collections.Concurrent;
   using System.Collections.Generic;
   using System.Diagnostics;
   using System.Dynamic;
@@ -22,12 +21,11 @@ namespace DeriSock
   /// </summary>
   public class DeribitV2Client
   {
+    public event EventHandler Connected;
+    public event EventHandler<JsonRpcDisconnectEventArgs> Disconnected;
     private readonly IJsonRpcClient _client;
     private readonly SubscriptionManager _subscriptionManager;
     protected readonly ILogger Logger = Log.Logger;
-
-    public event EventHandler Connected;
-    public event EventHandler<JsonRpcDisconnectEventArgs> Disconnected;
 
     public string AccessToken { get; private set; }
 
@@ -131,9 +129,7 @@ namespace DeriSock
       {
         if (Logger?.IsEnabled(LogEventLevel.Warning) ?? false)
         {
-          Logger.Warning(
-            "OnNotification: Could not find subscription for notification: {@Notification}",
-            notification);
+          Logger.Warning("OnNotification: Could not find subscription for notification: {@Notification}", notification);
         }
 
         return;
@@ -178,235 +174,224 @@ namespace DeriSock
     protected class SubscriptionManager
     {
       private readonly DeribitV2Client _client;
-      private readonly ConcurrentDictionary<string, SubscriptionEntry> _subscriptionMap;
+      private readonly SortedDictionary<string, SubscriptionEntry> _subscriptionMap;
 
       public SubscriptionManager(DeribitV2Client client)
       {
         _client = client;
-        _subscriptionMap = new ConcurrentDictionary<string, SubscriptionEntry>();
+        _subscriptionMap = new SortedDictionary<string, SubscriptionEntry>();
       }
 
-      public async Task<bool> Subscribe(ISubscriptionChannel channel, Action<Notification> callback)
+      public async Task<SubscriptionToken> Subscribe(ISubscriptionChannel channel, Action<Notification> callback)
       {
         if (callback == null)
         {
-          return false;
+          return SubscriptionToken.Invalid;
         }
 
         var channelName = channel.ToChannelName();
+        TaskCompletionSource<SubscriptionToken> taskSource = null;
+        SubscriptionEntry entry;
 
-        var entryFound = _subscriptionMap.TryGetValue(channelName, out var entry);
-
-        if (entryFound && entry.State == SubscriptionState.Subscribing)
+        lock (_subscriptionMap)
         {
-          if (_client.Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
+          if (!_subscriptionMap.TryGetValue(channelName, out entry))
           {
-            _client.Logger.Verbose("Already subscribing: Wait for action completion ({Channel})", channelName);
-          }
-
-          //TODO: entry.CurrentAction could be null due to threading (already completed?)
-          var currentAction = entry.CurrentAction;
-          var result = currentAction != null && await currentAction.ConfigureAwait(false);
-
-          if (_client.Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
-          {
-            _client.Logger.Verbose("Already subscribing: Action result: {Result} ({Channel})", result, channelName);
-          }
-
-          if (!result || entry.State != SubscriptionState.Subscribed)
-          {
-            if (_client.Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
+            entry = new SubscriptionEntry();
+            if (!_subscriptionMap.TryAdd(channelName, entry))
             {
-              _client.Logger.Verbose("Already subscribing: Action failed or subscription not successful ({Channel})", channelName);
+              _client.Logger?.Error("Subscribe: Could not add internal item for channel {Channel}", channelName);
+              return SubscriptionToken.Invalid;
             }
 
-            return false;
+            taskSource = new TaskCompletionSource<SubscriptionToken>();
+            entry.State = SubscriptionState.Subscribing;
+            entry.SubscribeTask = taskSource.Task;
           }
 
-          if (_client.Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
+          // Entry already exists but is completely unsubscribed
+          if (entry.State == SubscriptionState.Unsubscribed)
           {
-            _client.Logger.Verbose("Already subscribing: Adding callback ({Channel})", channelName);
+            taskSource = new TaskCompletionSource<SubscriptionToken>();
+            entry.State = SubscriptionState.Subscribing;
+            entry.SubscribeTask = taskSource.Task;
           }
 
-          entry.Callbacks.Add(callback);
-          return true;
+          // Already subscribed - Put the callback in there and let's go
+          if (entry.State == SubscriptionState.Subscribed)
+          {
+            _client.Logger?.Debug("Subscribe: Subscription for channel already exists. Adding callback to list (Channel: {Channel})", channelName);
+            var callbackEntry = new SubscriptionCallback(new SubscriptionToken(Guid.NewGuid()), callback);
+            entry.Callbacks.Add(callbackEntry);
+            return callbackEntry.Token;
+          }
+
+          // We are in the middle of unsubscribing from the channel
+          if (entry.State == SubscriptionState.Unsubscribing)
+          {
+            _client.Logger?.Debug("Subscribe: Channel is unsubscribing. Abort subscribe (Channel: {Channel})", channelName);
+            return SubscriptionToken.Invalid;
+          }
         }
 
-        if (entryFound && entry.State == SubscriptionState.Subscribed)
+        // Only one state left: Subscribing
+
+        // We are already subscribing
+        if (taskSource == null && entry.State == SubscriptionState.Subscribing)
         {
-          if (_client.Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
+          _client.Logger?.Debug("Subscribe: Channel is already subscribing. Waiting for the task to complete ({Channel})", channelName);
+
+          var subscribeResult = entry.SubscribeTask != null && await entry.SubscribeTask != SubscriptionToken.Invalid;
+
+          if (!subscribeResult && entry.State != SubscriptionState.Subscribed)
           {
-            _client.Logger.Verbose("Subscription for channel already exists. Adding callback to list ({Channel})", channelName);
+            _client.Logger?.Debug("Subscribe: Subscription has failed. Abort subscribe (Channel: {Channel})", channelName);
+            return SubscriptionToken.Invalid;
           }
 
-          entry.Callbacks.Add(callback);
-          return true;
+          _client.Logger?.Debug("Subscribe: Subscription was successful. Adding callback (Channel: {Channel}", channelName);
+          var callbackEntry = new SubscriptionCallback(new SubscriptionToken(Guid.NewGuid()), callback);
+          entry.Callbacks.Add(callbackEntry);
+          return callbackEntry.Token;
         }
 
-        if (entryFound && entry.State == SubscriptionState.Unsubscribing)
+        if (taskSource == null)
         {
-          if (_client.Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
-          {
-            _client.Logger.Verbose("Currently unsubscribing from Channel. Abort Subscribe ({Channel})", channelName);
-          }
-
-          return false;
-        }
-
-        TaskCompletionSource<bool> defer = null;
-
-        if (entryFound && entry.State == SubscriptionState.Unsubscribed)
-        {
-          if (_client.Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
-          {
-            _client.Logger.Verbose("Unsubscribed from channel. Re-Subscribing ({Channel})", channelName);
-          }
-
-          defer = new TaskCompletionSource<bool>();
-          entry.State = SubscriptionState.Subscribing;
-          entry.CurrentAction = defer.Task;
-        }
-
-        if (!entryFound)
-        {
-          if (_client.Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
-          {
-            _client.Logger.Verbose("Subscription for channel not found. Subscribing ({Channel})", channelName);
-          }
-
-          defer = new TaskCompletionSource<bool>();
-          entry = new SubscriptionEntry {State = SubscriptionState.Subscribing, Callbacks = new List<Action<Notification>>(), CurrentAction = defer.Task};
-          _subscriptionMap[channelName] = entry;
+          _client.Logger?.Error("Subscribe: Invalid execution state. Missing TaskCompletionSource (Channel: {Channel}", channelName);
+          return SubscriptionToken.Invalid;
         }
 
         try
         {
-          //TODO: check if private subscribe works without access_token being sent
-          var subscribeResponse = IsPrivateChannel(channelName)
-            ? await _client.Send(
-              "private/subscribe", new {channels = new[] {channelName} /*, access_token = _client.AccessToken*/},
-              new ListJsonConverter<string>()).ConfigureAwait(false)
-            : await _client.Send(
-                "public/subscribe", new {channels = new[] {channelName}},
-                new ListJsonConverter<string>())
-              .ConfigureAwait(false);
-
-          //TODO: Handle possible error in response
+          var subscribeResponse = await _client.Send(
+            IsPrivateChannel(channelName) ? "private/subscribe" : "public/subscribe",
+            new {channels = new[] {channelName}},
+            new ListJsonConverter<string>()).ConfigureAwait(false);
 
           var response = subscribeResponse.ResultData;
 
           if (response.Count != 1 || response[0] != channelName)
           {
-            if (_client.Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
-            {
-              _client.Logger.Verbose("Invalid subscribe result: {@Response} {Channel}", response, channelName);
-            }
-
-            Debug.Assert(defer != null, nameof(defer) + " != null");
-            defer.SetResult(false);
+            _client.Logger?.Debug("Subscribe: Invalid result (Channel: {Channel}): {@Response}", channelName, response);
+            entry.State = SubscriptionState.Unsubscribed;
+            entry.SubscribeTask = null;
+            Debug.Assert(taskSource != null, nameof(taskSource) + " != null");
+            taskSource.SetResult(SubscriptionToken.Invalid);
           }
           else
           {
-            if (_client.Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
-            {
-              _client.Logger.Verbose("Successfully subscribed. Adding callback ({Channel})", channelName);
-            }
+            _client.Logger?.Debug("Subscribe: Successfully subscribed. Adding callback (Channel: {Channel})", channelName);
 
+            var callbackEntry = new SubscriptionCallback(new SubscriptionToken(Guid.NewGuid()), callback);
+            entry.Callbacks.Add(callbackEntry);
             entry.State = SubscriptionState.Subscribed;
-            entry.Callbacks.Add(callback);
-            entry.CurrentAction = null;
-            Debug.Assert(defer != null, nameof(defer) + " != null");
-            defer.SetResult(true);
+            entry.SubscribeTask = null;
+            Debug.Assert(taskSource != null, nameof(taskSource) + " != null");
+            taskSource.SetResult(callbackEntry.Token);
           }
         }
         catch (Exception e)
         {
-          Debug.Assert(defer != null, nameof(defer) + " != null");
-          defer.SetException(e);
+          entry.State = SubscriptionState.Unsubscribed;
+          entry.SubscribeTask = null;
+          Debug.Assert(taskSource != null, nameof(taskSource) + " != null");
+          taskSource.SetException(e);
         }
 
-        return await defer.Task;
+        return await taskSource.Task;
       }
 
-      public async Task<bool> Unsubscribe(ISubscriptionChannel channel, Action<Notification> callback)
+      public async Task<bool> Unsubscribe(SubscriptionToken token)
       {
-        var channelName = channel.ToChannelName();
+        string channelName;
+        SubscriptionEntry entry;
+        SubscriptionCallback callbackEntry;
+        TaskCompletionSource<bool> taskSource;
 
-        if (!_subscriptionMap.TryGetValue(channelName, out var entry))
+        lock (_subscriptionMap)
         {
-          return false;
-        }
+          (channelName, entry, callbackEntry) = GetEntryByToken(token);
 
-        if (!entry.Callbacks.Contains(callback))
-        {
-          return false;
-        }
-
-        switch (entry.State)
-        {
-          case SubscriptionState.Subscribing:
+          if (string.IsNullOrEmpty(channelName) || entry == null || callbackEntry == null)
+          {
+            _client.Logger?.Warning("Unsubscribe: Could not find token {token}", token.Token);
             return false;
-          case SubscriptionState.Unsubscribed:
-          case SubscriptionState.Unsubscribing:
-            entry.Callbacks.Remove(callback);
-            return true;
-          case SubscriptionState.Subscribed:
-            if (entry.Callbacks.Count > 1)
-            {
-              entry.Callbacks.Remove(callback);
+          }
+
+          switch (entry.State)
+          {
+            case SubscriptionState.Subscribing:
+              _client.Logger?.Debug("Unsubscribe: Channel is currently subscribing. Abort unsubscribe (Channel: {Channel})", channelName);
+              return false;
+            case SubscriptionState.Unsubscribed:
+            case SubscriptionState.Unsubscribing:
+              _client.Logger?.Debug("Unsubscribe: Channel is unsubscribed or unsubscribing. Remove callback (Channel: {Channel})", channelName);
+              entry.Callbacks.Remove(callbackEntry);
               return true;
-            }
+            case SubscriptionState.Subscribed:
+              if (entry.Callbacks.Count > 1)
+              {
+                _client.Logger?.Debug("Unsubscribe: There are still callbacks left. Remove callback but don't unsubscribe (Channel: {Channel})", channelName);
+                entry.Callbacks.Remove(callbackEntry);
+                return true;
+              }
 
-            break;
-          default:
-            return false;
+              _client.Logger?.Debug("Unsubscribe: No callbacks left. Unsubscribe and remove callback (Channel: {Channel})", channelName);
+              break;
+            default:
+              return false;
+          }
+
+          // At this point it's only possible that the entry-State is Subscribed
+          // and the callback list is empty after removing this callback.
+          // Hence we unsubscribe at the server now
+          entry.State = SubscriptionState.Unsubscribing;
+          taskSource = new TaskCompletionSource<bool>();
+          entry.UnsubscribeTask = taskSource.Task;
         }
-
-        // At this point it's only possible that the entry-State is Subscribed
-        // and the callback list is empty after removing this callback.
-        // Hence we unsubscribe at the server now
-        entry.State = SubscriptionState.Unsubscribing;
-        var defer = new TaskCompletionSource<bool>();
-        entry.CurrentAction = defer.Task;
 
         try
         {
-          //TODO: check if private unsubscribe works without access_token being sent
-          var unsubscribeResponse = IsPrivateChannel(channelName)
-            ? await _client.Send(
-              "private/unsubscribe", new {channels = new[] {channelName} /*, access_token = _client.AccessToken*/},
-              new ListJsonConverter<string>())
-            : await _client.Send(
-              "public/unsubscribe", new {channels = new[] {channelName}},
-              new ListJsonConverter<string>());
-
-          //TODO: Handle possible error in response
+          var unsubscribeResponse = await _client.Send(
+            IsPrivateChannel(channelName) ? "private/unsubscribe" : "public/unsubscribe",
+            new {channels = new[] {channelName}},
+            new ListJsonConverter<string>()).ConfigureAwait(false);
 
           var response = unsubscribeResponse.ResultData;
 
           if (response.Count != 1 || response[0] != channelName)
           {
-            defer.SetResult(false);
+            entry.State = SubscriptionState.Subscribed;
+            entry.UnsubscribeTask = null;
+            taskSource.SetResult(false);
           }
           else
           {
+            entry.Callbacks.Remove(callbackEntry);
             entry.State = SubscriptionState.Unsubscribed;
-            entry.Callbacks.Remove(callback);
-            entry.CurrentAction = null;
-            defer.SetResult(true);
+            entry.UnsubscribeTask = null;
+            taskSource.SetResult(true);
           }
         }
         catch (Exception e)
         {
-          defer.SetException(e);
+          entry.State = SubscriptionState.Subscribed;
+          entry.UnsubscribeTask = null;
+          taskSource.SetException(e);
         }
 
-        return await defer.Task;
+        return await taskSource.Task;
       }
 
       public IEnumerable<Action<Notification>> GetCallbacks(string channel)
       {
-        return !_subscriptionMap.TryGetValue(channel, out var entry) ? null : entry.Callbacks;
+        if (_subscriptionMap.TryGetValue(channel, out var entry))
+        {
+          foreach (var callbackEntry in entry.Callbacks)
+          {
+            yield return callbackEntry.Action;
+          }
+        }
       }
 
       public void Reset()
@@ -417,6 +402,25 @@ namespace DeriSock
       private static bool IsPrivateChannel(string channel)
       {
         return channel.StartsWith("user.");
+      }
+
+      private (string channelName, SubscriptionEntry entry, SubscriptionCallback callbackEntry) GetEntryByToken(SubscriptionToken token)
+      {
+        lock (_subscriptionMap)
+        {
+          foreach (var kvp in _subscriptionMap)
+          {
+            foreach (var callbackEntry in kvp.Value.Callbacks)
+            {
+              if (callbackEntry.Token == token)
+              {
+                return (kvp.Key, kvp.Value, callbackEntry);
+              }
+            }
+          }
+        }
+
+        return (null, null, null);
       }
     }
 
@@ -2901,9 +2905,17 @@ namespace DeriSock
     #region Subscriptions
 
     /// <summary>
+    ///   Unsubscribe from a Subscription you subscribed before
+    /// </summary>
+    public Task<bool> Unsubscribe(SubscriptionToken token)
+    {
+      return _subscriptionManager.Unsubscribe(token);
+    }
+
+    /// <summary>
     ///   General announcements concerning the Deribit platform.
     /// </summary>
-    public Task<bool> SubscribeAnnouncements(Action<AnnouncementNotification> callback)
+    public Task<SubscriptionToken> SubscribeAnnouncements(Action<AnnouncementNotification> callback)
     {
       return _subscriptionManager.Subscribe(new AnnouncementsSubscriptionParams(),
         n => callback(n.Data.ToObject<AnnouncementNotification>()));
@@ -2925,7 +2937,7 @@ namespace DeriSock
     ///     for options it is amount of corresponding cryptocurrency contracts, e.g., BTC or ETH.
     ///   </para>
     /// </summary>
-    public Task<bool> SubscribeBookGroup(BookGroupSubscriptionParams @params, Action<BookGroupNotification> callback)
+    public Task<SubscriptionToken> SubscribeBookGroup(BookGroupSubscriptionParams @params, Action<BookGroupNotification> callback)
     {
       return _subscriptionManager.Subscribe(@params,
         n => callback(n.Data.ToObject<BookGroupNotification>()));
@@ -2952,7 +2964,7 @@ namespace DeriSock
     ///     contracts, e.g., BTC or ETH.
     ///   </para>
     /// </summary>
-    public Task<bool> SubscribeBookChange(BookChangeSubscriptionParams @params, Action<BookChangeNotification> callback)
+    public Task<SubscriptionToken> SubscribeBookChange(BookChangeSubscriptionParams @params, Action<BookChangeNotification> callback)
     {
       return _subscriptionManager.Subscribe(@params,
         n => callback(n.Data.ToObject<BookChangeNotification>()));
@@ -2968,7 +2980,7 @@ namespace DeriSock
     ///     generated which uses data from the last available trade candle (open and close values).
     ///   </para>
     /// </summary>
-    public Task<bool> SubscribeChartTrades(ChartTradesSubscriptionParams @params, Action<ChartTradesNotification> callback)
+    public Task<SubscriptionToken> SubscribeChartTrades(ChartTradesSubscriptionParams @params, Action<ChartTradesNotification> callback)
     {
       return _subscriptionManager.Subscribe(@params,
         n => callback(n.Data.ToObject<ChartTradesNotification>()));
@@ -2977,7 +2989,7 @@ namespace DeriSock
     /// <summary>
     ///   Provides information about current value (price) for Deribit Index
     /// </summary>
-    public Task<bool> SubscribeDeribitPriceIndex(DeribitPriceIndexSubscriptionParams @params, Action<DeribitPriceIndexNotification> callback)
+    public Task<SubscriptionToken> SubscribeDeribitPriceIndex(DeribitPriceIndexSubscriptionParams @params, Action<DeribitPriceIndexNotification> callback)
     {
       return _subscriptionManager.Subscribe(@params,
         n => callback(n.Data.ToObject<DeribitPriceIndexNotification>()));
@@ -2986,7 +2998,8 @@ namespace DeriSock
     /// <summary>
     ///   Provides information about current value (price) for stock exchanges used to calculate Deribit Index
     /// </summary>
-    public Task<bool> SubscribeDeribitPriceRanking(DeribitPriceRankingSubscriptionParams @params, Action<DeribitPriceRankingNotification[]> callback)
+    public Task<SubscriptionToken> SubscribeDeribitPriceRanking(DeribitPriceRankingSubscriptionParams @params,
+      Action<DeribitPriceRankingNotification[]> callback)
     {
       return _subscriptionManager.Subscribe(@params,
         n => callback(n.Data.ToObject<DeribitPriceRankingNotification[]>()));
@@ -2995,7 +3008,7 @@ namespace DeriSock
     /// <summary>
     ///   Returns calculated (estimated) ending price for given index
     /// </summary>
-    public Task<bool> SubscribeEstimatedExpirationPrice(EstimatedExpirationPriceSubscriptionParams @params,
+    public Task<SubscriptionToken> SubscribeEstimatedExpirationPrice(EstimatedExpirationPriceSubscriptionParams @params,
       Action<EstimatedExpirationPriceNotification> callback)
     {
       return _subscriptionManager.Subscribe(@params,
@@ -3005,7 +3018,7 @@ namespace DeriSock
     /// <summary>
     ///   Provides information about options markprices
     /// </summary>
-    public Task<bool> SubscribeMarkPriceOptions(MarkPriceOptionsSubscriptionParams @params, Action<MarkPriceOptionsNotification[]> callback)
+    public Task<SubscriptionToken> SubscribeMarkPriceOptions(MarkPriceOptionsSubscriptionParams @params, Action<MarkPriceOptionsNotification[]> callback)
     {
       return _subscriptionManager.Subscribe(@params,
         n => callback(n.Data.ToObject<MarkPriceOptionsNotification[]>()));
@@ -3015,7 +3028,8 @@ namespace DeriSock
     ///   Provide current interest rate - but only for <c>perpetual</c> instruments. Other types won't generate any
     ///   notification.
     /// </summary>
-    public Task<bool> SubscribePerpetualInterestRate(PerpetualInterestRateSubscriptionParams @params, Action<PerpetualInterestRateNotification> callback)
+    public Task<SubscriptionToken> SubscribePerpetualInterestRate(PerpetualInterestRateSubscriptionParams @params,
+      Action<PerpetualInterestRateNotification> callback)
     {
       return _subscriptionManager.Subscribe(@params,
         n => callback(n.Data.ToObject<PerpetualInterestRateNotification>()));
@@ -3024,7 +3038,7 @@ namespace DeriSock
     /// <summary>
     ///   Information about platform state
     /// </summary>
-    public Task<bool> SubscribePlatformState(Action<PlatformStateNotification> callback)
+    public Task<SubscriptionToken> SubscribePlatformState(Action<PlatformStateNotification> callback)
     {
       return _subscriptionManager.Subscribe(new PlatformStateSubscriptionParams(),
         n => callback(n.Data.ToObject<PlatformStateNotification>()));
@@ -3033,7 +3047,7 @@ namespace DeriSock
     /// <summary>
     ///   Best bid/ask price and size
     /// </summary>
-    public Task<bool> SubscribeQuote(QuoteSubscriptionParams @params, Action<QuoteNotification> callback)
+    public Task<SubscriptionToken> SubscribeQuote(QuoteSubscriptionParams @params, Action<QuoteNotification> callback)
     {
       return _subscriptionManager.Subscribe(@params,
         n => callback(n.Data.ToObject<QuoteNotification>()));
@@ -3042,7 +3056,7 @@ namespace DeriSock
     /// <summary>
     ///   Key information about the instrument
     /// </summary>
-    public Task<bool> SubscribeTicker(TickerSubscriptionParams @params, Action<TickerNotification> callback)
+    public Task<SubscriptionToken> SubscribeTicker(TickerSubscriptionParams @params, Action<TickerNotification> callback)
     {
       return _subscriptionManager.Subscribe(@params,
         n => callback(n.Data.ToObject<TickerNotification>()));
@@ -3051,7 +3065,7 @@ namespace DeriSock
     /// <summary>
     ///   Get notifications about trades for an instrument
     /// </summary>
-    public Task<bool> SubscribeTradesInstrument(TradesInstrumentSubscriptionParams @params, Action<TradesNotification[]> callback)
+    public Task<SubscriptionToken> SubscribeTradesInstrument(TradesInstrumentSubscriptionParams @params, Action<TradesNotification[]> callback)
     {
       return _subscriptionManager.Subscribe(@params,
         n => callback(n.Data.ToObject<TradesNotification[]>()));
@@ -3060,7 +3074,7 @@ namespace DeriSock
     /// <summary>
     ///   Get notifications about trades in any instrument of a given kind and given currency
     /// </summary>
-    public Task<bool> SubscribeTradesKindCurrency(TradesKindCurrencySubscriptionParams @params, Action<TradesNotification[]> callback)
+    public Task<SubscriptionToken> SubscribeTradesKindCurrency(TradesKindCurrencySubscriptionParams @params, Action<TradesNotification[]> callback)
     {
       return _subscriptionManager.Subscribe(@params,
         n => callback(n.Data.ToObject<TradesNotification[]>()));
@@ -3069,7 +3083,7 @@ namespace DeriSock
     /// <summary>
     ///   Get notifications about user's updates related to order, trades, etc. in an instrument.
     /// </summary>
-    public Task<bool> SubscribeUserChangesInstrument(UserChangesInstrumentSubscriptionParams @params, Action<UserChangesNotification> callback)
+    public Task<SubscriptionToken> SubscribeUserChangesInstrument(UserChangesInstrumentSubscriptionParams @params, Action<UserChangesNotification> callback)
     {
       return _subscriptionManager.Subscribe(@params,
         n => callback(n.Data.ToObject<UserChangesNotification>()));
@@ -3079,7 +3093,7 @@ namespace DeriSock
     ///   Get notifications about changes in user's updates related to orders, trades, etc. in instruments of a given kind and
     ///   currency.
     /// </summary>
-    public Task<bool> SubscribeUserChangesKindCurrency(UserChangesKindCurrencySubscriptionParams @params, Action<UserChangesNotification> callback)
+    public Task<SubscriptionToken> SubscribeUserChangesKindCurrency(UserChangesKindCurrencySubscriptionParams @params, Action<UserChangesNotification> callback)
     {
       return _subscriptionManager.Subscribe(@params,
         n => callback(n.Data.ToObject<UserChangesNotification>()));
@@ -3088,7 +3102,7 @@ namespace DeriSock
     /// <summary>
     ///   Get notifications about changes in user's orders for given instrument
     /// </summary>
-    public Task<bool> SubscribeUserOrdersInstrument(UserOrdersInstrumentSubscriptionParams @params, Action<UserOrder[]> callback)
+    public Task<SubscriptionToken> SubscribeUserOrdersInstrument(UserOrdersInstrumentSubscriptionParams @params, Action<UserOrder[]> callback)
     {
       return _subscriptionManager.Subscribe(@params,
         n =>
@@ -3100,7 +3114,7 @@ namespace DeriSock
     /// <summary>
     ///   Get notifications about changes in user's orders in instrument of a given kind and currency
     /// </summary>
-    public Task<bool> SubscribeUserOrdersKindCurrency(UserOrdersKindCurrencySubscriptionParams @params, Action<UserOrder[]> callback)
+    public Task<SubscriptionToken> SubscribeUserOrdersKindCurrency(UserOrdersKindCurrencySubscriptionParams @params, Action<UserOrder[]> callback)
     {
       return _subscriptionManager.Subscribe(@params,
         n =>
@@ -3112,7 +3126,7 @@ namespace DeriSock
     /// <summary>
     ///   Provides information about current user portfolio
     /// </summary>
-    public Task<bool> SubscribeUserPortfolio(UserPortfolioSubscriptionParams @params, Action<UserPortfolioNotification> callback)
+    public Task<SubscriptionToken> SubscribeUserPortfolio(UserPortfolioSubscriptionParams @params, Action<UserPortfolioNotification> callback)
     {
       return _subscriptionManager.Subscribe(@params,
         n => callback(n.Data.ToObject<UserPortfolioNotification>()));
@@ -3121,7 +3135,7 @@ namespace DeriSock
     /// <summary>
     ///   Get notifications about user's trades in an instrument
     /// </summary>
-    public Task<bool> SubscribeUserTradesInstrument(UserTradesInstrumentSubscriptionParams @params, Action<UserTrade[]> callback)
+    public Task<SubscriptionToken> SubscribeUserTradesInstrument(UserTradesInstrumentSubscriptionParams @params, Action<UserTrade[]> callback)
     {
       return _subscriptionManager.Subscribe(@params,
         n => callback(n.Data.ToObject<UserTrade[]>()));
@@ -3130,7 +3144,7 @@ namespace DeriSock
     /// <summary>
     ///   Get notifications about user's trades in any instrument of a given kind and given currency
     /// </summary>
-    public Task<bool> SubscribeUserTradesKindCurrency(UserTradesKindCurrencySubscriptionParams @params, Action<UserTrade[]> callback)
+    public Task<SubscriptionToken> SubscribeUserTradesKindCurrency(UserTradesKindCurrencySubscriptionParams @params, Action<UserTrade[]> callback)
     {
       return _subscriptionManager.Subscribe(@params,
         n => callback(n.Data.ToObject<UserTrade[]>()));
