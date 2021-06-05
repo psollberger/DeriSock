@@ -137,7 +137,7 @@
     public decimal SessionRpl { get; set; }
 
     /// <summary>
-    ///   The sum of position deltas
+    ///   The sum of position deltas, including collateral.
     /// </summary>
     [JsonProperty("delta_total")]
     public decimal DeltaTotal { get; set; }
@@ -165,6 +165,12 @@
     /// </summary>
     [JsonProperty("initial_margin")]
     public decimal InitialMargin { get; set; }
+
+    /// <summary>
+    ///  The account's estimated liquidation ratio.
+    /// </summary>
+    [JsonProperty("estimated_liquidation_ratio")]
+    public decimal EstimatedLiquidationRatio { get; set; }
 
     /// <summary>
     ///   <c>true</c> when the inter-user transfers are enabled for user (available when parameter <c>extended</c> is true)
@@ -224,6 +230,12 @@
     /// </summary>
     [JsonProperty("options_delta")]
     public decimal OptionsDelta { get; set; }
+
+    /// <summary>
+    ///  Projected Delta total
+    /// </summary>
+    [JsonProperty("projected_delta_total")]
+    public decimal ProjectedDeltaTotal { get; set; }
 
     /// <summary>
     ///   The account's balance
