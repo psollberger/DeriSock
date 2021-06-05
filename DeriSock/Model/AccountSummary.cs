@@ -143,6 +143,15 @@
     public decimal DeltaTotal { get; set; }
 
     /// <summary>
+    ///   The sum of position deltas, excluding collateral.
+    /// </summary>
+    public decimal PositionDelta
+    {
+      get { return DeltaTotal + Equity; }
+      private set { }
+    }
+
+    /// <summary>
     ///   Options profit and loss
     /// </summary>
     [JsonProperty("options_pl")]
