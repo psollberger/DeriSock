@@ -249,7 +249,7 @@
       ///   Number of matching engine requests per second allowed for user
       /// </summary>
       [JsonProperty("matching_engine")]
-      public int MatchingEngine { get; set; }
+      public EngineMatchItem MatchingEngine { get; set; }
 
       /// <summary>
       ///   Maximal number of matching engine requests per second allowed for user in burst mode
@@ -261,13 +261,31 @@
       ///   Number of non matching engine requests per second allowed for user
       /// </summary>
       [JsonProperty("non_matching_engine")]
-      public int NonMatchingEngine { get; set; }
+      public EngineMatchItem NonMatchingEngine { get; set; }
 
       /// <summary>
       ///   Maximal number of non matching engine requests per second allowed for user in burst mode
       /// </summary>
       [JsonProperty("non_matching_engine_burst")]
       public int NonMatchingEngineBurst { get; set; }
+    }
+
+    /// <summary>
+    /// Matching engine limits holder
+    /// </summary>
+    public class EngineMatchItem
+    {
+      /// <summary>
+      ///   Number of non matching engine requests per second allowed for user
+      /// </summary>
+      [JsonProperty("rate")]
+      public int Rate { get; set; }
+
+      /// <summary>
+      ///   Number of non matching engine burst requests per second allowed for user
+      /// </summary>
+      [JsonProperty("burst")]
+      public int Burst { get; set; }
     }
 
     public class FeesItem
