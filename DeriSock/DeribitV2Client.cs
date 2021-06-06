@@ -2293,6 +2293,23 @@ namespace DeriSock
     }
 
     /// <summary>
+    ///   Retrieves available trading instrument. This method can be used to see which instruments are available for trading,
+    ///   or which instruments have existed historically
+    ///   https://docs.deribit.com/#public-get_instrument
+    /// </summary>
+    /// <param name="instrument_name">The instrument_name. Valid values: <c>BTC-25JUN21</c>, <c>ETH-25JUN21</c></param>
+    public Task<JsonRpcResponse<Instrument>> PublicGetInstrument(string instrument_name)
+    {
+      var args = new ExpandoObject();
+      args.TryAdd("instrument_name", instrument_name);
+
+      return Send(
+        "public/get_instrument",
+        args,
+        new ObjectJsonConverter<Instrument>());
+    }
+
+    /// <summary>
     ///   Retrieves available trading instruments. This method can be used to see which instruments are available for trading,
     ///   or which instruments have existed historically
     /// </summary>
