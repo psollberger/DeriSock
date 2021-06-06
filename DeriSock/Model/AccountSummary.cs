@@ -137,15 +137,15 @@
     public decimal SessionRpl { get; set; }
 
     /// <summary>
-    ///   The sum of position deltas, including collateral.
+    ///   The sum of all position deltas, EXCLUDING your collateral.
     /// </summary>
     [JsonProperty("delta_total")]
     public decimal DeltaTotal { get; set; }
 
     /// <summary>
-    ///   The sum of position deltas, excluding collateral.
+    ///   The sum of position deltas + INCLUDING your collateral.
     /// </summary>
-    public decimal PositionDelta
+    public decimal DeltaTotalWithCollateral
     {
       get { return DeltaTotal + Equity; }
       private set { }
