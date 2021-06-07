@@ -32,7 +32,7 @@
     ///   Only for futures, estimated liquidation price
     /// </summary>
     [JsonProperty("estimated_liquidation_price")]
-    public decimal EstimatedLiquidationPrice { get; set; }
+    public decimal? EstimatedLiquidationPrice { get; set; }
 
     /// <summary>
     ///   Floating profit or loss
