@@ -137,10 +137,19 @@
     public decimal SessionRpl { get; set; }
 
     /// <summary>
-    ///   The sum of position deltas
+    ///   The sum of all position deltas, EXCLUDING your collateral.
     /// </summary>
     [JsonProperty("delta_total")]
     public decimal DeltaTotal { get; set; }
+
+    /// <summary>
+    ///   The sum of position deltas + INCLUDING your collateral.
+    /// </summary>
+    public decimal DeltaTotalWithCollateral
+    {
+      get { return DeltaTotal + Equity; }
+      private set { }
+    }
 
     /// <summary>
     ///   Options profit and loss
@@ -165,6 +174,12 @@
     /// </summary>
     [JsonProperty("initial_margin")]
     public decimal InitialMargin { get; set; }
+
+    /// <summary>
+    ///  The account's estimated liquidation ratio.
+    /// </summary>
+    [JsonProperty("estimated_liquidation_ratio")]
+    public decimal EstimatedLiquidationRatio { get; set; }
 
     /// <summary>
     ///   <c>true</c> when the inter-user transfers are enabled for user (available when parameter <c>extended</c> is true)
@@ -226,6 +241,12 @@
     public decimal OptionsDelta { get; set; }
 
     /// <summary>
+    ///  Projected Delta total
+    /// </summary>
+    [JsonProperty("projected_delta_total")]
+    public decimal ProjectedDeltaTotal { get; set; }
+
+    /// <summary>
     ///   The account's balance
     /// </summary>
     [JsonProperty("balance")]
@@ -249,7 +270,7 @@
       ///   Number of matching engine requests per second allowed for user
       /// </summary>
       [JsonProperty("matching_engine")]
-      public int MatchingEngine { get; set; }
+      public EngineMatchItem MatchingEngine { get; set; }
 
       /// <summary>
       ///   Maximal number of matching engine requests per second allowed for user in burst mode
@@ -261,13 +282,31 @@
       ///   Number of non matching engine requests per second allowed for user
       /// </summary>
       [JsonProperty("non_matching_engine")]
-      public int NonMatchingEngine { get; set; }
+      public EngineMatchItem NonMatchingEngine { get; set; }
 
       /// <summary>
       ///   Maximal number of non matching engine requests per second allowed for user in burst mode
       /// </summary>
       [JsonProperty("non_matching_engine_burst")]
       public int NonMatchingEngineBurst { get; set; }
+    }
+
+    /// <summary>
+    /// Matching engine limits holder
+    /// </summary>
+    public class EngineMatchItem
+    {
+      /// <summary>
+      ///   Number of non matching engine requests per second allowed for user
+      /// </summary>
+      [JsonProperty("rate")]
+      public int Rate { get; set; }
+
+      /// <summary>
+      ///   Number of non matching engine burst requests per second allowed for user
+      /// </summary>
+      [JsonProperty("burst")]
+      public int Burst { get; set; }
     }
 
     public class FeesItem
