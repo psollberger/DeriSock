@@ -1863,7 +1863,7 @@ namespace DeriSock
     ///   </para>
     ///   <para>Enum: <c>asc</c>, <c>desc</c>, <c>default</c></para>
     /// </param>
-    public Task<JsonRpcResponse<UserTrade[]>> PrivateGetUserTradesByCurrency(string currency,
+    public Task<JsonRpcResponse<UserTradeCollection>> PrivateGetUserTradesByCurrency(string currency,
       string kind = default, string startId = default, string endId = default, int count = default, bool? includeOld = null, string sorting = default)
     {
       var args = new ExpandoObject();
@@ -1902,7 +1902,7 @@ namespace DeriSock
       return Send(
         "private/get_user_trades_by_currency",
         args,
-        new ObjectJsonConverter<UserTrade[]>());
+        new ObjectJsonConverter<UserTradeCollection>());
     }
 
     /// <summary>
@@ -1925,7 +1925,7 @@ namespace DeriSock
     ///   </para>
     ///   <para>Enum: <c>asc</c>, <c>desc</c>, <c>default</c></para>
     /// </param>
-    public Task<JsonRpcResponse<UserTrade[]>> PrivateGetUserTradesByCurrencyAndTime(string currency,
+    public Task<JsonRpcResponse<UserTradeCollection>> PrivateGetUserTradesByCurrencyAndTime(string currency,
       string kind = default, DateTime startTime = default, DateTime endTime = default, int count = default, bool? includeOld = null, string sorting = default)
     {
       var args = new ExpandoObject();
@@ -1964,7 +1964,7 @@ namespace DeriSock
       return Send(
         "private/get_user_trades_by_currency_and_time",
         args,
-        new ObjectJsonConverter<UserTrade[]>());
+        new ObjectJsonConverter<UserTradeCollection>());
     }
 
     /// <summary>
