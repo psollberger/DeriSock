@@ -12,15 +12,22 @@ jobs:
       uses: actions/checkout@v2
       
     - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1.4.0
+      uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.1.101
+        dotnet-version: '3.1.x'
+
+    - name: Restore Packages
+      run: |
+        dotnet restore DeriSock
+        dotnet restore DeriSock.Tests
         
     - name: Build with dotnet
-      run: dotnet build --configuration Release
+      run: |
+        dotnet build --no-restore --configuration Release DeriSock
+        dotnet build --no-restore --configuration Release DeriSock.Tests
 
     - name: Run Tests
-      run: dotnet test
+      run: dotnet test --no-restore DeriSock.Tests
 
     - name: Create nuget package
       run: dotnet pack --configuration Release
