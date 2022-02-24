@@ -4,6 +4,7 @@
     <LangVersion>latest</LangVersion>
     <UserSecretsId>82099c6d-b905-4e95-98ba-954efe494b4a</UserSecretsId>
     <TargetFramework>net6.0</TargetFramework>
+    <OutputType>Exe</OutputType>
   </PropertyGroup>
 
   <ItemGroup>
