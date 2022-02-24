@@ -69,9 +69,17 @@
           var loginRes = await _client.PublicAuth(new AuthParams {GrantType = GrantType.Signature, ClientId = clientId, Signature = sig});
           var summary = await _client.PrivateGetAccountSummary("BTC", false);
 
+          var instruments = await _client.PublicGetInstruments("BTC");
+
+          var sub = _client.SubscribePerpetualInterestRate(
+            new PerpetualInterestRateSubscriptionParams { Interval = "100ms", InstrumentName = "BTC" },
+            notification =>
+            {
+              Log.Logger.Information($"IR {notification.Interest}");
+            });
           var subToken = await _client.SubscribeBookChange(new BookChangeSubscriptionParams {InstrumentName = "BTC-PERPETUAL", Interval = "100ms"}, o =>
           {
-            Log.Logger.Information($"HandleNotification: {o}");
+            // Log.Logger.Information($"HandleNotification: {o}");
           });
 
           var blub = 4;

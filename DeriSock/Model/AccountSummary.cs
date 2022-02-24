@@ -145,10 +145,10 @@
     /// <summary>
     ///   The sum of position deltas + INCLUDING your collateral.
     /// </summary>
+    [JsonIgnore]
     public decimal DeltaTotalWithCollateral
     {
       get { return DeltaTotal + Equity; }
-      private set { }
     }
 
     /// <summary>
