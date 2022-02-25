@@ -4,6 +4,7 @@
     <OutputType>Library</OutputType>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <LangVersion>latest</LangVersion>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
 
     <Authors>Patrick Sollberger</Authors>
     <Company />
@@ -13,7 +14,6 @@
     <PackageProjectUrl>https://github.com/psollberger/DeriSock</PackageProjectUrl>
     <PackageTags>deribit deribit-api deribit-api-v2 websocket api-client dotnetcore</PackageTags>
 
-
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/psollberger/DeriSock</RepositoryUrl>
 
@@ -22,6 +22,13 @@
     <AssemblyVersion>0.3.0.0</AssemblyVersion>
     <FileVersion>0.3.0.0</FileVersion>
     <Version>0.3.0</Version>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <ItemGroup>
