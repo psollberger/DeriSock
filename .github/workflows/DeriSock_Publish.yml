@@ -33,4 +33,4 @@ jobs:
       run: dotnet pack --configuration Release
 
     - name: Publish nuget package
-      run: dotnet nuget push .\DeriSock\bin\Release\DeriSock.0.3.0.nupkg -k ${{secrets.NUGET_KEY}} -s https://api.nuget.org/v3/index.json --skip-duplicate
+      run: dotnet nuget push .\DeriSock\bin\Release\DeriSock.0.3.0.nupkg -k ${{secrets.NUGET_KEY}} -s https://api.nuget.org/v3/index.json
