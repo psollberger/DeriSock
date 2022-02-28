@@ -23,9 +23,10 @@
 
     protected IWebSocket Socket;
 
-    public JsonRpcClient(Uri serverUri)
+    public JsonRpcClient(Uri serverUri, ILogger logger)
     {
       ServerUri = serverUri;
+      Logger = logger;
       RequestMgr = new RequestManager(this);
     }
 
