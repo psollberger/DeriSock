@@ -15,7 +15,7 @@
 
   public class JsonRpcClient : IJsonRpcClient
   {
-    protected readonly ILogger Logger = Log.Logger;
+    protected readonly ILogger Logger;
     protected readonly RequestIdGenerator RequestIdGenerator = new RequestIdGenerator();
     protected readonly RequestManager RequestMgr;
     protected Thread ProcessReceiveThread;
@@ -23,9 +23,10 @@
 
     protected IWebSocket Socket;
 
-    public JsonRpcClient(Uri serverUri)
+    public JsonRpcClient(Uri serverUri, ILogger logger)
     {
       ServerUri = serverUri;
+      Logger = logger;
       RequestMgr = new RequestManager(this);
     }
 

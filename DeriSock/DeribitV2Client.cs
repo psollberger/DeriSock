@@ -25,7 +25,7 @@ namespace DeriSock
     public event EventHandler<JsonRpcDisconnectEventArgs> Disconnected;
     private readonly IJsonRpcClient _client;
     private readonly SubscriptionManager _subscriptionManager;
-    protected readonly ILogger Logger = Log.Logger;
+    protected readonly ILogger Logger;
 
     public string AccessToken { get; private set; }
 
@@ -36,15 +36,17 @@ namespace DeriSock
     public string CloseStatusDescription => _client.CloseStatusDescription;
     public Exception Error => _client.Error;
 
-    public DeribitV2Client(DeribitEndpointType endpointType)
+    public DeribitV2Client(DeribitEndpointType endpointType, ILogger logger = null)
     {
+      Logger = logger ?? Log.Logger;
+
       switch (endpointType)
       {
         case DeribitEndpointType.Productive:
-          _client = JsonRpcClientFactory.Create(new Uri("wss://www.deribit.com/ws/api/v2"));
+          _client = JsonRpcClientFactory.Create(new Uri("wss://www.deribit.com/ws/api/v2"), Logger);
           break;
         case DeribitEndpointType.Testnet:
-          _client = JsonRpcClientFactory.Create(new Uri("wss://test.deribit.com/ws/api/v2"));
+          _client = JsonRpcClientFactory.Create(new Uri("wss://test.deribit.com/ws/api/v2"), Logger);
           break;
         default:
           throw new ArgumentOutOfRangeException(nameof(endpointType), endpointType, "Unsupported endpoint type");
