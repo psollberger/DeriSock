@@ -27,7 +27,7 @@
     ///   It represents the requested order size of all best bids
     /// </summary>
     [JsonProperty("best_bid_amount")]
-    public decimal NestBidAmount { get; set; }
+    public decimal BestBidAmount { get; set; }
 
     /// <summary>
     ///   The current best bid price, null if there aren't any bids
