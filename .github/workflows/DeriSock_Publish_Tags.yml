@@ -12,6 +12,8 @@ env:
   PROJECT_PATH: 'DeriSock/DeriSock.csproj'
   PACKAGE_OUTPUT_DIRECTORY: ${{ github.workspace }}\output
   NUGET_SOURCE_URL: 'https://api.nuget.org/v3/index.json'
+  # SET IN ENVIRONMENT VARIABLES --> PACKAGE_ID: DeriSock
+  # SET IN ENVIRONMENT VARIABLES --> REPOSITORY_URL: https://github.com/psollberger/DeriSock
 
 jobs:
   deploy:
@@ -37,7 +39,7 @@ jobs:
       uses: battila7/get-version-action@v2
 
     - name: 'Pack project'
-      run: dotnet pack ${{ env.PROJECT_PATH }} --no-restore --no-build --configuration Release --include-symbols -p:PackageVersion=${{ steps.version.outputs.version-without-v }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
+      run: dotnet pack ${{ env.PROJECT_PATH }} --no-restore --no-build --configuration Release --include-symbols -p:PackageVersion=${{ steps.version.outputs.version-without-v }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }} -p:PackageId=${{ env.PACKAGE_ID }} -p:RepositoryUrl=${{ env.REPOSITORY_URL }}
 
     - name: 'Push package'
       run: dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}\*.nupkg -k ${{ secrets.NUGET_KEY }} -s ${{ env.NUGET_SOURCE_URL }}
