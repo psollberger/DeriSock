@@ -9,6 +9,8 @@
     <Authors>Patrick Sollberger</Authors>
     <Company />
 
+    <Version>0.3.4</Version>
+
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageId>DeriSock</PackageId>
     <PackageProjectUrl>https://github.com/psollberger/DeriSock</PackageProjectUrl>
@@ -18,10 +20,6 @@
     <RepositoryUrl>https://github.com/psollberger/DeriSock</RepositoryUrl>
 
     <NeutralLanguage>en</NeutralLanguage>
-
-    <AssemblyVersion>0.3.3.0</AssemblyVersion>
-    <FileVersion>0.3.3.0</FileVersion>
-    <Version>0.3.3</Version>
   </PropertyGroup>
 
   <PropertyGroup>
