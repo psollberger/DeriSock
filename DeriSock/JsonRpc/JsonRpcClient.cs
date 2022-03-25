@@ -238,7 +238,7 @@
           catch (Exception ex)
           {
             Logger?.Error(ex, "ProcessReceive: Connection closed by unknown error");
-            InternalOnDisconnected(new JsonRpcDisconnectEventArgs(WebSocketCloseStatus.Empty, "user error", ex));
+            InternalOnDisconnected(new JsonRpcDisconnectEventArgs(WebSocketCloseStatus.Empty, null, ex));
             break;
           }
         }
