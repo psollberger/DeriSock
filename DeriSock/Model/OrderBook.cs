@@ -159,7 +159,7 @@
     ///   Name of the underlying future, or index_price (options only)
     /// </summary>
     [JsonProperty("underlying_index")]
-    public decimal UnderlyingIndex { get; set; }
+    public string UnderlyingIndex { get; set; }
 
     /// <summary>
     ///   Underlying price for implied volatility calculations (options only)
