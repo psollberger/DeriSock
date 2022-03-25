@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28803.352
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32319.34
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeriSock", "DeriSock\DeriSock.csproj", "{EB30D7E9-EF6A-4AEB-8DDA-FE1D031EF94F}"
 EndProject
@@ -20,7 +20,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{4E520EB0-AA19-465D-9868-4E2D41D47C1E}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\DeriSock_BuildTest.yml = .github\workflows\DeriSock_BuildTest.yml
-		.github\workflows\DeriSock_Publish.yml = .github\workflows\DeriSock_Publish.yml
+		.github\workflows\DeriSock_Publish_On_Tag.yml = .github\workflows\DeriSock_Publish_On_Tag.yml
 	EndProjectSection
 EndProject
 Global
