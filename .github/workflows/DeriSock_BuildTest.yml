@@ -11,20 +11,23 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - name: Checkout Code
+    - name: Checkout code
       uses: actions/checkout@v2
       
-    - name: Setup .NET Core
+    - name: Setup dotnet
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: '3.1.x'
+        dotnet-version: |
+          3.1.x
+          5.0.x
+          6.0.x
 
-    - name: Restore Packages
+    - name: Restore packages
       run: |
         dotnet restore DeriSock
 #        dotnet restore DeriSock.Tests
         
-    - name: Build with dotnet
+    - name: Build project
       run: |
         dotnet build --no-restore --configuration Release DeriSock
 #        dotnet build --no-restore --configuration Release DeriSock.Tests

@@ -1,6 +1,8 @@
 ﻿namespace DeriSock
 {
   using System;
+  using System.Collections.Generic;
+  using DeriSock.Constants;
 
   public static class HelperExtensions
   {
@@ -37,7 +39,21 @@
     public static long AsMilliseconds(this DateTime dateTime)
     {
       dateTime = dateTime.ToUniversalTime();
-      return (long)dateTime.Subtract(DateTime.UnixEpoch).TotalMilliseconds;
+      return (long)dateTime.Subtract(DateTimeConsts.UnixEpoch).TotalMilliseconds;
+    }
+
+    public static bool TryAdd<T>(this IDictionary<string, T> dictionary, string key, T value)
+    {
+      if (dictionary is null)
+      {
+        throw new ArgumentNullException(nameof(dictionary));
+      }
+
+      if (dictionary.ContainsKey(key))
+        return false;
+
+      dictionary.Add(key, value);
+      return true;
     }
   }
 }

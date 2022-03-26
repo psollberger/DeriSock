@@ -387,18 +387,24 @@ namespace DeriSock
 
       public IEnumerable<Action<Notification>> GetCallbacks(string channel)
       {
-        if (_subscriptionMap.TryGetValue(channel, out var entry))
+        lock (_subscriptionMap)
         {
-          foreach (var callbackEntry in entry.Callbacks)
+          if (_subscriptionMap.TryGetValue(channel, out var entry))
           {
-            yield return callbackEntry.Action;
+            foreach (var callbackEntry in entry.Callbacks)
+            {
+              yield return callbackEntry.Action;
+            }
           }
         }
       }
 
       public void Reset()
       {
-        _subscriptionMap.Clear();
+        lock (_subscriptionMap)
+        {
+          _subscriptionMap.Clear();
+        }
       }
 
       private static bool IsPrivateChannel(string channel)
@@ -456,7 +462,6 @@ namespace DeriSock
     ///   <para>
     ///     NOTE: The necessary values for client_signature are automatically calculated.
     ///     Provide <see cref="AuthParams.ClientId" /> and <see cref="AuthParams.ClientSecret" />.
-    ///     Optional: Provide <see cref="AuthParams.Data" /> for more random data for signature calculation
     ///   </para>
     /// </summary>
     /// <param name="args"><see cref="AuthParams" /> object containing the necessary values</param>
@@ -703,10 +708,6 @@ namespace DeriSock
     /// <summary>
     ///   Read current Cancel On Disconnect configuration for the account
     /// </summary>
-    /// <param name="scope">
-    ///   Specifies if Cancel On Disconnect change should be applied/checked for the current connection or
-    ///   the account (default - <c>connection</c>)
-    /// </param>
     public Task<JsonRpcResponse<CancelOnDisconnectInfo>> PrivateGetCancelOnDisconnect()
     {
       return PrivateGetCancelOnDisconnect("connection");
