@@ -73,8 +73,6 @@
           {
             Log.Logger.Information($"HandleNotification: {o}");
           });
-
-          var blub = 4;
         }
         catch (Exception ex)
         {

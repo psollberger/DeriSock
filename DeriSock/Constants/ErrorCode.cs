@@ -1,5 +1,5 @@
 ﻿// ReSharper disable StringLiteralTypo
-
+#pragma warning disable CS1591
 namespace DeriSock.Constants
 {
   public sealed class ErrorCode
