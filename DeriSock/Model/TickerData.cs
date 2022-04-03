@@ -27,7 +27,7 @@
     ///   It represents the requested order size of all best bids
     /// </summary>
     [JsonProperty("best_bid_amount")]
-    public decimal NestBidAmount { get; set; }
+    public decimal BestBidAmount { get; set; }
 
     /// <summary>
     ///   The current best bid price, null if there aren't any bids
@@ -146,7 +146,7 @@
     ///   Name of the underlying future, or index_price (options only)
     /// </summary>
     [JsonProperty("underlying_index")]
-    public decimal UnderlyingIndex { get; set; }
+    public string UnderlyingIndex { get; set; }
 
     /// <summary>
     ///   Underlying price for implied volatility calculations (options only)

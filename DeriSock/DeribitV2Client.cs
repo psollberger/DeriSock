@@ -25,7 +25,7 @@ namespace DeriSock
     public event EventHandler<JsonRpcDisconnectEventArgs> Disconnected;
     private readonly IJsonRpcClient _client;
     private readonly SubscriptionManager _subscriptionManager;
-    protected readonly ILogger Logger = Log.Logger;
+    protected readonly ILogger Logger;
 
     public string AccessToken { get; private set; }
 
@@ -36,15 +36,17 @@ namespace DeriSock
     public string CloseStatusDescription => _client.CloseStatusDescription;
     public Exception Error => _client.Error;
 
-    public DeribitV2Client(DeribitEndpointType endpointType)
+    public DeribitV2Client(DeribitEndpointType endpointType, ILogger logger = null)
     {
+      Logger = logger ?? Log.Logger;
+
       switch (endpointType)
       {
         case DeribitEndpointType.Productive:
-          _client = JsonRpcClientFactory.Create(new Uri("wss://www.deribit.com/ws/api/v2"));
+          _client = JsonRpcClientFactory.Create(new Uri("wss://www.deribit.com/ws/api/v2"), Logger);
           break;
         case DeribitEndpointType.Testnet:
-          _client = JsonRpcClientFactory.Create(new Uri("wss://test.deribit.com/ws/api/v2"));
+          _client = JsonRpcClientFactory.Create(new Uri("wss://test.deribit.com/ws/api/v2"), Logger);
           break;
         default:
           throw new ArgumentOutOfRangeException(nameof(endpointType), endpointType, "Unsupported endpoint type");
@@ -385,18 +387,24 @@ namespace DeriSock
 
       public IEnumerable<Action<Notification>> GetCallbacks(string channel)
       {
-        if (_subscriptionMap.TryGetValue(channel, out var entry))
+        lock (_subscriptionMap)
         {
-          foreach (var callbackEntry in entry.Callbacks)
+          if (_subscriptionMap.TryGetValue(channel, out var entry))
           {
-            yield return callbackEntry.Action;
+            foreach (var callbackEntry in entry.Callbacks)
+            {
+              yield return callbackEntry.Action;
+            }
           }
         }
       }
 
       public void Reset()
       {
-        _subscriptionMap.Clear();
+        lock (_subscriptionMap)
+        {
+          _subscriptionMap.Clear();
+        }
       }
 
       private static bool IsPrivateChannel(string channel)
@@ -454,7 +462,6 @@ namespace DeriSock
     ///   <para>
     ///     NOTE: The necessary values for client_signature are automatically calculated.
     ///     Provide <see cref="AuthParams.ClientId" /> and <see cref="AuthParams.ClientSecret" />.
-    ///     Optional: Provide <see cref="AuthParams.Data" /> for more random data for signature calculation
     ///   </para>
     /// </summary>
     /// <param name="args"><see cref="AuthParams" /> object containing the necessary values</param>
@@ -701,10 +708,6 @@ namespace DeriSock
     /// <summary>
     ///   Read current Cancel On Disconnect configuration for the account
     /// </summary>
-    /// <param name="scope">
-    ///   Specifies if Cancel On Disconnect change should be applied/checked for the current connection or
-    ///   the account (default - <c>connection</c>)
-    /// </param>
     public Task<JsonRpcResponse<CancelOnDisconnectInfo>> PrivateGetCancelOnDisconnect()
     {
       return PrivateGetCancelOnDisconnect("connection");
@@ -1863,7 +1866,7 @@ namespace DeriSock
     ///   </para>
     ///   <para>Enum: <c>asc</c>, <c>desc</c>, <c>default</c></para>
     /// </param>
-    public Task<JsonRpcResponse<UserTrade[]>> PrivateGetUserTradesByCurrency(string currency,
+    public Task<JsonRpcResponse<UserTradeCollection>> PrivateGetUserTradesByCurrency(string currency,
       string kind = default, string startId = default, string endId = default, int count = default, bool? includeOld = null, string sorting = default)
     {
       var args = new ExpandoObject();
@@ -1902,7 +1905,7 @@ namespace DeriSock
       return Send(
         "private/get_user_trades_by_currency",
         args,
-        new ObjectJsonConverter<UserTrade[]>());
+        new ObjectJsonConverter<UserTradeCollection>());
     }
 
     /// <summary>
@@ -1925,7 +1928,7 @@ namespace DeriSock
     ///   </para>
     ///   <para>Enum: <c>asc</c>, <c>desc</c>, <c>default</c></para>
     /// </param>
-    public Task<JsonRpcResponse<UserTrade[]>> PrivateGetUserTradesByCurrencyAndTime(string currency,
+    public Task<JsonRpcResponse<UserTradeCollection>> PrivateGetUserTradesByCurrencyAndTime(string currency,
       string kind = default, DateTime startTime = default, DateTime endTime = default, int count = default, bool? includeOld = null, string sorting = default)
     {
       var args = new ExpandoObject();
@@ -1964,7 +1967,7 @@ namespace DeriSock
       return Send(
         "private/get_user_trades_by_currency_and_time",
         args,
-        new ObjectJsonConverter<UserTrade[]>());
+        new ObjectJsonConverter<UserTradeCollection>());
     }
 
     /// <summary>

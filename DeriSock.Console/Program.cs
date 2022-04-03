@@ -37,7 +37,7 @@
       var clientId = apiSettings["ClientId"];
       var clientSecret = apiSettings["ClientSecret"];
 
-      const string logFilePath = @"D:\Temp\Serilog\test-log-.txt";
+      const string logFilePath = @"C:\Temp\Serilog\test-log-.txt";
       Directory.CreateDirectory(Path.GetDirectoryName(logFilePath));
 
       //const string outputTemplateLongLevelName = "{Timestamp:yyyy-MM-dd HH:mm:ss.fffffff} [{Level,-11:u}] {Message:lj}{NewLine}{Exception}";
@@ -67,13 +67,12 @@
 
           var sig = CryptoHelper.CreateSignature(clientSecret);
           var loginRes = await _client.PublicAuth(new AuthParams {GrantType = GrantType.Signature, ClientId = clientId, Signature = sig});
+          var summary = await _client.PrivateGetAccountSummary("BTC", false);
 
           var subToken = await _client.SubscribeBookChange(new BookChangeSubscriptionParams {InstrumentName = "BTC-PERPETUAL", Interval = "100ms"}, o =>
           {
             Log.Logger.Information($"HandleNotification: {o}");
           });
-
-          var blub = 4;
         }
         catch (Exception ex)
         {

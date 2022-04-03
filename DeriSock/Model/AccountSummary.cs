@@ -145,6 +145,7 @@
     /// <summary>
     ///   The sum of position deltas + INCLUDING your collateral.
     /// </summary>
+    [JsonIgnore]
     public decimal DeltaTotalWithCollateral
     {
       get { return DeltaTotal + Equity; }
@@ -273,22 +274,10 @@
       public EngineMatchItem MatchingEngine { get; set; }
 
       /// <summary>
-      ///   Maximal number of matching engine requests per second allowed for user in burst mode
-      /// </summary>
-      [JsonProperty("matching_engine_burst")]
-      public int MatchingEngineBurst { get; set; }
-
-      /// <summary>
       ///   Number of non matching engine requests per second allowed for user
       /// </summary>
       [JsonProperty("non_matching_engine")]
       public EngineMatchItem NonMatchingEngine { get; set; }
-
-      /// <summary>
-      ///   Maximal number of non matching engine requests per second allowed for user in burst mode
-      /// </summary>
-      [JsonProperty("non_matching_engine_burst")]
-      public int NonMatchingEngineBurst { get; set; }
     }
 
     /// <summary>
@@ -299,6 +288,9 @@
       /// <summary>
       ///   Number of non matching engine requests per second allowed for user
       /// </summary>
+      [JsonProperty("non_matching_engine")]
+      public EngineMatchItem NonMatchingEngine { get; set; }
+
       [JsonProperty("rate")]
       public int Rate { get; set; }
 

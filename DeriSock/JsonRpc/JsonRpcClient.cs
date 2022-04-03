@@ -15,7 +15,7 @@
 
   public class JsonRpcClient : IJsonRpcClient
   {
-    protected readonly ILogger Logger = Log.Logger;
+    protected readonly ILogger Logger;
     protected readonly RequestIdGenerator RequestIdGenerator = new RequestIdGenerator();
     protected readonly RequestManager RequestMgr;
     protected Thread ProcessReceiveThread;
@@ -23,9 +23,10 @@
 
     protected IWebSocket Socket;
 
-    public JsonRpcClient(Uri serverUri)
+    public JsonRpcClient(Uri serverUri, ILogger logger)
     {
       ServerUri = serverUri;
+      Logger = logger;
       RequestMgr = new RequestManager(this);
     }
 
@@ -237,7 +238,8 @@
           catch (Exception ex)
           {
             Logger?.Error(ex, "ProcessReceive: Connection closed by unknown error");
-            InternalOnDisconnected(new JsonRpcDisconnectEventArgs(WebSocketCloseStatus.Empty, "user error", ex));
+            //Fixing #18: When using close status code 'Empty' the description must be null
+            InternalOnDisconnected(new JsonRpcDisconnectEventArgs(WebSocketCloseStatus.Empty, null, ex));
             break;
           }
         }
