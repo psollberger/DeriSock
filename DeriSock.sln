@@ -19,6 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{81CC
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{4E520EB0-AA19-465D-9868-4E2D41D47C1E}"
 	ProjectSection(SolutionItems) = preProject
+		.github\workflows\codeql-analysis.yml = .github\workflows\codeql-analysis.yml
 		.github\workflows\DeriSock_BuildTest.yml = .github\workflows\DeriSock_BuildTest.yml
 		.github\workflows\DeriSock_Publish_On_Tag.yml = .github\workflows\DeriSock_Publish_On_Tag.yml
 	EndProjectSection

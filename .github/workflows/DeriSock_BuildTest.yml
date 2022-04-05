@@ -5,12 +5,12 @@ on:
     branches:
       - master
     tags-ignore:
-      - *
+      - v*
   pull_request:
     branches:
       - master
     tags-ignore:
-      - *
+      - v*
 
 jobs:
   build_test:
