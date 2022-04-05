@@ -1,10 +1,9 @@
-﻿namespace DeriSock
+﻿namespace DeriSock;
+
+public enum SubscriptionState
 {
-  public enum SubscriptionState
-  {
-    Subscribing,
-    Subscribed,
-    Unsubscribing,
-    Unsubscribed
-  }
+  Subscribing,
+  Subscribed,
+  Unsubscribing,
+  Unsubscribed
 }

@@ -1,16 +1,15 @@
-﻿namespace DeriSock
+﻿namespace DeriSock;
+
+using System;
+
+public class SubscriptionToken
 {
-  using System;
+  public static readonly SubscriptionToken Invalid = new(Guid.Empty);
 
-  public class SubscriptionToken
+  public Guid Token { get; }
+
+  public SubscriptionToken(Guid token)
   {
-    public static readonly SubscriptionToken Invalid = new SubscriptionToken(Guid.Empty);
-
-    public Guid Token { get; }
-
-    public SubscriptionToken(Guid token)
-    {
-      Token = token;
-    }
+    Token = token;
   }
 }

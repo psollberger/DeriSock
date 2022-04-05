@@ -1,59 +1,60 @@
-﻿namespace DeriSock
+﻿namespace DeriSock;
+
+using System;
+using System.Collections.Generic;
+using DeriSock.Constants;
+
+public static class HelperExtensions
 {
-  using System;
-  using System.Collections.Generic;
-  using DeriSock.Constants;
+  private static readonly long _ticksPerMillisecond = TimeSpan.TicksPerMillisecond;
+  private static readonly long _ticksPerMicrosecond = TimeSpan.TicksPerMillisecond / 1000;
 
-  public static class HelperExtensions
+  /// <summary>
+  ///   Converts Deribit Timestamps from microseconds to an <see cref="DateTime" />
+  /// </summary>
+  /// <param name="timestamp">timestamp in microseconds since the Unix epoch</param>
+  /// <returns>The <see cref="DateTime" /> that represents the timestamp in local time</returns>
+  public static DateTime AsDateTimeFromMicroseconds(this long timestamp)
   {
-    private static readonly long _ticksPerMillisecond = TimeSpan.TicksPerMillisecond;
-    private static readonly long _ticksPerMicrosecond = TimeSpan.TicksPerMillisecond / 1000;
+    var dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+    return dateTime.AddTicks(_ticksPerMicrosecond * timestamp).ToLocalTime();
+  }
 
-    /// <summary>
-    ///   Converts Deribit Timestamps from microseconds to an <see cref="DateTime" />
-    /// </summary>
-    /// <param name="timestamp">timestamp in microseconds since the Unix epoch</param>
-    /// <returns>The <see cref="DateTime" /> that represents the timestamp in local time</returns>
-    public static DateTime AsDateTimeFromMicroseconds(this long timestamp)
+  /// <summary>
+  ///   Converts Deribit Timestamps from milliseconds to an <see cref="DateTime" />
+  /// </summary>
+  /// <param name="timestamp">timestamp in milliseconds since the Unix epoch</param>
+  /// <returns>The <see cref="DateTime" /> that represents the timestamp in local time</returns>
+  public static DateTime AsDateTimeFromMilliseconds(this long timestamp)
+  {
+    var dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+    return dateTime.AddTicks(_ticksPerMillisecond * timestamp).ToLocalTime();
+  }
+
+  /// <summary>
+  ///   Converts a <see cref="DateTime" /> into milliseconds since Unix epoch
+  /// </summary>
+  /// <param name="dateTime"><see cref="DateTime" /> as UTC</param>
+  /// <returns></returns>
+  public static long AsMilliseconds(this DateTime dateTime)
+  {
+    dateTime = dateTime.ToUniversalTime();
+    return (long)dateTime.Subtract(DateTimeConsts.UnixEpoch).TotalMilliseconds;
+  }
+
+  public static bool TryAdd<T>(this IDictionary<string, T> dictionary, string key, T value)
+  {
+    if (dictionary is null)
     {
-      var dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-      return dateTime.AddTicks(_ticksPerMicrosecond * timestamp).ToLocalTime();
+      throw new ArgumentNullException(nameof(dictionary));
     }
 
-    /// <summary>
-    ///   Converts Deribit Timestamps from milliseconds to an <see cref="DateTime" />
-    /// </summary>
-    /// <param name="timestamp">timestamp in milliseconds since the Unix epoch</param>
-    /// <returns>The <see cref="DateTime" /> that represents the timestamp in local time</returns>
-    public static DateTime AsDateTimeFromMilliseconds(this long timestamp)
+    if (dictionary.ContainsKey(key))
     {
-      var dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-      return dateTime.AddTicks(_ticksPerMillisecond * timestamp).ToLocalTime();
+      return false;
     }
 
-    /// <summary>
-    ///   Converts a <see cref="DateTime" /> into milliseconds since Unix epoch
-    /// </summary>
-    /// <param name="dateTime"><see cref="DateTime" /> as UTC</param>
-    /// <returns></returns>
-    public static long AsMilliseconds(this DateTime dateTime)
-    {
-      dateTime = dateTime.ToUniversalTime();
-      return (long)dateTime.Subtract(DateTimeConsts.UnixEpoch).TotalMilliseconds;
-    }
-
-    public static bool TryAdd<T>(this IDictionary<string, T> dictionary, string key, T value)
-    {
-      if (dictionary is null)
-      {
-        throw new ArgumentNullException(nameof(dictionary));
-      }
-
-      if (dictionary.ContainsKey(key))
-        return false;
-
-      dictionary.Add(key, value);
-      return true;
-    }
+    dictionary.Add(key, value);
+    return true;
   }
 }

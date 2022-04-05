@@ -1,71 +1,70 @@
-﻿namespace DeriSock.JsonRpc
+﻿namespace DeriSock.JsonRpc;
+
+using System;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
+public class JsonRpcResponse<T> : JsonRpcResponse
 {
-  using System;
-  using Newtonsoft.Json;
-  using Newtonsoft.Json.Linq;
+  [JsonIgnore]
+  public T ResultData { get; set; }
 
-  public class JsonRpcResponse<T> : JsonRpcResponse
+  public JsonRpcResponse(JsonRpcResponse response, T value)
   {
-    [JsonIgnore]
-    public T ResultData { get; set; }
+    Original = response.Original;
+    JsonRpc = response.JsonRpc;
+    Id = response.Id;
+    Result = response.Result;
+    Error = response.Error;
+    Testnet = response.Testnet;
+    UsIn = response.UsIn;
+    UsOut = response.UsOut;
+    UsDiff = response.UsDiff;
+    ResultData = value;
+  }
+}
 
-    public JsonRpcResponse(JsonRpcResponse response, T value)
-    {
-      Original = response.Original;
-      JsonRpc = response.JsonRpc;
-      Id = response.Id;
-      Result = response.Result;
-      Error = response.Error;
-      Testnet = response.Testnet;
-      UsIn = response.UsIn;
-      UsOut = response.UsOut;
-      UsDiff = response.UsDiff;
-      ResultData = value;
-    }
+public class JsonRpcResponse
+{
+  [JsonIgnore]
+  public string Original { get; set; }
+
+  [JsonProperty("jsonrpc")]
+  public string JsonRpc { get; set; }
+
+  [JsonProperty("id")]
+  public int Id { get; set; }
+
+  [JsonProperty("result")]
+  public JToken Result { get; set; }
+
+  [JsonProperty("error")]
+  public JsonRpcError Error { get; set; }
+
+  public JsonRpcResponse<T> CreateTyped<T>(T value)
+  {
+    return new JsonRpcResponse<T>(this, value);
   }
 
-  public class JsonRpcResponse
-  {
-    [JsonIgnore]
-    public string Original { get; set; }
+  #region Fields not part of the JSON-RPC standard
 
-    [JsonProperty("jsonrpc")]
-    public string JsonRpc { get; set; }
+  [JsonProperty("testnet")]
+  public bool Testnet { get; set; }
 
-    [JsonProperty("id")]
-    public int Id { get; set; }
+  [JsonProperty("usIn")]
+  public long UsIn { get; set; }
 
-    [JsonProperty("result")]
-    public JToken Result { get; set; }
+  [JsonIgnore]
+  public DateTime UsInDateTime => UsIn.AsDateTimeFromMicroseconds();
 
-    [JsonProperty("error")]
-    public JsonRpcError Error { get; set; }
+  [JsonProperty("usOut")]
+  public long UsOut { get; set; }
 
-    public JsonRpcResponse<T> CreateTyped<T>(T value)
-    {
-      return new JsonRpcResponse<T>(this, value);
-    }
+  [JsonIgnore]
+  public DateTime UsOutDateTime => UsOut.AsDateTimeFromMicroseconds();
 
-    #region Fields not part of the JSON-RPC standard
+  [JsonProperty("usDiff")]
+  public int UsDiff { get; set; }
 
-    [JsonProperty("testnet")]
-    public bool Testnet { get; set; }
-
-    [JsonProperty("usIn")]
-    public long UsIn { get; set; }
-
-    [JsonIgnore]
-    public DateTime UsInDateTime => UsIn.AsDateTimeFromMicroseconds();
-
-    [JsonProperty("usOut")]
-    public long UsOut { get; set; }
-
-    [JsonIgnore]
-    public DateTime UsOutDateTime => UsOut.AsDateTimeFromMicroseconds();
-
-    [JsonProperty("usDiff")]
-    public int UsDiff { get; set; }
-
-    #endregion
-  }
+  #endregion
 }

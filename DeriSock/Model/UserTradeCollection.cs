@@ -1,13 +1,12 @@
-﻿namespace DeriSock.Model
+﻿namespace DeriSock.Model;
+
+using Newtonsoft.Json;
+
+public class UserTradeCollection
 {
-  using Newtonsoft.Json;
+  [JsonProperty("has_more")]
+  public bool HasMore { get; set; }
 
-  public class UserTradeCollection
-  {
-    [JsonProperty("has_more")]
-    public bool HasMore { get; set; }
-
-    [JsonProperty("trades")]
-    public UserTrade[] Trades { get; set; }
-  }
+  [JsonProperty("trades")]
+  public UserTrade[] Trades { get; set; }
 }

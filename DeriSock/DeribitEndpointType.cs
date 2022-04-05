@@ -1,8 +1,17 @@
-﻿namespace DeriSock
+﻿namespace DeriSock;
+
+/// <summary>
+///   The target network to connect to
+/// </summary>
+public enum DeribitEndpointType
 {
-  public enum DeribitEndpointType
-  {
-    Productive,
-    Testnet
-  }
+  /// <summary>
+  ///   Use productive network
+  /// </summary>
+  Productive,
+
+  /// <summary>
+  ///   Use test network
+  /// </summary>
+  Testnet
 }

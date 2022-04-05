@@ -1,18 +1,17 @@
-﻿namespace DeriSock.Request
+﻿namespace DeriSock.Request;
+
+using Newtonsoft.Json;
+
+public class UserPortfolioSubscriptionParams : ISubscriptionChannel
 {
-  using Newtonsoft.Json;
+  /// <summary>
+  ///   The currency symbol
+  /// </summary>
+  [JsonProperty("currency")]
+  public string Currency { get; set; }
 
-  public class UserPortfolioSubscriptionParams : ISubscriptionChannel
+  public string ToChannelName()
   {
-    /// <summary>
-    ///   The currency symbol
-    /// </summary>
-    [JsonProperty("currency")]
-    public string Currency { get; set; }
-
-    public string ToChannelName()
-    {
-      return $"user.portfolio.{Currency}".ToLower();
-    }
+    return $"user.portfolio.{Currency}".ToLower();
   }
 }

@@ -1,16 +1,15 @@
-﻿namespace DeriSock.Model
+﻿namespace DeriSock.Model;
+
+using Newtonsoft.Json;
+
+public class WithdrawalCollection
 {
-  using Newtonsoft.Json;
+  /// <summary>
+  ///   Total number of results available
+  /// </summary>
+  [JsonProperty("count")]
+  public int Count { get; set; }
 
-  public class WithdrawalCollection
-  {
-    /// <summary>
-    ///   Total number of results available
-    /// </summary>
-    [JsonProperty("count")]
-    public int Count { get; set; }
-
-    [JsonProperty("data")]
-    public WithdrawalInfo[] Data { get; set; }
-  }
+  [JsonProperty("data")]
+  public WithdrawalInfo[] Data { get; set; }
 }

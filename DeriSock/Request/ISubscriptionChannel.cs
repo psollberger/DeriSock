@@ -1,7 +1,6 @@
-﻿namespace DeriSock.Request
+﻿namespace DeriSock.Request;
+
+public interface ISubscriptionChannel
 {
-  public interface ISubscriptionChannel
-  {
-    string ToChannelName();
-  }
+  string ToChannelName();
 }

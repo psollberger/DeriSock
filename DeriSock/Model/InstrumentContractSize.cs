@@ -1,10 +1,9 @@
-﻿namespace DeriSock.Model
-{
-  using Newtonsoft.Json;
+﻿namespace DeriSock.Model;
 
-  public class InstrumentContractSize
-  {
-    [JsonProperty("contract_size")]
-    public int ContractSize { get; set; }
-  }
+using Newtonsoft.Json;
+
+public class InstrumentContractSize
+{
+  [JsonProperty("contract_size")]
+  public int ContractSize { get; set; }
 }

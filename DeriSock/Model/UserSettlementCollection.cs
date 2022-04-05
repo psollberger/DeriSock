@@ -1,16 +1,15 @@
-﻿namespace DeriSock.Model
+﻿namespace DeriSock.Model;
+
+using Newtonsoft.Json;
+
+public class UserSettlementCollection
 {
-  using Newtonsoft.Json;
+  /// <summary>
+  ///   Continuation token for pagination
+  /// </summary>
+  [JsonProperty("continuation")]
+  public string Continuation { get; set; }
 
-  public class UserSettlementCollection
-  {
-    /// <summary>
-    ///   Continuation token for pagination
-    /// </summary>
-    [JsonProperty("continuation")]
-    public string Continuation { get; set; }
-
-    [JsonProperty("settlements")]
-    public UserSettlement[] Settlements { get; set; }
-  }
+  [JsonProperty("settlements")]
+  public UserSettlement[] Settlements { get; set; }
 }

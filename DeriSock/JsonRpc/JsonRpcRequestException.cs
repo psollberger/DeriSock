@@ -1,20 +1,19 @@
-﻿namespace DeriSock.JsonRpc
+﻿namespace DeriSock.JsonRpc;
+
+using System;
+
+public class JsonRpcRequestException : Exception
 {
-  using System;
+  public JsonRpcRequest Request { get; }
+  public JsonRpcResponse Response { get; }
 
-  public class JsonRpcRequestException : Exception
+  public JsonRpcError Error => Response.Error;
+  public int Code => Response.Error.Code;
+  public override string Message => Response.Error.Message;
+
+  public JsonRpcRequestException(JsonRpcRequest request, JsonRpcResponse response)
   {
-    public JsonRpcRequest Request { get; }
-    public JsonRpcResponse Response { get; }
-
-    public JsonRpcError Error => Response.Error;
-    public int Code => Response.Error.Code;
-    public override string Message => Response.Error.Message;
-
-    public JsonRpcRequestException(JsonRpcRequest request, JsonRpcResponse response)
-    {
-      Request = request;
-      Response = response;
-    }
+    Request = request;
+    Response = response;
   }
 }
