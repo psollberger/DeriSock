@@ -6,7 +6,7 @@ name: "Deploy to NuGet"
 on:
   push:
     tags:
-    - 'v*'
+      - v*
 
 env:
   PROJECT_PATH: DeriSock/DeriSock.csproj

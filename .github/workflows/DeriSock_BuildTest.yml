@@ -2,9 +2,15 @@ name: Build and Test DeriSock Project
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - master
+    tags-ignore:
+      - *
   pull_request:
-    branches: [ master ]
+    branches:
+      - master
+    tags-ignore:
+      - *
 
 jobs:
   build_test:
