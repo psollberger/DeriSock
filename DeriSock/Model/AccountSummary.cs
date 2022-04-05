@@ -3,6 +3,9 @@
   using System;
   using Newtonsoft.Json;
 
+  /// <summary>
+  /// User account summary
+  /// </summary>
   public class AccountSummary
   {
     /// <summary>
@@ -47,6 +50,9 @@
     [JsonProperty("username")]
     public string Username { get; set; }
 
+    /// <summary>
+    /// Information about rate limits enforced on the account
+    /// </summary>
     [JsonProperty("limits")]
     public LimitsItem Limits { get; set; }
 
@@ -264,8 +270,17 @@
     [JsonProperty("deposit_address")]
     public string DepositAddress { get; set; }
 
+    /// <summary>
+    /// Various rate limits enforced on the account
+    /// </summary>
     public class LimitsItem
     {
+      /// <summary>
+      /// Field not included if limits for futures are not set
+      /// </summary>
+      [JsonProperty("futures")]
+      public EngineMatchItem Futures { get; set; }
+
       /// <summary>
       ///   Number of matching engine requests per second allowed for user
       /// </summary>
@@ -297,6 +312,9 @@
       public int Burst { get; set; }
     }
 
+    /// <summary>
+    /// Information about a fee entry
+    /// </summary>
     public class FeesItem
     {
       /// <summary>
