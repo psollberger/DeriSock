@@ -4,6 +4,9 @@ using System;
 using System.Collections.Generic;
 using DeriSock.Constants;
 
+/// <summary>
+/// Provides some Extension Methods for various types
+/// </summary>
 public static class HelperExtensions
 {
   private static readonly long _ticksPerMillisecond = TimeSpan.TicksPerMillisecond;
@@ -42,6 +45,15 @@ public static class HelperExtensions
     return (long)dateTime.Subtract(DateTimeConsts.UnixEpoch).TotalMilliseconds;
   }
 
+  /// <summary>
+  /// Tries to add a key/value pair
+  /// </summary>
+  /// <typeparam name="T">The type of the value</typeparam>
+  /// <param name="dictionary">The dictionary in which the key/value pair should be added</param>
+  /// <param name="key">The key as a string</param>
+  /// <param name="value">The value as a type of T</param>
+  /// <returns>true if the key was added. false if the key already existed</returns>
+  /// <exception cref="ArgumentNullException"></exception>
   public static bool TryAdd<T>(this IDictionary<string, T> dictionary, string key, T value)
   {
     if (dictionary is null)
