@@ -13,7 +13,7 @@ using Newtonsoft.Json.Linq;
 using Serilog;
 using Serilog.Events;
 
-public class JsonRpcClient : IJsonRpcClient
+internal class JsonRpcClient : IJsonRpcClient
 {
   protected readonly ILogger Logger;
   protected readonly RequestIdGenerator RequestIdGenerator = new();
@@ -27,7 +27,7 @@ public class JsonRpcClient : IJsonRpcClient
   {
     ServerUri = serverUri;
     Logger = logger;
-    RequestMgr = new RequestManager(this);
+    RequestMgr = new RequestManager();
   }
 
   public event EventHandler Connected;
@@ -360,15 +360,13 @@ public class JsonRpcClient : IJsonRpcClient
     }
   }
 
-  protected class RequestManager
+  internal class RequestManager
   {
-    private readonly JsonRpcClient _client;
     private readonly ConcurrentDictionary<int, JsonRpcRequest> _requestObjects;
     private readonly ConcurrentDictionary<int, TaskCompletionSource<JsonRpcResponse>> _taskSources;
 
-    public RequestManager(JsonRpcClient client)
+    public RequestManager()
     {
-      _client = client;
       _taskSources = new ConcurrentDictionary<int, TaskCompletionSource<JsonRpcResponse>>();
       _requestObjects = new ConcurrentDictionary<int, JsonRpcRequest>();
     }
