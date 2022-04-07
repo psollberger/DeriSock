@@ -1,5 +1,5 @@
 ﻿// ReSharper disable UnusedMember.Local
-
+// ReSharper disable InheritdocConsiderUsage
 namespace DeriSock;
 
 using System;
@@ -19,36 +19,50 @@ using Serilog.Events;
 ///   <para>The implementation of the API methods from Deribit</para>
 ///   <para>All methods are asynchronous. Synchronous methods are suffixed with <c>Sync</c></para>
 /// </summary>
-public class DeribitV2Client
+public class DeribitV2Client : IWebSocketStateInfo
 {
   private readonly IJsonRpcClient _client;
   private readonly SubscriptionManager _subscriptionManager;
-  protected readonly ILogger Logger;
+  private readonly ILogger _logger;
 
+  /// <summary>
+  /// The AccessToken received from the server after authentication
+  /// </summary>
   public string AccessToken { get; private set; }
 
+  /// <summary>
+  /// The RefreshToken received from the server after authentication
+  /// </summary>
   public string RefreshToken { get; private set; }
 
+  /// <inheritdoc />
   public WebSocketState State => _client.State;
+
+  /// <inheritdoc />
   public WebSocketCloseStatus? CloseStatus => _client.CloseStatus;
+
+  /// <inheritdoc />
   public string CloseStatusDescription => _client.CloseStatusDescription;
+
+  /// <inheritdoc />
   public Exception Error => _client.Error;
 
+  /// <summary>
+  /// Creates a new <see cref="DeribitV2Client"/> instance
+  /// </summary>
+  /// <param name="endpointType">The network type. Productive or Testnet</param>
+  /// <param name="logger">The logger to be used. Uses a default logger if <c>null</c></param>
+  /// <exception cref="ArgumentOutOfRangeException">Throws an exception if the <paramref name="endpointType"/> is not recognized</exception>
   public DeribitV2Client(DeribitEndpointType endpointType, ILogger logger = null)
   {
-    Logger = logger ?? Log.Logger;
+    _logger = logger ?? Log.Logger;
 
-    switch (endpointType)
+    _client = endpointType switch
     {
-      case DeribitEndpointType.Productive:
-        _client = JsonRpcClientFactory.Create(new Uri("wss://www.deribit.com/ws/api/v2"), Logger);
-        break;
-      case DeribitEndpointType.Testnet:
-        _client = JsonRpcClientFactory.Create(new Uri("wss://test.deribit.com/ws/api/v2"), Logger);
-        break;
-      default:
-        throw new ArgumentOutOfRangeException(nameof(endpointType), endpointType, "Unsupported endpoint type");
-    }
+      DeribitEndpointType.Productive => JsonRpcClientFactory.Create(new Uri("wss://www.deribit.com/ws/api/v2"), _logger),
+      DeribitEndpointType.Testnet => JsonRpcClientFactory.Create(new Uri("wss://test.deribit.com/ws/api/v2"), _logger),
+      _ => throw new ArgumentOutOfRangeException(nameof(endpointType), endpointType, "Unsupported endpoint type"),
+    };
 
     _client.Connected += OnServerConnected;
     _client.Disconnected += OnServerDisconnected;
@@ -56,9 +70,19 @@ public class DeribitV2Client
     _subscriptionManager = new SubscriptionManager(this);
   }
 
+  /// <summary>
+  /// Occurs when the client is connected to the server
+  /// </summary>
   public event EventHandler Connected;
+
+  /// <summary>
+  /// Occurs when the client disconnects from the server
+  /// </summary>
   public event EventHandler<JsonRpcDisconnectEventArgs> Disconnected;
 
+  /// <summary>
+  /// Connects to the server
+  /// </summary>
   public async Task Connect()
   {
     await _client.Connect();
@@ -67,6 +91,9 @@ public class DeribitV2Client
     _subscriptionManager.Reset();
   }
 
+  /// <summary>
+  /// Disconnects from the server
+  /// </summary>
   public async Task Disconnect()
   {
     await _client.Disconnect();
@@ -74,23 +101,23 @@ public class DeribitV2Client
     RefreshToken = null;
   }
 
-  protected virtual async Task<JsonRpcResponse<T>> Send<T>(string method, object @params, IJsonConverter<T> converter)
+  private async Task<JsonRpcResponse<T>> Send<T>(string method, object @params, IJsonConverter<T> converter)
   {
     var response = await _client.Send(method, @params).ConfigureAwait(false);
     return response.CreateTyped(converter.Convert(response.Result));
   }
 
-  protected virtual void OnServerConnected(object sender, EventArgs e)
+  private void OnServerConnected(object sender, EventArgs e)
   {
     Connected?.Invoke(this, e);
   }
 
-  protected virtual void OnServerDisconnected(object sender, JsonRpcDisconnectEventArgs e)
+  private void OnServerDisconnected(object sender, JsonRpcDisconnectEventArgs e)
   {
     Disconnected?.Invoke(this, e);
   }
 
-  protected virtual void OnServerRequest(object sender, JsonRpcRequest request)
+  private void OnServerRequest(object sender, JsonRpcRequest request)
   {
     if (string.Equals(request.Method, "subscription"))
     {
@@ -102,15 +129,15 @@ public class DeribitV2Client
     }
     else
     {
-      Logger.Warning("Unknown Server Request: {@Request}", request);
+      _logger.Warning("Unknown Server Request: {@Request}", request);
     }
   }
 
-  protected virtual void OnHeartbeat(Heartbeat heartbeat)
+  private void OnHeartbeat(Heartbeat heartbeat)
   {
-    if (Logger?.IsEnabled(LogEventLevel.Debug) ?? false)
+    if (_logger?.IsEnabled(LogEventLevel.Debug) ?? false)
     {
-      Logger.Debug("OnHeartbeat: {@Heartbeat}", heartbeat);
+      _logger.Debug("OnHeartbeat: {@Heartbeat}", heartbeat);
     }
 
     if (heartbeat.Type == "test_request")
@@ -119,20 +146,20 @@ public class DeribitV2Client
     }
   }
 
-  protected virtual void OnNotification(Notification notification)
+  private void OnNotification(Notification notification)
   {
-    if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
+    if (_logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
     {
-      Logger.Verbose("OnNotification: {@Notification}", notification);
+      _logger.Verbose("OnNotification: {@Notification}", notification);
     }
 
     var callbacks = _subscriptionManager.GetCallbacks(notification.Channel);
 
     if (callbacks == null)
     {
-      if (Logger?.IsEnabled(LogEventLevel.Warning) ?? false)
+      if (_logger?.IsEnabled(LogEventLevel.Warning) ?? false)
       {
-        Logger.Warning("OnNotification: Could not find subscription for notification: {@Notification}", notification);
+        _logger.Warning("OnNotification: Could not find subscription for notification: {@Notification}", notification);
       }
 
       return;
@@ -146,15 +173,15 @@ public class DeribitV2Client
       }
       catch (Exception ex)
       {
-        if (Logger?.IsEnabled(LogEventLevel.Error) ?? false)
+        if (_logger?.IsEnabled(LogEventLevel.Error) ?? false)
         {
-          Logger?.Error(ex, "OnNotification: Error during event callback call: {@Notification}", notification);
+          _logger?.Error(ex, "OnNotification: Error during event callback call: {@Notification}", notification);
         }
       }
     }
   }
 
-  protected virtual void EnqueueAuthRefresh(int expiresIn)
+  private void EnqueueAuthRefresh(int expiresIn)
   {
     var expireTimeSpan = TimeSpan.FromSeconds(expiresIn);
     if (expireTimeSpan.TotalMilliseconds > Int32.MaxValue)
@@ -162,7 +189,7 @@ public class DeribitV2Client
       return;
     }
 
-    _ = Task.Delay(expireTimeSpan.Subtract(TimeSpan.FromSeconds(5))).ContinueWith(t =>
+    _ = Task.Delay(expireTimeSpan.Subtract(TimeSpan.FromSeconds(5))).ContinueWith(_ =>
     {
       if (_client.State != WebSocketState.Open)
       {
@@ -177,7 +204,7 @@ public class DeribitV2Client
     });
   }
 
-  protected class SubscriptionManager
+  private class SubscriptionManager
   {
     private readonly DeribitV2Client _client;
     private readonly SortedDictionary<string, SubscriptionEntry> _subscriptionMap;
@@ -206,7 +233,7 @@ public class DeribitV2Client
           entry = new SubscriptionEntry();
           if (!_subscriptionMap.TryAdd(channelName, entry))
           {
-            _client.Logger?.Error("Subscribe: Could not add internal item for channel {Channel}", channelName);
+            _client._logger?.Error("Subscribe: Could not add internal item for channel {Channel}", channelName);
             return SubscriptionToken.Invalid;
           }
 
@@ -226,7 +253,7 @@ public class DeribitV2Client
         // Already subscribed - Put the callback in there and let's go
         if (entry.State == SubscriptionState.Subscribed)
         {
-          _client.Logger?.Debug("Subscribe: Subscription for channel already exists. Adding callback to list (Channel: {Channel})", channelName);
+          _client._logger?.Debug("Subscribe: Subscription for channel already exists. Adding callback to list (Channel: {Channel})", channelName);
           var callbackEntry = new SubscriptionCallback(new SubscriptionToken(Guid.NewGuid()), callback);
           entry.Callbacks.Add(callbackEntry);
           return callbackEntry.Token;
@@ -235,7 +262,7 @@ public class DeribitV2Client
         // We are in the middle of unsubscribing from the channel
         if (entry.State == SubscriptionState.Unsubscribing)
         {
-          _client.Logger?.Debug("Subscribe: Channel is unsubscribing. Abort subscribe (Channel: {Channel})", channelName);
+          _client._logger?.Debug("Subscribe: Channel is unsubscribing. Abort subscribe (Channel: {Channel})", channelName);
           return SubscriptionToken.Invalid;
         }
       }
@@ -245,17 +272,17 @@ public class DeribitV2Client
       // We are already subscribing
       if (taskSource == null && entry.State == SubscriptionState.Subscribing)
       {
-        _client.Logger?.Debug("Subscribe: Channel is already subscribing. Waiting for the task to complete ({Channel})", channelName);
+        _client._logger?.Debug("Subscribe: Channel is already subscribing. Waiting for the task to complete ({Channel})", channelName);
 
         var subscribeResult = entry.SubscribeTask != null && await entry.SubscribeTask != SubscriptionToken.Invalid;
 
         if (!subscribeResult && entry.State != SubscriptionState.Subscribed)
         {
-          _client.Logger?.Debug("Subscribe: Subscription has failed. Abort subscribe (Channel: {Channel})", channelName);
+          _client._logger?.Debug("Subscribe: Subscription has failed. Abort subscribe (Channel: {Channel})", channelName);
           return SubscriptionToken.Invalid;
         }
 
-        _client.Logger?.Debug("Subscribe: Subscription was successful. Adding callback (Channel: {Channel}", channelName);
+        _client._logger?.Debug("Subscribe: Subscription was successful. Adding callback (Channel: {Channel}", channelName);
         var callbackEntry = new SubscriptionCallback(new SubscriptionToken(Guid.NewGuid()), callback);
         entry.Callbacks.Add(callbackEntry);
         return callbackEntry.Token;
@@ -263,7 +290,7 @@ public class DeribitV2Client
 
       if (taskSource == null)
       {
-        _client.Logger?.Error("Subscribe: Invalid execution state. Missing TaskCompletionSource (Channel: {Channel}", channelName);
+        _client._logger?.Error("Subscribe: Invalid execution state. Missing TaskCompletionSource (Channel: {Channel}", channelName);
         return SubscriptionToken.Invalid;
       }
 
@@ -284,7 +311,7 @@ public class DeribitV2Client
 
         if (response.Count != 1 || response[0] != channelName)
         {
-          _client.Logger?.Debug("Subscribe: Invalid result (Channel: {Channel}): {@Response}", channelName, response);
+          _client._logger?.Debug("Subscribe: Invalid result (Channel: {Channel}): {@Response}", channelName, response);
           entry.State = SubscriptionState.Unsubscribed;
           entry.SubscribeTask = null;
           Debug.Assert(taskSource != null, nameof(taskSource) + " != null");
@@ -292,7 +319,7 @@ public class DeribitV2Client
         }
         else
         {
-          _client.Logger?.Debug("Subscribe: Successfully subscribed. Adding callback (Channel: {Channel})", channelName);
+          _client._logger?.Debug("Subscribe: Successfully subscribed. Adding callback (Channel: {Channel})", channelName);
 
           var callbackEntry = new SubscriptionCallback(new SubscriptionToken(Guid.NewGuid()), callback);
           entry.Callbacks.Add(callbackEntry);
@@ -326,29 +353,29 @@ public class DeribitV2Client
 
         if (string.IsNullOrEmpty(channelName) || entry == null || callbackEntry == null)
         {
-          _client.Logger?.Warning("Unsubscribe: Could not find token {token}", token.Token);
+          _client._logger?.Warning("Unsubscribe: Could not find token {token}", token.Token);
           return false;
         }
 
         switch (entry.State)
         {
           case SubscriptionState.Subscribing:
-            _client.Logger?.Debug("Unsubscribe: Channel is currently subscribing. Abort unsubscribe (Channel: {Channel})", channelName);
+            _client._logger?.Debug("Unsubscribe: Channel is currently subscribing. Abort unsubscribe (Channel: {Channel})", channelName);
             return false;
           case SubscriptionState.Unsubscribed:
           case SubscriptionState.Unsubscribing:
-            _client.Logger?.Debug("Unsubscribe: Channel is unsubscribed or unsubscribing. Remove callback (Channel: {Channel})", channelName);
+            _client._logger?.Debug("Unsubscribe: Channel is unsubscribed or unsubscribing. Remove callback (Channel: {Channel})", channelName);
             entry.Callbacks.Remove(callbackEntry);
             return true;
           case SubscriptionState.Subscribed:
             if (entry.Callbacks.Count > 1)
             {
-              _client.Logger?.Debug("Unsubscribe: There are still callbacks left. Remove callback but don't unsubscribe (Channel: {Channel})", channelName);
+              _client._logger?.Debug("Unsubscribe: There are still callbacks left. Remove callback but don't unsubscribe (Channel: {Channel})", channelName);
               entry.Callbacks.Remove(callbackEntry);
               return true;
             }
 
-            _client.Logger?.Debug("Unsubscribe: No callbacks left. Unsubscribe and remove callback (Channel: {Channel})", channelName);
+            _client._logger?.Debug("Unsubscribe: No callbacks left. Unsubscribe and remove callback (Channel: {Channel})", channelName);
             break;
           default:
             return false;
@@ -483,8 +510,11 @@ public class DeribitV2Client
   /// <param name="args"><see cref="AuthParams" /> object containing the necessary values</param>
   public async Task<JsonRpcResponse<AuthInfo>> PublicAuth(AuthParams args)
   {
-    Logger.Debug("Authenticate ({GrantType})", args?.GrantType);
+    if (args == null)
+      throw new ArgumentNullException(nameof(args));
 
+    _logger.Debug("Authenticate ({GrantType})", args.GrantType);
+    
     if (!string.Equals(args.GrantType, "client_credentials") &&
         !string.Equals(args.GrantType, "client_signature") &&
         !string.Equals(args.GrantType, "refresh_token"))
