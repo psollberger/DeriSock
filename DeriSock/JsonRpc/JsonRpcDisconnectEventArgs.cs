@@ -12,7 +12,8 @@ public class JsonRpcDisconnectEventArgs
   public JsonRpcDisconnectEventArgs(WebSocketCloseStatus closeStatus, string closeStatusDescription, Exception exception)
   {
     CloseStatus = closeStatus;
-    CloseStatusDescription = closeStatusDescription;
+    // When using close status code 'Empty' the description must be null
+    CloseStatusDescription = closeStatus == WebSocketCloseStatus.Empty ? null : closeStatusDescription;
     Exception = exception;
   }
 }
