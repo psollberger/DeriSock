@@ -87,7 +87,7 @@ public class TickerNotification
   ///   The price for the last trade
   /// </summary>
   [JsonProperty("last_price")]
-  public decimal LastPrice { get; set; }
+  public decimal? LastPrice { get; set; }
 
   /// <summary>
   ///   (Only for option) implied volatility for mark price
@@ -159,4 +159,28 @@ public class TickerNotification
   /// </summary>
   [JsonProperty("underlying_price")]
   public decimal UnderlyingPrice { get; set; }
+  
+  public InstrumentType InstrumentType => GetInstrumentType();
+
+  public OptionType OptionType => GetOptionType();
+  
+  private OptionType GetOptionType()
+  {
+    if (InstrumentName.EndsWith("-C"))
+      return OptionType.Call;
+    if (InstrumentName.EndsWith("-P"))
+      return OptionType.Put;
+    return OptionType.Undefined;
+  }
+  
+  private InstrumentType GetInstrumentType()
+  {
+    if (InstrumentName.EndsWith("-C") || InstrumentName.EndsWith("-P"))
+      return InstrumentType.Option;
+    if (InstrumentName.EndsWith("-PERPETUAL"))
+      return InstrumentType.Perpetual;
+    if (char.IsDigit(InstrumentName[InstrumentName.Length-1]))
+      return InstrumentType.Future;
+    return InstrumentType.Undefined;
+  }
 }
