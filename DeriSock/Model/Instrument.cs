@@ -53,7 +53,8 @@ public class Instrument
   ///   Instrument kind, "future" or "option"
   /// </summary>
   [JsonProperty("kind")]
-  public string Kind { get; set; }
+  public InstrumentType Kind { get; set; }
+  //public string Kind { get; set; }
 
   /// <summary>
   ///   Maximal leverage for instrument, for futures only
@@ -78,7 +79,7 @@ public class Instrument
   ///   The option type (only for options)
   /// </summary>
   [JsonProperty("option_type")]
-  public string OptionType { get; set; }
+  public OptionType OptionType => GetOptionType();
 
   /// <summary>
   ///   The currency in which the instrument prices are quoted.
@@ -109,4 +110,13 @@ public class Instrument
   /// </summary>
   [JsonProperty("tick_size")]
   public decimal TickSize { get; set; }
+
+  private OptionType GetOptionType()
+  {
+    if (InstrumentName.EndsWith("-C"))
+      return OptionType.Call;
+    if (InstrumentName.EndsWith("-P"))
+      return OptionType.Put;
+    return OptionType.Undefined;
+  }
 }
