@@ -1,6 +1,7 @@
 ﻿namespace DeriSock.Model;
 
 using System;
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -72,8 +73,11 @@ public class OrderBook
   [JsonProperty("funding_8h")]
   public decimal Funding8H { get; set; }
 
+  /// <summary>
+  ///   Only for options
+  /// </summary>
   [JsonProperty("greeks")]
-  public Greeks Greeks { get; set; }
+  public Greeks? Greeks { get; set; }
 
   /// <summary>
   ///   Current index price
@@ -90,7 +94,7 @@ public class OrderBook
   public InstrumentType InstrumentType => GetInstrumentType();
 
   public OptionType OptionType => GetOptionType();
-  
+
   /// <summary>
   ///   Interest rate used in implied volatility calculations (options only)
   /// </summary>
@@ -171,31 +175,32 @@ public class OrderBook
   [JsonProperty("underlying_price")]
   public decimal UnderlyingPrice { get; set; }
 
+  private InstrumentType GetInstrumentType()
+  {
+    return InstrumentName switch
+    {
+      { } i when i.EndsWith("-C") || i.EndsWith("-P") => InstrumentType.Option,
+      { } i when i.EndsWith("-PERPETUAL") => InstrumentType.Perpetual,
+      { } i when i.Length >= 1 && char.IsDigit(i[i.Length - 1]) => InstrumentType.Future,
+      _ => InstrumentType.Undefined
+    };
+  }
+
+  private OptionType GetOptionType()
+  {
+    return InstrumentName switch
+    {
+      { } i when i.EndsWith("-C") => OptionType.Call,
+      { } i when i.EndsWith("-P") => OptionType.Put,
+      _ => OptionType.Undefined
+    };
+  }
+
   [JsonConverter(typeof(PriceItemConverter))]
   public class PriceItem
   {
     public decimal Price { get; set; }
     public decimal Amount { get; set; }
-  }
-  
-  private InstrumentType GetInstrumentType()
-  {
-    if (InstrumentName.EndsWith("-C") || InstrumentName.EndsWith("-P"))
-      return InstrumentType.Option;
-    if (InstrumentName.EndsWith("-PERPETUAL"))
-      return InstrumentType.Perpetual;
-    if (char.IsDigit(InstrumentName[InstrumentName.Length-1]))
-      return InstrumentType.Future;
-    return InstrumentType.Undefined;
-  }
-  
-  private OptionType GetOptionType()
-  {
-    if (InstrumentName.EndsWith("-C"))
-      return OptionType.Call;
-    if (InstrumentName.EndsWith("-P"))
-      return OptionType.Put;
-    return OptionType.Undefined;
   }
 
   public class PriceItemConverter : JsonConverter<PriceItem>
@@ -213,6 +218,7 @@ public class OrderBook
       JsonSerializer serializer)
     {
       var arr = JArray.Load(reader);
+
       return new PriceItem
       {
         Price = arr[0].Value<decimal>(), Amount = arr[1].Value<decimal>()
