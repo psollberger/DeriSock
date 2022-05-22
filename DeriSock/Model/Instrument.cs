@@ -79,7 +79,7 @@ public class Instrument
   ///   The option type (only for options)
   /// </summary>
   [JsonProperty("option_type")]
-  public OptionType OptionType => GetOptionType();
+  public OptionType OptionType => InstrumentName.GetOptionType();
 
   /// <summary>
   ///   The currency in which the instrument prices are quoted.
@@ -110,13 +110,4 @@ public class Instrument
   /// </summary>
   [JsonProperty("tick_size")]
   public decimal TickSize { get; set; }
-
-  private OptionType GetOptionType()
-  {
-    if (InstrumentName.EndsWith("-C"))
-      return OptionType.Call;
-    if (InstrumentName.EndsWith("-P"))
-      return OptionType.Put;
-    return OptionType.Undefined;
-  }
 }

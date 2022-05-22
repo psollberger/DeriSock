@@ -91,9 +91,9 @@ public class OrderBook
   [JsonProperty("instrument_name")]
   public string InstrumentName { get; set; }
 
-  public InstrumentType InstrumentType => GetInstrumentType();
+  public InstrumentType InstrumentType => InstrumentName.GetInstrumentType();
 
-  public OptionType OptionType => GetOptionType();
+  public OptionType OptionType => InstrumentName.GetOptionType();
 
   /// <summary>
   ///   Interest rate used in implied volatility calculations (options only)
@@ -174,27 +174,6 @@ public class OrderBook
   /// </summary>
   [JsonProperty("underlying_price")]
   public decimal UnderlyingPrice { get; set; }
-
-  private InstrumentType GetInstrumentType()
-  {
-    return InstrumentName switch
-    {
-      { } i when i.EndsWith("-C") || i.EndsWith("-P") => InstrumentType.Option,
-      { } i when i.EndsWith("-PERPETUAL") => InstrumentType.Perpetual,
-      { } i when i.Length >= 1 && char.IsDigit(i[i.Length - 1]) => InstrumentType.Future,
-      _ => InstrumentType.Undefined
-    };
-  }
-
-  private OptionType GetOptionType()
-  {
-    return InstrumentName switch
-    {
-      { } i when i.EndsWith("-C") => OptionType.Call,
-      { } i when i.EndsWith("-P") => OptionType.Put,
-      _ => OptionType.Undefined
-    };
-  }
 
   [JsonConverter(typeof(PriceItemConverter))]
   public class PriceItem
