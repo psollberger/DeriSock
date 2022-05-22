@@ -3,12 +3,12 @@ name: Build and Test DeriSock Project
 on:
   push:
     branches:
-      - master
+      - main
     tags-ignore:
       - v*
   pull_request:
     branches:
-      - master
+      - main
     tags-ignore:
       - v*
 
