@@ -2839,7 +2839,10 @@ public class DeribitV2Client : IWebSocketStateInfo
       args.TryAdd("depth", depth);
     }
 
-    return Send("public/get_order_book", args, new ObjectJsonConverter<OrderBook>());
+    return Send(
+      "public/get_order_book",
+      args,
+      new ObjectJsonConverter<OrderBook>());
   }
 
   /// <summary>
