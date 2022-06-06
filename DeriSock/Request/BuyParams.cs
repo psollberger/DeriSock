@@ -1,4 +1,7 @@
-﻿namespace DeriSock.Request;
+﻿using DeriSock.Model;
+using Newtonsoft.Json;
+
+namespace DeriSock.Request;
 
 public class BuyParams
 {
@@ -17,7 +20,8 @@ public class BuyParams
   ///   <para>The order type, default: "limit"</para>
   ///   <para>Enum: <c>limit</c>, <c>stop_limit</c>, <c>market</c>, <c>stop_market</c></para>
   /// </summary>
-  public string Type { get; set; }
+  //[JsonProperty("type")]
+  public string OrderType { get; set; }
 
   /// <summary>
   ///   user defined label for the order (maximum 64 characters)

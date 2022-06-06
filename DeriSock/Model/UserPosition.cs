@@ -26,7 +26,7 @@ public class UserPosition
   ///   Direction: <c>buy</c>, <c>sell</c> or <c>zero</c>
   /// </summary>
   [JsonProperty("direction")]
-  public string Direction { get; set; }
+  public Side Side { get; set; }
 
   /// <summary>
   ///   Only for futures, estimated liquidation price
@@ -148,4 +148,30 @@ public class UserPosition
   /// </summary>
   [JsonProperty("vega")]
   public decimal Vega { get; set; }
+    
+  public InstrumentType InstrumentType => GetInstrumentType();
+
+  public OptionType OptionType => GetOptionType();
+  
+  
+  
+  private OptionType GetOptionType()
+  {
+    if (InstrumentName.EndsWith("-C"))
+      return OptionType.Call;
+    if (InstrumentName.EndsWith("-P"))
+      return OptionType.Put;
+    return OptionType.Undefined;
+  }
+  
+  private InstrumentType GetInstrumentType()
+  {
+    if (InstrumentName.EndsWith("-C") || InstrumentName.EndsWith("-P"))
+      return InstrumentType.Option;
+    if (InstrumentName.EndsWith("-PERPETUAL"))
+      return InstrumentType.Perpetual;
+    if (char.IsDigit(InstrumentName[InstrumentName.Length-1]))
+      return InstrumentType.Future;
+    return InstrumentType.Undefined;
+  }
 }

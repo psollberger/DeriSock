@@ -1,5 +1,8 @@
 ﻿// ReSharper disable UnusedMember.Local
 // ReSharper disable InheritdocConsiderUsage
+
+using System.Collections.Concurrent;
+
 namespace DeriSock;
 
 using System;
@@ -59,7 +62,8 @@ public class DeribitV2Client : IWebSocketStateInfo
 
     _client = endpointType switch
     {
-      DeribitEndpointType.Productive => JsonRpcClientFactory.Create(new Uri("wss://www.deribit.com/ws/api/v2"), _logger),
+      DeribitEndpointType.Productive =>
+        JsonRpcClientFactory.Create(new Uri("wss://www.deribit.com/ws/api/v2"), _logger),
       DeribitEndpointType.Testnet => JsonRpcClientFactory.Create(new Uri("wss://test.deribit.com/ws/api/v2"), _logger),
       _ => throw new ArgumentOutOfRangeException(nameof(endpointType), endpointType, "Unsupported endpoint type"),
     };
@@ -196,10 +200,7 @@ public class DeribitV2Client : IWebSocketStateInfo
         return;
       }
 
-      var result = PublicAuth(new AuthParams
-      {
-        GrantType = "refresh_token"
-      }).GetAwaiter().GetResult();
+      var result = PublicAuth(new AuthParams {GrantType = "refresh_token"}).GetAwaiter().GetResult();
       EnqueueAuthRefresh(result.ResultData.ExpiresIn);
     });
   }
@@ -207,12 +208,12 @@ public class DeribitV2Client : IWebSocketStateInfo
   private class SubscriptionManager
   {
     private readonly DeribitV2Client _client;
-    private readonly SortedDictionary<string, SubscriptionEntry> _subscriptionMap;
+    private readonly ConcurrentDictionary<string, SubscriptionEntry> _subscriptionMap;
 
     public SubscriptionManager(DeribitV2Client client)
     {
       _client = client;
-      _subscriptionMap = new SortedDictionary<string, SubscriptionEntry>();
+      _subscriptionMap = new ConcurrentDictionary<string, SubscriptionEntry>();
     }
 
     public async Task<SubscriptionToken> Subscribe(ISubscriptionChannel channel, Action<Notification> callback)
@@ -253,7 +254,9 @@ public class DeribitV2Client : IWebSocketStateInfo
         // Already subscribed - Put the callback in there and let's go
         if (entry.State == SubscriptionState.Subscribed)
         {
-          _client._logger?.Debug("Subscribe: Subscription for channel already exists. Adding callback to list (Channel: {Channel})", channelName);
+          _client._logger?.Debug(
+            "Subscribe: Subscription for channel already exists. Adding callback to list (Channel: {Channel})",
+            channelName);
           var callbackEntry = new SubscriptionCallback(new SubscriptionToken(Guid.NewGuid()), callback);
           entry.Callbacks.Add(callbackEntry);
           return callbackEntry.Token;
@@ -262,7 +265,8 @@ public class DeribitV2Client : IWebSocketStateInfo
         // We are in the middle of unsubscribing from the channel
         if (entry.State == SubscriptionState.Unsubscribing)
         {
-          _client._logger?.Debug("Subscribe: Channel is unsubscribing. Abort subscribe (Channel: {Channel})", channelName);
+          _client._logger?.Debug("Subscribe: Channel is unsubscribing. Abort subscribe (Channel: {Channel})",
+            channelName);
           return SubscriptionToken.Invalid;
         }
       }
@@ -272,17 +276,20 @@ public class DeribitV2Client : IWebSocketStateInfo
       // We are already subscribing
       if (taskSource == null && entry.State == SubscriptionState.Subscribing)
       {
-        _client._logger?.Debug("Subscribe: Channel is already subscribing. Waiting for the task to complete ({Channel})", channelName);
+        _client._logger?.Debug(
+          "Subscribe: Channel is already subscribing. Waiting for the task to complete ({Channel})", channelName);
 
         var subscribeResult = entry.SubscribeTask != null && await entry.SubscribeTask != SubscriptionToken.Invalid;
 
         if (!subscribeResult && entry.State != SubscriptionState.Subscribed)
         {
-          _client._logger?.Debug("Subscribe: Subscription has failed. Abort subscribe (Channel: {Channel})", channelName);
+          _client._logger?.Debug("Subscribe: Subscription has failed. Abort subscribe (Channel: {Channel})",
+            channelName);
           return SubscriptionToken.Invalid;
         }
 
-        _client._logger?.Debug("Subscribe: Subscription was successful. Adding callback (Channel: {Channel}", channelName);
+        _client._logger?.Debug("Subscribe: Subscription was successful. Adding callback (Channel: {Channel}",
+          channelName);
         var callbackEntry = new SubscriptionCallback(new SubscriptionToken(Guid.NewGuid()), callback);
         entry.Callbacks.Add(callbackEntry);
         return callbackEntry.Token;
@@ -290,7 +297,8 @@ public class DeribitV2Client : IWebSocketStateInfo
 
       if (taskSource == null)
       {
-        _client._logger?.Error("Subscribe: Invalid execution state. Missing TaskCompletionSource (Channel: {Channel}", channelName);
+        _client._logger?.Error("Subscribe: Invalid execution state. Missing TaskCompletionSource (Channel: {Channel}",
+          channelName);
         return SubscriptionToken.Invalid;
       }
 
@@ -298,13 +306,7 @@ public class DeribitV2Client : IWebSocketStateInfo
       {
         var subscribeResponse = await _client.Send(
           IsPrivateChannel(channelName) ? "private/subscribe" : "public/subscribe",
-          new
-          {
-            channels = new[]
-            {
-              channelName
-            }
-          },
+          new {channels = new[] {channelName}},
           new ListJsonConverter<string>()).ConfigureAwait(false);
 
         var response = subscribeResponse.ResultData;
@@ -319,7 +321,8 @@ public class DeribitV2Client : IWebSocketStateInfo
         }
         else
         {
-          _client._logger?.Debug("Subscribe: Successfully subscribed. Adding callback (Channel: {Channel})", channelName);
+          _client._logger?.Debug("Subscribe: Successfully subscribed. Adding callback (Channel: {Channel})",
+            channelName);
 
           var callbackEntry = new SubscriptionCallback(new SubscriptionToken(Guid.NewGuid()), callback);
           entry.Callbacks.Add(callbackEntry);
@@ -360,22 +363,28 @@ public class DeribitV2Client : IWebSocketStateInfo
         switch (entry.State)
         {
           case SubscriptionState.Subscribing:
-            _client._logger?.Debug("Unsubscribe: Channel is currently subscribing. Abort unsubscribe (Channel: {Channel})", channelName);
+            _client._logger?.Debug(
+              "Unsubscribe: Channel is currently subscribing. Abort unsubscribe (Channel: {Channel})", channelName);
             return false;
           case SubscriptionState.Unsubscribed:
           case SubscriptionState.Unsubscribing:
-            _client._logger?.Debug("Unsubscribe: Channel is unsubscribed or unsubscribing. Remove callback (Channel: {Channel})", channelName);
+            _client._logger?.Debug(
+              "Unsubscribe: Channel is unsubscribed or unsubscribing. Remove callback (Channel: {Channel})",
+              channelName);
             entry.Callbacks.Remove(callbackEntry);
             return true;
           case SubscriptionState.Subscribed:
             if (entry.Callbacks.Count > 1)
             {
-              _client._logger?.Debug("Unsubscribe: There are still callbacks left. Remove callback but don't unsubscribe (Channel: {Channel})", channelName);
+              _client._logger?.Debug(
+                "Unsubscribe: There are still callbacks left. Remove callback but don't unsubscribe (Channel: {Channel})",
+                channelName);
               entry.Callbacks.Remove(callbackEntry);
               return true;
             }
 
-            _client._logger?.Debug("Unsubscribe: No callbacks left. Unsubscribe and remove callback (Channel: {Channel})", channelName);
+            _client._logger?.Debug(
+              "Unsubscribe: No callbacks left. Unsubscribe and remove callback (Channel: {Channel})", channelName);
             break;
           default:
             return false;
@@ -393,13 +402,7 @@ public class DeribitV2Client : IWebSocketStateInfo
       {
         var unsubscribeResponse = await _client.Send(
           IsPrivateChannel(channelName) ? "private/unsubscribe" : "public/unsubscribe",
-          new
-          {
-            channels = new[]
-            {
-              channelName
-            }
-          },
+          new {channels = new[] {channelName}},
           new ListJsonConverter<string>()).ConfigureAwait(false);
 
         var response = unsubscribeResponse.ResultData;
@@ -455,7 +458,8 @@ public class DeribitV2Client : IWebSocketStateInfo
       return channel.StartsWith("user.");
     }
 
-    private (string channelName, SubscriptionEntry entry, SubscriptionCallback callbackEntry) GetEntryByToken(SubscriptionToken token)
+    private (string channelName, SubscriptionEntry entry, SubscriptionCallback callbackEntry) GetEntryByToken(
+      SubscriptionToken token)
     {
       lock (_subscriptionMap)
       {
@@ -514,7 +518,7 @@ public class DeribitV2Client : IWebSocketStateInfo
       throw new ArgumentNullException(nameof(args));
 
     _logger.Debug("Authenticate ({GrantType})", args.GrantType);
-    
+
     if (!string.Equals(args.GrantType, "client_credentials") &&
         !string.Equals(args.GrantType, "client_signature") &&
         !string.Equals(args.GrantType, "refresh_token"))
@@ -584,10 +588,7 @@ public class DeribitV2Client : IWebSocketStateInfo
         throw new ArgumentNullException(nameof(RefreshToken));
       }
 
-      reqParams = new
-      {
-        grant_type = "refresh_token", refresh_token = RefreshToken
-      };
+      reqParams = new {grant_type = "refresh_token", refresh_token = RefreshToken};
     }
 
     var response = await Send("public/auth", reqParams, new ObjectJsonConverter<AuthInfo>());
@@ -614,10 +615,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "public/exchange_token",
-      new
-      {
-        refresh_token = refreshToken, subject_id = subjectId
-      },
+      new {refresh_token = refreshToken, subject_id = subjectId},
       new ObjectJsonConverter<AuthInfo>());
   }
 
@@ -630,10 +628,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "public/fork_token",
-      new
-      {
-        refresh_token = refreshToken, session_name = sessionName
-      },
+      new {refresh_token = refreshToken, session_name = sessionName},
       new ObjectJsonConverter<AuthInfo>());
   }
 
@@ -673,10 +668,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   /// <param name="interval">The heartbeat interval in seconds, but not less than 10</param>
   public Task<JsonRpcResponse<string>> PublicSetHeartbeat(int interval)
   {
-    return Send("public/set_heartbeat", new
-    {
-      interval
-    }, new ObjectJsonConverter<string>());
+    return Send("public/set_heartbeat", new {interval}, new ObjectJsonConverter<string>());
   }
 
   /// <summary>
@@ -727,10 +719,7 @@ public class DeribitV2Client : IWebSocketStateInfo
     //TODO: check if private method works without access_token being sent
     return Send(
       "private/enable_cancel_on_disconnect",
-      new
-      {
-        scope /*, access_token = AccessToken*/
-      },
+      new {scope /*, access_token = AccessToken*/},
       new ObjectJsonConverter<string>());
   }
 
@@ -762,10 +751,7 @@ public class DeribitV2Client : IWebSocketStateInfo
     //TODO: check if private method works without access_token being sent
     return Send(
       "private/disable_cancel_on_disconnect",
-      new
-      {
-        scope /*, access_token = AccessToken*/
-      },
+      new {scope /*, access_token = AccessToken*/},
       new ObjectJsonConverter<string>());
   }
 
@@ -789,10 +775,7 @@ public class DeribitV2Client : IWebSocketStateInfo
     //TODO: check if private method works without access_token being sent
     return Send(
       "private/get_cancel_on_disconnect",
-      new
-      {
-        scope /*, access_token = AccessToken*/
-      },
+      new {scope /*, access_token = AccessToken*/},
       new ObjectJsonConverter<CancelOnDisconnectInfo>());
   }
 
@@ -821,10 +804,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "public/hello",
-      new
-      {
-        client_name = clientName, client_version = clientVersion
-      },
+      new {client_name = clientName, client_version = clientVersion},
       new ObjectJsonConverter<ServerHello>());
   }
 
@@ -840,10 +820,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "public/test",
-      new
-      {
-        expected_result = expectedResult
-      },
+      new {expected_result = expectedResult},
       new ObjectJsonConverter<ServerHello>());
   }
 
@@ -860,10 +837,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "private/get_account_summary",
-      new
-      {
-        currency, extended
-      },
+      new {currency, extended},
       new ObjectJsonConverter<AccountSummary>());
   }
 
@@ -889,10 +863,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "private/set_email_language",
-      new
-      {
-        language
-      },
+      new {language},
       new ObjectJsonConverter<string>());
   }
 
@@ -904,10 +875,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "private/get_position",
-      new
-      {
-        instrument_name = instrumentName
-      },
+      new {instrument_name = instrumentName},
       new ObjectJsonConverter<UserPosition>());
   }
 
@@ -948,10 +916,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "public/get_announcements",
-      new
-      {
-        start_timestamp = startTime.AsMilliseconds()
-      },
+      new {start_timestamp = startTime.AsMilliseconds()},
       new ObjectJsonConverter<Announcement[]>());
   }
 
@@ -965,10 +930,7 @@ public class DeribitV2Client : IWebSocketStateInfo
 
     return Send(
       "public/get_announcements",
-      new
-      {
-        count
-      },
+      new {count},
       new ObjectJsonConverter<Announcement[]>());
   }
 
@@ -987,10 +949,7 @@ public class DeribitV2Client : IWebSocketStateInfo
 
     return Send(
       "public/get_announcements",
-      new
-      {
-        start_timestamp = startTime.AsMilliseconds(), count
-      },
+      new {start_timestamp = startTime.AsMilliseconds(), count},
       new ObjectJsonConverter<Announcement[]>());
   }
 
@@ -1013,10 +972,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "private/set_announcement_as_read",
-      new
-      {
-        announcement_id = id
-      },
+      new {announcement_id = id},
       new ObjectJsonConverter<string>());
   }
 
@@ -1034,10 +990,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "private/change_api_key_name",
-      new
-      {
-        id, name
-      },
+      new {id, name},
       new ObjectJsonConverter<ApiKeyInfo>());
   }
 
@@ -1051,10 +1004,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "private/change_scope_in_api_key",
-      new
-      {
-        id, max_scope = maxScope
-      },
+      new {id, max_scope = maxScope},
       new ObjectJsonConverter<ApiKeyInfo>());
   }
 
@@ -1064,10 +1014,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "private/create_api_key",
-      new
-      {
-        max_scope = maxScope
-      },
+      new {max_scope = maxScope},
       new ObjectJsonConverter<ApiKeyInfo>());
   }
 
@@ -1077,10 +1024,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "private/create_api_key",
-      new
-      {
-        name, max_scope = maxScope
-      },
+      new {name, max_scope = maxScope},
       new ObjectJsonConverter<ApiKeyInfo>());
   }
 
@@ -1090,10 +1034,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "private/create_api_key",
-      new
-      {
-        @default = asDefault, max_scope = maxScope
-      },
+      new {@default = asDefault, max_scope = maxScope},
       new ObjectJsonConverter<ApiKeyInfo>());
   }
 
@@ -1108,10 +1049,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "private/create_api_key",
-      new
-      {
-        name, @default = asDefault, max_scope = maxScope
-      },
+      new {name, @default = asDefault, max_scope = maxScope},
       new ObjectJsonConverter<ApiKeyInfo>());
   }
 
@@ -1124,10 +1062,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "private/disable_api_key",
-      new
-      {
-        id
-      },
+      new {id},
       new ObjectJsonConverter<ApiKeyInfo>());
   }
 
@@ -1140,10 +1075,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "private/enable_api_key",
-      new
-      {
-        id
-      },
+      new {id},
       new ObjectJsonConverter<ApiKeyInfo>());
   }
 
@@ -1166,10 +1098,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "private/remove_api_key",
-      new
-      {
-        id
-      },
+      new {id},
       new ObjectJsonConverter<string>());
   }
 
@@ -1182,10 +1111,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "private/reset_api_key",
-      new
-      {
-        id
-      },
+      new {id},
       new ObjectJsonConverter<ApiKeyInfo>());
   }
 
@@ -1198,10 +1124,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "private/set_api_key_as_default",
-      new
-      {
-        id
-      },
+      new {id},
       new ObjectJsonConverter<ApiKeyInfo>());
   }
 
@@ -1219,10 +1142,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "private/change_subaccount_name",
-      new
-      {
-        sid, name
-      },
+      new {sid, name},
       new ObjectJsonConverter<string>());
   }
 
@@ -1246,10 +1166,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "private/disable_tfa_for_subaccount",
-      new
-      {
-        sid
-      },
+      new {sid},
       new ObjectJsonConverter<string>());
   }
 
@@ -1271,10 +1188,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "private/get_subaccounts",
-      new
-      {
-        with_portfolio = withPortfolio
-      },
+      new {with_portfolio = withPortfolio},
       new ObjectJsonConverter<SubAccount[]>());
   }
 
@@ -1288,10 +1202,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "private/set_email_for_subaccount",
-      new
-      {
-        sid, email
-      },
+      new {sid, email},
       new ObjectJsonConverter<string>());
   }
 
@@ -1305,10 +1216,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "private/set_password_for_subaccount",
-      new
-      {
-        sid, password
-      },
+      new {sid, password},
       new ObjectJsonConverter<string>());
   }
 
@@ -1322,10 +1230,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "private/toggle_notifications_from_subaccount",
-      new
-      {
-        sid, state
-      },
+      new {sid, state},
       new ObjectJsonConverter<string>());
   }
 
@@ -1340,10 +1245,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "private/toggle_subaccount_login",
-      new
-      {
-        sid, state = state ? "enable" : "disable"
-      },
+      new {sid, state = state ? "enable" : "disable"},
       new ObjectJsonConverter<string>());
   }
 
@@ -1395,10 +1297,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "private/get_block_trade",
-      new
-      {
-        id
-      },
+      new {id},
       new ObjectJsonConverter<BlockTrade>());
   }
 
@@ -1448,10 +1347,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "private/invalidate_block_trade_signature",
-      new
-      {
-        signature
-      },
+      new {signature},
       new ObjectJsonConverter<string>());
   }
 
@@ -1490,9 +1386,9 @@ public class DeribitV2Client : IWebSocketStateInfo
     args.TryAdd("instrument_name", @params.InstrumentName);
     args.TryAdd("amount", @params.Amount);
 
-    if (@params.Type != default)
+    if (@params.OrderType != default)
     {
-      args.TryAdd("type", @params.Type);
+      args.TryAdd("type", @params.OrderType);
     }
 
     if (@params.Label != default)
@@ -1560,9 +1456,9 @@ public class DeribitV2Client : IWebSocketStateInfo
     args.TryAdd("instrument_name", @params.InstrumentName);
     args.TryAdd("amount", @params.Amount);
 
-    if (@params.Type != default)
+    if (@params.OrderType != default)
     {
-      args.TryAdd("type", @params.Type);
+      args.TryAdd("type", @params.OrderType);
     }
 
     if (@params.Label != default)
@@ -1670,10 +1566,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "private/cancel",
-      new
-      {
-        order_id = orderId
-      },
+      new {order_id = orderId},
       new ObjectJsonConverter<UserOrder>());
   }
 
@@ -1700,7 +1593,8 @@ public class DeribitV2Client : IWebSocketStateInfo
   ///   <para>Order type, default - <c>all</c></para>
   ///   <para>Enum: <c>all</c>, <c>limit</c> or <c>stop</c></para>
   /// </param>
-  public Task<JsonRpcResponse<int>> PrivateCancelAllByCurrency(string currency, string kind = default, string type = default)
+  public Task<JsonRpcResponse<int>> PrivateCancelAllByCurrency(string currency, string kind = default,
+    string type = default)
   {
     var args = new ExpandoObject();
     args.TryAdd("currency", currency);
@@ -1753,10 +1647,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "private/cancel_by_label",
-      new
-      {
-        label
-      },
+      new {label},
       new ObjectJsonConverter<int>());
   }
 
@@ -1769,7 +1660,8 @@ public class DeribitV2Client : IWebSocketStateInfo
   ///   <para>Enum: <c>limit</c>, <c>market</c></para>
   /// </param>
   /// <param name="price">Optional price for limit order</param>
-  public Task<JsonRpcResponse<UserOrderTrades>> PrivateClosePosition(string instrumentName, string type, decimal price = default)
+  public Task<JsonRpcResponse<UserOrderTrades>> PrivateClosePosition(string instrumentName, string type,
+    decimal price = default)
   {
     var args = new ExpandoObject();
     args.TryAdd("instrument_name", instrumentName);
@@ -1799,10 +1691,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "private/get_margins",
-      new
-      {
-        instrument_name = instrumentName, amount, price
-      },
+      new {instrument_name = instrumentName, amount, price},
       new ObjectJsonConverter<UserMargin>());
   }
 
@@ -1818,7 +1707,8 @@ public class DeribitV2Client : IWebSocketStateInfo
   ///   <para>Order type, default - <c>all</c></para>
   ///   <para>Enum: <c>all</c>, <c>limit</c>, <c>stop_all</c>, <c>stop_limit</c>, <c>stop_market</c></para>
   /// </param>
-  public Task<JsonRpcResponse<UserOrder[]>> PrivateGetOpenOrdersByCurrency(string currency, string kind = default, string type = default)
+  public Task<JsonRpcResponse<UserOrder[]>> PrivateGetOpenOrdersByCurrency(string currency, string kind = default,
+    string type = default)
   {
     var args = new ExpandoObject();
     args.TryAdd("currency", currency);
@@ -1847,7 +1737,8 @@ public class DeribitV2Client : IWebSocketStateInfo
   ///   <para>Order type, default - <c>all</c></para>
   ///   <para>Enum: <c>all</c>, <c>limit</c>, <c>stop_all</c>, <c>stop_limit</c>, <c>stop_market</c></para>
   /// </param>
-  public Task<JsonRpcResponse<UserOrder[]>> PrivateGetOpenOrdersByInstrument(string instrumentName, string type = default)
+  public Task<JsonRpcResponse<UserOrder[]>> PrivateGetOpenOrdersByInstrument(string instrumentName,
+    string type = default)
   {
     var args = new ExpandoObject();
     args.TryAdd("instrument_name", instrumentName);
@@ -1876,7 +1767,8 @@ public class DeribitV2Client : IWebSocketStateInfo
   /// <param name="includeOld">Include in result orders oder than 2 days, default - <c>false</c></param>
   /// <param name="includeUnfilled">Include in result fully unfilled closed orders, default - <c>false</c></param>
   public Task<JsonRpcResponse<UserOrder[]>> PrivateGetOrderHistoryByCurrency(string currency,
-    string kind = default, int count = default, int offset = default, bool? includeOld = null, bool? includeUnfilled = null)
+    string kind = default, int count = default, int offset = default, bool? includeOld = null,
+    bool? includeUnfilled = null)
   {
     var args = new ExpandoObject();
     args.TryAdd("currency", currency);
@@ -1960,10 +1852,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "private/get_order_margin_by_ids",
-      new
-      {
-        ids
-      },
+      new {ids},
       new ObjectJsonConverter<UserOrderMargin[]>());
   }
 
@@ -1975,10 +1864,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "private/get_order_state",
-      new
-      {
-        order_id = orderId
-      },
+      new {order_id = orderId},
       new ObjectJsonConverter<UserOrder>());
   }
 
@@ -2036,7 +1922,8 @@ public class DeribitV2Client : IWebSocketStateInfo
   ///   <para>Enum: <c>asc</c>, <c>desc</c>, <c>default</c></para>
   /// </param>
   public Task<JsonRpcResponse<UserTradeCollection>> PrivateGetUserTradesByCurrency(string currency,
-    string kind = default, string startId = default, string endId = default, int count = default, bool? includeOld = null, string sorting = default)
+    string kind = default, string startId = default, string endId = default, int count = default,
+    bool? includeOld = null, string sorting = default)
   {
     var args = new ExpandoObject();
     args.TryAdd("currency", currency);
@@ -2098,7 +1985,8 @@ public class DeribitV2Client : IWebSocketStateInfo
   ///   <para>Enum: <c>asc</c>, <c>desc</c>, <c>default</c></para>
   /// </param>
   public Task<JsonRpcResponse<UserTradeCollection>> PrivateGetUserTradesByCurrencyAndTime(string currency,
-    string kind = default, DateTime startTime = default, DateTime endTime = default, int count = default, bool? includeOld = null, string sorting = default)
+    string kind = default, DateTime startTime = default, DateTime endTime = default, int count = default,
+    bool? includeOld = null, string sorting = default)
   {
     var args = new ExpandoObject();
     args.TryAdd("currency", currency);
@@ -2155,7 +2043,8 @@ public class DeribitV2Client : IWebSocketStateInfo
   ///   <para>Enum: <c>asc</c>, <c>desc</c>, <c>default</c></para>
   /// </param>
   public Task<JsonRpcResponse<UserTrade[]>> PrivateGetUserTradesByInstrument(string instrumentName,
-    long startSeq = default, long endSeq = default, int count = default, bool? includeOld = null, string sorting = default)
+    long startSeq = default, long endSeq = default, int count = default, bool? includeOld = null,
+    string sorting = default)
   {
     var args = new ExpandoObject();
     args.TryAdd("instrument_name", instrumentName);
@@ -2207,7 +2096,8 @@ public class DeribitV2Client : IWebSocketStateInfo
   ///   <para>Enum: <c>asc</c>, <c>desc</c>, <c>default</c></para>
   /// </param>
   public Task<JsonRpcResponse<UserTrade[]>> PrivateGetUserTradesByInstrumentAndTime(string instrumentName,
-    DateTime startTime = default, DateTime endTime = default, int count = default, bool? includeOld = null, string sorting = default)
+    DateTime startTime = default, DateTime endTime = default, int count = default, bool? includeOld = null,
+    string sorting = default)
   {
     var args = new ExpandoObject();
     args.TryAdd("instrument_name", instrumentName);
@@ -2310,7 +2200,8 @@ public class DeribitV2Client : IWebSocketStateInfo
   ///   <para>Enum: <c>settlement</c>, <c>delivery</c>, <c>bankruptcy</c></para>
   /// </param>
   /// <param name="count">Number of requested items, default - <c>20</c></param>
-  public Task<JsonRpcResponse<UserSettlementCollection>> PrivateGetSettlementHistoryByCurrency(string currency, string type = default, int count = default)
+  public Task<JsonRpcResponse<UserSettlementCollection>> PrivateGetSettlementHistoryByCurrency(string currency,
+    string type = default, int count = default)
   {
     var args = new ExpandoObject();
     args.TryAdd("currency", currency);
@@ -2371,10 +2262,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "public/get_book_summary_by_instrument",
-      new
-      {
-        instrument_name = instrumentName
-      },
+      new {instrument_name = instrumentName},
       new ObjectJsonConverter<BookSummary[]>());
   }
 
@@ -2386,10 +2274,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "public/get_contract_size",
-      new
-      {
-        instrument_name = instrumentName
-      },
+      new {instrument_name = instrumentName},
       new ObjectJsonConverter<InstrumentContractSize>());
   }
 
@@ -2414,10 +2299,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "public/get_funding_chart_data",
-      new
-      {
-        instrument_name = instrumentName, length
-      },
+      new {instrument_name = instrumentName, length},
       new ObjectJsonConverter<PerpetualUserTrades>());
   }
 
@@ -2427,13 +2309,16 @@ public class DeribitV2Client : IWebSocketStateInfo
   /// <param name="instrumentName">Instrument name</param>
   /// <param name="startTime">The earliest timestamp to return result for</param>
   /// <param name="endTime">The most recent timestamp to return result for</param>
-  public Task<JsonRpcResponse<InterestRate[]>> PublicGetFundingRateHistory(string instrumentName, DateTime startTime, DateTime endTime)
+  public Task<JsonRpcResponse<InterestRate[]>> PublicGetFundingRateHistory(string instrumentName, DateTime startTime,
+    DateTime endTime)
   {
     return Send(
       "public/get_funding_rate_history",
       new
       {
-        instrument_name = instrumentName, start_timestamp = startTime.AsMilliseconds(), end_timestamp = endTime.AsMilliseconds()
+        instrument_name = instrumentName,
+        start_timestamp = startTime.AsMilliseconds(),
+        end_timestamp = endTime.AsMilliseconds()
       },
       new ObjectJsonConverter<InterestRate[]>());
   }
@@ -2444,13 +2329,16 @@ public class DeribitV2Client : IWebSocketStateInfo
   /// <param name="instrumentName">Instrument name</param>
   /// <param name="startTime">The earliest timestamp to return result for</param>
   /// <param name="endTime">The most recent timestamp to return result for</param>
-  public Task<JsonRpcResponse<decimal>> PublicGetFundingRateValue(string instrumentName, DateTime startTime, DateTime endTime)
+  public Task<JsonRpcResponse<decimal>> PublicGetFundingRateValue(string instrumentName, DateTime startTime,
+    DateTime endTime)
   {
     return Send(
       "public/get_funding_rate_value",
       new
       {
-        instrument_name = instrumentName, start_timestamp = startTime.AsMilliseconds(), end_timestamp = endTime.AsMilliseconds()
+        instrument_name = instrumentName,
+        start_timestamp = startTime.AsMilliseconds(),
+        end_timestamp = endTime.AsMilliseconds()
       },
       new ObjectJsonConverter<decimal>());
   }
@@ -2463,10 +2351,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "public/get_historical_volatility",
-      new
-      {
-        currency
-      },
+      new {currency},
       new ObjectJsonConverter<VolatilityItem[]>());
   }
 
@@ -2478,12 +2363,10 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "public/get_index",
-      new
-      {
-        currency
-      },
+      new {currency},
       new ObjectJsonConverter<IndexPrice>());
   }
+
 
   /// <summary>
   ///   Retrieves available trading instrument. This method can be used to see which instruments are available for trading,
@@ -2512,7 +2395,8 @@ public class DeribitV2Client : IWebSocketStateInfo
   ///   <c>future</c>, <c>option</c>
   /// </param>
   /// <param name="expired">Set to true to show expired instruments instead of active ones</param>
-  public Task<JsonRpcResponse<Instrument[]>> PublicGetInstruments(string currency, string kind = default, bool? expired = default)
+  public Task<JsonRpcResponse<Instrument[]>> PublicGetInstruments(string currency, string kind = default,
+    bool? expired = default)
   {
     var args = new ExpandoObject();
     args.TryAdd("currency", currency);
@@ -2633,7 +2517,8 @@ public class DeribitV2Client : IWebSocketStateInfo
   ///   <para>Enum: <c>asc</c>, <c>desc</c>, <c>default</c></para>
   /// </param>
   public Task<JsonRpcResponse<MarketTradeCollection>> PublicGetLastTradesByCurrency(string currency,
-    string kind = default, string startId = default, string endId = default, int count = default, bool? includeOld = null, string sorting = default)
+    string kind = default, string startId = default, string endId = default, int count = default,
+    bool? includeOld = null, string sorting = default)
   {
     var args = new ExpandoObject();
     args.TryAdd("currency", currency);
@@ -2693,7 +2578,8 @@ public class DeribitV2Client : IWebSocketStateInfo
   ///   </para>
   ///   <para>Enum: <c>asc</c>, <c>desc</c>, <c>default</c></para>
   /// </param>
-  public Task<JsonRpcResponse<MarketTradeCollection>> PublicGetLastTradesByCurrencyAndTime(string currency, DateTime startTime, DateTime endTime,
+  public Task<JsonRpcResponse<MarketTradeCollection>> PublicGetLastTradesByCurrencyAndTime(string currency,
+    DateTime startTime, DateTime endTime,
     string kind = default, int count = default, bool? includeOld = null, string sorting = default)
   {
     var args = new ExpandoObject();
@@ -2743,7 +2629,8 @@ public class DeribitV2Client : IWebSocketStateInfo
   ///   <para>Enum: <c>asc</c>, <c>desc</c>, <c>default</c></para>
   /// </param>
   public Task<JsonRpcResponse<MarketTradeCollection>> PublicGetLastTradesByInstrument(string instrumentName,
-    long startSeq = default, long endSeq = default, int count = default, bool? includeOld = null, string sorting = default)
+    long startSeq = default, long endSeq = default, int count = default, bool? includeOld = null,
+    string sorting = default)
   {
     var args = new ExpandoObject();
     args.TryAdd("instrument_name", instrumentName);
@@ -2866,15 +2753,38 @@ public class DeribitV2Client : IWebSocketStateInfo
   ///     <c>180</c>, <c>360</c>, <c>720</c>, <c>1D</c>
   ///   </para>
   /// </param>
-  public Task<JsonRpcResponse<TradingViewMarketData>> PublicGetTradingViewData(string instrumentName, DateTime startTime, DateTime endTime, string resolution)
+  public Task<JsonRpcResponse<TradingViewMarketData>> PublicGetTradingViewData(string instrumentName,
+    DateTime startTime, DateTime endTime, string resolution)
   {
     return Send(
       "public/get_tradingview_chart_data",
       new
       {
-        instrument_name = instrumentName, start_timestamp = startTime.AsMilliseconds(), end_timestamp = endTime.AsMilliseconds(), resolution
+        instrument_name = instrumentName,
+        start_timestamp = startTime.AsMilliseconds(),
+        end_timestamp = endTime.AsMilliseconds(),
+        resolution
       },
       new ObjectJsonConverter<TradingViewMarketData>());
+  }
+
+  /// <summary>
+  ///   Provides information about historical volatility for given crypto currency
+  /// </summary>
+  /// <param name="currency">The currency symbol BTC ETH SOL USDC</param>
+  public Task<JsonRpcResponse<VolatilityIndexData>> PublicGetVolatilityIndexData(string currency, DateTime startTime,
+    DateTime endTime, string resolution)
+  {
+    return Send(
+      "public/get_volatility_index_data",
+      new
+      {
+        currency = currency,
+        start_timestamp = startTime.AsMilliseconds(),
+        end_timestamp = endTime.AsMilliseconds(),
+        resolution
+      },
+      new ObjectJsonConverter<VolatilityIndexData>());
   }
 
   /// <summary>
@@ -2885,10 +2795,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "public/ticker",
-      new
-      {
-        instrument_name = instrumentName
-      },
+      new {instrument_name = instrumentName},
       new ObjectJsonConverter<TickerData>());
   }
 
@@ -2928,10 +2835,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "private/cancel_withdrawal",
-      new
-      {
-        currency, id
-      },
+      new {currency, id},
       new ObjectJsonConverter<WithdrawalInfo>());
   }
 
@@ -2943,10 +2847,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "private/create_deposit_address",
-      new
-      {
-        currency
-      },
+      new {currency},
       new ObjectJsonConverter<DepositAddress>());
   }
 
@@ -2958,10 +2859,7 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     return Send(
       "private/get_current_deposit_address",
-      new
-      {
-        currency
-      },
+      new {currency},
       new ObjectJsonConverter<DepositAddress>());
   }
 
@@ -2971,7 +2869,8 @@ public class DeribitV2Client : IWebSocketStateInfo
   /// <param name="currency">The currency symbol</param>
   /// <param name="count">Number of requested items, default - <c>10</c></param>
   /// <param name="offset">The offset for pagination, default - <c>0</c></param>
-  public Task<JsonRpcResponse<DepositCollection>> PrivateGetDeposits(string currency, int count = default, int offset = default)
+  public Task<JsonRpcResponse<DepositCollection>> PrivateGetDeposits(string currency, int count = default,
+    int offset = default)
   {
     var args = new ExpandoObject();
     args.TryAdd("currency", currency);
@@ -2998,7 +2897,8 @@ public class DeribitV2Client : IWebSocketStateInfo
   /// <param name="currency">The currency symbol</param>
   /// <param name="count">Number of requested items, default - <c>10</c></param>
   /// <param name="offset">The offset for pagination, default - <c>0</c></param>
-  public Task<JsonRpcResponse<TransferCollection>> PrivateGetTransfers(string currency, int count = default, int offset = default)
+  public Task<JsonRpcResponse<TransferCollection>> PrivateGetTransfers(string currency, int count = default,
+    int offset = default)
   {
     var args = new ExpandoObject();
     args.TryAdd("currency", currency);
@@ -3025,7 +2925,8 @@ public class DeribitV2Client : IWebSocketStateInfo
   /// <param name="currency">The currency symbol</param>
   /// <param name="count">Number of requested items, default - <c>10</c></param>
   /// <param name="offset">The offset for pagination, default - <c>0</c></param>
-  public Task<JsonRpcResponse<WithdrawalCollection>> PrivateGetWithdrawals(string currency, int count = default, int offset = default)
+  public Task<JsonRpcResponse<WithdrawalCollection>> PrivateGetWithdrawals(string currency, int count = default,
+    int offset = default)
   {
     var args = new ExpandoObject();
     args.TryAdd("currency", currency);
@@ -3052,14 +2953,12 @@ public class DeribitV2Client : IWebSocketStateInfo
   /// <param name="currency">The currency symbol</param>
   /// <param name="amount">Amount of funds to be transferred</param>
   /// <param name="destination">Id of destination subaccount. Can be found in <c>My Account >> Subaccounts</c> tab</param>
-  public Task<JsonRpcResponse<TransferInfo>> PrivateSubmitTransferToSubAccount(string currency, decimal amount, int destination)
+  public Task<JsonRpcResponse<TransferInfo>> PrivateSubmitTransferToSubAccount(string currency, decimal amount,
+    int destination)
   {
     return Send(
       "private/submit_transfer_to_subaccount",
-      new
-      {
-        currency, amount, destination
-      },
+      new {currency, amount, destination},
       new ObjectJsonConverter<TransferInfo>());
   }
 
@@ -3070,7 +2969,8 @@ public class DeribitV2Client : IWebSocketStateInfo
   /// <param name="amount">Amount of funds to be transferred</param>
   /// <param name="destination">Destination wallet's address taken from address book</param>
   /// <param name="tfa">TFA code, required when TFA is enabled for current account</param>
-  public Task<JsonRpcResponse<TransferInfo>> PrivateSubmitTransferToUser(string currency, decimal amount, string destination, string tfa = default)
+  public Task<JsonRpcResponse<TransferInfo>> PrivateSubmitTransferToUser(string currency, decimal amount,
+    string destination, string tfa = default)
   {
     var args = new ExpandoObject();
     args.TryAdd("currency", currency);
@@ -3101,7 +3001,8 @@ public class DeribitV2Client : IWebSocketStateInfo
   ///   </para>
   /// </param>
   /// <param name="tfa">TFA code, required when TFA is enabled for current account</param>
-  public Task<JsonRpcResponse<WithdrawalInfo>> PrivateWithdraw(string currency, string address, decimal amount, string priority = default,
+  public Task<JsonRpcResponse<WithdrawalInfo>> PrivateWithdraw(string currency, string address, decimal amount,
+    string priority = default,
     string tfa = default)
   {
     var args = new ExpandoObject();
@@ -3162,7 +3063,8 @@ public class DeribitV2Client : IWebSocketStateInfo
   ///     for options it is amount of corresponding cryptocurrency contracts, e.g., BTC or ETH.
   ///   </para>
   /// </summary>
-  public Task<SubscriptionToken> SubscribeBookGroup(BookGroupSubscriptionParams @params, Action<BookGroupNotification> callback)
+  public Task<SubscriptionToken> SubscribeBookGroup(BookGroupSubscriptionParams @params,
+    Action<BookGroupNotification> callback)
   {
     return _subscriptionManager.Subscribe(@params,
       n => callback(n.Data.ToObject<BookGroupNotification>()));
@@ -3189,7 +3091,8 @@ public class DeribitV2Client : IWebSocketStateInfo
   ///     contracts, e.g., BTC or ETH.
   ///   </para>
   /// </summary>
-  public Task<SubscriptionToken> SubscribeBookChange(BookChangeSubscriptionParams @params, Action<BookChangeNotification> callback)
+  public Task<SubscriptionToken> SubscribeBookChange(BookChangeSubscriptionParams @params,
+    Action<BookChangeNotification> callback)
   {
     return _subscriptionManager.Subscribe(@params,
       n => callback(n.Data.ToObject<BookChangeNotification>()));
@@ -3205,7 +3108,8 @@ public class DeribitV2Client : IWebSocketStateInfo
   ///     generated which uses data from the last available trade candle (open and close values).
   ///   </para>
   /// </summary>
-  public Task<SubscriptionToken> SubscribeChartTrades(ChartTradesSubscriptionParams @params, Action<ChartTradesNotification> callback)
+  public Task<SubscriptionToken> SubscribeChartTrades(ChartTradesSubscriptionParams @params,
+    Action<ChartTradesNotification> callback)
   {
     return _subscriptionManager.Subscribe(@params,
       n => callback(n.Data.ToObject<ChartTradesNotification>()));
@@ -3214,10 +3118,21 @@ public class DeribitV2Client : IWebSocketStateInfo
   /// <summary>
   ///   Provides information about current value (price) for Deribit Index
   /// </summary>
-  public Task<SubscriptionToken> SubscribeDeribitPriceIndex(DeribitPriceIndexSubscriptionParams @params, Action<DeribitPriceIndexNotification> callback)
+  public Task<SubscriptionToken> SubscribeDeribitPriceIndex(DeribitPriceIndexSubscriptionParams @params,
+    Action<DeribitPriceIndexNotification> callback)
   {
     return _subscriptionManager.Subscribe(@params,
       n => callback(n.Data.ToObject<DeribitPriceIndexNotification>()));
+  }
+
+  /// <summary>
+  ///   Provides information about current value (volatility) for Deribit Index
+  /// </summary>
+  public Task<SubscriptionToken> SubscribeDeribitVolatilityIndex(DeribitVolatilityIndexSubscriptionParams @params,
+    Action<DeribitVolatilityIndexNotification> callback)
+  {
+    return _subscriptionManager.Subscribe(@params,
+      n => callback(n.Data.ToObject<DeribitVolatilityIndexNotification>()));
   }
 
   /// <summary>
@@ -3243,7 +3158,8 @@ public class DeribitV2Client : IWebSocketStateInfo
   /// <summary>
   ///   Provides information about options markprices
   /// </summary>
-  public Task<SubscriptionToken> SubscribeMarkPriceOptions(MarkPriceOptionsSubscriptionParams @params, Action<MarkPriceOptionsNotification[]> callback)
+  public Task<SubscriptionToken> SubscribeMarkPriceOptions(MarkPriceOptionsSubscriptionParams @params,
+    Action<MarkPriceOptionsNotification[]> callback)
   {
     return _subscriptionManager.Subscribe(@params,
       n => callback(n.Data.ToObject<MarkPriceOptionsNotification[]>()));
@@ -3288,9 +3204,20 @@ public class DeribitV2Client : IWebSocketStateInfo
   }
 
   /// <summary>
+  ///   Key information about the instrument
+  /// </summary>
+  public Task<SubscriptionToken> SubscribeIncrementalTicker(IncrementalTickerSubscriptionParams @params,
+    Action<TickerNotification> callback)
+  {
+    return _subscriptionManager.Subscribe(@params,
+      n => callback(n.Data.ToObject<TickerNotification>()));
+  }
+
+  /// <summary>
   ///   Get notifications about trades for an instrument
   /// </summary>
-  public Task<SubscriptionToken> SubscribeTradesInstrument(TradesInstrumentSubscriptionParams @params, Action<TradesNotification[]> callback)
+  public Task<SubscriptionToken> SubscribeTradesInstrument(TradesInstrumentSubscriptionParams @params,
+    Action<TradesNotification[]> callback)
   {
     return _subscriptionManager.Subscribe(@params,
       n => callback(n.Data.ToObject<TradesNotification[]>()));
@@ -3299,7 +3226,8 @@ public class DeribitV2Client : IWebSocketStateInfo
   /// <summary>
   ///   Get notifications about trades in any instrument of a given kind and given currency
   /// </summary>
-  public Task<SubscriptionToken> SubscribeTradesKindCurrency(TradesKindCurrencySubscriptionParams @params, Action<TradesNotification[]> callback)
+  public Task<SubscriptionToken> SubscribeTradesKindCurrency(TradesKindCurrencySubscriptionParams @params,
+    Action<TradesNotification[]> callback)
   {
     return _subscriptionManager.Subscribe(@params,
       n => callback(n.Data.ToObject<TradesNotification[]>()));
@@ -3308,7 +3236,8 @@ public class DeribitV2Client : IWebSocketStateInfo
   /// <summary>
   ///   Get notifications about user's updates related to order, trades, etc. in an instrument.
   /// </summary>
-  public Task<SubscriptionToken> SubscribeUserChangesInstrument(UserChangesInstrumentSubscriptionParams @params, Action<UserChangesNotification> callback)
+  public Task<SubscriptionToken> SubscribeUserChangesInstrument(UserChangesInstrumentSubscriptionParams @params,
+    Action<UserChangesNotification> callback)
   {
     return _subscriptionManager.Subscribe(@params,
       n => callback(n.Data.ToObject<UserChangesNotification>()));
@@ -3318,7 +3247,8 @@ public class DeribitV2Client : IWebSocketStateInfo
   ///   Get notifications about changes in user's updates related to orders, trades, etc. in instruments of a given kind and
   ///   currency.
   /// </summary>
-  public Task<SubscriptionToken> SubscribeUserChangesKindCurrency(UserChangesKindCurrencySubscriptionParams @params, Action<UserChangesNotification> callback)
+  public Task<SubscriptionToken> SubscribeUserChangesKindCurrency(UserChangesKindCurrencySubscriptionParams @params,
+    Action<UserChangesNotification> callback)
   {
     return _subscriptionManager.Subscribe(@params,
       n => callback(n.Data.ToObject<UserChangesNotification>()));
@@ -3327,16 +3257,14 @@ public class DeribitV2Client : IWebSocketStateInfo
   /// <summary>
   ///   Get notifications about changes in user's orders for given instrument
   /// </summary>
-  public Task<SubscriptionToken> SubscribeUserOrdersInstrument(UserOrdersInstrumentSubscriptionParams @params, Action<UserOrder[]> callback)
+  public Task<SubscriptionToken> SubscribeUserOrdersInstrument(UserOrdersInstrumentSubscriptionParams @params,
+    Action<UserOrder[]> callback)
   {
     return _subscriptionManager.Subscribe(@params,
       n =>
       {
         callback(@params.Interval.Equals("raw")
-          ? new[]
-          {
-            n.Data.ToObject<UserOrder>()
-          }
+          ? new[] {n.Data.ToObject<UserOrder>()}
           : n.Data.ToObject<UserOrder[]>());
       });
   }
@@ -3344,16 +3272,14 @@ public class DeribitV2Client : IWebSocketStateInfo
   /// <summary>
   ///   Get notifications about changes in user's orders in instrument of a given kind and currency
   /// </summary>
-  public Task<SubscriptionToken> SubscribeUserOrdersKindCurrency(UserOrdersKindCurrencySubscriptionParams @params, Action<UserOrder[]> callback)
+  public Task<SubscriptionToken> SubscribeUserOrdersKindCurrency(UserOrdersKindCurrencySubscriptionParams @params,
+    Action<UserOrder[]> callback)
   {
     return _subscriptionManager.Subscribe(@params,
       n =>
       {
         callback(@params.Interval.Equals("raw")
-          ? new[]
-          {
-            n.Data.ToObject<UserOrder>()
-          }
+          ? new[] {n.Data.ToObject<UserOrder>()}
           : n.Data.ToObject<UserOrder[]>());
       });
   }
@@ -3361,7 +3287,8 @@ public class DeribitV2Client : IWebSocketStateInfo
   /// <summary>
   ///   Provides information about current user portfolio
   /// </summary>
-  public Task<SubscriptionToken> SubscribeUserPortfolio(UserPortfolioSubscriptionParams @params, Action<UserPortfolioNotification> callback)
+  public Task<SubscriptionToken> SubscribeUserPortfolio(UserPortfolioSubscriptionParams @params,
+    Action<UserPortfolioNotification> callback)
   {
     return _subscriptionManager.Subscribe(@params,
       n => callback(n.Data.ToObject<UserPortfolioNotification>()));
@@ -3370,7 +3297,8 @@ public class DeribitV2Client : IWebSocketStateInfo
   /// <summary>
   ///   Get notifications about user's trades in an instrument
   /// </summary>
-  public Task<SubscriptionToken> SubscribeUserTradesInstrument(UserTradesInstrumentSubscriptionParams @params, Action<UserTrade[]> callback)
+  public Task<SubscriptionToken> SubscribeUserTradesInstrument(UserTradesInstrumentSubscriptionParams @params,
+    Action<UserTrade[]> callback)
   {
     return _subscriptionManager.Subscribe(@params,
       n => callback(n.Data.ToObject<UserTrade[]>()));
@@ -3379,7 +3307,8 @@ public class DeribitV2Client : IWebSocketStateInfo
   /// <summary>
   ///   Get notifications about user's trades in any instrument of a given kind and given currency
   /// </summary>
-  public Task<SubscriptionToken> SubscribeUserTradesKindCurrency(UserTradesKindCurrencySubscriptionParams @params, Action<UserTrade[]> callback)
+  public Task<SubscriptionToken> SubscribeUserTradesKindCurrency(UserTradesKindCurrencySubscriptionParams @params,
+    Action<UserTrade[]> callback)
   {
     return _subscriptionManager.Subscribe(@params,
       n => callback(n.Data.ToObject<UserTrade[]>()));
