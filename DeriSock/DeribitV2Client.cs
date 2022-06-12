@@ -10,6 +10,8 @@ using System.Linq;
 using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
+
+using DeriSock.Constants;
 using DeriSock.Converter;
 using DeriSock.JsonRpc;
 using DeriSock.Model;
@@ -30,12 +32,12 @@ public class DeribitV2Client : IWebSocketStateInfo
   /// <summary>
   /// The AccessToken received from the server after authentication
   /// </summary>
-  public string AccessToken { get; private set; }
+  public string? AccessToken { get; private set; }
 
   /// <summary>
   /// The RefreshToken received from the server after authentication
   /// </summary>
-  public string RefreshToken { get; private set; }
+  public string? RefreshToken { get; private set; }
 
   /// <inheritdoc />
   public WebSocketState State => _client.State;
@@ -44,10 +46,10 @@ public class DeribitV2Client : IWebSocketStateInfo
   public WebSocketCloseStatus? CloseStatus => _client.CloseStatus;
 
   /// <inheritdoc />
-  public string CloseStatusDescription => _client.CloseStatusDescription;
+  public string? CloseStatusDescription => _client.CloseStatusDescription;
 
   /// <inheritdoc />
-  public Exception Error => _client.Error;
+  public Exception? Error => _client.Error;
 
   /// <summary>
   /// Creates a new <see cref="DeribitV2Client"/> instance
@@ -55,14 +57,14 @@ public class DeribitV2Client : IWebSocketStateInfo
   /// <param name="endpointType">The network type. Productive or Testnet</param>
   /// <param name="logger">The logger to be used. Uses a default logger if <c>null</c></param>
   /// <exception cref="ArgumentOutOfRangeException">Throws an exception if the <paramref name="endpointType"/> is not recognized</exception>
-  public DeribitV2Client(DeribitEndpointType endpointType, ILogger logger = null)
+  public DeribitV2Client(DeribitEndpointType endpointType, ILogger? logger = null)
   {
     _logger = logger ?? Log.Logger;
 
     _client = endpointType switch
     {
-      DeribitEndpointType.Productive => JsonRpcClientFactory.Create(new Uri("wss://www.deribit.com/ws/api/v2"), _logger),
-      DeribitEndpointType.Testnet => JsonRpcClientFactory.Create(new Uri("wss://test.deribit.com/ws/api/v2"), _logger),
+      DeribitEndpointType.Productive => JsonRpcClientFactory.Create(new Uri(Endpoint.Productive), _logger),
+      DeribitEndpointType.Testnet => JsonRpcClientFactory.Create(new Uri(Endpoint.TestNet), _logger),
       _ => throw new ArgumentOutOfRangeException(nameof(endpointType), endpointType, "Unsupported endpoint type"),
     };
 
@@ -75,12 +77,12 @@ public class DeribitV2Client : IWebSocketStateInfo
   /// <summary>
   /// Occurs when the client is connected to the server
   /// </summary>
-  public event EventHandler Connected;
+  public event EventHandler? Connected;
 
   /// <summary>
   /// Occurs when the client disconnects from the server
   /// </summary>
-  public event EventHandler<JsonRpcDisconnectEventArgs> Disconnected;
+  public event EventHandler<JsonRpcDisconnectEventArgs>? Disconnected;
 
   /// <summary>
   /// Connects to the server
@@ -123,11 +125,11 @@ public class DeribitV2Client : IWebSocketStateInfo
   {
     if (string.Equals(request.Method, "subscription"))
     {
-      OnNotification(request.Original.ToObject<Notification>());
+      OnNotification(request.Original.ToObject<Notification>()!);
     }
     else if (string.Equals(request.Method, "heartbeat"))
     {
-      OnHeartbeat(request.Original.ToObject<Heartbeat>());
+      OnHeartbeat(request.Original.ToObject<Heartbeat>()!);
     }
     else
     {
@@ -137,7 +139,7 @@ public class DeribitV2Client : IWebSocketStateInfo
 
   private void OnHeartbeat(Heartbeat heartbeat)
   {
-    if (_logger?.IsEnabled(LogEventLevel.Debug) ?? false)
+    if (_logger.IsEnabled(LogEventLevel.Debug))
     {
       _logger.Debug("OnHeartbeat: {@Heartbeat}", heartbeat);
     }
@@ -150,14 +152,14 @@ public class DeribitV2Client : IWebSocketStateInfo
 
   private void OnNotification(Notification notification)
   {
-    if (_logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
+    if (_logger.IsEnabled(LogEventLevel.Verbose))
       _logger.Verbose("OnNotification: {@Notification}", notification);
 
     const int retryDelay = 5;
     const int maxRetries = 10;
     var retryCount = 0;
 
-    Action<Notification>[] callbacks = null;
+    var callbacks = Array.Empty<Action<Notification>>();
 
     do {
       callbacks = _subscriptionManager.GetCallbacks(notification.Channel);
@@ -184,8 +186,8 @@ public class DeribitV2Client : IWebSocketStateInfo
         Task.Run(() => callback(notification));
       }
       catch (Exception ex) {
-        if (_logger?.IsEnabled(LogEventLevel.Error) ?? false)
-          _logger?.Error(ex, "OnNotification: Error during event callback call: {@Notification}", notification);
+        if (_logger.IsEnabled(LogEventLevel.Error))
+          _logger.Error(ex, "OnNotification: Error during event callback call: {@Notification}", notification);
       }
     }
   }
@@ -224,7 +226,7 @@ public class DeribitV2Client : IWebSocketStateInfo
       _subscriptionMap = new SortedDictionary<string, SubscriptionEntry>();
     }
 
-    public async Task<SubscriptionToken> Subscribe(ISubscriptionChannel channel, Action<Notification> callback)
+    public async Task<SubscriptionToken> Subscribe(ISubscriptionChannel channel, Action<Notification>? callback)
     {
       if (callback == null)
       {
@@ -232,7 +234,7 @@ public class DeribitV2Client : IWebSocketStateInfo
       }
 
       var channelName = channel.ToChannelName();
-      TaskCompletionSource<SubscriptionToken> taskSource = null;
+      TaskCompletionSource<SubscriptionToken>? taskSource = null;
       SubscriptionEntry entry;
 
       lock (_subscriptionMap)

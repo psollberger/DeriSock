@@ -1,4 +1,4 @@
-﻿namespace DeriSock.JsonRpc;
+namespace DeriSock.JsonRpc;
 
 using System;
 using Newtonsoft.Json;
@@ -27,19 +27,19 @@ public class JsonRpcResponse<T> : JsonRpcResponse
 public class JsonRpcResponse
 {
   [JsonIgnore]
-  public string Original { get; set; }
+  public string? Original { get; set; }
 
   [JsonProperty("jsonrpc")]
-  public string JsonRpc { get; set; }
+  public string JsonRpc { get; set; } = null!;
 
   [JsonProperty("id")]
   public int Id { get; set; }
 
   [JsonProperty("result")]
-  public JToken Result { get; set; }
+  public JToken Result { get; set; } = null!;
 
   [JsonProperty("error")]
-  public JsonRpcError Error { get; set; }
+  public JsonRpcError? Error { get; set; }
 
   public JsonRpcResponse<T> CreateTyped<T>(T value)
   {

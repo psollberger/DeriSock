@@ -1,104 +1,87 @@
-﻿namespace DeriSock.JsonRpc;
+namespace DeriSock.JsonRpc;
 
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Net.WebSockets;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+
 using DeriSock.Utils;
+using DeriSock.WebSocket;
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+
 using Serilog;
 using Serilog.Events;
 
 internal class JsonRpcClient : IJsonRpcClient
 {
-  protected readonly ILogger Logger;
+  protected readonly ILogger? Logger;
   protected readonly RequestIdGenerator RequestIdGenerator = new();
   protected readonly RequestManager RequestMgr;
-  protected Thread ProcessReceiveThread;
-  protected CancellationTokenSource ReceiveCancellationTokenSource;
 
-  protected IWebSocket Socket;
+  protected ITextMessageWebSocket Socket;
 
-  public JsonRpcClient(Uri serverUri, ILogger logger)
+  public JsonRpcClient(Uri serverUri, ILogger? logger)
   {
     ServerUri = serverUri;
     Logger = logger;
     RequestMgr = new RequestManager();
+    Socket = TextMessageWebSocketFactory.Create(logger);
+
+    Socket.MessageReceived += (_, e) => InternalOnMessageReceived(e.Message);
+    Socket.ConnectionClosed += (_, e) => InternalOnDisconnected(new JsonRpcDisconnectEventArgs(e.CloseStatus, e.CloseStatusDescription, e.Error));
   }
 
-  public event EventHandler Connected;
-  public event EventHandler<JsonRpcDisconnectEventArgs> Disconnected;
-  public event EventHandler<JsonRpcRequest> RequestReceived;
+  public event EventHandler? Connected;
+  public event EventHandler<JsonRpcDisconnectEventArgs>? Disconnected;
+  public event EventHandler<JsonRpcRequest>? RequestReceived;
 
   public Uri ServerUri { get; }
 
-  public WebSocketState State => Socket?.State ?? WebSocketState.Closed;
+  public WebSocketState State => Socket.State;
   public WebSocketCloseStatus? CloseStatus { get; protected set; }
-  public string CloseStatusDescription { get; protected set; }
-  public Exception Error { get; protected set; }
+  public string? CloseStatusDescription { get; protected set; }
+  public Exception? Error { get; protected set; }
 
   /// <inheritdoc />
   public virtual async Task Connect()
   {
-    if (Socket != null)
-    {
+    if (Socket.State is not (WebSocketState.Closed or WebSocketState.None))
       throw new JsonRpcAlreadyConnectedException();
-    }
 
-    Socket?.Dispose();
     RequestMgr.Reset();
 
-    ReceiveCancellationTokenSource = new CancellationTokenSource();
-
     if (Logger?.IsEnabled(LogEventLevel.Information) ?? false)
-    {
       Logger.Information("Connecting to {Host}", ServerUri);
-    }
 
-    Socket = WebSocketFactory.Create();
-    try
-    {
+    try {
       await Socket.ConnectAsync(ServerUri, CancellationToken.None).ConfigureAwait(false);
     }
-    catch (Exception ex)
-    {
+    catch (Exception ex) {
       Logger?.Error(ex, "Exception during ConnectAsync");
-      Socket.Dispose();
-      Socket = null;
       throw;
     }
 
-    InternalOnConnected();
+    if (Logger?.IsEnabled(LogEventLevel.Information) ?? false)
+      Logger?.Information("Connection established");
+
+    _ = Task.Run(OnConnected).ConfigureAwait(false);
   }
 
   /// <inheritdoc />
   public virtual async Task Disconnect()
   {
-    if (Socket == null || Socket.State != WebSocketState.Open)
-    {
+    if (Socket is not { State: WebSocketState.Open })
       throw new JsonRpcNotConnectedException();
-    }
 
     if (Logger?.IsEnabled(LogEventLevel.Information) ?? false)
-    {
       Logger.Information("Disconnecting from {Host}", ServerUri);
-    }
-
-    //Shutdown processing Threads
-    ReceiveCancellationTokenSource.Cancel();
-    ProcessReceiveThread.Join();
 
     if (Socket.State == WebSocketState.Open)
-    {
-      await Socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "user close", CancellationToken.None);
-    }
-
-    Socket?.Dispose();
-    Socket = null;
+      await Socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "user_close", CancellationToken.None);
   }
 
   /// <inheritdoc />
@@ -110,15 +93,9 @@ internal class JsonRpcClient : IJsonRpcClient
     };
 
     if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
-    {
       Logger.Verbose("Send: {@Request}", request);
-    }
 
-    Socket.SendAsync(
-      new ArraySegment<byte>(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(request, Formatting.None))),
-      WebSocketMessageType.Text,
-      true,
-      CancellationToken.None).GetAwaiter().GetResult();
+    Socket.SendMessageAsync(JsonConvert.SerializeObject(request, Formatting.None), CancellationToken.None);
   }
 
   /// <inheritdoc />
@@ -130,18 +107,12 @@ internal class JsonRpcClient : IJsonRpcClient
     };
 
     if (Logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
-    {
       Logger.Verbose("SendAsync: {@Request}", request);
-    }
 
     var taskSource = new TaskCompletionSource<JsonRpcResponse>();
     RequestMgr.Add(request.Id, request, taskSource);
 
-    _ = Socket.SendAsync(
-      new ArraySegment<byte>(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(request, Formatting.None))),
-      WebSocketMessageType.Text,
-      true,
-      CancellationToken.None);
+    _ = Socket.SendMessageAsync(JsonConvert.SerializeObject(request, Formatting.None), CancellationToken.None);
 
     return taskSource.Task;
   }
@@ -161,124 +132,10 @@ internal class JsonRpcClient : IJsonRpcClient
     RequestReceived?.Invoke(this, request);
   }
 
-  protected virtual void CollectMessages()
-  {
-    var msgBuffer = new byte[0x1000];
-    var msgSegment = new ArraySegment<byte>(msgBuffer);
-    var msgBuilder = new StringBuilder();
-
-    var verboseDebugEnabled = Logger?.IsEnabled(LogEventLevel.Verbose) ?? false;
-    var msgRecvStart = DateTime.MinValue;
-
-    try
-    {
-      while (!ReceiveCancellationTokenSource.IsCancellationRequested)
-      {
-        if (Socket == null || Socket.State != WebSocketState.Open)
-        {
-          if (Logger?.IsEnabled(LogEventLevel.Debug) ?? false)
-          {
-            Logger?.Debug("ProcessReceive: Socket null or not connected");
-          }
-
-          continue;
-        }
-
-        try
-        {
-          var receiveResult = Socket.ReceiveAsync(msgSegment, ReceiveCancellationTokenSource.Token).GetAwaiter().GetResult();
-
-          if (verboseDebugEnabled && msgRecvStart == DateTime.MinValue)
-          {
-            msgRecvStart = DateTime.Now;
-          }
-
-          if (receiveResult.MessageType == WebSocketMessageType.Close)
-          {
-            if (Logger?.IsEnabled(LogEventLevel.Debug) ?? false)
-            {
-              Logger.Debug("ProcessReceive: The host closed the connection ({Status}: {StatusDescription})", receiveResult.CloseStatus, receiveResult.CloseStatusDescription);
-            }
-
-            InternalOnDisconnected(new JsonRpcDisconnectEventArgs(
-              receiveResult.CloseStatus ?? WebSocketCloseStatus.Empty,
-              receiveResult.CloseStatusDescription, null));
-            break;
-          }
-
-          msgBuilder.Append(Encoding.UTF8.GetString(msgBuffer, 0, receiveResult.Count));
-          if (!receiveResult.EndOfMessage)
-          {
-            continue;
-          }
-
-          var message = msgBuilder.ToString();
-
-          if (verboseDebugEnabled)
-          {
-            var msgRecvDiff = DateTime.Now.Subtract(msgRecvStart);
-            msgRecvStart = DateTime.MinValue;
-
-            Logger.Verbose(
-              "ProcessReceive: Received Message ({Size} ; {Duration:N3}ms): {@Message}",
-              Encoding.UTF8.GetByteCount(message), msgRecvDiff.TotalMilliseconds, message);
-          }
-
-          if (!string.IsNullOrEmpty(message))
-          {
-            InternalOnMessageReceived(message);
-          }
-
-          msgBuilder.Clear();
-        }
-        catch (OperationCanceledException) when (ReceiveCancellationTokenSource.IsCancellationRequested)
-        {
-          if (Logger?.IsEnabled(LogEventLevel.Debug) ?? false)
-          {
-            Logger?.Debug("ProcessReceive: Valid manual cancellation");
-          }
-
-          InternalOnDisconnected(new JsonRpcDisconnectEventArgs(WebSocketCloseStatus.NormalClosure, "user close", null));
-          break;
-        }
-        catch (Exception ex)
-        {
-          Logger?.Error(ex, "ProcessReceive: Connection closed by unknown error");
-          //Fixing #18: When using close status code 'Empty' the description must be null
-          InternalOnDisconnected(new JsonRpcDisconnectEventArgs(WebSocketCloseStatus.Empty, null, ex));
-          break;
-        }
-      }
-    }
-    finally
-    {
-      Logger?.Debug("ProcessReceive: Leaving");
-    }
-  }
-
-  protected virtual void InternalOnConnected()
-  {
-    if (Logger?.IsEnabled(LogEventLevel.Information) ?? false)
-    {
-      Logger.Information("Connected. Start collecting messages");
-    }
-
-    //Start processing Threads
-    ProcessReceiveThread = new Thread(CollectMessages)
-    {
-      Name = "ProcessReceive"
-    };
-    ProcessReceiveThread.Start();
-
-    Task.Factory.StartNew(OnConnected);
-  }
-
   protected virtual void InternalOnDisconnected(JsonRpcDisconnectEventArgs args)
   {
     if (Logger?.IsEnabled(LogEventLevel.Debug) ?? false)
-    {
-      Logger.Debug("Disconnected");
-    }
+      Logger?.Debug("Disconnected");
 
     CloseStatus = args.CloseStatus;
     CloseStatusDescription = args.CloseStatusDescription;
@@ -286,35 +143,20 @@ internal class JsonRpcClient : IJsonRpcClient
 
     // After a disconnect, do not call Socket.CloseAsync unless the socket state is Open, CloseReceived or CloseSent
     if (args.Exception != null && Socket.State is WebSocketState.Open or WebSocketState.CloseReceived or WebSocketState.CloseSent)
-    {
       Socket.CloseAsync(args.CloseStatus, args.CloseStatusDescription, CancellationToken.None).GetAwaiter().GetResult();
-    }
 
-    Socket?.Dispose();
-    Socket = null;
-
-    Task.Factory.StartNew(a =>
-    {
-      OnDisconnected((JsonRpcDisconnectEventArgs)a);
-    }, args);
+    Task.Run(() => OnDisconnected(args)).ConfigureAwait(false);
   }
 
   protected virtual void InternalOnMessageReceived(string message)
   {
-    var jObject = (JObject)JsonConvert.DeserializeObject(message);
-    if (jObject == null)
-    {
+    if (JsonConvert.DeserializeObject(message) is not JObject jObject)
       return;
-    }
 
     if (jObject.TryGetValue("method", out _))
-    {
       InternalOnRequestReceived(message, jObject);
-    }
     else
-    {
       InternalOnResponseReceived(message, jObject);
-    }
   }
 
   protected virtual void InternalOnRequestReceived(string message, JObject requestObject)
@@ -322,10 +164,7 @@ internal class JsonRpcClient : IJsonRpcClient
     var request = requestObject.ToObject<JsonRpcRequest>();
     Debug.Assert(request != null, nameof(request) + " != null");
     request.Original = requestObject;
-    Task.Factory.StartNew(req =>
-    {
-      OnRequestReceived((JsonRpcRequest)req);
-    }, request);
+    Task.Run(() => OnRequestReceived(request)).ConfigureAwait(false);
   }
 
   protected virtual void InternalOnResponseReceived(string message, JObject responseObject)
@@ -335,30 +174,23 @@ internal class JsonRpcClient : IJsonRpcClient
     response.Original = message;
 
     if (response.Id > 0)
-    {
-      Task.Factory.StartNew(res =>
-      {
-        var r = (JsonRpcResponse)res;
-        if (!RequestMgr.TryRemove(r.Id, out var request, out var taskSource))
+      Task.Factory.StartNew(
+        res =>
         {
-          if (Logger?.IsEnabled(LogEventLevel.Warning) ?? false)
-          {
-            Logger.Warning("Could not find request id {reqId}", r.Id);
+          var r = (JsonRpcResponse)res;
+
+          if (!RequestMgr.TryRemove(r.Id, out var request, out var taskSource)) {
+            if (Logger?.IsEnabled(LogEventLevel.Warning) ?? false)
+              Logger?.Warning("Could not find request id {reqId}", r.Id);
+
+            return;
           }
 
-          return;
-        }
-
-        if (r.Error != null)
-        {
-          taskSource.SetException(new JsonRpcRequestException(request, r));
-        }
-        else
-        {
-          taskSource.SetResult(r);
-        }
-      }, response);
-    }
+          if (r.Error != null)
+            taskSource!.SetException(new JsonRpcRequestException(request, r));
+          else
+            taskSource!.SetResult(r);
+        }, response);
   }
 
   internal class RequestManager
@@ -378,7 +210,7 @@ internal class JsonRpcClient : IJsonRpcClient
       _requestObjects[id] = request;
     }
 
-    public bool TryRemove(int id, out JsonRpcRequest request, out TaskCompletionSource<JsonRpcResponse> taskSource)
+    public bool TryRemove(int id, out JsonRpcRequest request, out TaskCompletionSource<JsonRpcResponse>? taskSource)
     {
       taskSource = null;
       return _requestObjects.TryRemove(id, out request) && _taskSources.TryRemove(id, out taskSource);

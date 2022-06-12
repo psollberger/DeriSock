@@ -1,4 +1,4 @@
-﻿namespace DeriSock.JsonRpc;
+namespace DeriSock.JsonRpc;
 
 using System;
 using System.Net.WebSockets;
@@ -21,10 +21,10 @@ public interface IWebSocketStateInfo
   /// <summary>
   ///   Can contain a description about the reason of a disconnect
   /// </summary>
-  string CloseStatusDescription { get; }
+  string? CloseStatusDescription { get; }
 
   /// <summary>
   ///   Can contain a Exception that occurred when the WebSocket disconnected
   /// </summary>
-  Exception Error { get; }
+  Exception? Error { get; }
 }

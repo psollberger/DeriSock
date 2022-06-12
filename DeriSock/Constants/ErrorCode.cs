@@ -14,36 +14,28 @@ public sealed class ErrorCode
 
   public static ErrorCode PriceTooLowLimit = new(10005, "price_too_low<Limit>", "Price is too low, <Limit> defines current limit for the operation.");
 
-  public static ErrorCode PriceTooLowForIndex = new(10006, "price_too_low4idx <Limit>",
-    "Price is too low for current index, <Limit> defines current bottom limit for the operation.");
+  public static ErrorCode PriceTooLowForIndex = new(10006, "price_too_low4idx <Limit>", "Price is too low for current index, <Limit> defines current bottom limit for the operation.");
 
   public static ErrorCode PriceTooHighLimit = new(10007, "price_too_high <Limit>", "Price is too high, <Limit> defines current up limit for the operation.");
 
-  public static ErrorCode PriceTooHigh4Index = new(10008, "price_too_high4idx <Limit>",
-    "Price is too high for current index, <Limit> defines current up limit for the operation.");
+  public static ErrorCode PriceTooHigh4Index = new(10008, "price_too_high4idx <Limit>", "Price is too high for current index, <Limit> defines current up limit for the operation.");
 
   public static ErrorCode NotEnoughFunds = new(10009, "not_enough_funds", "Account has not enough funds for the operation.");
   public static ErrorCode AlreadyClosed = new(10010, "already_closed", "Attempt of doing something with closed order.");
   public static ErrorCode PriceNotAllowed = new(10011, "price_not_allowed", "This price is not allowed for some reason.");
   public static ErrorCode BookClosed = new(10012, "book_closed", "Operation for instrument which order book had been closed.");
 
-  public static ErrorCode PmeMaxTotalOpenOrdersLimit = new(10013, "pme_max_total_open_orders <Limit>",
-    "Total limit of open orders has been exceeded, it is applicable for PME users.");
+  public static ErrorCode PmeMaxTotalOpenOrdersLimit = new(10013, "pme_max_total_open_orders <Limit>", "Total limit of open orders has been exceeded, it is applicable for PME users.");
 
-  public static ErrorCode PmeMaxFutureOpenOrdersLimit = new(10014, "pme_max_future_open_orders <Limit>",
-    "Limit of count of futures' open orders has been exceeded, it is applicable for PME users.");
+  public static ErrorCode PmeMaxFutureOpenOrdersLimit = new(10014, "pme_max_future_open_orders <Limit>", "Limit of count of futures' open orders has been exceeded, it is applicable for PME users.");
 
-  public static ErrorCode PmeMaxOptionOpenOrdersLimit = new(10015, "pme_max_option_open_orders <Limit>",
-    "Limit of count of options' open orders has been exceeded, it is applicable for PME users.");
+  public static ErrorCode PmeMaxOptionOpenOrdersLimit = new(10015, "pme_max_option_open_orders <Limit>", "Limit of count of options' open orders has been exceeded, it is applicable for PME users.");
 
-  public static ErrorCode PmeMaxFutureOpenOrdersSizeLimit = new(10016, "pme_max_future_open_orders_size <Limit>",
-    "Limit of size for futures has been exceeded, it is applicable for PME users.");
+  public static ErrorCode PmeMaxFutureOpenOrdersSizeLimit = new(10016, "pme_max_future_open_orders_size <Limit>", "Limit of size for futures has been exceeded, it is applicable for PME users.");
 
-  public static ErrorCode PmeMaxOptionOpenOrdersSizeLimit = new(10017, "pme_max_option_open_orders_size <Limit>",
-    "Limit of size for options has been exceeded, it is applicable for PME users.");
+  public static ErrorCode PmeMaxOptionOpenOrdersSizeLimit = new(10017, "pme_max_option_open_orders_size <Limit>", "Limit of size for options has been exceeded, it is applicable for PME users.");
 
-  public static ErrorCode NonPmeMaxFuturePositionSizeLimit = new(10018, "non_pme_max_future_position_size <Limit>",
-    "Limit of size for futures has been exceeded, it is applicable for non-PME users.");
+  public static ErrorCode NonPmeMaxFuturePositionSizeLimit = new(10018, "non_pme_max_future_position_size <Limit>", "Limit of size for futures has been exceeded, it is applicable for non-PME users.");
 
   public static ErrorCode LockedByAdmin = new(10019, "locked_by_admin", "Trading is temporary locked by admin.");
   public static ErrorCode InvalidOrUnsupportedInstrument = new(10020, "invalid_or_unsupported_instrument", "Instrument name is not valid.");
@@ -67,8 +59,7 @@ public sealed class ErrorCode
   public static ErrorCode InvalidMaxShowAmount = new(10036, "invalid_max_show_amount", "Max Show Amount is not valid.");
   public static ErrorCode Retry = new(10040, "retry", "Request can't be processed right now and should be retried.");
 
-  public static ErrorCode SettlementInProgress = new(10041, "settlement_in_progress",
-    "Settlement is in progress. Every day at settlement time for several seconds, the system calculates user profits and updates balances. That time trading is paused for several seconds till the calculation is completed.");
+  public static ErrorCode SettlementInProgress = new(10041, "settlement_in_progress", "Settlement is in progress. Every day at settlement time for several seconds, the system calculates user profits and updates balances. That time trading is paused for several seconds till the calculation is completed.");
 
   public static ErrorCode PriceWrongTick = new(10043, "price_wrong_tick", "Price has to be rounded to a certain tick size.");
   public static ErrorCode StopPriceWrongTick = new(10044, "stop_price_wrong_tick", "Stop Price has to be rounded to a certain tick size.");
@@ -84,11 +75,9 @@ public sealed class ErrorCode
   public static ErrorCode AlreadyFilled = new(11008, "already_filled", "This request is not allowed in regards to the filled order.");
   public static ErrorCode InvalidArguments = new(11029, "invalid_arguments", "Some invalid input has been detected.");
 
-  public static ErrorCode OtherReject = new(11030, "other_reject <Reason>",
-    "Some rejects which are not considered as very often, more info may be specified in <Reason>.");
+  public static ErrorCode OtherReject = new(11030, "other_reject <Reason>", "Some rejects which are not considered as very often, more info may be specified in <Reason>.");
 
-  public static ErrorCode OtherError = new(11031, "other_error <Error>",
-    "Some errors which are not considered as very often, more info may be specified in <Error>.");
+  public static ErrorCode OtherError = new(11031, "other_error <Error>", "Some errors which are not considered as very often, more info may be specified in <Error>.");
 
   public static ErrorCode NoMoreStops = new(11035, "no_more_stops <Limit>", "Allowed amount of stop orders has been exceeded.");
 
@@ -104,8 +93,7 @@ public sealed class ErrorCode
   public static ErrorCode NotOpenOrder = new(11044, "not_open_order", "Attempt to do open order operations with the not open order.");
   public static ErrorCode InvalidEvent = new(11045, "invalid_event", "Event name has not been recognized.");
 
-  public static ErrorCode OutdatedInstrument = new(11046, "outdated_instrument",
-    "At several minutes to instrument expiration, corresponding advanced implied volatility orders are not allowed.");
+  public static ErrorCode OutdatedInstrument = new(11046, "outdated_instrument", "At several minutes to instrument expiration, corresponding advanced implied volatility orders are not allowed.");
 
   public static ErrorCode UnsupportedArgumentCombination = new(11047, "unsupported_arg_combination", "The specified combination of arguments is not supported.");
 
@@ -114,8 +102,7 @@ public sealed class ErrorCode
   public static ErrorCode BadRequest = new(11050, "bad_request", "Request has not been parsed properly.");
   public static ErrorCode SystemMaintenance = new(11051, "system_maintenance", "System is under maintenance.");
 
-  public static ErrorCode SubscribeErrorUnsubscribed = new(11052, "subscribe_error_unsubscribed",
-    "Subscription error. However, subscription may fail without this error, please check list of subscribed channels returned, as some channels can be not subscribed due to wrong input or lack of permissions.");
+  public static ErrorCode SubscribeErrorUnsubscribed = new(11052, "subscribe_error_unsubscribed", "Subscription error. However, subscription may fail without this error, please check list of subscribed channels returned, as some channels can be not subscribed due to wrong input or lack of permissions.");
 
   public static ErrorCode TransferNotFound = new(11053, "transfer_not_found", "Specified transfer is not found.");
   public static ErrorCode InvalidAddress = new(11090, "invalid_addr", "Invalid address.");
@@ -123,8 +110,7 @@ public sealed class ErrorCode
   public static ErrorCode AddressAlreadyExist = new(11092, "address_already_exist", "The address already exists.");
   public static ErrorCode MaxAddressCountExceeded = new(11093, "max_addr_count_exceeded", "Limit of allowed addresses has been reached.");
 
-  public static ErrorCode InternalServerError = new(11094, "internal_server_error",
-    "Some unhandled error on server. Please report to admin. The details of the request will help to locate the problem.");
+  public static ErrorCode InternalServerError = new(11094, "internal_server_error", "Some unhandled error on server. Please report to admin. The details of the request will help to locate the problem.");
 
   public static ErrorCode DisabledDepositAddressCreation = new(11095, "disabled_deposit_address_creation", "Deposit address creation has been disabled by admin.");
 
@@ -150,8 +136,7 @@ public sealed class ErrorCode
   public static ErrorCode UserNotFound = new(13007, "user_not_found", "User's security code has been changed or wrong.");
   public static ErrorCode RequestFailed = new(13008, "request_failed", "Request failed because of invalid input or internal failure.");
 
-  public static ErrorCode Unauthorized = new(13009, "unauthorized",
-    "Wrong or expired authorization token or bad signature. For example, please check scope of the token, \"connection\" scope can't be reused for other connections.");
+  public static ErrorCode Unauthorized = new(13009, "unauthorized", "Wrong or expired authorization token or bad signature. For example, please check scope of the token, \"connection\" scope can't be reused for other connections.");
 
   public static ErrorCode ValueRequired = new(13010, "value_required", "Invalid input, missing value.");
   public static ErrorCode ValueTooShort = new(13011, "value_too_short", "Input is too short.");

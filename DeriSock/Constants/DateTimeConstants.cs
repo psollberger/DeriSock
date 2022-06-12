@@ -1,8 +1,8 @@
-﻿namespace DeriSock.Constants;
+namespace DeriSock.Constants;
 
 using System;
 
-internal static class DateTimeConsts
+internal static class DateTimeConstants
 {
 #if NETFRAMEWORK
   public static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);

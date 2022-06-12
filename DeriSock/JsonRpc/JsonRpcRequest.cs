@@ -1,4 +1,4 @@
-﻿namespace DeriSock.JsonRpc;
+namespace DeriSock.JsonRpc;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -6,7 +6,7 @@ using Newtonsoft.Json.Linq;
 public class JsonRpcRequest
 {
   [JsonIgnore]
-  public JObject Original { get; set; }
+  public JObject Original { get; set; } = null!;
 
   [JsonProperty("jsonrpc")]
   public string JsonRpc { get; set; } = "2.0";

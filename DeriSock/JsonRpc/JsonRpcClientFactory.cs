@@ -1,4 +1,4 @@
-﻿namespace DeriSock.JsonRpc;
+namespace DeriSock.JsonRpc;
 
 using System;
 using Serilog;
@@ -8,7 +8,7 @@ using Serilog;
 /// </summary>
 public static class JsonRpcClientFactory
 {
-  private static IJsonRpcClientFactory _factory;
+  private static IJsonRpcClientFactory? _factory;
 
   /// <summary>
   ///   Inject a custom <see cref="IJsonRpcClientFactory" />
@@ -27,6 +27,6 @@ public static class JsonRpcClientFactory
   /// <returns>An <see cref="IJsonRpcClient" /> instance</returns>
   public static IJsonRpcClient Create(Uri serverUri, ILogger logger)
   {
-    return _factory != null ? _factory.Create(serverUri) : new JsonRpcClient(serverUri, logger);
+    return _factory?.Create(serverUri) ?? new JsonRpcClient(serverUri, logger);
   }
 }

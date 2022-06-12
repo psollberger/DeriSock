@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+
 using DeriSock.Constants;
 
 /// <summary>
@@ -42,7 +43,7 @@ public static class HelperExtensions
   public static long AsMilliseconds(this DateTime dateTime)
   {
     dateTime = dateTime.ToUniversalTime();
-    return (long)dateTime.Subtract(DateTimeConsts.UnixEpoch).TotalMilliseconds;
+    return (long)dateTime.Subtract(DateTimeConstants.UnixEpoch).TotalMilliseconds;
   }
 
   /// <summary>

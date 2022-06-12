@@ -1,4 +1,4 @@
-﻿namespace DeriSock.Console
+namespace DeriSock.Console
 {
   using System;
   using System.IO;
@@ -40,8 +40,7 @@
       const string logFilePath = @"C:\Temp\Serilog\test-log-.txt";
       Directory.CreateDirectory(Path.GetDirectoryName(logFilePath));
 
-      //const string outputTemplateLongLevelName = "{Timestamp:yyyy-MM-dd HH:mm:ss.fffffff} [{Level,-11:u}] {Message:lj}{NewLine}{Exception}";
-      const string outputTemplateShortLevelName = "{Timestamp:yyyy-MM-dd HH:mm:ss.fffffff} [{Level:u3}] {Message:lj}{NewLine}{Exception}";
+      const string outputTemplateShortLevelName = "{Timestamp:yyyy-MM-dd HH:mm:ss.ffff} [{Level:u3}] {Message:lj}{NewLine}{Exception}";
 
       Log.Logger = new LoggerConfiguration()
         .MinimumLevel.Verbose()
@@ -104,7 +103,7 @@
       Log.Logger.Information("");
       Log.Logger.Information("");
       Log.Logger.Information("");
-      Log.Logger.Information("Drücksch du Taschtä für fertig ...");
+      Log.Logger.Information("Press return key to close ...");
       Console.ReadKey();
 
       return 0;
