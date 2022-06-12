@@ -1,4 +1,4 @@
-﻿// ReSharper disable UnusedMember.Local
+// ReSharper disable UnusedMember.Local
 // ReSharper disable InheritdocConsiderUsage
 namespace DeriSock;
 
@@ -6,7 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Dynamic;
+using System.Linq;
 using System.Net.WebSockets;
+using System.Threading;
 using System.Threading.Tasks;
 using DeriSock.Converter;
 using DeriSock.JsonRpc;
@@ -149,34 +151,41 @@ public class DeribitV2Client : IWebSocketStateInfo
   private void OnNotification(Notification notification)
   {
     if (_logger?.IsEnabled(LogEventLevel.Verbose) ?? false)
-    {
       _logger.Verbose("OnNotification: {@Notification}", notification);
-    }
 
-    var callbacks = _subscriptionManager.GetCallbacks(notification.Channel);
+    const int retryDelay = 5;
+    const int maxRetries = 10;
+    var retryCount = 0;
 
-    if (callbacks == null)
-    {
+    Action<Notification>[] callbacks = null;
+
+    do {
+      callbacks = _subscriptionManager.GetCallbacks(notification.Channel);
+
+      if (callbacks is { Length: > 0 })
+        break;
+
+      if (retryCount == 0 && (_logger?.IsEnabled(LogEventLevel.Debug) ?? false))
+        _logger.Debug("OnNotification: Could not find subscription for notification. Retrying up to {@maxRetries} times", maxRetries);
+
+      Thread.Sleep(retryDelay);
+      retryCount++;
+    } while (retryCount < maxRetries);
+
+    if (callbacks is not { Length: > 0 }) {
       if (_logger?.IsEnabled(LogEventLevel.Warning) ?? false)
-      {
         _logger.Warning("OnNotification: Could not find subscription for notification: {@Notification}", notification);
-      }
 
       return;
     }
 
-    foreach (var cb in callbacks)
-    {
-      try
-      {
-        Task.Factory.StartNew(() => { cb(notification); });
+    foreach (var callback in callbacks) {
+      try {
+        Task.Run(() => callback(notification));
       }
-      catch (Exception ex)
-      {
+      catch (Exception ex) {
         if (_logger?.IsEnabled(LogEventLevel.Error) ?? false)
-        {
           _logger?.Error(ex, "OnNotification: Error during event callback call: {@Notification}", notification);
-        }
       }
     }
   }
@@ -428,18 +437,16 @@ public class DeribitV2Client : IWebSocketStateInfo
       return await taskSource.Task;
     }
 
-    public IEnumerable<Action<Notification>> GetCallbacks(string channel)
+    public Action<Notification>[] GetCallbacks(string channel)
     {
       lock (_subscriptionMap)
       {
-        if (_subscriptionMap.TryGetValue(channel, out var entry))
-        {
-          foreach (var callbackEntry in entry.Callbacks)
-          {
-            yield return callbackEntry.Action;
-          }
+        if (_subscriptionMap.TryGetValue(channel, out var entry)) {
+          return (from c in entry.Callbacks select c.Action).ToArray();
         }
       }
+
+      return null;
     }
 
     public void Reset()
