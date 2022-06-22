@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32319.34
@@ -14,6 +14,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeriSock.Console", "DeriSock.Console\DeriSock.Console.csproj", "{20EDCB3C-F4E4-43FC-99B7-2B2408E0EAC1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{81CCDC57-ACEE-4FE0-A31D-E73697397E06}"
+	ProjectSection(SolutionItems) = preProject
+		.github\dependabot.yml = .github\dependabot.yml
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{4E520EB0-AA19-465D-9868-4E2D41D47C1E}"
 	ProjectSection(SolutionItems) = preProject
