@@ -25,7 +25,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "10_Tests", "10_Tests", "{45D371F7-3267-4929-A020-B729E7A44E75}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeriSock.Tests.Integration", "test\DeriSock.Tests\DeriSock.Tests.Integration\DeriSock.Tests.Integration.csproj", "{7438F452-DD0F-4030-97FE-61BE65AB9282}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeriSock.Tests.Integration", "test\DeriSock.Tests.Integration\DeriSock.Tests.Integration.csproj", "{7438F452-DD0F-4030-97FE-61BE65AB9282}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "20_Projects", "20_Projects", "{48164DAE-1C32-4346-AF5A-5E0DB9929D83}"
 EndProject

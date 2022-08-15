@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\DeriSock\DeriSock.csproj" />
+    <ProjectReference Include="..\..\src\DeriSock\DeriSock.csproj" />
   </ItemGroup>
 
   <ItemGroup>
