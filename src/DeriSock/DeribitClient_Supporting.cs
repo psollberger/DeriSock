@@ -14,7 +14,6 @@ public partial class DeribitClient : ISupportingApi
   ISupportingApi ICategoriesApi.Supporting()
     => this;
 
-
   /// <inheritdoc cref="ISupportingApi.PublicGetTime" />
   public async Task<JsonRpcResponse<DateTime>> PublicGetTime()
   {
