@@ -33,24 +33,24 @@ namespace DeriSock.Api {
     //[System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     //ISubscriptionManagementApi SubscriptionManagement();
 
-    ///// <inheritdoc cref="IAccountManagementApi" />
-    //[System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    //IAccountManagementApi AccountManagement();
+    /// <inheritdoc cref="IAccountManagementApi" />
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    IAccountManagementApi AccountManagement();
 
-    ///// <inheritdoc cref="IBlockTradeApi" />
-    //[System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    //IBlockTradeApi BlockTrade();
+    /// <inheritdoc cref="IBlockTradeApi" />
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    IBlockTradeApi BlockTrade();
 
-    ///// <inheritdoc cref="ITradingApi" />
-    //[System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    //ITradingApi Trading();
+    /// <inheritdoc cref="ITradingApi" />
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    ITradingApi Trading();
 
-    ///// <inheritdoc cref="IMarketDataApi" />
-    //[System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    //IMarketDataApi MarketData();
+    /// <inheritdoc cref="IMarketDataApi" />
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    IMarketDataApi MarketData();
 
-    ///// <inheritdoc cref="IWalletApi" />
-    //[System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    //IWalletApi Wallet();
+    /// <inheritdoc cref="IWalletApi" />
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    IWalletApi Wallet();
   }
 }
