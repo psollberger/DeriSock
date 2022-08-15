@@ -140,7 +140,7 @@ public partial class DeribitClient : IWebSocketStateInfo, IPrivateApi, IPublicAp
       _logger.Debug("OnHeartbeat: {@Heartbeat}", heartbeat);
 
     if (heartbeat.Type == "test_request")
-      PublicTest("ok");
+      _ = PublicTest(null);
   }
 
   private void OnNotification(Notification notification)
@@ -152,8 +152,7 @@ public partial class DeribitClient : IWebSocketStateInfo, IPrivateApi, IPublicAp
     const int maxRetries = 10;
     var retryCount = 0;
 
-    var callbacks = Array.Empty<Action<Notification>>();
-
+    Action<Notification>[] callbacks;
     do {
       callbacks = _subscriptionManager.GetCallbacks(notification.Channel);
 
@@ -443,182 +442,6 @@ public partial class DeribitClient : IWebSocketStateInfo, IPrivateApi, IPublicAp
   }
 
 #region API Calls
-
-#region Session management
-
-  /// <summary>
-  ///   <para>
-  ///     Signals the Websocket connection to send and request heartbeats. Heartbeats can be used to detect stale
-  ///     connections.
-  ///     When heartbeats have been set up, the API server will send heartbeat messages and test_request messages.
-  ///     Your software should respond to test_request messages by sending a <see cref="PublicTest" /> request.
-  ///     If your software fails to do so, the API server will immediately close the connection.
-  ///     If your account is configured to cancel on disconnect, any orders opened over the connection will be cancelled.
-  ///   </para>
-  ///   <para>The <see cref="DeribitClient" /> will automatically respond to heartbeats.</para>
-  /// </summary>
-  /// <param name="interval">The heartbeat interval in seconds, but not less than 10</param>
-  public Task<JsonRpcResponse<string>> PublicSetHeartbeat(int interval)
-    => Send(
-      "public/set_heartbeat",
-      new
-      {
-        interval
-      },
-      new ObjectJsonConverter<string>());
-
-  /// <summary>
-  ///   Stop sending heartbeat messages.
-  /// </summary>
-  public Task<JsonRpcResponse<string>> PublicDisableHeartbeat()
-    => Send("public/disable_heartbeat", null, new ObjectJsonConverter<string>());
-
-  /// <summary>
-  ///   <para>
-  ///     Enable Cancel On Disconnect for the connection.
-  ///     After enabling Cancel On Disconnect all orders created by the connection will be removed when connection is closed.
-  ///   </para>
-  ///   <para>
-  ///     NOTICE: It does not affect orders created by other connections - they will remain active!
-  ///   </para>
-  ///   <para>
-  ///     When change is applied for the account, then every newly opened connection will start with active Cancel on
-  ///     Disconnect
-  ///   </para>
-  /// </summary>
-  public Task<JsonRpcResponse<string>> PrivateEnableCancelOnDisconnect()
-    => PrivateEnableCancelOnDisconnect("connection");
-
-  /// <summary>
-  ///   <para>
-  ///     Enable Cancel On Disconnect for the connection.
-  ///     After enabling Cancel On Disconnect all orders created by the connection will be removed when connection is closed.
-  ///   </para>
-  ///   <para>
-  ///     NOTICE: It does not affect orders created by other connections - they will remain active!
-  ///   </para>
-  ///   <para>
-  ///     When change is applied for the account, then every newly opened connection will start with active Cancel on
-  ///     Disconnect
-  ///   </para>
-  /// </summary>
-  /// <param name="scope">
-  ///   Specifies if Cancel On Disconnect change should be applied/checked for the current connection or
-  ///   the account (default - <c>connection</c>)
-  /// </param>
-  public Task<JsonRpcResponse<string>> PrivateEnableCancelOnDisconnect(string scope)
-
-    //TODO: check if private method works without access_token being sent
-    => Send(
-      "private/enable_cancel_on_disconnect",
-      new
-      {
-        scope /*, access_token = AccessToken*/
-      },
-      new ObjectJsonConverter<string>());
-
-  /// <summary>
-  ///   <para>Disable Cancel On Disconnect for the connection.</para>
-  ///   <para>
-  ///     When change is applied for the account, then every newly opened connection will start with inactive Cancel on
-  ///     Disconnect
-  ///   </para>
-  /// </summary>
-  public Task<JsonRpcResponse<string>> PrivateDisableCancelOnDisconnect()
-    => PrivateDisableCancelOnDisconnect("connection");
-
-  /// <summary>
-  ///   <para>Disable Cancel On Disconnect for the connection.</para>
-  ///   <para>
-  ///     When change is applied for the account, then every newly opened connection will start with inactive Cancel on
-  ///     Disconnect
-  ///   </para>
-  /// </summary>
-  /// <param name="scope">
-  ///   Specifies if Cancel On Disconnect change should be applied/checked for the current connection or
-  ///   the account (default - <c>connection</c>)
-  /// </param>
-  public Task<JsonRpcResponse<string>> PrivateDisableCancelOnDisconnect(string scope)
-
-    //TODO: check if private method works without access_token being sent
-    => Send(
-      "private/disable_cancel_on_disconnect",
-      new
-      {
-        scope /*, access_token = AccessToken*/
-      },
-      new ObjectJsonConverter<string>());
-
-  /// <summary>
-  ///   Read current Cancel On Disconnect configuration for the account
-  /// </summary>
-  public Task<JsonRpcResponse<CancelOnDisconnectInfo>> PrivateGetCancelOnDisconnect()
-    => PrivateGetCancelOnDisconnect("connection");
-
-  /// <summary>
-  ///   Read current Cancel On Disconnect configuration for the account
-  /// </summary>
-  /// <param name="scope">
-  ///   Specifies if Cancel On Disconnect change should be applied/checked for the current connection or
-  ///   the account (default - <c>connection</c>)
-  /// </param>
-  public Task<JsonRpcResponse<CancelOnDisconnectInfo>> PrivateGetCancelOnDisconnect(string scope)
-
-    //TODO: check if private method works without access_token being sent
-    => Send(
-      "private/get_cancel_on_disconnect",
-      new
-      {
-        scope /*, access_token = AccessToken*/
-      },
-      new ObjectJsonConverter<CancelOnDisconnectInfo>());
-
-#endregion
-
-#region Supporting
-
-  /// <summary>
-  ///   Retrieves the current time (in milliseconds).
-  ///   This API endpoint can be used to check the clock skew between your software and Deribit's systems.
-  /// </summary>
-  public Task<JsonRpcResponse<DateTime>> PublicGetTime()
-    => Send("public/get_time", null, new TimestampJsonConverter());
-
-  /// <summary>
-  ///   Method used to introduce the client software connected to Deribit platform over websocket.
-  ///   Provided data may have an impact on the maintained connection and will be collected for internal statistical
-  ///   purposes.
-  ///   In response, Deribit will also introduce itself.
-  /// </summary>
-  /// <param name="clientName">Client software name</param>
-  /// <param name="clientVersion">Client software version</param>
-  public Task<JsonRpcResponse<ServerHello>> PublicHello(string clientName, string clientVersion)
-    => Send(
-      "public/hello",
-      new
-      {
-        client_name = clientName, client_version = clientVersion
-      },
-      new ObjectJsonConverter<ServerHello>());
-
-  /// <summary>
-  ///   Tests the connection to the API server, and returns its version.
-  ///   You can use this to make sure the API is reachable, and matches the expected version.
-  /// </summary>
-  /// <param name="expectedResult">
-  ///   The value "exception" will trigger an error response. This may be useful for testing
-  ///   wrapper libraries.
-  /// </param>
-  public Task<JsonRpcResponse<ServerHello>> PublicTest(string expectedResult)
-    => Send(
-      "public/test",
-      new
-      {
-        expected_result = expectedResult
-      },
-      new ObjectJsonConverter<ServerHello>());
-
-#endregion
 
 #region Account management
 

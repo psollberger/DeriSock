@@ -25,9 +25,9 @@ namespace DeriSock.Api {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     ISessionManagementApi SessionManagement();
 
-    ///// <inheritdoc cref="ISupportingApi" />
-    //[System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    //ISupportingApi Supporting();
+    /// <inheritdoc cref="ISupportingApi" />
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    ISupportingApi Supporting();
 
     ///// <inheritdoc cref="ISubscriptionManagementApi" />
     //[System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]

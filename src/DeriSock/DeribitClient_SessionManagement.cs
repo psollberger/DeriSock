@@ -19,6 +19,12 @@ public partial class DeribitClient : ISessionManagementApi
     return await Send("public/set_heartbeat", args, new ObjectJsonConverter<string?>()).ConfigureAwait(false);
   }
 
+  /// <inheritdoc cref="ISessionManagementApi.PublicDisableHeartbeat" />
+  public async Task<JsonRpcResponse<string?>> PublicDisableHeartbeat()
+  {
+    return await Send("public/disable_heartbeat", null, new ObjectJsonConverter<string?>()).ConfigureAwait(false);
+  }
+
   /// <inheritdoc cref="ISessionManagementApi.PrivateEnableCancelOnDisconnect" />
   public async Task<JsonRpcResponse<string?>> PrivateEnableCancelOnDisconnect(PrivateEnableCancelOnDisconnectRequest? args)
   {
