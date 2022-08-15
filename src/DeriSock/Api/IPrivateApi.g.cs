@@ -48,7 +48,7 @@ namespace DeriSock.Api {
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateGetCancelOnDisconnectResponse>> PrivateGetCancelOnDisconnect(PrivateGetCancelOnDisconnectRequest? args);
-
+    
     ///// <summary>
     ///// <para>Subscribe to one or more channels.</para>
     ///// <para>The name of the channel determines what information will be provided, and in what form.</para>
@@ -56,224 +56,224 @@ namespace DeriSock.Api {
     ///// <param name="args"></param>
     //[System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     //System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<string[]>> PrivateSubscribe(PrivateSubscribeRequest args);
-
+    
     ///// <summary>
     ///// <para>Unsubscribe from one or more channels.</para>
     ///// </summary>
     ///// <param name="args"></param>
     //[System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     //System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<string[]>> PrivateUnsubscribe(PrivateUnsubscribeRequest args);
-
+    
     ///// <summary>
     ///// <para>Unsubscribe from all the channels subscribed so far.</para>
     ///// </summary>
     //[System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     //System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<string>> PrivateUnsubscribeAll();
-
+    
     /// <summary>
     /// <para>Changes name for key with given id</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateChangeApiKeyNameResponse>> PrivateChangeApiKeyName(PrivateChangeApiKeyNameRequest args);
-
+    
     /// <summary>
     /// <para>Changes scope for key with given id</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateChangeScopeInApiKeyResponse>> PrivateChangeScopeInApiKey(PrivateChangeScopeInApiKeyRequest args);
-
+    
     /// <summary>
     /// <para>Change the user name for a subaccount</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<string>> PrivateChangeSubaccountName(PrivateChangeSubaccountNameRequest args);
-
+    
     /// <summary>
     /// <para>Creates new api key with given scope</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateCreateApiKeyResponse>> PrivateCreateApiKey(PrivateCreateApiKeyRequest args);
-
+    
     /// <summary>
     /// <para>Create a new subaccount</para>
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateCreateSubaccountResponse>> PrivateCreateSubaccount();
-
+    
     /// <summary>
     /// <para>Disables api key with given id</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateDisableApiKeyResponse>> PrivateDisableApiKey(PrivateDisableApiKeyRequest args);
-
+    
     /// <summary>
     /// <para>Enables affilate program for user</para>
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<string>> PrivateEnableAffiliateProgram();
-
+    
     /// <summary>
     /// <para>Enables api key with given id</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateEnableApiKeyResponse>> PrivateEnableApiKey(PrivateEnableApiKeyRequest args);
-
+    
     /// <summary>
     /// <para>Lists access logs for the user</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateGetAccessLogResponse>> PrivateGetAccessLog(PrivateGetAccessLogRequest? args);
-
+    
     /// <summary>
     /// <para>Retrieves user account summary.</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateGetAccountSummaryResponse>> PrivateGetAccountSummary(PrivateGetAccountSummaryRequest args);
-
+    
     /// <summary>
     /// <para>Retrieves user</c>s affiliates count, payouts and link.</para>
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateGetAffiliateProgramInfoResponse>> PrivateGetAffiliateProgramInfo();
-
+    
     /// <summary>
     /// <para>Retrieves the language to be used for emails.</para>
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<string>> PrivateGetEmailLanguage();
-
+    
     /// <summary>
     /// <para>Retrieves announcements that have not been marked read by the user.</para>
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateGetNewAnnouncementsResponse>> PrivateGetNewAnnouncements();
-
+    
     /// <summary>
     /// <para>Calculates portfolio margin info for simulated position or current position of the user. This request has special restricted rate limit (not more than once per a second).</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<JObject>> PrivateGetPortfolioMargins(PrivateGetPortfolioMarginsRequest args);
-
+    
     /// <summary>
     /// <para>Retrieve user position.</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateGetPositionResponse>> PrivateGetPosition(PrivateGetPositionRequest args);
-
+    
     /// <summary>
     /// <para>Retrieve user positions.</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateGetPositionsResponse>> PrivateGetPositions(PrivateGetPositionsRequest args);
-
+    
     /// <summary>
     /// <para>Get information about subaccounts</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateGetSubaccountsResponse>> PrivateGetSubaccounts(PrivateGetSubaccountsRequest? args);
-
+    
     /// <summary>
     /// <para>Get subaccounts positions</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateGetSubaccountsDetailsResponse>> PrivateGetSubaccountsDetails(PrivateGetSubaccountsDetailsRequest args);
-
+    
     /// <summary>
     /// <para>Retrieve the latest user trades that have occurred for a specific instrument and within given time range.</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateGetTransactionLogResponse>> PrivateGetTransactionLog(PrivateGetTransactionLogRequest args);
-
+    
     /// <summary>
     /// <para>Retrieves list of api keys</para>
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateListApiKeysResponse>> PrivateListApiKeys();
-
+    
     /// <summary>
     /// <para>Removes api key</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<string>> PrivateRemoveApiKey(PrivateRemoveApiKeyRequest args);
-
+    
     /// <summary>
     /// <para>Remove empty subaccount.</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<string>> PrivateRemoveSubaccount(PrivateRemoveSubaccountRequest args);
-
+    
     /// <summary>
     /// <para>Resets secret in api key</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateResetApiKeyResponse>> PrivateResetApiKey(PrivateResetApiKeyRequest args);
-
+    
     /// <summary>
     /// <para>Marks an announcement as read, so it will not be shown in <c>get_new_announcements</c>.</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<string>> PrivateSetAnnouncementAsRead(PrivateSetAnnouncementAsReadRequest args);
-
+    
     /// <summary>
     /// <para>Sets key with given id as default one for API Console</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateSetApiKeyAsDefaultResponse>> PrivateSetApiKeyAsDefault(PrivateSetApiKeyAsDefaultRequest args);
-
+    
     /// <summary>
     /// <para>Assign an email address to a subaccount. User will receive an email with confirmation link.</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<string>> PrivateSetEmailForSubaccount(PrivateSetEmailForSubaccountRequest args);
-
+    
     /// <summary>
     /// <para>Changes the language to be used for emails.</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<string>> PrivateSetEmailLanguage(PrivateSetEmailLanguageRequest args);
-
+    
     /// <summary>
     /// <para>Set the password for the subaccount</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<string>> PrivateSetPasswordForSubaccount(PrivateSetPasswordForSubaccountRequest args);
-
+    
     /// <summary>
     /// <para>Enable or disable sending of notifications for the subaccount.</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<string>> PrivateToggleNotificationsFromSubaccount(PrivateToggleNotificationsFromSubaccountRequest args);
-
+    
     /// <summary>
     /// <para>Enable or disable login for a subaccount. If login is disabled and a session for the subaccount exists, this session will be terminated.</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<string>> PrivateToggleSubaccountLogin(PrivateToggleSubaccountLoginRequest args);
-
+    
     /// <summary>
     /// <para>Creates block trade</para>
     /// <para>The whole request have to be exact the same as in <c>private/verify_block_trade</c>, only role field should be set appropriately - it basically means that both sides have to agree on the same timestamp, nonce, trades fields and server will assure that role field is different between sides (each party accepted own role).</para>
@@ -282,308 +282,308 @@ namespace DeriSock.Api {
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateExecuteBlockTradeResponse>> PrivateExecuteBlockTrade(PrivateExecuteBlockTradeRequest args);
-
+    
     /// <summary>
     /// <para>Returns information about users block trade</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateGetBlockTradeResponse>> PrivateGetBlockTrade(PrivateGetBlockTradeRequest args);
-
+    
     /// <summary>
     /// <para>Returns list of last users block trades</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateGetLastBlockTradesByCurrencyResponse>> PrivateGetLastBlockTradesByCurrency(PrivateGetLastBlockTradesByCurrencyRequest args);
-
+    
     /// <summary>
     /// <para>User at any time (before the private/execute_block_trade is called) can invalidate its own signature effectively cancelling block trade</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<string>> PrivateInvalidateBlockTradeSignature(PrivateInvalidateBlockTradeSignatureRequest args);
-
+    
     /// <summary>
     /// <para>Moves positions from source subaccount to target subaccount</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateMovePositionsResponse>> PrivateMovePositions(PrivateMovePositionsRequest args);
-
+    
     /// <summary>
     /// <para>Verifies and creates block trade signature</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateVerifyBlockTradeResponse>> PrivateVerifyBlockTrade(PrivateVerifyBlockTradeRequest args);
-
+    
     /// <summary>
     /// <para>Places a buy order for an instrument.</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateBuyResponse>> PrivateBuy(PrivateBuyRequest args);
-
+    
     /// <summary>
     /// <para>Places a sell order for an instrument.</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateSellResponse>> PrivateSell(PrivateSellRequest args);
-
+    
     /// <summary>
     /// <para>Change price, amount and/or other properties of an order.</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateEditResponse>> PrivateEdit(PrivateEditRequest args);
-
+    
     /// <summary>
     /// <para>Change price, amount and/or other properties of an order with given label. It works only when there is one open order with this label</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateEditByLabelResponse>> PrivateEditByLabel(PrivateEditByLabelRequest args);
-
+    
     /// <summary>
     /// <para>Cancel an order, specified by order id</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateCancelResponse>> PrivateCancel(PrivateCancelRequest args);
-
+    
     /// <summary>
     /// <para>This method cancels all users orders and trigger orders within all currencies and instrument kinds.</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<decimal>> PrivateCancelAll(PrivateCancelAllRequest? args);
-
+    
     /// <summary>
     /// <para>Cancels all orders by currency, optionally filtered by instrument kind and/or order type.</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<decimal>> PrivateCancelAllByCurrency(PrivateCancelAllByCurrencyRequest args);
-
+    
     /// <summary>
     /// <para>Cancels all orders by instrument, optionally filtered by order type.</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<decimal>> PrivateCancelAllByInstrument(PrivateCancelAllByInstrumentRequest args);
-
+    
     /// <summary>
     /// <para>Cancels orders by label. All user&apos;s orders (trigger orders too), with given label are canceled in all currencies or in one given currency (in this case currency queue is used)</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<decimal>> PrivateCancelByLabel(PrivateCancelByLabelRequest args);
-
+    
     /// <summary>
     /// <para>Makes closing position reduce only order .</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateClosePositionResponse>> PrivateClosePosition(PrivateClosePositionRequest args);
-
+    
     /// <summary>
     /// <para>Get margins for given instrument, amount and price.</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateGetMarginsResponse>> PrivateGetMargins(PrivateGetMarginsRequest args);
-
+    
     /// <summary>
     /// <para>Get current config for MMP</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateGetMmpConfigResponse>> PrivateGetMmpConfig(PrivateGetMmpConfigRequest args);
-
+    
     /// <summary>
     /// <para>Retrieves list of user&apos;s open orders.</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateGetOpenOrdersByCurrencyResponse>> PrivateGetOpenOrdersByCurrency(PrivateGetOpenOrdersByCurrencyRequest args);
-
+    
     /// <summary>
     /// <para>Retrieves list of user&apos;s open orders within given Instrument.</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateGetOpenOrdersByInstrumentResponse>> PrivateGetOpenOrdersByInstrument(PrivateGetOpenOrdersByInstrumentRequest args);
-
+    
     /// <summary>
     /// <para>Retrieves history of orders that have been partially or fully filled.</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateGetOrderHistoryByCurrencyResponse>> PrivateGetOrderHistoryByCurrency(PrivateGetOrderHistoryByCurrencyRequest args);
-
+    
     /// <summary>
     /// <para>Retrieves history of orders that have been partially or fully filled.</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateGetOrderHistoryByInstrumentResponse>> PrivateGetOrderHistoryByInstrument(PrivateGetOrderHistoryByInstrumentRequest args);
-
+    
     /// <summary>
     /// <para>Retrieves initial margins of given orders</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateGetOrderMarginByIdsResponse>> PrivateGetOrderMarginByIds(PrivateGetOrderMarginByIdsRequest args);
-
+    
     /// <summary>
     /// <para>Retrieve the current state of an order.</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateGetOrderStateResponse>> PrivateGetOrderState(PrivateGetOrderStateRequest args);
-
+    
     /// <summary>
     /// <para>Retrieves detailed log of the user&apos;s trigger orders.</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateGetTriggerOrderHistoryResponse>> PrivateGetTriggerOrderHistory(PrivateGetTriggerOrderHistoryRequest args);
-
+    
     /// <summary>
     /// <para>Retrieve the latest user trades that have occurred for instruments in a specific currency symbol.</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateGetUserTradesByCurrencyResponse>> PrivateGetUserTradesByCurrency(PrivateGetUserTradesByCurrencyRequest args);
-
+    
     /// <summary>
     /// <para>Retrieve the latest user trades that have occurred for instruments in a specific currency symbol and within given time range.</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateGetUserTradesByCurrencyAndTimeResponse>> PrivateGetUserTradesByCurrencyAndTime(PrivateGetUserTradesByCurrencyAndTimeRequest args);
-
+    
     /// <summary>
     /// <para>Retrieve the latest user trades that have occurred for a specific instrument.</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateGetUserTradesByInstrumentResponse>> PrivateGetUserTradesByInstrument(PrivateGetUserTradesByInstrumentRequest args);
-
+    
     /// <summary>
     /// <para>Retrieve the latest user trades that have occurred for a specific instrument and within given time range.</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateGetUserTradesByInstrumentAndTimeResponse>> PrivateGetUserTradesByInstrumentAndTime(PrivateGetUserTradesByInstrumentAndTimeRequest args);
-
+    
     /// <summary>
     /// <para>Retrieve the list of user trades that was created for given order</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateGetUserTradesByOrderResponse>> PrivateGetUserTradesByOrder(PrivateGetUserTradesByOrderRequest args);
-
+    
     /// <summary>
     /// <para>Reset MMP</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<string>> PrivateResetMmp(PrivateResetMmpRequest args);
-
+    
     /// <summary>
     /// <para>Sends RFQ on a given instrument.</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<string>> PrivateSendRfq(PrivateSendRfqRequest args);
-
+    
     /// <summary>
     /// <para>Set config for MMP - triggers MMP reset</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<string>> PrivateSetMmpConfig(PrivateSetMmpConfigRequest args);
-
+    
     /// <summary>
     /// <para>Retrieves public settlement, delivery and bankruptcy events filtered by instrument name</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateGetSettlementHistoryByInstrumentResponse>> PrivateGetSettlementHistoryByInstrument(PrivateGetSettlementHistoryByInstrumentRequest args);
-
+    
     /// <summary>
     /// <para>Retrieves settlement, delivery and bankruptcy events that have affected your account.</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateGetSettlementHistoryByCurrencyResponse>> PrivateGetSettlementHistoryByCurrency(PrivateGetSettlementHistoryByCurrencyRequest args);
-
+    
     /// <summary>
     /// <para>Cancel transfer</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateCancelTransferByIdResponse>> PrivateCancelTransferById(PrivateCancelTransferByIdRequest args);
-
+    
     /// <summary>
     /// <para>Cancels withdrawal request</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateCancelWithdrawalResponse>> PrivateCancelWithdrawal(PrivateCancelWithdrawalRequest args);
-
+    
     /// <summary>
     /// <para>Creates deposit address in currency</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateCreateDepositAddressResponse>> PrivateCreateDepositAddress(PrivateCreateDepositAddressRequest args);
-
+    
     /// <summary>
     /// <para>Retrieve deposit address for currency</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateGetCurrentDepositAddressResponse>> PrivateGetCurrentDepositAddress(PrivateGetCurrentDepositAddressRequest args);
-
+    
     /// <summary>
     /// <para>Retrieve the latest users deposits</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateGetDepositsResponse>> PrivateGetDeposits(PrivateGetDepositsRequest args);
-
+    
     /// <summary>
     /// <para>Retrieve the user&apos;s transfers list</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateGetTransfersResponse>> PrivateGetTransfers(PrivateGetTransfersRequest args);
-
+    
     /// <summary>
     /// <para>Retrieve the latest users withdrawals</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateGetWithdrawalsResponse>> PrivateGetWithdrawals(PrivateGetWithdrawalsRequest args);
-
+    
     /// <summary>
     /// <para>Transfer funds to subaccount.</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateSubmitTransferToSubaccountResponse>> PrivateSubmitTransferToSubaccount(PrivateSubmitTransferToSubaccountRequest args);
-
+    
     /// <summary>
     /// <para>Transfer funds to another user.</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateSubmitTransferToUserResponse>> PrivateSubmitTransferToUser(PrivateSubmitTransferToUserRequest args);
-
+    
     /// <summary>
     /// <para>Creates a new withdrawal request</para>
     /// </summary>

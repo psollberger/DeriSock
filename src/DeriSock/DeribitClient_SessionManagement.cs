@@ -9,10 +9,6 @@ using DeriSock.Model;
 
 public partial class DeribitClient : ISessionManagementApi
 {
-  /// <inheritdoc cref="ISessionManagementApi" />
-  ISessionManagementApi ICategoriesApi.SessionManagement()
-    => this;
-
   /// <inheritdoc cref="ISessionManagementApi.PublicSetHeartbeat" />
   public async Task<JsonRpcResponse<string>> PublicSetHeartbeat(PublicSetHeartbeatRequest args)
   {

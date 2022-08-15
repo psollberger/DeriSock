@@ -726,9 +726,15 @@ public static class ApiDocUtils
       apiCodeProvider,
       categoryNames,
       _ => Path.Combine(directoryName, $"ICategoriesApi{apiCodeProvider.FileExtension}"),
-      (code, x) =>
+      (code, categoryNames) =>
       {
-        code.AddCategoriesInterface("ICategoriesApi", x);
+        code.BeginCategoriesInterface("ICategoriesApi");
+        code.AddCategoriesInterfaceProperty("Public");
+        code.AddCategoriesInterfaceProperty("Private");
+        foreach (var categoryName in categoryNames) {          
+          code.AddCategoriesInterfaceProperty(categoryName);
+        }
+        code.EndCategoriesInterface();
       },
       cancellationToken).ConfigureAwait(false);
 

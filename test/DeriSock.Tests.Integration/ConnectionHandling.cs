@@ -3,6 +3,7 @@ namespace DeriSock.Tests.Integration
   using System.Net.WebSockets;
 
   using DeriSock.Api;
+  using DeriSock.Model;
 
   public class ConnectionHandling : IAsyncLifetime
   {

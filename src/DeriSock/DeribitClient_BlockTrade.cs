@@ -9,10 +9,6 @@ using DeriSock.Model;
 
 public partial class DeribitClient : IBlockTradeApi
 {
-  /// <inheritdoc cref="IBlockTradeApi" />
-  IBlockTradeApi ICategoriesApi.BlockTrade()
-    => this;
-
   /// <inheritdoc cref="IBlockTradeApi.PrivateExecuteBlockTrade" />
   public async Task<JsonRpcResponse<PrivateExecuteBlockTradeResponse>> PrivateExecuteBlockTrade(PrivateExecuteBlockTradeRequest args)
     => await Send("private/execute_block_trade", args, new ObjectJsonConverter<PrivateExecuteBlockTradeResponse>()).ConfigureAwait(false);

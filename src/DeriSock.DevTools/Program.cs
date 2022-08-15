@@ -31,9 +31,9 @@ internal class Program
       //await ApiDocUtils.WriteApiDocumentAsync(apiDoc, ApiDocBaseDocumentPath).ConfigureAwait(false);
 
       var apiDoc = await ApiDocUtils.ReadApiDocumentAsync(ApiDocDocumentPath).ConfigureAwait(false);
-      //var enumMap = await ApiDocUtils.ReadEnumMapAsync(ApiDocEnumMapPath).ConfigureAwait(false);
-      //var objectMap = await ApiDocUtils.ReadObjectMapAsync(ApiDocObjectMapPath).ConfigureAwait(false);
-      //await GenerateAllCode(apiDoc, enumMap, objectMap).ConfigureAwait(false);
+      var enumMap = await ApiDocUtils.ReadEnumMapAsync(ApiDocEnumMapPath).ConfigureAwait(false);
+      var objectMap = await ApiDocUtils.ReadObjectMapAsync(ApiDocObjectMapPath).ConfigureAwait(false);
+      await GenerateAllCode(apiDoc, enumMap, objectMap).ConfigureAwait(false);
 
       //await ApiDocUtils.AnalyzeApiDocumentAsync(apiDoc).ConfigureAwait(false);
 
@@ -43,7 +43,7 @@ internal class Program
       //await ApiDocUtils.PrintObjectMapTemplateAsync(apiDoc, objectMap).ConfigureAwait(false);
       //await ApiDocUtils.PrintObjectOverridesFromMapAsync(apiDoc, objectMap).ConfigureAwait(false);
 
-      await Playground(apiDoc).ConfigureAwait(false);
+      //await Playground(apiDoc).ConfigureAwait(false);
     }
     catch (Exception ex) {
       Console.WriteLine(ex.ToString());

@@ -11,10 +11,6 @@ using Newtonsoft.Json.Linq;
 
 public partial class DeribitClient : IAccountManagementApi
 {
-  /// <inheritdoc cref="IAccountManagementApi" />
-  IAccountManagementApi ICategoriesApi.AccountManagement()
-    => this;
-
   /// <inheritdoc cref="IAccountManagementApi.PublicGetAnnouncements" />
   public async Task<JsonRpcResponse<PublicGetAnnouncementsResponse>> PublicGetAnnouncements(PublicGetAnnouncementsRequest? args)
     => await Send("public/get_announcements", args, new ObjectJsonConverter<PublicGetAnnouncementsResponse>()).ConfigureAwait(false);

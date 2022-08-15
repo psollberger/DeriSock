@@ -9,10 +9,6 @@ using DeriSock.Model;
 
 public partial class DeribitClient : IWalletApi
 {
-  /// <inheritdoc cref="IWalletApi" />
-  IWalletApi ICategoriesApi.Wallet()
-    => this;
-
   /// <inheritdoc cref="IWalletApi.PrivateCancelTransferById" />
   public async Task<JsonRpcResponse<PrivateCancelTransferByIdResponse>> PrivateCancelTransferById(PrivateCancelTransferByIdRequest args)
     => await Send("private/cancel_transfer_by_id", args, new ObjectJsonConverter<PrivateCancelTransferByIdResponse>()).ConfigureAwait(false);

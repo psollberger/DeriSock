@@ -26,7 +26,7 @@ using Serilog.Events;
 ///   <para>The implementation of the API methods from Deribit</para>
 ///   <para>All methods are asynchronous. Synchronous methods are suffixed with <c>Sync</c></para>
 /// </summary>
-public partial class DeribitClient : IWebSocketStateInfo, IPrivateApi, IPublicApi, ICategoriesApi
+public partial class DeribitClient : IWebSocketStateInfo, IPrivateApi, IPublicApi
 {
   /// <summary>
   ///   Occurs when the client is connected to the server

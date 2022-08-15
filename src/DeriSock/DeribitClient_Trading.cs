@@ -9,10 +9,6 @@ using DeriSock.Model;
 
 public partial class DeribitClient : ITradingApi
 {
-  /// <inheritdoc cref="ITradingApi" />
-  ITradingApi ICategoriesApi.Trading()
-    => this;
-
   /// <inheritdoc cref="ITradingApi.PrivateBuy" />
   public async Task<JsonRpcResponse<PrivateBuyResponse>> PrivateBuy(PrivateBuyRequest args)
     => await Send("private/buy", args, new ObjectJsonConverter<PrivateBuyResponse>()).ConfigureAwait(false);

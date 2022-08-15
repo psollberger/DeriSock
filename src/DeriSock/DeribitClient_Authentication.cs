@@ -12,10 +12,6 @@ using DeriSock.Utils;
 public partial class DeribitClient : IAuthenticationApi, IAuthenticationMethods
 {
   /// <inheritdoc cref="IAuthenticationApi" />
-  IAuthenticationApi ICategoriesApi.Authentication()
-    => this;
-
-  /// <inheritdoc cref="IAuthenticationApi" />
    public IAuthenticationMethods PublicLogin()
     => this;
 

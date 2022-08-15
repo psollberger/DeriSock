@@ -9,10 +9,6 @@ using DeriSock.Model;
 
 public partial class DeribitClient : IMarketDataApi
 {
-  /// <inheritdoc cref="IMarketDataApi" />
-  IMarketDataApi ICategoriesApi.MarketData()
-    => this;
-
   /// <inheritdoc cref="IMarketDataApi.PublicGetBookSummaryByCurrency" />
   public async Task<JsonRpcResponse<PublicGetBookSummaryByCurrencyResponse>> PublicGetBookSummaryByCurrency(PublicGetBookSummaryByCurrencyRequest args)
     => await Send("public/get_book_summary_by_currency", args, new ObjectJsonConverter<PublicGetBookSummaryByCurrencyResponse>()).ConfigureAwait(false);

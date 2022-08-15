@@ -10,10 +10,6 @@ using DeriSock.Model;
 
 public partial class DeribitClient : ISupportingApi
 {
-  /// <inheritdoc cref="ISessionManagementApi" />
-  ISupportingApi ICategoriesApi.Supporting()
-    => this;
-
   /// <inheritdoc cref="ISupportingApi.PublicGetTime" />
   public async Task<JsonRpcResponse<DateTime>> PublicGetTime()
   {

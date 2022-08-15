@@ -313,40 +313,47 @@ internal class ApiDocCodeProvider
     _namespace.Types.Add(objInterface);
   }
 
-  public void AddCategoriesInterface(string typeName, IEnumerable<string> names)
+  private CodeTypeDeclaration? _currentInterface;
+  public void BeginCategoriesInterface(string typeName)
   {
     _namespace.Imports.Add(ImportSystemThreadingTasks);
     _namespace.Imports.Add(ImportDeriSockJsonRpc);
     _namespace.Imports.Add(ImportDeriSockModel);
 
-    var objInterface = new CodeTypeDeclaration(typeName)
+    _currentInterface = new CodeTypeDeclaration(typeName)
     {
       Attributes = MemberAttributes.Public,
       IsInterface = true,
       IsPartial = true
     };
 
-    objInterface.CustomAttributes.Add(GeneratedCodeAttribute);
+    _currentInterface.CustomAttributes.Add(GeneratedCodeAttribute);
+  }
 
-    foreach (var name in names) {
-      var objMethod = new CodeMemberMethod
+  public void EndCategoriesInterface()
+  {
+    _namespace.Types.Add(_currentInterface);
+  }
+
+  public void AddCategoriesInterfaceProperty(string name)
+  {
+    if (_currentInterface is null)
+      return;
+
+    var objProperty = new CodeMemberProperty()
       {
         Attributes = MemberAttributes.Public | MemberAttributes.Final,
         Name = name.ToPublicCodeName()
       };
 
-      var returnTypeName = $"I{objMethod.Name}Api";
+      var returnTypeName = $"I{objProperty.Name}Api";
+      objProperty.CustomAttributes.Add(GeneratedCodeAttribute);
+      objProperty.Comments.Add(new CodeCommentStatement($"<inheritdoc cref=\"{returnTypeName}\" />", true));
+      objProperty.Type = new CodeTypeReference(returnTypeName);
 
-      objMethod.CustomAttributes.Add(GeneratedCodeAttribute);
+      objProperty.GetStatements.Add(new CodeExpression());
 
-      objMethod.Comments.Add(new CodeCommentStatement($"<inheritdoc cref=\"{returnTypeName}\" />", true));
-
-      objMethod.ReturnType = new CodeTypeReference(returnTypeName);
-
-      objInterface.Members.Add(objMethod);
-    }
-
-    _namespace.Types.Add(objInterface);
+      _currentInterface.Members.Add(objProperty);
   }
 
   private CodeTypeReference CreateCodeTypeReference(DataTypeInfo dataTypeInfo)
