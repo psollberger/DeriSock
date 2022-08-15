@@ -30,13 +30,13 @@ jobs:
 
     - name: Restore packages
       run: |
-        dotnet restore DeriSock
-#        dotnet restore DeriSock.Tests
+        dotnet restore src/DeriSock
+#        dotnet restore src/DeriSock.Tests.Integration
         
     - name: Build project
       run: |
-        dotnet build --no-restore --configuration Release DeriSock
-#        dotnet build --no-restore --configuration Release DeriSock.Tests
+        dotnet build --no-restore --configuration Release src/DeriSock
+#        dotnet build --no-restore --configuration Release src/DeriSock.Tests.Integration
 
 #    - name: Run Tests
-#      run: dotnet test --no-restore DeriSock.Tests
+#      run: dotnet test --no-restore src/DeriSock.Tests.Integration
