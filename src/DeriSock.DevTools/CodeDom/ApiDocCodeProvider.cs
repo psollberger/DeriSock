@@ -51,7 +51,7 @@ internal class ApiDocCodeProvider
 
   private CodeNamespace _namespace;
 
-  public string FileExtension => ".cs";
+  public string FileExtension => ".g.cs";
 
   static ApiDocCodeProvider()
   {

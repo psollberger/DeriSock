@@ -1,20 +1,17 @@
 namespace DeriSock.DevTools;
 
 using System;
-using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 using DeriSock.DevTools.ApiDoc;
 using DeriSock.DevTools.ApiDoc.Model;
-using DeriSock.Model;
-
-using Newtonsoft.Json;
 
 internal class Program
 {
   private const string ApiDocumentationUrl = "https://docs.deribit.com";
-  private const string DeriSockGeneratedModelsDirectory = @"C:\Users\psoll\source\repos\DeriSock\src\DeriSock\Model\Generated";
-  private const string DeriSockGeneratedApisDirectory = @"C:\Users\psoll\source\repos\DeriSock\src\DeriSock\Api\Generated";
+  private const string DeriSockGeneratedModelsDirectory = @"C:\Users\psoll\source\repos\DeriSock\src\DeriSock\Model";
+  private const string DeriSockGeneratedApisDirectory = @"C:\Users\psoll\source\repos\DeriSock\src\DeriSock\Api";
 
   private const string ApiDocBaseDocumentPath = @"C:\Users\psoll\source\repos\DeriSock\src\DeriSock.DevTools\deribit.api.v211.base.json";
   private const string ApiDocDocumentPath = @"C:\Users\psoll\source\repos\DeriSock\src\DeriSock.DevTools\deribit.api.v211.json";
@@ -34,37 +31,40 @@ internal class Program
       //await ApiDocUtils.WriteApiDocumentAsync(apiDoc, ApiDocBaseDocumentPath).ConfigureAwait(false);
 
 
-      //var apiDoc = await ApiDocUtils.ReadApiDocumentAsync(ApiDocDocumentPath).ConfigureAwait(false);
+      var apiDoc = await ApiDocUtils.ReadApiDocumentAsync(ApiDocDocumentPath).ConfigureAwait(false);
 
       //await ApiDocUtils.AnalyzeApiDocumentAsync(apiDoc).ConfigureAwait(false);
 
 
-      //var enumMap = await ApiDocUtils.ReadEnumMapAsync(ApiDocEnumMapPath).ConfigureAwait(false);
+      var enumMap = await ApiDocUtils.ReadEnumMapAsync(ApiDocEnumMapPath).ConfigureAwait(false);
       //await ApiDocUtils.PrintEnumMapTemplateAsync(apiDoc, enumMap).ConfigureAwait(false);
       //await ApiDocUtils.PrintEnumOverridesFromMapAsync(enumMap).ConfigureAwait(false);
-      //await ApiDocUtils.GenerateEnumCodeAsync(enumMap, DeriSockGeneratedModelsDirectory, "Enums").ConfigureAwait(false);
 
 
-      //var objectMap = await ApiDocUtils.ReadObjectMapAsync(ApiDocObjectMapPath).ConfigureAwait(false);
+      var objectMap = await ApiDocUtils.ReadObjectMapAsync(ApiDocObjectMapPath).ConfigureAwait(false);
       //await ApiDocUtils.PrintObjectMapTemplateAsync(apiDoc, objectMap).ConfigureAwait(false);
       //await ApiDocUtils.PrintObjectOverridesFromMapAsync(apiDoc, objectMap).ConfigureAwait(false);
-      //await ApiDocUtils.GenerateObjectCodeAsync(objectMap, DeriSockGeneratedModelsDirectory, "Objects").ConfigureAwait(false);
 
 
-      //await ApiDocUtils.GenerateRequestClassesAsync(apiDoc, DeriSockGeneratedModelsDirectory, "Requests").ConfigureAwait(false);
-      //await ApiDocUtils.GenerateResponseClassesAsync(apiDoc, DeriSockGeneratedModelsDirectory, "Responses").ConfigureAwait(false);
+      await GenerateAllCode(apiDoc, enumMap, objectMap).ConfigureAwait(false);
 
-      //await ApiDocUtils.GenerateApiInterfaces(apiDoc, DeriSockGeneratedApisDirectory).ConfigureAwait(false);
 
-      await Playground().ConfigureAwait(false);
+      //await Playground().ConfigureAwait(false);
     }
     catch (Exception ex) {
       Console.WriteLine(ex.ToString());
     }
   }
 
-  private static Task Playground()
+  private static async Task GenerateAllCode(ApiDocDocument apiDoc, ApiDocEnumMap enumMap, ApiDocObjectMap objectMap, CancellationToken cancellationToken = default)
   {
-    return Task.CompletedTask;
+    await ApiDocUtils.GenerateEnumCodeAsync(enumMap, DeriSockGeneratedModelsDirectory, "Enums", cancellationToken).ConfigureAwait(false);
+    await ApiDocUtils.GenerateObjectCodeAsync(objectMap, DeriSockGeneratedModelsDirectory, "Objects", cancellationToken).ConfigureAwait(false);
+    await ApiDocUtils.GenerateRequestClassesAsync(apiDoc, DeriSockGeneratedModelsDirectory, "Requests", cancellationToken).ConfigureAwait(false);
+    await ApiDocUtils.GenerateResponseClassesAsync(apiDoc, DeriSockGeneratedModelsDirectory, "Responses", cancellationToken).ConfigureAwait(false);
+    await ApiDocUtils.GenerateApiInterfaces(apiDoc, DeriSockGeneratedApisDirectory, cancellationToken).ConfigureAwait(false);
   }
+
+  private static Task Playground()
+    => Task.CompletedTask;
 }
