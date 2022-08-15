@@ -76,6 +76,12 @@ public class ApiDocOverrideAdopter
       if (overrideFunction.Description is not null)
         function.Description = overrideFunction.Description;
 
+      if (overrideFunction.ExcludeInInterface.HasValue)
+        function.ExcludeInInterface = overrideFunction.ExcludeInInterface.Value;
+
+      if (overrideFunction.IsSynchronous.HasValue)
+        function.IsSynchronous = overrideFunction.IsSynchronous.Value;
+
       if (overrideFunction.Deprecated.HasValue)
         function.Deprecated = overrideFunction.Deprecated.Value;
 
@@ -116,9 +122,6 @@ public class ApiDocOverrideAdopter
   {
     if (property is null || overrideProperty is null)
       return;
-
-    if (overrideProperty.CodeName is not null)
-      property.CodeName = overrideProperty.CodeName;
 
     if (overrideProperty.Description is not null)
       property.Description = overrideProperty.Description;

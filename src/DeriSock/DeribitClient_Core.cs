@@ -26,7 +26,7 @@ using Serilog.Events;
 ///   <para>The implementation of the API methods from Deribit</para>
 ///   <para>All methods are asynchronous. Synchronous methods are suffixed with <c>Sync</c></para>
 /// </summary>
-public partial class DeribitClient : IWebSocketStateInfo
+public partial class DeribitClient : IWebSocketStateInfo, IPrivateApi, IPublicApi, ICategoriesApi
 {
   /// <summary>
   ///   Occurs when the client is connected to the server
@@ -198,7 +198,7 @@ public partial class DeribitClient : IWebSocketStateInfo
         if (_client.State != WebSocketState.Open)
           return;
 
-        var result = ((IAuthenticationGrantTypes)this).WithRefreshToken().GetAwaiter().GetResult();
+        var result = ((IAuthenticationMethods)this).WithRefreshToken().GetAwaiter().GetResult();
         EnqueueAuthRefresh(result.ResultData.ExpiresIn);
       });
   }

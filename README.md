@@ -29,8 +29,7 @@ The library supports authentication via credentials and signature
 ### Authentication using Credentials
 
 ```csharp
-var authInfo = await client
-                 .Authentication().Login()
+var authInfo = await client.PublicLogin()
                  .WithClientCredentials("<client id", "<client secret>",
                                         "<optional state>", "<optional scope>");
 ```
@@ -38,8 +37,7 @@ var authInfo = await client
 ### Authentication using Signature
 
 ```csharp
-var authInfo = await client
-                 .Authentication().Login()
+var authInfo = await client.PublicLogin()
                  .WithClientSignature("<client id", "<client secret>", "<optional data>",
                                       "<optional state>", "<optional scope>");
 ```
@@ -49,7 +47,7 @@ var authInfo = await client
 When authenticated, you can logout like this (this is the only synchroneous method):
 
 ```csharp
-client.Authentication().Logout();
+client.PrivateLogout();
 ```
 
 **Note:** The server will automatically close the connection when you logout

@@ -3,11 +3,13 @@ namespace DeriSock.DevTools.CodeDom;
 using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 
 using DeriSock.DevTools.ApiDoc.Model;
+using DeriSock.JsonRpc;
 using DeriSock.Model;
 
 using Microsoft.CSharp;
@@ -40,9 +42,14 @@ internal class ApiDocCodeProvider
   private static readonly CodeFieldReferenceExpression StringEmptyRefExpr;
   private static readonly CodeSnippetExpression NotNullValueRefExpr;
 
-  private readonly CodeNamespace _namespace;
-  private bool _hasConverters;
-  private bool _hasJsonLinqEntities;
+  private static readonly CodeNamespaceImport ImportSystem = new("System");
+  private static readonly CodeNamespaceImport ImportSystemThreadingTasks = new("System.Threading.Tasks");
+  private static readonly CodeNamespaceImport ImportDeriSockConverter = new("DeriSock.Converter");
+  private static readonly CodeNamespaceImport ImportDeriSockJsonRpc = new("DeriSock.JsonRpc");
+  private static readonly CodeNamespaceImport ImportDeriSockModel = new("DeriSock.Model");
+  private static readonly CodeNamespaceImport ImportNewtonsoftJsonLinq = new("Newtonsoft.Json.Linq");
+
+  private CodeNamespace _namespace;
 
   public string FileExtension => ".cs";
 
@@ -81,8 +88,6 @@ internal class ApiDocCodeProvider
 
   public async Task<string> GenerateAsync()
   {
-    CheckAndAddNeededImports();
-
     var options = new CodeGeneratorOptions
     {
       IndentString = "  ",
@@ -111,15 +116,9 @@ internal class ApiDocCodeProvider
     return writer.ToString();
   }
 
-  private void CheckAndAddNeededImports()
+  public void Clear()
   {
-    if (_hasConverters) {
-      _namespace.Imports.Add(new CodeNamespaceImport("System"));
-      _namespace.Imports.Add(new CodeNamespaceImport("DeriSock.Converter"));
-    }
-
-    if (_hasJsonLinqEntities)
-      _namespace.Imports.Add(new CodeNamespaceImport("Newtonsoft.Json.Linq"));
+    _namespace = new CodeNamespace(_namespace.Name);
   }
 
   public void AddEnumValueClass(string typeName, ApiDocEnumMapEntry mapEntry)
@@ -231,31 +230,153 @@ internal class ApiDocCodeProvider
     _namespace.Types.Add(objClass);
   }
 
-  private (CodeMemberField backingField, CodeMemberProperty property) CreateProperty(ApiDocProperty property)
+  public void AddPartialInterface(string typeName, IEnumerable<ApiDocFunction> functions)
   {
-    var dataTypeInfo = property.GetDataTypeInfo();
+    _namespace.Imports.Add(ImportSystemThreadingTasks);
+    _namespace.Imports.Add(ImportDeriSockJsonRpc);
+    _namespace.Imports.Add(ImportDeriSockModel);
 
+    var objInterface = new CodeTypeDeclaration(typeName)
+    {
+      Attributes = MemberAttributes.Public,
+      IsInterface = true,
+      IsPartial = true
+    };
+
+    objInterface.CustomAttributes.Add(GeneratedCodeAttribute);
+
+    foreach (var function in functions) {
+      if (function.ExcludeInInterface)
+        continue;
+
+      var objMethod = new CodeMemberMethod
+      {
+        Attributes = MemberAttributes.Public | MemberAttributes.Final,
+        Name = function.Name.ToPublicCodeName()
+      };
+
+      objMethod.CustomAttributes.Add(GeneratedCodeAttribute);
+
+      objMethod.Comments.Add(new CodeCommentStatement("<summary>", true));
+
+      if (!string.IsNullOrEmpty(function.Description))
+        foreach (var xmlDocParagraph in function.Description.ToXmlDocParagraphs())
+          objMethod.Comments.Add(new CodeCommentStatement($"<para>{xmlDocParagraph}</para>", true));
+
+      objMethod.Comments.Add(new CodeCommentStatement("</summary>", true));
+
+      CodeTypeReference? returnType = null;
+
+      if (function.Response is { Properties.Count: > 0 }) {
+        var genericType = new CodeTypeReference(typeof(JsonRpcResponse<>));
+        genericType.TypeArguments.Add($"{function.Name.ToPublicCodeName()}Response");
+        returnType = genericType;
+      }
+      else if (function.Response is not null) {
+        var dataTypeInfo = function.Response.GetDataTypeInfo();
+        returnType = CreateCodeTypeReference(dataTypeInfo);
+      }
+
+      if (returnType is null) {
+        if (!function.IsSynchronous)
+          objMethod.ReturnType = new CodeTypeReference(typeof(Task));
+      }
+      else {
+        if (returnType is { BaseType: "DateTime" or "DateTime?" })
+          _namespace.Imports.Add(ImportSystem);
+
+        if (returnType is { BaseType: "JToken" or "JToken?" or "JObject" or "JObject?" })
+          _namespace.Imports.Add(ImportNewtonsoftJsonLinq);
+
+        if (function.IsSynchronous) {
+          objMethod.ReturnType = returnType;
+        }
+        else {
+          var realReturnType = new CodeTypeReference(typeof(Task<>));
+          realReturnType.TypeArguments.Add(returnType);
+          objMethod.ReturnType = realReturnType;
+        }
+      }
+
+      if (function.Request is { Properties.Count: > 0 }) {
+        var isRequired = function.Request.IsAnyPropertyRequired;
+        objMethod.Parameters.Add(new CodeParameterDeclarationExpression($"{function.Name.ToPublicCodeName()}Request{(isRequired ? string.Empty : "?")}", "args"));
+        objMethod.Comments.Add(new CodeCommentStatement("<param name=\"args\"></param>", true));
+      }
+
+      objInterface.Members.Add(objMethod);
+    }
+
+    _namespace.Types.Add(objInterface);
+  }
+
+  public void AddCategoriesInterface(string typeName, IEnumerable<string> names)
+  {
+    _namespace.Imports.Add(ImportSystemThreadingTasks);
+    _namespace.Imports.Add(ImportDeriSockJsonRpc);
+    _namespace.Imports.Add(ImportDeriSockModel);
+
+    var objInterface = new CodeTypeDeclaration(typeName)
+    {
+      Attributes = MemberAttributes.Public,
+      IsInterface = true,
+      IsPartial = true
+    };
+
+    objInterface.CustomAttributes.Add(GeneratedCodeAttribute);
+
+    foreach (var name in names) {
+      var objMethod = new CodeMemberMethod
+      {
+        Attributes = MemberAttributes.Public | MemberAttributes.Final,
+        Name = name.ToPublicCodeName()
+      };
+
+      var returnTypeName = $"I{objMethod.Name}Api";
+
+      objMethod.CustomAttributes.Add(GeneratedCodeAttribute);
+
+      objMethod.Comments.Add(new CodeCommentStatement($"<inheritdoc cref=\"{returnTypeName}\" />", true));
+
+      objMethod.ReturnType = new CodeTypeReference(returnTypeName);
+
+      objInterface.Members.Add(objMethod);
+    }
+
+    _namespace.Types.Add(objInterface);
+  }
+
+  private CodeTypeReference CreateCodeTypeReference(DataTypeInfo dataTypeInfo)
+  {
     var fullTypeName = dataTypeInfo.TypeName;
 
     if (dataTypeInfo.IsNullable && !dataTypeInfo.IsArray)
       fullTypeName = $"{fullTypeName}?";
 
-    var propertyTypeReference = new CodeTypeReference(fullTypeName);
+    if (dataTypeInfo.IsArray)
+      fullTypeName = $"{fullTypeName}[]{(dataTypeInfo.IsNullable ? "?" : string.Empty)}";
+
+    return new CodeTypeReference(fullTypeName);
+  }
+
+  private (CodeMemberField backingField, CodeMemberProperty property) CreateProperty(ApiDocProperty property)
+  {
+    var dataTypeInfo = property.GetDataTypeInfo();
+    var propertyTypeReference = CreateCodeTypeReference(dataTypeInfo);
 
     var fieldName = property.Name;
-    var propertyName = property.CodeName ?? property.Name.ToPublicCodeName();
+    var propertyName = property.Name.ToPublicCodeName();
 
-    if (dataTypeInfo.IsArray)
-      propertyTypeReference = new CodeTypeReference($"{fullTypeName}[]{(dataTypeInfo.IsNullable ? "?" : string.Empty)}");
 
     var memberField = CreateCodeMemberField(propertyTypeReference, $"_{propertyName}", dataTypeInfo.IsArray, dataTypeInfo.IsNullable);
     var memberProperty = CreateCodeMemberProperty(memberField, propertyName, fieldName, property.Description, property.Deprecated);
 
     if (property is { DataType: "JToken" or "JObject" })
-      _hasJsonLinqEntities = true;
+      _namespace.Imports.Add(ImportNewtonsoftJsonLinq);
 
     if (property is { Converters.Length: > 0 }) {
-      _hasConverters = true;
+      _namespace.Imports.Add(ImportSystem);
+      _namespace.Imports.Add(ImportDeriSockConverter);
 
       foreach (var converterTypeName in property.Converters) {
         var jsonConverterAttribute = new CodeAttributeDeclaration(
@@ -267,41 +388,6 @@ internal class ApiDocCodeProvider
     }
 
     return (memberField, memberProperty);
-  }
-
-  private void AddResultValueProperty(CodeTypeMemberCollection value, ApiDocProperty property)
-  {
-    var propertyTypeInfo = property.GetDataTypeInfo();
-    var propertyTypeReference = new CodeTypeReference(propertyTypeInfo.TypeName);
-
-    var fieldName = "result";
-    var propertyName = "Value";
-
-    if (propertyTypeInfo.IsArray)
-      propertyTypeReference = new CodeTypeReference($"{propertyTypeInfo.TypeName}[]{(propertyTypeInfo.IsNullable ? "?" : string.Empty)}");
-    else if (propertyTypeInfo.IsNullable)
-      propertyTypeReference = new CodeTypeReference($"{propertyTypeInfo.TypeName}?");
-
-    var memberField = CreateCodeMemberField(propertyTypeReference, $"_{propertyName}", propertyTypeInfo.IsArray, propertyTypeInfo.IsNullable);
-    var memberProperty = CreateCodeMemberProperty(memberField, propertyName, fieldName, property.Description, false);
-
-    if (property is { DataType: "JToken" or "JObject" })
-      _hasJsonLinqEntities = true;
-
-    if (property is { Converters.Length: > 0 }) {
-      _hasConverters = true;
-
-      foreach (var converterTypeName in property.Converters) {
-        var jsonConverterAttribute = new CodeAttributeDeclaration(
-          JsonConverterAttributeType,
-          new CodeAttributeArgument(new CodeTypeOfExpression(converterTypeName)));
-
-        memberProperty.CustomAttributes.Add(jsonConverterAttribute);
-      }
-    }
-
-    value.Add(memberField);
-    value.Add(memberProperty);
   }
 
   private static CodeMemberField CreateCodeMemberField(CodeTypeReference type, string name, bool isArray, bool isNullable)

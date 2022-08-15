@@ -1,6 +1,7 @@
 ﻿{
   "methods": {
     "public/auth": {
+      "excludeInInterface": true,
       "request": {
         "properties": {
           ".+": {
@@ -9,210 +10,213 @@
         }
       }
     },
+    "private/logout": {
+      "isSynchronous": true
+    },
     "public/test": {
-        "request": {
-          "properties": {
-            "expected_result": {
-              "enumValues": [ "", "exception" ]
-            }
+      "request": {
+        "properties": {
+          "expected_result": {
+            "enumValues": [ "", "exception" ]
+          }
+        }
+      }
+    },
+    "[^/]+/subscribe": {
+      "request": {
+        "properties": {
+          "channels": {
+            "arrayDataType": "string"
+          }
+        }
+      }
+    },
+    "[^/]*/unsubscribe": {
+      "request": {
+        "properties": {
+          "channels": {
+            "arrayDataType": "string"
+          }
+        }
+      }
+    },
+    "public/get_announcements": {
+      "request": {
+        "properties": {
+          "count": {
+            "defaultValue": 5
+          }
+        }
+      }
+    },
+    "private/change_api_key_name": {
+      "request": {
+        "properties": {
+          "name": {
+            "maxLength": 16
+          }
+        }
+      }
+    },
+    "private/create_api_key": {
+      "request": {
+        "properties": {
+          "name": {
+            "maxLength": 16
+          }
+        }
+      }
+    },
+    "private/get_positions": {
+      "request": {
+        "properties": {
+          "currency": {
+            "description": "The currency symbol"
+          }
+        }
+      }
+    },
+    "private/buy": {
+      "request": {
+        "properties": {
+          "label": {
+            "maxLength": 64
+          },
+          "time_in_force": {
+            "defaultValue": "good_til_cancelled"
+          }
+        }
+      }
+    },
+    "private/sell": {
+      "request": {
+        "properties": {
+          "label": {
+            "maxLength": 64
+          },
+          "time_in_force": {
+            "defaultValue": "good_til_cancelled"
+          }
+        }
+      }
+    },
+    "private/edit_by_label": {
+      "request": {
+        "properties": {
+          "label": {
+            "maxLength": 64
+          }
+        }
+      }
+    },
+    "private/cancel_by_label": {
+      "request": {
+        "properties": {
+          "label": {
+            "maxLength": 64
+          }
+        }
+      }
+    },
+    "private/get_order_margin_by_ids": {
+      "request": {
+        "properties": {
+          "ids": {
+            "arrayDataType": "string"
+          }
+        }
+      }
+    },
+    "public/status": {
+      "response": {
+        "properties": {
+          "locked_currencies": {
+            "arrayDataType": "string"
+          }
+        }
+      }
+    },
+    "public/get_mark_price_history": {
+      "response": {
+        "type": "array",
+        "arrayDataType": "[timestamp, value]"
+      }
+    },
+    "private/get_subaccounts_details": {
+      "response": {
+        "properties": {
+          "open_orders": {
+            "required": false
+          }
+        }
+      }
+    },
+    "public/get_index_price": {
+      "request": {
+        "properties": {
+          "index_name": {
+            "enumIsSuggestion": true,
+            "valueLookupSource": "public/get_index_price_names"
+          }
+        }
+      }
+    },
+    "^(public|private)/get_portfolio_margins$": {
+      "request": {
+        "properties": {
+          "simulated_positions": {
+            "dataType": "SimulatedPositions"
           }
         }
       },
-      "[^/]+/subscribe": {
-        "request": {
-          "properties": {
-            "channels": {
-              "arrayDataType": "string"
-            }
-          }
-        }
-      },
-      "[^/]*/unsubscribe": {
-        "request": {
-          "properties": {
-            "channels": {
-              "arrayDataType": "string"
-            }
-          }
-        }
-      },
-      "public/get_announcements": {
-        "request": {
-          "properties": {
-            "count": {
-              "defaultValue": 5
-            }
-          }
-        }
-      },
-      "private/change_api_key_name": {
-        "request": {
-          "properties": {
-            "name": {
-              "maxLength": 16
-            }
-          }
-        }
-      },
-      "private/create_api_key": {
-        "request": {
-          "properties": {
-            "name": {
-              "maxLength": 16
-            }
-          }
-        }
-      },
-      "private/get_positions": {
-        "request": {
-          "properties": {
-            "currency": {
-              "description": "The currency symbol"
-            }
-          }
-        }
-      },
-      "private/buy": {
-        "request": {
-          "properties": {
-            "label": {
-              "maxLength": 64
-            },
-            "time_in_force": {
-              "defaultValue": "good_til_cancelled"
-            }
-          }
-        }
-      },
-      "private/sell": {
-        "request": {
-          "properties": {
-            "label": {
-              "maxLength": 64
-            },
-            "time_in_force": {
-              "defaultValue": "good_til_cancelled"
-            }
-          }
-        }
-      },
-      "private/edit_by_label": {
-        "request": {
-          "properties": {
-            "label": {
-              "maxLength": 64
-            }
-          }
-        }
-      },
-      "private/cancel_by_label": {
-        "request": {
-          "properties": {
-            "label": {
-              "maxLength": 64
-            }
-          }
-        }
-      },
-      "private/get_order_margin_by_ids": {
-        "request": {
-          "properties": {
-            "ids": {
-              "arrayDataType": "string"
-            }
-          }
-        }
-      },
-      "public/status": {
-        "response": {
-          "properties": {
-            "locked_currencies": {
-              "arrayDataType": "string"
-            }
-          }
-        }
-      },
-      "public/get_mark_price_history": {
-        "response": {
-          "type": "array",
-          "arrayDataType": "[timestamp, value]"
-        }
-      },
-      "private/get_subaccounts_details": {
-        "response": {
-          "properties": {
-            "open_orders": {
-              "required": false
-            }
-          }
-        }
-      },
-      "public/get_index_price": {
-        "request": {
-          "properties": {
-            "index_name": {
-              "enumIsSuggestion": true,
-              "valueLookupSource": "public/get_index_price_names"
-            }
-          }
-        }
-      },
-      "^(public|private)/get_portfolio_margins$": {
-        "request": {
-          "properties": {
-            "simulated_positions": {
-              "dataType": "SimulatedPositions"
-            }
-          }
-        },
-        "response": {
-          "dataType": "JObject"
-        }
-      },
-      "private/get_transaction_log": {
-        "response": {
-          "properties": {
-            "logs": {
-              "properties": {
-                "info": {
-                  "dataType": "JObject"
-                }
+      "response": {
+        "dataType": "JObject"
+      }
+    },
+    "private/get_transaction_log": {
+      "response": {
+        "properties": {
+          "logs": {
+            "properties": {
+              "info": {
+                "dataType": "JObject"
               }
-            }
-          }
-        }
-      },
-      "private/get_subaccounts": {
-        "response": {
-          "properties": {
-            "security_keys_assignments": {
-              "arrayDataType": "string"
-            }
-          }
-        }
-      },
-      "public/get_volatility_index_data": {
-        "response": {
-          "properties": {
-            "data": {
-              "arrayDataType": "VolatilityIndexCandle"
             }
           }
         }
       }
     },
-    "subscriptions": {
-      "user.portfolio.{currency}": {
-        "response": {
-          "properties": {
-            "delta_total_map": {
-              "dataType": "JObject"
-            },
-            "estimated_liquidation_ratio_map": {
-              "dataType": "JObject"
-            }
+    "private/get_subaccounts": {
+      "response": {
+        "properties": {
+          "security_keys_assignments": {
+            "arrayDataType": "string"
+          }
+        }
+      }
+    },
+    "public/get_volatility_index_data": {
+      "response": {
+        "properties": {
+          "data": {
+            "arrayDataType": "VolatilityIndexCandle"
+          }
+        }
+      }
+    }
+  },
+  "subscriptions": {
+    "user.portfolio.{currency}": {
+      "response": {
+        "properties": {
+          "delta_total_map": {
+            "dataType": "JObject"
+          },
+          "estimated_liquidation_ratio_map": {
+            "dataType": "JObject"
           }
         }
       }
     }
   }
+}

@@ -47,6 +47,18 @@ public class ApiDocFunction : IApiDocPropertyNode
   public string Description { get; set; } = string.Empty;
 
   /// <summary>
+  /// Gets, if this entry should not be included in interface generation
+  /// </summary>
+  [JsonPropertyName("excludeInInterface")]
+  public bool ExcludeInInterface { get; set; }
+
+  /// <summary>
+  /// Gets, if this function is executed synchronously
+  /// </summary>
+  [JsonPropertyName("isSynchronous")]
+  public bool IsSynchronous { get; set; }
+
+  /// <summary>
   ///   Gets, if this entry
   /// </summary>
   [JsonPropertyName("deprecated")]

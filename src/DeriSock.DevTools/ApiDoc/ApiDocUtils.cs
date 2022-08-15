@@ -2,6 +2,9 @@ namespace DeriSock.DevTools.ApiDoc;
 
 using System;
 using System.CodeDom.Compiler;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -23,13 +26,6 @@ public static class ApiDocUtils
   private static readonly JsonSerializerOptions SerializerOptions = new()
   {
     WriteIndented = true,
-    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
-    Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-  };
-
-  private static readonly JsonSerializerOptions SerializerOptionsNoIndent = new()
-  {
-    WriteIndented = false,
     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
     Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
   };
@@ -516,15 +512,16 @@ public static class ApiDocUtils
 
   public static Task PrintObjectOverridesFromMapAsync(ApiDocDocument apiDoc, ApiDocObjectMap map, CancellationToken cancellationToken = default)
   {
-    var overrideDoc = new ApiDocOverrideDocument();
-
-    overrideDoc.Methods = new ApiDocOverrideFunctionCollection();
-    overrideDoc.Subscriptions = new ApiDocOverrideFunctionCollection();
+    var overrideDoc = new ApiDocOverrideDocument
+    {
+      Methods = new ApiDocOverrideFunctionCollection(),
+      Subscriptions = new ApiDocOverrideFunctionCollection()
+    };
 
     foreach (var (typeName, mapEntry) in map) {
-
       foreach (var path in mapEntry.Methods.Concat(mapEntry.Subscriptions)) {
         var apiDocProperty = apiDoc.GetPropertyFromPath(path);
+
         if (apiDocProperty == null)
           continue;
 
@@ -534,11 +531,11 @@ public static class ApiDocUtils
         var apiFunctionCollection = isMethod ? apiDoc.Methods : apiDoc.Subscriptions;
         var overrideFunctionCollection = isMethod ? overrideDoc.Methods : overrideDoc.Subscriptions;
 
-        if (!apiFunctionCollection.TryGetValue(functionName, out var apiFunction))
+        if (!apiFunctionCollection.TryGetValue(functionName, out var _))
           continue;
 
         if (!overrideFunctionCollection.TryGetValue(functionName, out var overrideFunction)) {
-          overrideFunction  = new ApiDocOverrideFunction();
+          overrideFunction = new ApiDocOverrideFunction();
           overrideFunctionCollection.Add(functionName, overrideFunction);
         }
 
@@ -612,7 +609,7 @@ public static class ApiDocUtils
 
 
   /// <summary>
-  /// Generates code for all the requests.
+  ///   Generates code for all the requests.
   /// </summary>
   /// <param name="apiDoc">The API documentation document.</param>
   /// <param name="directoryName">The directory where the resulting file should be written to.</param>
@@ -643,8 +640,9 @@ public static class ApiDocUtils
     return apiCodeProvider.FileExtension;
   }
 
+
   /// <summary>
-  /// Generates code for all the responses.
+  ///   Generates code for all the responses.
   /// </summary>
   /// <param name="apiDoc">The API documentation document.</param>
   /// <param name="directoryName">The directory where the resulting file should be written to.</param>
@@ -673,5 +671,88 @@ public static class ApiDocUtils
     }
 
     return apiCodeProvider.FileExtension;
+  }
+
+
+  /// <summary>
+  ///   Generates the interfaces for the API (e.g. categoris, private, public, ...).
+  /// </summary>
+  /// <param name="apiDoc">The API documentation document.</param>
+  /// <param name="directoryName">The directory in which the resulting files will be written to.</param>
+  /// <param name="cancellationToken"></param>
+  /// <returns>The extension used for the filenames.</returns>
+  [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
+  public static async Task<string> GenerateApiInterfaces(ApiDocDocument apiDoc, string directoryName, CancellationToken cancellationToken = default)
+  {
+    if (!Directory.Exists(directoryName))
+      throw new DirectoryNotFoundException();
+
+    var apiCodeProvider = new ApiDocCodeProvider("DeriSock.Api");
+
+    var functionsPerCategory = apiDoc.Methods.GroupBy(x => x.Value.Category);
+
+    await CodeGenEnumerate(
+      apiCodeProvider,
+      functionsPerCategory,
+      category =>
+      {
+        Debug.Assert(!string.IsNullOrEmpty(category.Key));
+
+        return Path.Combine(directoryName, $"I{category.Key.ToPublicCodeName()}Api{apiCodeProvider.FileExtension}");
+      },
+      (code, category) =>
+      {
+        code.AddPartialInterface($"I{category.Key!.ToPublicCodeName()}Api", category.Select(x => x.Value));
+      },
+      cancellationToken).ConfigureAwait(false);
+
+
+    var functionsPerScope = apiDoc.Methods.GroupBy(x => x.Value.IsPrivate);
+
+    await CodeGenEnumerate(
+      apiCodeProvider,
+      functionsPerScope,
+      scope => Path.Combine(directoryName, $"I{(scope.Key ? "Private" : "Public")}Api{apiCodeProvider.FileExtension}"),
+      (code, scope) =>
+      {
+        code.AddPartialInterface($"I{(scope.Key ? "Private" : "Public")}Api", scope.Select(x => x.Value));
+      },
+      cancellationToken).ConfigureAwait(false);
+
+
+    var categoryNames = new[] { functionsPerCategory.Select(x => x.Key!) };
+
+    await CodeGenEnumerate(
+      apiCodeProvider,
+      categoryNames,
+      _ => Path.Combine(directoryName, $"ICategoriesApi{apiCodeProvider.FileExtension}"),
+      (code, x) =>
+      {
+        code.AddCategoriesInterface("ICategoriesApi", x);
+      },
+      cancellationToken).ConfigureAwait(false);
+
+    return apiCodeProvider.FileExtension;
+  }
+
+  private static async Task CodeGenEnumerate<T>(ApiDocCodeProvider apiCodeProvider, IEnumerable<T> list, Func<T, string> definePath, Action<ApiDocCodeProvider, T> generate, CancellationToken cancellationToken)
+  {
+    foreach (var item in list) {
+      var path = definePath(item);
+
+      if (string.IsNullOrEmpty(path))
+        continue;
+
+      generate(apiCodeProvider, item);
+
+      var fs = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.ReadWrite);
+
+      await using (fs.ConfigureAwait(false)) {
+        await fs.WriteAsync(Encoding.UTF8.GetBytes(await apiCodeProvider.GenerateAsync()), cancellationToken).ConfigureAwait(false);
+        await fs.FlushAsync(cancellationToken).ConfigureAwait(false);
+      }
+
+      apiCodeProvider.Clear();
+    }
   }
 }

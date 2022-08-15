@@ -2,6 +2,8 @@ namespace DeriSock.Tests.Integration
 {
   using System.Net.WebSockets;
 
+  using DeriSock.Api;
+
   public class ConnectionHandling : IAsyncLifetime
   {
     private readonly DeribitConfiguration _config;

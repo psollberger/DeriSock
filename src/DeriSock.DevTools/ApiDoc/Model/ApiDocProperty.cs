@@ -1,6 +1,7 @@
 namespace DeriSock.DevTools.ApiDoc.Model;
 
 using System;
+using System.Linq;
 using System.Text.Json.Serialization;
 
 /// <summary>
@@ -24,12 +25,6 @@ public class ApiDocProperty : IApiDocPropertyNode, IEquatable<ApiDocProperty>
   /// </summary>
   [JsonIgnore]
   public string Name { get; set; } = string.Empty;
-
-  /// <summary>
-  ///   If the normal name of the property conflicts with code generation, this field defines an alternative name to use
-  /// </summary>
-  [JsonPropertyName("codeName")]
-  public string? CodeName { get; set; } = null;
 
   /// <summary>
   ///   The description of the parameter or response property.
@@ -108,6 +103,24 @@ public class ApiDocProperty : IApiDocPropertyNode, IEquatable<ApiDocProperty>
   /// </summary>
   [JsonPropertyName("properties")]
   public ApiDocPropertyCollection? Properties { get; set; } = default;
+
+  /// <summary>
+  /// Gets, if any of the properties contained in this property is required
+  /// </summary>
+  [JsonIgnore]
+  public bool IsAnyPropertyRequired
+  {
+    get
+    {
+      if (Properties == null)
+        return false;
+
+      if (Properties.Count < 1)
+        return false;
+
+      return Properties.Any(x => x.Value.Required);
+    }
+  }
 
   [JsonIgnore]
   public bool IsObject => DataType is "object" || ArrayDataType is "object";

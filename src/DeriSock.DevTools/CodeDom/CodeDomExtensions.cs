@@ -46,10 +46,22 @@ public static class CodeDomExtensions
 
   public static string ToPublicCodeName(this string value)
   {
+    return ToCodeName(value, false);
+  }
+
+  public static string ToPrivateCodeName(this string value)
+  {
+    return ToCodeName(value, true);
+  }
+
+  private static string ToCodeName(string value, bool isPrivate)
+  {
     if (string.IsNullOrEmpty(value))
       return value;
 
     var sb = new StringBuilder(EnglishTextInfo.ToTitleCase(value));
+    if (isPrivate)
+      sb[0] = EnglishTextInfo.ToLower(sb[0]);
 
     for (var i = 0; i < sb.Length; ++i) {
       var c = sb[i];

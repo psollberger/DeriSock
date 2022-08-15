@@ -1,4 +1,4 @@
-﻿namespace DeriSock.JsonRpc;
+namespace DeriSock.JsonRpc;
 
 using System;
 using System.Threading.Tasks;
@@ -47,7 +47,7 @@ public interface IJsonRpcClient : IWebSocketStateInfo
   ///   A structured value that hold the parameter values to be used during the invocation of the
   ///   method
   /// </param>
-  void SendLogoutSync(string method, object parameters);
+  void SendLogoutSync(string method, object? parameters);
 
   /// <summary>
   ///   Sends a message to the server
@@ -58,5 +58,5 @@ public interface IJsonRpcClient : IWebSocketStateInfo
   ///   method
   /// </param>
   /// <returns>A Task object</returns>
-  Task<JsonRpcResponse> Send(string method, object parameters);
+  Task<JsonRpcResponse> Send(string method, object? parameters);
 }

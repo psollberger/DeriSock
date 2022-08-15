@@ -13,6 +13,12 @@ public class ApiDocOverrideFunction
   [JsonPropertyName("description")]
   public string? Description { get; set; } = null;
 
+  [JsonPropertyName("excludeInInterface")]
+  public bool? ExcludeInInterface { get; set; } = null;
+
+  [JsonPropertyName("isSynchronous")]
+  public bool? IsSynchronous { get; set; }
+
   [JsonPropertyName("deprecated")]
   public bool? Deprecated { get; set; } = default;
 

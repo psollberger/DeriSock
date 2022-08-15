@@ -9,10 +9,18 @@ using DeriSock.JsonRpc;
 using DeriSock.Model;
 using DeriSock.Utils;
 
-public partial class DeribitClient : IAuthenticationGrantTypes
+public partial class DeribitClient : IAuthenticationApi, IAuthenticationMethods
 {
+  /// <inheritdoc cref="IAuthenticationApi" />
+  IAuthenticationApi ICategoriesApi.Authentication()
+    => this;
+
+  /// <inheritdoc cref="IAuthenticationApi" />
+   public IAuthenticationMethods PublicLogin()
+    => this;
+
   /// <inheritdoc />
-  async Task<JsonRpcResponse<PublicAuthResponse>> IAuthenticationGrantTypes.WithClientCredentials(string clientId, string clientSecret, string state, string scope)
+  async Task<JsonRpcResponse<PublicAuthResponse>> IAuthenticationMethods.WithClientCredentials(string clientId, string clientSecret, string state, string scope)
   {
     _logger.Debug("Authenticate (client_credentials)");
 
@@ -47,7 +55,7 @@ public partial class DeribitClient : IAuthenticationGrantTypes
   }
 
   /// <inheritdoc />
-  async Task<JsonRpcResponse<PublicAuthResponse>> IAuthenticationGrantTypes.WithClientSignature(string clientId, string clientSecret, string data, string state, string scope)
+  async Task<JsonRpcResponse<PublicAuthResponse>> IAuthenticationMethods.WithClientSignature(string clientId, string clientSecret, string data, string state, string scope)
   {
     _logger.Debug("Authenticate (client_signature)");
 
@@ -87,7 +95,7 @@ public partial class DeribitClient : IAuthenticationGrantTypes
   }
 
   /// <inheritdoc />
-  async Task<JsonRpcResponse<PublicAuthResponse>> IAuthenticationGrantTypes.WithRefreshToken(string state, string scope)
+  async Task<JsonRpcResponse<PublicAuthResponse>> IAuthenticationMethods.WithRefreshToken(string state, string scope)
   {
     _logger.Debug("Authenticate (refresh_token)");
 
@@ -112,51 +120,33 @@ public partial class DeribitClient : IAuthenticationGrantTypes
     return response;
   }
 
-  private async Task<JsonRpcResponse<PublicExchangeTokenResponse>> PublicExchangeToken(string refreshToken, int subjectId)
+  /// <inheritdoc cref="IAuthenticationApi.PublicExchangeToken" />
+  public async Task<JsonRpcResponse<PublicExchangeTokenResponse>> PublicExchangeToken(PublicExchangeTokenRequest args)
   {
     _logger.Debug("Exchanging token");
-
-    var reqParams = new PublicExchangeTokenRequest
-    {
-      RefreshToken = refreshToken,
-      SubjectId = subjectId
-    };
-
-    return await Send("public/exchange_token", reqParams, new ObjectJsonConverter<PublicExchangeTokenResponse>()).ConfigureAwait(false);
+    return await Send("public/exchange_token", args, new ObjectJsonConverter<PublicExchangeTokenResponse>()).ConfigureAwait(false);
   }
 
-  private async Task<JsonRpcResponse<PublicForkTokenResponse>> PublicForkToken(string refreshToken, string sessionName)
+  /// <inheritdoc cref="IAuthenticationApi.PublicForkToken" />
+  public async Task<JsonRpcResponse<PublicForkTokenResponse>> PublicForkToken(PublicForkTokenRequest args)
   {
     _logger.Debug("Forking token");
-
-    var reqParams = new PublicForkTokenRequest
-    {
-      RefreshToken = refreshToken,
-      SessionName = sessionName
-    };
-
-    return await Send("public/fork_token", reqParams, new ObjectJsonConverter<PublicForkTokenResponse>()).ConfigureAwait(false);
+    return await Send("public/fork_token", args, new ObjectJsonConverter<PublicForkTokenResponse>()).ConfigureAwait(false);
   }
 
-  private bool PrivateLogout(bool? invalidateToken)
+  /// <inheritdoc cref="IAuthenticationApi.PrivateLogout" />
+  public void PrivateLogout(PrivateLogoutRequest? args)
   {
     _logger.Debug("Logging out");
 
     if (string.IsNullOrEmpty(AccessToken))
-      return false;
-
-    var reqParams = new PrivateLogoutRequest
-    {
-      InvalidateToken = invalidateToken
-    };
+      return;
 
     //TODO: check if logout works without access_token being sent
     //_client.SendLogout("private/logout", new {access_token = AccessToken});
-    _client.SendLogoutSync("private/logout", reqParams);
+    _client.SendLogoutSync("private/logout", args);
 
     AccessToken = null;
     RefreshToken = null;
-
-    return true;
   }
 }

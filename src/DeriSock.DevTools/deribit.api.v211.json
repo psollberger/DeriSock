@@ -8,6 +8,7 @@
     "public/auth": {
       "category": "Authentication",
       "description": "Retrieve an Oauth access token, to be used for authentication of 'private' requests.\nThree methods of authentication are supported:\n- `client_credentials` - using the access key and access secret that can be found on the API page on the website\n- `client_signature` - using the access key that can be found on the API page on the website and user generated signature. The signature is calculated using some fields provided in the request, using formula described here [Deribit signature credentials](https://docs.deribit.com/#additional-authorization-method-signature-credentials-websocket-api)\n- `refresh_token` - using a refresh token that was received from an earlier invocation\nThe response will contain an access token, expiration period (number of seconds that the token is valid) and a refresh token that can be used to get a new set of tokens.",
+      "excludeInInterface": true,
       "request": {
         "properties": {
           "grant_type": {
@@ -222,6 +223,7 @@
     "private/logout": {
       "category": "Authentication",
       "description": "Gracefully close websocket connection, when COD (Cancel On Disconnect) is enabled orders are not cancelled",
+      "isSynchronous": true,
       "request": {
         "properties": {
           "invalidate_token": {
