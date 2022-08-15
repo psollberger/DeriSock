@@ -13,7 +13,7 @@ All methods and subscriptions found on https://docs.deribit.com are supported.
 Usage is quite simple. To obtain the current best bid price you simply do the following:
 
 ```csharp
-var client = new DeribitV2Client(DeribitEndpointType.Testnet);
+var client = new DeribitClient(EndpointType.Testnet);
 await client.Connect();
 
 var response = await client.PublicGetOrderBook("BTC-PERPETUAL");
@@ -29,24 +29,19 @@ The library supports authentication via credentials and signature
 ### Authentication using Credentials
 
 ```csharp
-var authInfo = await client.PublicAuth(new AuthParams
-{
-    GrantType = GrantType.Credentials,
-    ClientId = "<client id>",
-    ClientSecret = "<client secret>"
-});
+var authInfo = await client
+                 .Authentication().Login()
+                 .WithClientCredentials("<client id", "<client secret>",
+                                        "<optional state>", "<optional scope>");
 ```
 
 ### Authentication using Signature
 
 ```csharp
-var signatureData = CryptoHelper.CreateSignature("<client secret>", "<optional data>");
-var authInfo = await client.PublicAuth(new AuthParams
-{
-    GrantType = GrantType.Signature,
-    ClientId = "<client id>",
-    Signature = signatureData
-});
+var authInfo = await client
+                 .Authentication().Login()
+                 .WithClientSignature("<client id", "<client secret>", "<optional data>",
+                                      "<optional state>", "<optional scope>");
 ```
 
 ### Logout
@@ -54,7 +49,7 @@ var authInfo = await client.PublicAuth(new AuthParams
 When authenticated, you can logout like this (this is the only synchroneous method):
 
 ```csharp
-client.PrivateLogout();
+client.Authentication().Logout();
 ```
 
 **Note:** The server will automatically close the connection when you logout

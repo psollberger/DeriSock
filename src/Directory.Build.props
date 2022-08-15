@@ -1,0 +1,23 @@
+<Project>
+  <PropertyGroup Label="AssemblyInfo">
+    <!-- See: https://docs.microsoft.com/en-us/dotnet/core/project-sdk/msbuild-props#generateassemblyinfo -->
+    <Authors>Patrick Sollberger</Authors>
+    <Copyright>Copyright (c) Patrick Sollberger</Copyright>
+
+    <VersionSuffix Condition="'$(Configuration)' == 'Debug'">dev</VersionSuffix>
+    <VersionSuffix Condition="'$(VersionSuffix)' == '' And '$(VcsBranch)' != '' And '$(VcsBranch)' != 'main'">$(VcsBranch)</VersionSuffix>
+
+    <SourceRevisionId Condition="'$(VcsRevisionId)' != ''">$(VcsRevisionId)</SourceRevisionId>
+    <IncludeSourceRevisionInInformationalVersion>true</IncludeSourceRevisionInInformationalVersion>
+
+    <NeutralLanguage>en</NeutralLanguage>
+  </PropertyGroup>
+
+  <PropertyGroup Label="BuildSettings">
+    <MySolutionDir>$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)\..))</MySolutionDir>
+    <SolutionDir Condition="'$(SolutionDir)'=='' Or $(SolutionDir) == '*Undefined*'">$(MySolutionDir)</SolutionDir>
+    <BaseOutputPath>$(MySolutionDir)\build</BaseOutputPath>
+    <AppendTargetFrameworkToOutputPath>true</AppendTargetFrameworkToOutputPath>
+    <Configuration Condition="'$(Configuration)'==''">Debug</Configuration>
+  </PropertyGroup>
+</Project>

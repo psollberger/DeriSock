@@ -1,0 +1,948 @@
+﻿{
+  "methods": {
+    "public/auth": {
+      "request": {
+        "properties": {
+          "grant_type": {
+            "dataType": "GrantType"
+          }
+        }
+      }
+    },
+    "private/enable_cancel_on_disconnect": {
+      "request": {
+        "properties": {
+          "scope": {
+            "dataType": "ConnectionScope"
+          }
+        }
+      }
+    },
+    "private/disable_cancel_on_disconnect": {
+      "request": {
+        "properties": {
+          "scope": {
+            "dataType": "ConnectionScope"
+          }
+        }
+      }
+    },
+    "private/get_cancel_on_disconnect": {
+      "request": {
+        "properties": {
+          "scope": {
+            "dataType": "ConnectionScope"
+          }
+        }
+      }
+    },
+    "public/test": {
+      "request": {
+        "properties": {
+          "expected_result": {
+            "dataType": "TestExpectedResult"
+          }
+        }
+      }
+    },
+    "public/get_portfolio_margins": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbol"
+          }
+        }
+      }
+    },
+    "private/get_account_summary": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbol"
+          }
+        }
+      }
+    },
+    "private/get_portfolio_margins": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbol"
+          }
+        }
+      }
+    },
+    "private/get_positions": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbol"
+          },
+          "kind": {
+            "dataType": "InstrumentKind"
+          }
+        }
+      }
+    },
+    "private/get_subaccounts_details": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbol"
+          }
+        }
+      }
+    },
+    "private/get_transaction_log": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbol"
+          }
+        }
+      }
+    },
+    "private/execute_block_trade": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbol"
+          },
+          "role": {
+            "dataType": "TradeRole"
+          },
+          "trades": {
+            "properties": {
+              "direction": {
+                "dataType": "TradeDirection"
+              }
+            }
+          }
+        }
+      }
+    },
+    "private/get_last_block_trades_by_currency": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbol"
+          }
+        }
+      }
+    },
+    "private/move_positions": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbol"
+          }
+        }
+      }
+    },
+    "private/verify_block_trade": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbol"
+          },
+          "role": {
+            "dataType": "TradeRole"
+          },
+          "trades": {
+            "properties": {
+              "direction": {
+                "dataType": "TradeDirection"
+              }
+            }
+          }
+        }
+      }
+    },
+    "private/cancel_all_by_currency": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbol"
+          },
+          "kind": {
+            "dataType": "InstrumentKind"
+          },
+          "type": {
+            "dataType": "CancelOrderType"
+          }
+        }
+      }
+    },
+    "private/cancel_by_label": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbol"
+          }
+        }
+      }
+    },
+    "private/get_mmp_config": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbol"
+          }
+        }
+      }
+    },
+    "private/get_open_orders_by_currency": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbol"
+          },
+          "kind": {
+            "dataType": "InstrumentKind"
+          },
+          "type": {
+            "dataType": "OpenOrderType"
+          }
+        }
+      }
+    },
+    "private/get_order_history_by_currency": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbol"
+          },
+          "kind": {
+            "dataType": "InstrumentKind"
+          }
+        }
+      }
+    },
+    "private/get_trigger_order_history": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbol"
+          }
+        }
+      }
+    },
+    "private/get_user_trades_by_currency": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbol"
+          },
+          "kind": {
+            "dataType": "InstrumentKind"
+          },
+          "sorting": {
+            "dataType": "UserTradeSortDirection"
+          }
+        }
+      }
+    },
+    "private/get_user_trades_by_currency_and_time": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbol"
+          },
+          "kind": {
+            "dataType": "InstrumentKind"
+          },
+          "sorting": {
+            "dataType": "UserTradeSortDirection"
+          }
+        }
+      }
+    },
+    "private/reset_mmp": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbol"
+          }
+        }
+      }
+    },
+    "private/set_mmp_config": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbol"
+          }
+        }
+      }
+    },
+    "private/get_settlement_history_by_currency": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbol"
+          },
+          "type": {
+            "dataType": "SettlementType"
+          }
+        }
+      }
+    },
+    "public/get_book_summary_by_currency": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbol"
+          },
+          "kind": {
+            "dataType": "InstrumentKind"
+          }
+        }
+      }
+    },
+    "public/get_historical_volatility": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbol"
+          }
+        }
+      }
+    },
+    "public/get_index": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbol"
+          }
+        }
+      }
+    },
+    "public/get_instruments": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbol"
+          },
+          "kind": {
+            "dataType": "InstrumentKind"
+          }
+        }
+      }
+    },
+    "public/get_last_settlements_by_currency": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbol"
+          },
+          "type": {
+            "dataType": "SettlementType"
+          }
+        }
+      }
+    },
+    "public/get_last_trades_by_currency": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbol"
+          },
+          "kind": {
+            "dataType": "InstrumentKind"
+          },
+          "sorting": {
+            "dataType": "UserTradeSortDirection"
+          }
+        }
+      }
+    },
+    "public/get_last_trades_by_currency_and_time": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbol"
+          },
+          "kind": {
+            "dataType": "InstrumentKind"
+          },
+          "sorting": {
+            "dataType": "UserTradeSortDirection"
+          }
+        }
+      }
+    },
+    "public/get_rfqs": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbol"
+          },
+          "kind": {
+            "dataType": "InstrumentKind"
+          }
+        }
+      }
+    },
+    "public/get_volatility_index_data": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbol"
+          },
+          "resolution": {
+            "dataType": "VolatilityIndexResolution"
+          }
+        }
+      }
+    },
+    "private/cancel_transfer_by_id": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbol"
+          }
+        }
+      }
+    },
+    "private/cancel_withdrawal": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbol"
+          }
+        }
+      }
+    },
+    "private/create_deposit_address": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbol"
+          }
+        }
+      }
+    },
+    "private/get_current_deposit_address": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbol"
+          }
+        }
+      }
+    },
+    "private/get_deposits": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbol"
+          }
+        }
+      }
+    },
+    "private/get_transfers": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbol"
+          }
+        }
+      }
+    },
+    "private/get_withdrawals": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbol"
+          }
+        }
+      }
+    },
+    "private/submit_transfer_to_subaccount": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbol"
+          }
+        }
+      }
+    },
+    "private/submit_transfer_to_user": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbol"
+          }
+        }
+      }
+    },
+    "private/withdraw": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbol"
+          },
+          "priority": {
+            "dataType": "WithdrawPriority"
+          }
+        }
+      }
+    },
+    "private/toggle_subaccount_login": {
+      "request": {
+        "properties": {
+          "state": {
+            "dataType": "LoginStatus"
+          }
+        }
+      }
+    },
+    "private/send_rfq": {
+      "request": {
+        "properties": {
+          "side": {
+            "dataType": "TradeDirection"
+          }
+        }
+      }
+    },
+    "private/buy": {
+      "request": {
+        "properties": {
+          "type": {
+            "dataType": "BuySellOrderType"
+          },
+          "time_in_force": {
+            "dataType": "TimeInForce"
+          },
+          "trigger": {
+            "dataType": "TriggerType"
+          },
+          "advanced": {
+            "dataType": "AdvancedOptionOrderType"
+          }
+        }
+      }
+    },
+    "private/sell": {
+      "request": {
+        "properties": {
+          "type": {
+            "dataType": "BuySellOrderType"
+          },
+          "time_in_force": {
+            "dataType": "TimeInForce"
+          },
+          "trigger": {
+            "dataType": "TriggerType"
+          },
+          "advanced": {
+            "dataType": "AdvancedOptionOrderType"
+          }
+        }
+      }
+    },
+    "private/edit": {
+      "request": {
+        "properties": {
+          "advanced": {
+            "dataType": "AdvancedOptionOrderType"
+          }
+        }
+      }
+    },
+    "private/edit_by_label": {
+      "request": {
+        "properties": {
+          "advanced": {
+            "dataType": "AdvancedOptionOrderType"
+          }
+        }
+      }
+    },
+    "private/cancel_all_by_instrument": {
+      "request": {
+        "properties": {
+          "type": {
+            "dataType": "CancelOrderType"
+          }
+        }
+      }
+    },
+    "private/close_position": {
+      "request": {
+        "properties": {
+          "type": {
+            "dataType": "ClosePositionOrderType"
+          }
+        }
+      }
+    },
+    "private/get_open_orders_by_instrument": {
+      "request": {
+        "properties": {
+          "type": {
+            "dataType": "OpenOrderType"
+          }
+        }
+      }
+    },
+    "private/get_user_trades_by_instrument": {
+      "request": {
+        "properties": {
+          "sorting": {
+            "dataType": "UserTradeSortDirection"
+          }
+        }
+      }
+    },
+    "private/get_user_trades_by_instrument_and_time": {
+      "request": {
+        "properties": {
+          "sorting": {
+            "dataType": "UserTradeSortDirection"
+          }
+        }
+      }
+    },
+    "private/get_user_trades_by_order": {
+      "request": {
+        "properties": {
+          "sorting": {
+            "dataType": "UserTradeSortDirection"
+          }
+        }
+      }
+    },
+    "public/get_last_trades_by_instrument": {
+      "request": {
+        "properties": {
+          "sorting": {
+            "dataType": "UserTradeSortDirection"
+          }
+        }
+      }
+    },
+    "public/get_last_trades_by_instrument_and_time": {
+      "request": {
+        "properties": {
+          "sorting": {
+            "dataType": "UserTradeSortDirection"
+          }
+        }
+      }
+    },
+    "private/get_settlement_history_by_instrument": {
+      "request": {
+        "properties": {
+          "type": {
+            "dataType": "SettlementType"
+          }
+        }
+      }
+    },
+    "public/get_last_settlements_by_instrument": {
+      "request": {
+        "properties": {
+          "type": {
+            "dataType": "SettlementType"
+          }
+        }
+      }
+    },
+    "public/get_delivery_prices": {
+      "request": {
+        "properties": {
+          "index_name": {
+            "dataType": "IndexName"
+          }
+        }
+      }
+    },
+    "public/get_index_price": {
+      "request": {
+        "properties": {
+          "index_name": {
+            "dataType": "IndexName"
+          }
+        }
+      }
+    },
+    "public/get_funding_chart_data": {
+      "request": {
+        "properties": {
+          "length": {
+            "dataType": "FundingChartPeriod"
+          }
+        }
+      }
+    },
+    "public/get_tradingview_chart_data": {
+      "request": {
+        "properties": {
+          "resolution": {
+            "dataType": "ChartBarResolution"
+          }
+        }
+      }
+    }
+  },
+  "subscriptions": {
+    "user.mmp_trigger.{currency}": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbol"
+          }
+        }
+      }
+    },
+    "user.portfolio.{currency}": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbol"
+          }
+        }
+      }
+    },
+    "trades.{kind}.{currency}.{interval}": {
+      "request": {
+        "properties": {
+          "kind": {
+            "dataType": "InstrumentKind"
+          },
+          "interval": {
+            "dataType": "NotificationInterval2"
+          },
+          "currency": {
+            "dataType": "CurrencySymbolOrAny"
+          }
+        }
+      }
+    },
+    "deribit_price_index.{index_name}": {
+      "request": {
+        "properties": {
+          "index_name": {
+            "dataType": "IndexName"
+          }
+        }
+      }
+    },
+    "deribit_price_ranking.{index_name}": {
+      "request": {
+        "properties": {
+          "index_name": {
+            "dataType": "IndexName"
+          }
+        }
+      }
+    },
+    "deribit_price_statistics.{index_name}": {
+      "request": {
+        "properties": {
+          "index_name": {
+            "dataType": "IndexName"
+          }
+        }
+      }
+    },
+    "deribit_volatility_index.{index_name}": {
+      "request": {
+        "properties": {
+          "index_name": {
+            "dataType": "IndexName"
+          }
+        }
+      }
+    },
+    "estimated_expiration_price.{index_name}": {
+      "request": {
+        "properties": {
+          "index_name": {
+            "dataType": "IndexName"
+          }
+        }
+      }
+    },
+    "markprice.options.{index_name}": {
+      "request": {
+        "properties": {
+          "index_name": {
+            "dataType": "IndexName"
+          }
+        }
+      }
+    },
+    "chart.trades.{instrument_name}.{resolution}": {
+      "request": {
+        "properties": {
+          "resolution": {
+            "dataType": "ChartBarResolution"
+          }
+        }
+      }
+    },
+    "book.{instrument_name}.{group}.{depth}.{interval}": {
+      "request": {
+        "properties": {
+          "group": {
+            "dataType": "PriceGrouping"
+          },
+          "depth": {
+            "dataType": "PriceLevelDepth"
+          },
+          "interval": {
+            "dataType": "NotificationInterval1"
+          }
+        }
+      }
+    },
+    "user.orders.{instrument_name}.{interval}": {
+      "request": {
+        "properties": {
+          "interval": {
+            "dataType": "NotificationInterval1"
+          }
+        }
+      }
+    },
+    "user.orders.{kind}.{currency}.{interval}": {
+      "request": {
+        "properties": {
+          "interval": {
+            "dataType": "NotificationInterval1"
+          },
+          "kind": {
+            "dataType": "InstrumentKindOrAny"
+          },
+          "currency": {
+            "dataType": "CurrencySymbolOrAny"
+          }
+        }
+      }
+    },
+    "book.{instrument_name}.{interval}": {
+      "request": {
+        "properties": {
+          "interval": {
+            "dataType": "NotificationInterval2"
+          }
+        }
+      }
+    },
+    "perpetual.{instrument_name}.{interval}": {
+      "request": {
+        "properties": {
+          "interval": {
+            "dataType": "NotificationInterval2"
+          }
+        }
+      }
+    },
+    "ticker.{instrument_name}.{interval}": {
+      "request": {
+        "properties": {
+          "interval": {
+            "dataType": "NotificationInterval2"
+          }
+        }
+      }
+    },
+    "trades.{instrument_name}.{interval}": {
+      "request": {
+        "properties": {
+          "interval": {
+            "dataType": "NotificationInterval2"
+          }
+        }
+      }
+    },
+    "user.changes.{instrument_name}.{interval}": {
+      "request": {
+        "properties": {
+          "interval": {
+            "dataType": "NotificationInterval2"
+          }
+        }
+      }
+    },
+    "user.changes.{kind}.{currency}.{interval}": {
+      "request": {
+        "properties": {
+          "interval": {
+            "dataType": "NotificationInterval2"
+          },
+          "kind": {
+            "dataType": "InstrumentKindOrAny"
+          },
+          "currency": {
+            "dataType": "CurrencySymbolOrAny"
+          }
+        }
+      }
+    },
+    "user.trades.{instrument_name}.{interval}": {
+      "request": {
+        "properties": {
+          "interval": {
+            "dataType": "NotificationInterval2"
+          }
+        }
+      }
+    },
+    "user.trades.{kind}.{currency}.{interval}": {
+      "request": {
+        "properties": {
+          "interval": {
+            "dataType": "NotificationInterval2"
+          },
+          "kind": {
+            "dataType": "InstrumentKindOrAny"
+          },
+          "currency": {
+            "dataType": "CurrencySymbolOrAny"
+          }
+        }
+      }
+    },
+    "instrument.state.{kind}.{currency}": {
+      "request": {
+        "properties": {
+          "kind": {
+            "dataType": "InstrumentKindOrAny"
+          },
+          "currency": {
+            "dataType": "CurrencySymbolOrAny"
+          }
+        }
+      }
+    },
+    "user.orders.{kind}.{currency}": {
+      "response": {
+        "properties": {
+          "request": {
+            "properties": {
+              "kind": {
+                "dataType": "InstrumentKindOrAny"
+              },
+              "currency": {
+                "dataType": "CurrencySymbolOrAny"
+              }
+            }
+          }
+        }
+      }
+    },
+    "rfq.{currency}": {
+      "request": {
+        "properties": {
+          "currency": {
+            "dataType": "CurrencySymbolOrAny"
+          }
+        }
+      }
+    }
+  }
+}

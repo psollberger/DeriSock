@@ -1,0 +1,24 @@
+﻿{
+  "methods": {
+    "private/get_account_summary": {
+      "response": {
+        "properties": {
+          "limits": {
+            "properties": {
+              ".+": {
+                "properties": {
+                  "burst": {
+                    "description": "Maximal number of (type related) matching engine requests allowed for user in burst mode"
+                  },
+                  "rate": {
+                    "description": "Number of (type related) matching engine requests per second allowed for user"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

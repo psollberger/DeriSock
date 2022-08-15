@@ -1,0 +1,517 @@
+﻿{
+  "GrantType": {
+    "description": "Method of authentication",
+    "enumValues": [
+      "client_credentials",
+      "client_signature",
+      "refresh_token"
+    ],
+    "methods": [
+      "public/auth.request.grant_type"
+    ],
+    "subscriptions": [
+    ]
+  },
+  "ConnectionScope": {
+    "description": "Specifies if Cancel On Disconnect change should be applied/checked for the current connection or the account (default - \u0060connection\u0060)\n\n __NOTICE:__ Scope \u0060connection\u0060 can be used only when working via Websocket.",
+    "enumValues": [
+      "connection",
+      "account"
+    ],
+    "methods": [
+      "private/enable_cancel_on_disconnect.request.scope",
+      "private/disable_cancel_on_disconnect.request.scope",
+      "private/get_cancel_on_disconnect.request.scope"
+    ],
+    "subscriptions": [
+    ]
+  },
+  "TestExpectedResult": {
+    "description": "The value \u0022exception\u0022 will trigger an error response. This may be useful for testing wrapper libraries.",
+    "enumValues": [
+      "",
+      "exception"
+    ],
+    "methods": [
+      "public/test.request.expected_result"
+    ],
+    "subscriptions": [
+    ]
+  },
+  "CurrencySymbol": {
+    "description": "The currency symbol",
+    "enumValues": [
+      "BTC",
+      "ETH",
+      "SOL",
+      "USDC"
+    ],
+    "methods": [
+      "public/get_portfolio_margins.request.currency",
+      "private/get_account_summary.request.currency",
+      "private/get_portfolio_margins.request.currency",
+      "private/get_positions.request.currency",
+      "private/get_subaccounts_details.request.currency",
+      "private/get_transaction_log.request.currency",
+      "private/execute_block_trade.request.currency",
+      "private/get_last_block_trades_by_currency.request.currency",
+      "private/move_positions.request.currency",
+      "private/verify_block_trade.request.currency",
+      "private/cancel_all_by_currency.request.currency",
+      "private/cancel_by_label.request.currency",
+      "private/get_mmp_config.request.currency",
+      "private/get_open_orders_by_currency.request.currency",
+      "private/get_order_history_by_currency.request.currency",
+      "private/get_trigger_order_history.request.currency",
+      "private/get_user_trades_by_currency.request.currency",
+      "private/get_user_trades_by_currency_and_time.request.currency",
+      "private/reset_mmp.request.currency",
+      "private/set_mmp_config.request.currency",
+      "private/get_settlement_history_by_currency.request.currency",
+      "public/get_book_summary_by_currency.request.currency",
+      "public/get_historical_volatility.request.currency",
+      "public/get_index.request.currency",
+      "public/get_instruments.request.currency",
+      "public/get_last_settlements_by_currency.request.currency",
+      "public/get_last_trades_by_currency.request.currency",
+      "public/get_last_trades_by_currency_and_time.request.currency",
+      "public/get_rfqs.request.currency",
+      "public/get_volatility_index_data.request.currency",
+      "private/cancel_transfer_by_id.request.currency",
+      "private/cancel_withdrawal.request.currency",
+      "private/create_deposit_address.request.currency",
+      "private/get_current_deposit_address.request.currency",
+      "private/get_deposits.request.currency",
+      "private/get_transfers.request.currency",
+      "private/get_withdrawals.request.currency",
+      "private/submit_transfer_to_subaccount.request.currency",
+      "private/submit_transfer_to_user.request.currency",
+      "private/withdraw.request.currency"
+    ],
+    "subscriptions": [
+      "user.mmp_trigger.{currency}.request.currency",
+      "user.portfolio.{currency}.request.currency"
+    ]
+  },
+  "InstrumentKind": {
+    "description": "Kind filter on positions",
+    "enumValues": [
+      "future",
+      "option"
+    ],
+    "methods": [
+      "private/get_positions.request.kind",
+      "private/cancel_all_by_currency.request.kind",
+      "private/get_open_orders_by_currency.request.kind",
+      "private/get_order_history_by_currency.request.kind",
+      "private/get_user_trades_by_currency.request.kind",
+      "private/get_user_trades_by_currency_and_time.request.kind",
+      "public/get_book_summary_by_currency.request.kind",
+      "public/get_instruments.request.kind",
+      "public/get_last_trades_by_currency.request.kind",
+      "public/get_last_trades_by_currency_and_time.request.kind",
+      "public/get_rfqs.request.kind"
+    ],
+    "subscriptions": [
+      "trades.{kind}.{currency}.{interval}.request.kind"
+    ]
+  },
+  "LoginStatus": {
+    "description": "enable or disable login.",
+    "enumValues": [
+      "enable",
+      "disable"
+    ],
+    "methods": [
+      "private/toggle_subaccount_login.request.state"
+    ],
+    "subscriptions": [
+    ]
+  },
+  "TradeRole": {
+    "description": "Describes if user wants to be maker or taker of trades",
+    "enumValues": [
+      "maker",
+      "taker"
+    ],
+    "methods": [
+      "private/execute_block_trade.request.role",
+      "private/verify_block_trade.request.role"
+    ],
+    "subscriptions": [
+    ]
+  },
+  "TradeDirection": {
+    "description": "Direction of trade from the maker perspective",
+    "enumValues": [
+      "buy",
+      "sell"
+    ],
+    "methods": [
+      "private/execute_block_trade.request.trades.direction",
+      "private/verify_block_trade.request.trades.direction",
+      "private/send_rfq.request.side"
+    ],
+    "subscriptions": [
+    ]
+  },
+  "BuySellOrderType": {
+    "description": "The order type, default: \u0060\u0022limit\u0022\u0060",
+    "enumValues": [
+      "limit",
+      "stop_limit",
+      "take_limit",
+      "market",
+      "stop_market",
+      "take_market",
+      "market_limit",
+      "trailing_stop"
+    ],
+    "methods": [
+      "private/buy.request.type",
+      "private/sell.request.type"
+    ],
+    "subscriptions": [
+    ]
+  },
+  "TimeInForce": {
+    "description": "Specifies how long the order remains in effect. Default \u0060\u0022good_til_cancelled\u0022\u0060\n\n - \u0060\u0022good_til_cancelled\u0022\u0060 - unfilled order remains in order book until cancelled\n- \u0060\u0022good_til_day\u0022\u0060 - unfilled order remains in order book till the end of the trading session\n- \u0060\u0022fill_or_kill\u0022\u0060 - execute a transaction immediately and completely or not at all\n- \u0060\u0022immediate_or_cancel\u0022\u0060 - execute a transaction immediately, and any portion of the order that cannot be immediately filled is cancelled",
+    "enumValues": [
+      "good_til_cancelled",
+      "good_til_day",
+      "fill_or_kill",
+      "immediate_or_cancel"
+    ],
+    "methods": [
+      "private/buy.request.time_in_force",
+      "private/sell.request.time_in_force"
+    ],
+    "subscriptions": [
+    ]
+  },
+  "TriggerType": {
+    "description": "Defines the trigger type. Required for \u0060\u0022Stop-Loss\u0022\u0060, \u0060\u0022Take-Profit\u0022\u0060 and \u0060\u0022Trailing\u0022\u0060 trigger orders",
+    "enumValues": [
+      "index_price",
+      "mark_price",
+      "last_price"
+    ],
+    "methods": [
+      "private/buy.request.trigger",
+      "private/sell.request.trigger"
+    ],
+    "subscriptions": [
+    ]
+  },
+  "AdvancedOptionOrderType": {
+    "description": "Advanced option order type. (Only for options)",
+    "enumValues": [
+      "usd",
+      "implv"
+    ],
+    "methods": [
+      "private/buy.request.advanced",
+      "private/sell.request.advanced",
+      "private/edit.request.advanced",
+      "private/edit_by_label.request.advanced"
+    ],
+    "subscriptions": [
+    ]
+  },
+  "CancelOrderType": {
+    "description": "Order type - \u0060limit\u0060, \u0060stop\u0060, \u0060take\u0060, \u0060trigger_all\u0060 or \u0060all\u0060, default - \u0060all\u0060",
+    "enumValues": [
+      "all",
+      "limit",
+      "trigger_all",
+      "stop",
+      "take",
+      "trailing_stop"
+    ],
+    "methods": [
+      "private/cancel_all_by_currency.request.type",
+      "private/cancel_all_by_instrument.request.type"
+    ],
+    "subscriptions": [
+    ]
+  },
+  "ClosePositionOrderType": {
+    "description": "The order type",
+    "enumValues": [
+      "limit",
+      "market"
+    ],
+    "methods": [
+      "private/close_position.request.type"
+    ],
+    "subscriptions": [
+    ]
+  },
+  "OpenOrderType": {
+    "description": "Order type, default - \u0060all\u0060",
+    "enumValues": [
+      "all",
+      "limit",
+      "trigger_all",
+      "stop_all",
+      "stop_limit",
+      "stop_market",
+      "take_all",
+      "take_limit",
+      "take_market",
+      "trailing_all",
+      "trailing_stop"
+    ],
+    "methods": [
+      "private/get_open_orders_by_currency.request.type",
+      "private/get_open_orders_by_instrument.request.type"
+    ],
+    "subscriptions": [
+    ]
+  },
+  "UserTradeSortDirection": {
+    "description": "Direction of results sorting (\u0060default\u0060 value means no sorting, results will be returned in order in which they left the database)",
+    "enumValues": [
+      "asc",
+      "desc",
+      "default"
+    ],
+    "methods": [
+      "private/get_user_trades_by_currency.request.sorting",
+      "private/get_user_trades_by_currency_and_time.request.sorting",
+      "private/get_user_trades_by_instrument.request.sorting",
+      "private/get_user_trades_by_instrument_and_time.request.sorting",
+      "private/get_user_trades_by_order.request.sorting",
+      "public/get_last_trades_by_currency.request.sorting",
+      "public/get_last_trades_by_currency_and_time.request.sorting",
+      "public/get_last_trades_by_instrument.request.sorting",
+      "public/get_last_trades_by_instrument_and_time.request.sorting"
+    ],
+    "subscriptions": [
+    ]
+  },
+  "SettlementType": {
+    "description": "Settlement type",
+    "enumValues": [
+      "settlement",
+      "delivery",
+      "bankruptcy"
+    ],
+    "methods": [
+      "private/get_settlement_history_by_instrument.request.type",
+      "private/get_settlement_history_by_currency.request.type",
+      "public/get_last_settlements_by_currency.request.type",
+      "public/get_last_settlements_by_instrument.request.type"
+    ],
+    "subscriptions": [
+    ]
+  },
+  "IndexName": {
+    "description": "Index identifier, matches (base) cryptocurrency with quote currency",
+    "enumValues": [
+      "ada_usd",
+      "avax_usd",
+      "btc_usd",
+      "eth_usd",
+      "dot_usd",
+      "luna_usd",
+      "matic_usd",
+      "sol_usd",
+      "usdc_usd",
+      "xrp_usd",
+      "ada_usdc",
+      "avax_usdc",
+      "btc_usdc",
+      "eth_usdc",
+      "dot_usdc",
+      "luna_usdc",
+      "matic_usdc",
+      "sol_usdc",
+      "xrp_usdc",
+      "btcdvol_usdc",
+      "ethdvol_usdc"
+    ],
+    "methods": [
+      "public/get_delivery_prices.request.index_name",
+      "public/get_index_price.request.index_name"
+    ],
+    "subscriptions": [
+      "deribit_price_index.{index_name}.request.index_name",
+      "deribit_price_ranking.{index_name}.request.index_name",
+      "deribit_price_statistics.{index_name}.request.index_name",
+      "deribit_volatility_index.{index_name}.request.index_name",
+      "estimated_expiration_price.{index_name}.request.index_name",
+      "markprice.options.{index_name}.request.index_name"
+    ]
+  },
+  "FundingChartPeriod": {
+    "description": "Specifies time period. \u00608h\u0060 - 8 hours, \u006024h\u0060 - 24 hours, \u00601m\u0060 - 1 month",
+    "enumValues": [
+      "8h",
+      "24h",
+      "1m"
+    ],
+    "methods": [
+      "public/get_funding_chart_data.request.length"
+    ],
+    "subscriptions": [
+    ]
+  },
+  "ChartBarResolution": {
+    "description": "Chart bars resolution given in full minutes or keyword \u00601D\u0060 (only some specific resolutions are supported)",
+    "enumValues": [
+      "1",
+      "3",
+      "5",
+      "10",
+      "15",
+      "30",
+      "60",
+      "120",
+      "180",
+      "360",
+      "720",
+      "1D"
+    ],
+    "methods": [
+      "public/get_tradingview_chart_data.request.resolution"
+    ],
+    "subscriptions": [
+      "chart.trades.{instrument_name}.{resolution}.request.resolution"
+    ]
+  },
+  "VolatilityIndexResolution": {
+    "description": "Time resolution given in full seconds or keyword \u00601D\u0060 (only some specific resolutions are supported)",
+    "enumValues": [
+      "1",
+      "60",
+      "3600",
+      "43200",
+      "1D"
+    ],
+    "methods": [
+      "public/get_volatility_index_data.request.resolution"
+    ],
+    "subscriptions": [
+    ]
+  },
+  "WithdrawPriority": {
+    "description": "Withdrawal priority, optional for BTC, default: \u0060high\u0060",
+    "enumValues": [
+      "insane",
+      "extreme_high",
+      "very_high",
+      "high",
+      "mid",
+      "low",
+      "very_low"
+    ],
+    "methods": [
+      "private/withdraw.request.priority"
+    ],
+    "subscriptions": [
+    ]
+  },
+  "PriceGrouping": {
+    "description": "Group prices (by rounding). Use \u0060none\u0060 for no grouping.\n For ETH cryptocurrency, real \u0060group\u0060 is divided by 100.0, e.g. given value \u00605\u0060 means using \u00600.05\u0060\n\n Allowed values for BTC - \u0060none\u0060, \u00601\u0060, \u00602\u0060, \u00605\u0060, \u006010\u0060\n Allowed values for ETH - \u0060none\u0060, \u00605\u0060, \u006010\u0060, \u006025\u0060, \u0060100\u0060, \u0060250\u0060",
+    "enumValues": [
+      "none",
+      "1",
+      "2",
+      "5",
+      "10",
+      "25",
+      "100",
+      "250"
+    ],
+    "methods": [
+    ],
+    "subscriptions": [
+      "book.{instrument_name}.{group}.{depth}.{interval}.request.group"
+    ]
+  },
+  "PriceLevelDepth": {
+    "description": "Number of price levels to be included.",
+    "enumValues": [
+      "1",
+      "10",
+      "20"
+    ],
+    "methods": [
+    ],
+    "subscriptions": [
+      "book.{instrument_name}.{group}.{depth}.{interval}.request.depth"
+    ]
+  },
+  "NotificationInterval1": {
+    "description": "Frequency of notifications. Events will be aggregated over this interval.",
+    "enumValues": [
+      "100ms"
+    ],
+    "methods": [
+    ],
+    "subscriptions": [
+      "book.{instrument_name}.{group}.{depth}.{interval}.request.interval",
+      "user.orders.{instrument_name}.{interval}.request.interval",
+      "user.orders.{kind}.{currency}.{interval}.request.interval"
+    ]
+  },
+  "NotificationInterval2": {
+    "description": "Frequency of notifications. Events will be aggregated over this interval.",
+    "enumValues": [
+      "100ms",
+      "raw"
+    ],
+    "methods": [
+    ],
+    "subscriptions": [
+      "book.{instrument_name}.{interval}.request.interval",
+      "perpetual.{instrument_name}.{interval}.request.interval",
+      "ticker.{instrument_name}.{interval}.request.interval",
+      "trades.{instrument_name}.{interval}.request.interval",
+      "trades.{kind}.{currency}.{interval}.request.interval",
+      "user.changes.{instrument_name}.{interval}.request.interval",
+      "user.changes.{kind}.{currency}.{interval}.request.interval",
+      "user.trades.{instrument_name}.{interval}.request.interval",
+      "user.trades.{kind}.{currency}.{interval}.request.interval"
+    ]
+  },
+  "InstrumentKindOrAny": {
+    "description": "Instrument kind or \u0060\u0022any\u0022\u0060 for all",
+    "enumValues": [
+      "future",
+      "option",
+      "any"
+    ],
+    "methods": [
+    ],
+    "subscriptions": [
+      "instrument.state.{kind}.{currency}.request.kind",
+      "user.changes.{kind}.{currency}.{interval}.request.kind",
+      "user.orders.{kind}.{currency}.raw.request.kind",
+      "user.orders.{kind}.{currency}.{interval}.request.kind",
+      "user.trades.{kind}.{currency}.{interval}.request.kind"
+    ]
+  },
+  "CurrencySymbolOrAny": {
+    "description": "The currency symbol or \u0060\u0022any\u0022\u0060 for all",
+    "enumValues": [
+      "BTC",
+      "ETH",
+      "SOL",
+      "USDC",
+      "any"
+    ],
+    "methods": [
+    ],
+    "subscriptions": [
+      "instrument.state.{kind}.{currency}.request.currency",
+      "rfq.{currency}.request.currency",
+      "trades.{kind}.{currency}.{interval}.request.currency",
+      "user.changes.{kind}.{currency}.{interval}.request.currency",
+      "user.orders.{kind}.{currency}.raw.request.currency",
+      "user.orders.{kind}.{currency}.{interval}.request.currency",
+      "user.trades.{kind}.{currency}.{interval}.request.currency"
+    ]
+  }
+}

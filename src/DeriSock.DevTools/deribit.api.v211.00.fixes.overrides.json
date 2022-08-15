@@ -1,0 +1,61 @@
+﻿{
+  "methods": {
+    ".+": {
+      "response": {
+        "properties": {
+          "acccess_token": {
+            "name": "access_token"
+          },
+          ".+": {
+            "properties": {
+              "session_bankrupcy": {
+                "name": "session_bankruptcy"
+              }
+            }
+          }
+        }
+      }
+    },
+    "^public/(get_order_book|get_order_book_by_instrument_id|ticker)$": {
+      "response": {
+        "properties": {
+          "underlying_index": {
+            "apiDataType": "string"
+          }
+        }
+      }
+    }
+  },
+  "subscriptions": {
+    "book.{instrument_name}.{interval}": {
+      "request": {
+        "properties": {
+          "interval": {
+            "enumValues": [
+              "100ms",
+              "raw"
+            ]
+          }
+        }
+      }
+    },
+    "incremental_ticker.{instrument_name}": {
+      "response": {
+        "properties": {
+          "underlying_index": {
+            "apiDataType": "string"
+          }
+        }
+      }
+    },
+    "ticker.{instrument_name}.{interval}": {
+      "response": {
+        "properties": {
+          "underlying_index": {
+            "apiDataType": "string"
+          }
+        }
+      }
+    }
+  }
+}

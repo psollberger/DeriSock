@@ -1,0 +1,32 @@
+﻿{
+  "methods": {
+    "private/get_affiliate_program_info": {
+      "response": {
+        "properties": {
+          "link": {
+            "description": "Affiliate link"
+          }
+        }
+      }
+    },
+    "^(private/get_settlement_history_by_(instrument|currency)|public/get_last_settlements_by_(instrument|currency))$": {
+      "response": {
+        "properties": {
+          "settlements": {
+            "properties": {
+              "session_bankruptcy": {
+                "description": "value of session bankruptcy (in base currency; bankruptcy only)"
+              },
+              "session_tax_rate": {
+                "description": "rate of paid taxes/fees (in base currency; bankruptcy only)"
+              }
+            }
+          }
+        }
+      }
+    },
+    "public/get_delivery_prices": {
+      "description": "Retrieves delivery prices for then given index"
+    }
+  }
+}
