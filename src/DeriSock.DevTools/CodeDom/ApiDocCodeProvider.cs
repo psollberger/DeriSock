@@ -6,6 +6,7 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 using DeriSock.DevTools.ApiDoc.Model;
@@ -265,29 +266,31 @@ internal class ApiDocCodeProvider
 
       objMethod.Comments.Add(new CodeCommentStatement("</summary>", true));
 
-      CodeTypeReference? returnType = null;
+      var isVoid = true;
+      var returnType = new CodeTypeReference(typeof(JsonRpcResponse<>));
 
       if (function.Response is { Properties.Count: > 0 }) {
-        var genericType = new CodeTypeReference(typeof(JsonRpcResponse<>));
-        genericType.TypeArguments.Add($"{function.Name.ToPublicCodeName()}Response");
-        returnType = genericType;
+        returnType.TypeArguments.Add($"{function.Name.ToPublicCodeName()}Response");
+        isVoid = false;
       }
       else if (function.Response is not null) {
         var dataTypeInfo = function.Response.GetDataTypeInfo();
-        returnType = CreateCodeTypeReference(dataTypeInfo);
-      }
 
-      if (returnType is null) {
-        if (!function.IsSynchronous)
-          objMethod.ReturnType = new CodeTypeReference(typeof(Task));
-      }
-      else {
-        if (returnType is { BaseType: "DateTime" or "DateTime?" })
+        if (dataTypeInfo is {TypeName: "DateTime"})
           _namespace.Imports.Add(ImportSystem);
 
-        if (returnType is { BaseType: "JToken" or "JToken?" or "JObject" or "JObject?" })
+        if (dataTypeInfo is {TypeName:"JToken" or "JObject"})
           _namespace.Imports.Add(ImportNewtonsoftJsonLinq);
 
+        returnType.TypeArguments.Add(CreateCodeTypeReference(dataTypeInfo));
+        isVoid = false;
+      }
+
+      if (isVoid) {
+        if (!function.IsSynchronous)
+          returnType = new CodeTypeReference(typeof(JsonRpcResponse));
+      }
+      else {
         if (function.IsSynchronous) {
           objMethod.ReturnType = returnType;
         }

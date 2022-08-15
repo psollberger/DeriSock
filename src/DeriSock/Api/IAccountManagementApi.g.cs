@@ -30,7 +30,7 @@ namespace DeriSock.Api {
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<JObject?> PublicGetPortfolioMargins(PublicGetPortfolioMarginsRequest args);
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<JObject?>> PublicGetPortfolioMargins(PublicGetPortfolioMarginsRequest args);
     
     /// <summary>
     /// <para>Changes name for key with given id</para>
@@ -51,7 +51,7 @@ namespace DeriSock.Api {
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<System.String?> PrivateChangeSubaccountName(PrivateChangeSubaccountNameRequest args);
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<System.String?>> PrivateChangeSubaccountName(PrivateChangeSubaccountNameRequest args);
     
     /// <summary>
     /// <para>Creates new api key with given scope</para>
@@ -77,7 +77,7 @@ namespace DeriSock.Api {
     /// <para>Enables affilate program for user</para>
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<System.String?> PrivateEnableAffiliateProgram();
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<System.String?>> PrivateEnableAffiliateProgram();
     
     /// <summary>
     /// <para>Enables api key with given id</para>
@@ -110,7 +110,7 @@ namespace DeriSock.Api {
     /// <para>Retrieves the language to be used for emails.</para>
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<System.String?> PrivateGetEmailLanguage();
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<System.String?>> PrivateGetEmailLanguage();
     
     /// <summary>
     /// <para>Retrieves announcements that have not been marked read by the user.</para>
@@ -123,7 +123,7 @@ namespace DeriSock.Api {
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<JObject?> PrivateGetPortfolioMargins(PrivateGetPortfolioMarginsRequest args);
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<JObject?>> PrivateGetPortfolioMargins(PrivateGetPortfolioMarginsRequest args);
     
     /// <summary>
     /// <para>Retrieve user position.</para>
@@ -171,14 +171,14 @@ namespace DeriSock.Api {
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<System.String?> PrivateRemoveApiKey(PrivateRemoveApiKeyRequest args);
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<System.String?>> PrivateRemoveApiKey(PrivateRemoveApiKeyRequest args);
     
     /// <summary>
     /// <para>Remove empty subaccount.</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<System.String?> PrivateRemoveSubaccount(PrivateRemoveSubaccountRequest args);
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<System.String?>> PrivateRemoveSubaccount(PrivateRemoveSubaccountRequest args);
     
     /// <summary>
     /// <para>Resets secret in api key</para>
@@ -192,7 +192,7 @@ namespace DeriSock.Api {
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<System.String?> PrivateSetAnnouncementAsRead(PrivateSetAnnouncementAsReadRequest args);
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<System.String?>> PrivateSetAnnouncementAsRead(PrivateSetAnnouncementAsReadRequest args);
     
     /// <summary>
     /// <para>Sets key with given id as default one for API Console</para>
@@ -206,34 +206,34 @@ namespace DeriSock.Api {
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<System.String?> PrivateSetEmailForSubaccount(PrivateSetEmailForSubaccountRequest args);
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<System.String?>> PrivateSetEmailForSubaccount(PrivateSetEmailForSubaccountRequest args);
     
     /// <summary>
     /// <para>Changes the language to be used for emails.</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<System.String?> PrivateSetEmailLanguage(PrivateSetEmailLanguageRequest args);
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<System.String?>> PrivateSetEmailLanguage(PrivateSetEmailLanguageRequest args);
     
     /// <summary>
     /// <para>Set the password for the subaccount</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<System.String?> PrivateSetPasswordForSubaccount(PrivateSetPasswordForSubaccountRequest args);
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<System.String?>> PrivateSetPasswordForSubaccount(PrivateSetPasswordForSubaccountRequest args);
     
     /// <summary>
     /// <para>Enable or disable sending of notifications for the subaccount.</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<System.String?> PrivateToggleNotificationsFromSubaccount(PrivateToggleNotificationsFromSubaccountRequest args);
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<System.String?>> PrivateToggleNotificationsFromSubaccount(PrivateToggleNotificationsFromSubaccountRequest args);
     
     /// <summary>
     /// <para>Enable or disable login for a subaccount. If login is disabled and a session for the subaccount exists, this session will be terminated.</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<System.String?> PrivateToggleSubaccountLogin(PrivateToggleSubaccountLoginRequest args);
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<System.String?>> PrivateToggleSubaccountLogin(PrivateToggleSubaccountLoginRequest args);
   }
 }

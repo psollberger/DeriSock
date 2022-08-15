@@ -23,20 +23,20 @@ namespace DeriSock.Api {
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<System.String[]?> PublicSubscribe(PublicSubscribeRequest args);
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<System.String[]?>> PublicSubscribe(PublicSubscribeRequest args);
     
     /// <summary>
     /// <para>Unsubscribe from one or more channels.</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<System.String[]?> PublicUnsubscribe(PublicUnsubscribeRequest args);
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<System.String[]?>> PublicUnsubscribe(PublicUnsubscribeRequest args);
     
     /// <summary>
     /// <para>Unsubscribe from all the channels subscribed so far.</para>
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<System.String?> PublicUnsubscribeAll();
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<System.String?>> PublicUnsubscribeAll();
     
     /// <summary>
     /// <para>Subscribe to one or more channels.</para>
@@ -44,19 +44,19 @@ namespace DeriSock.Api {
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<System.String[]?> PrivateSubscribe(PrivateSubscribeRequest args);
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<System.String[]?>> PrivateSubscribe(PrivateSubscribeRequest args);
     
     /// <summary>
     /// <para>Unsubscribe from one or more channels.</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<System.String[]?> PrivateUnsubscribe(PrivateUnsubscribeRequest args);
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<System.String[]?>> PrivateUnsubscribe(PrivateUnsubscribeRequest args);
     
     /// <summary>
     /// <para>Unsubscribe from all the channels subscribed so far.</para>
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<System.String?> PrivateUnsubscribeAll();
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<System.String?>> PrivateUnsubscribeAll();
   }
 }

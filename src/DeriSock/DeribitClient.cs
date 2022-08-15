@@ -108,7 +108,7 @@ public partial class DeribitClient : IWebSocketStateInfo, IPrivateApi, IPublicAp
     RefreshToken = null;
   }
 
-  private async Task<JsonRpcResponse<T>> Send<T>(string method, object @params, IJsonConverter<T> converter)
+  private async Task<JsonRpcResponse<T>> Send<T>(string method, object? @params, IJsonConverter<T> converter)
   {
     var response = await _client.Send(method, @params).ConfigureAwait(false);
     return response.CreateTyped(converter.Convert(response.Result));

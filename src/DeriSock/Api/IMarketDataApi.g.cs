@@ -70,14 +70,14 @@ namespace DeriSock.Api {
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<System.Double?> PublicGetFundingRateValue(PublicGetFundingRateValueRequest args);
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<System.Double?>> PublicGetFundingRateValue(PublicGetFundingRateValueRequest args);
     
     /// <summary>
     /// <para>Provides information about historical volatility for given cryptocurrency.</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.Model.TimestampValueItem[]?> PublicGetHistoricalVolatility(PublicGetHistoricalVolatilityRequest args);
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<DeriSock.Model.TimestampValueItem[]?>> PublicGetHistoricalVolatility(PublicGetHistoricalVolatilityRequest args);
     
     /// <summary>
     /// <para>Retrieves the current index price for the instruments, for the selected currency.</para>
@@ -97,7 +97,7 @@ namespace DeriSock.Api {
     /// <para>Retrieves the identifiers of all supported Price Indexes</para>
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<System.String[]?> PublicGetIndexPriceNames();
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<System.String[]?>> PublicGetIndexPriceNames();
     
     /// <summary>
     /// <para>Retrieves information about instrument</para>
@@ -160,7 +160,7 @@ namespace DeriSock.Api {
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.Model.TimestampValueItem[]?> PublicGetMarkPriceHistory(PublicGetMarkPriceHistoryRequest args);
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<DeriSock.Model.TimestampValueItem[]?>> PublicGetMarkPriceHistory(PublicGetMarkPriceHistoryRequest args);
     
     /// <summary>
     /// <para>Retrieves the order book, along with other market values for a given instrument.</para>

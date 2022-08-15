@@ -22,7 +22,7 @@ namespace DeriSock.Api {
     /// <para>Retrieves the current time (in milliseconds). This API endpoint can be used to check the clock skew between your software and Deribit&apos;s systems.</para>
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DateTime?> PublicGetTime();
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<DateTime?>> PublicGetTime();
     
     /// <summary>
     /// <para>Method used to introduce the client software connected to Deribit platform over websocket. Provided data may have an impact on the maintained connection and will be collected for internal statistical purposes. In response, Deribit will also introduce itself.</para>
