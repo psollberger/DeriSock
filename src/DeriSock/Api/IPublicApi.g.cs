@@ -72,27 +72,6 @@ namespace DeriSock.Api {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PublicTestResponse>> PublicTest(PublicTestRequest? args);
     
-    ///// <summary>
-    ///// <para>Subscribe to one or more channels.</para>
-    ///// <para>This is the same method as <a href="https://docs.deribit.com/#private_subscribe">/private/subscribe</a>, but it can only be used for &apos;public&apos; channels.</para>
-    ///// </summary>
-    ///// <param name="args"></param>
-    //[System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    //System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<string[]>> PublicSubscribe(PublicSubscribeRequest args);
-    
-    ///// <summary>
-    ///// <para>Unsubscribe from one or more channels.</para>
-    ///// </summary>
-    ///// <param name="args"></param>
-    //[System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    //System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<string[]>> PublicUnsubscribe(PublicUnsubscribeRequest args);
-    
-    ///// <summary>
-    ///// <para>Unsubscribe from all the channels subscribed so far.</para>
-    ///// </summary>
-    //[System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    //System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<string>> PublicUnsubscribeAll();
-    
     /// <summary>
     /// <para>Retrieves announcements. Default &quot;start_timestamp&quot; parameter value is current timestamp, &quot;count&quot; parameter value must be between 1 and 50, default is 5.</para>
     /// </summary>

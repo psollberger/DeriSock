@@ -142,5 +142,4 @@ internal class Program
     await ApiDocUtils.GenerateResponseClassesAsync(apiDoc, DeriSockGeneratedModelsDirectory, "Responses", cancellationToken).ConfigureAwait(false);
     await ApiDocUtils.GenerateApiInterfaces(apiDoc, DeriSockGeneratedApisDirectory, cancellationToken).ConfigureAwait(false);
   }
-
 }

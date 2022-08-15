@@ -462,6 +462,7 @@
     "public/subscribe": {
       "category": "Subscription management",
       "description": "Subscribe to one or more channels.\nThis is the same method as [/private/subscribe](https://docs.deribit.com/#private_subscribe), but it can only be used for 'public' channels.",
+      "excludeInInterface": true,
       "request": {
         "properties": {
           "channels": {
@@ -484,6 +485,7 @@
     "public/unsubscribe": {
       "category": "Subscription management",
       "description": "Unsubscribe from one or more channels.",
+      "excludeInInterface": true,
       "request": {
         "properties": {
           "channels": {
@@ -506,6 +508,7 @@
     "public/unsubscribe_all": {
       "category": "Subscription management",
       "description": "Unsubscribe from all the channels subscribed so far.",
+      "excludeInInterface": true,
       "response": {
         "description": "Result of method execution. `ok` in case of success",
         "required": true,
@@ -516,6 +519,7 @@
     "private/subscribe": {
       "category": "Subscription management",
       "description": "Subscribe to one or more channels.\nThe name of the channel determines what information will be provided, and in what form.",
+      "excludeInInterface": true,
       "request": {
         "properties": {
           "channels": {
@@ -543,6 +547,7 @@
     "private/unsubscribe": {
       "category": "Subscription management",
       "description": "Unsubscribe from one or more channels.",
+      "excludeInInterface": true,
       "request": {
         "properties": {
           "channels": {
@@ -565,6 +570,7 @@
     "private/unsubscribe_all": {
       "category": "Subscription management",
       "description": "Unsubscribe from all the channels subscribed so far.",
+      "excludeInInterface": true,
       "response": {
         "description": "Result of method execution. `ok` in case of success",
         "required": true,

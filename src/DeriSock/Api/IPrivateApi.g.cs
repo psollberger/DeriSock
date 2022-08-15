@@ -49,27 +49,6 @@ namespace DeriSock.Api {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateGetCancelOnDisconnectResponse>> PrivateGetCancelOnDisconnect(PrivateGetCancelOnDisconnectRequest? args);
     
-    ///// <summary>
-    ///// <para>Subscribe to one or more channels.</para>
-    ///// <para>The name of the channel determines what information will be provided, and in what form.</para>
-    ///// </summary>
-    ///// <param name="args"></param>
-    //[System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    //System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<string[]>> PrivateSubscribe(PrivateSubscribeRequest args);
-    
-    ///// <summary>
-    ///// <para>Unsubscribe from one or more channels.</para>
-    ///// </summary>
-    ///// <param name="args"></param>
-    //[System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    //System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<string[]>> PrivateUnsubscribe(PrivateUnsubscribeRequest args);
-    
-    ///// <summary>
-    ///// <para>Unsubscribe from all the channels subscribed so far.</para>
-    ///// </summary>
-    //[System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    //System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<string>> PrivateUnsubscribeAll();
-    
     /// <summary>
     /// <para>Changes name for key with given id</para>
     /// </summary>

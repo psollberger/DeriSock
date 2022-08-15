@@ -47,12 +47,6 @@ namespace DeriSock.Api {
       get;
     }
     
-    ///// <inheritdoc cref="ISubscriptionManagementApi" />
-    //[System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    //ISubscriptionManagementApi SubscriptionManagement {
-    //  get;
-    //}
-    
     /// <inheritdoc cref="IAccountManagementApi" />
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     IAccountManagementApi AccountManagement {

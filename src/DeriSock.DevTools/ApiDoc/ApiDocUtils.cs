@@ -689,7 +689,7 @@ public static class ApiDocUtils
 
     var apiCodeProvider = new ApiDocCodeProvider("DeriSock.Api");
 
-    var functionsPerCategory = apiDoc.Methods.GroupBy(x => x.Value.Category);
+    var functionsPerCategory = apiDoc.Methods.Where(x => !x.Value.ExcludeInInterface).GroupBy(x => x.Value.Category);
 
     await CodeGenEnumerate(
       apiCodeProvider,
@@ -707,7 +707,7 @@ public static class ApiDocUtils
       cancellationToken).ConfigureAwait(false);
 
 
-    var functionsPerScope = apiDoc.Methods.GroupBy(x => x.Value.IsPrivate);
+    var functionsPerScope = apiDoc.Methods.Where(x => !x.Value.ExcludeInInterface).GroupBy(x => x.Value.IsPrivate);
 
     await CodeGenEnumerate(
       apiCodeProvider,

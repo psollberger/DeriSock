@@ -441,8 +441,6 @@ public partial class DeribitClient : IWebSocketStateInfo, IPrivateApi, IPublicAp
     }
   }
 
-#region API Calls
-
 #region Subscriptions
 
   /// <summary>
@@ -730,8 +728,6 @@ public partial class DeribitClient : IWebSocketStateInfo, IPrivateApi, IPublicAp
       @params,
       n => callback(n.Data.ToObject<UserTrade[]>()));
   }
-
-#endregion
 
 #endregion
 }

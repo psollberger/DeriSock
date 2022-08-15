@@ -247,9 +247,6 @@ internal class ApiDocCodeProvider
     objInterface.CustomAttributes.Add(GeneratedCodeAttribute);
 
     foreach (var function in functions) {
-      if (function.ExcludeInInterface)
-        continue;
-
       var objMethod = new CodeMemberMethod
       {
         Attributes = MemberAttributes.Public | MemberAttributes.Final,

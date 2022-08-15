@@ -31,7 +31,7 @@
         }
       }
     },
-    "[^/]*/unsubscribe": {
+    "[^/]+/unsubscribe": {
       "request": {
         "properties": {
           "channels": {
@@ -39,6 +39,9 @@
           }
         }
       }
+    },
+    "^(public|private)/(subscribe|unsubscribe)(_all)?$": {
+      "excludeInInterface": true
     },
     "public/get_announcements": {
       "request": {
