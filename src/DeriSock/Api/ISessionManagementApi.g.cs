@@ -22,13 +22,13 @@ namespace DeriSock.Api {
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<System.String?>> PublicSetHeartbeat(PublicSetHeartbeatRequest args);
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<string>> PublicSetHeartbeat(PublicSetHeartbeatRequest args);
     
     /// <summary>
     /// <para>Stop sending heartbeat messages.</para>
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<System.String?>> PublicDisableHeartbeat();
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<string>> PublicDisableHeartbeat();
     
     /// <summary>
     /// <para>Enable Cancel On Disconnect for the connection. After enabling Cancel On Disconnect all orders created by the connection will be removed when connection is closed.</para>
@@ -37,7 +37,7 @@ namespace DeriSock.Api {
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<System.String?>> PrivateEnableCancelOnDisconnect(PrivateEnableCancelOnDisconnectRequest? args);
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<string>> PrivateEnableCancelOnDisconnect(PrivateEnableCancelOnDisconnectRequest? args);
     
     /// <summary>
     /// <para>Disable Cancel On Disconnect for the connection.</para>
@@ -45,7 +45,7 @@ namespace DeriSock.Api {
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<System.String?>> PrivateDisableCancelOnDisconnect(PrivateDisableCancelOnDisconnectRequest? args);
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<string>> PrivateDisableCancelOnDisconnect(PrivateDisableCancelOnDisconnectRequest? args);
     
     /// <summary>
     /// <para>Read current Cancel On Disconnect configuration for the account.</para>

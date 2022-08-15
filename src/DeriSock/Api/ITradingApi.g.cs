@@ -57,28 +57,28 @@ namespace DeriSock.Api {
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<System.Decimal?>> PrivateCancelAll(PrivateCancelAllRequest? args);
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<decimal>> PrivateCancelAll(PrivateCancelAllRequest? args);
     
     /// <summary>
     /// <para>Cancels all orders by currency, optionally filtered by instrument kind and/or order type.</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<System.Decimal?>> PrivateCancelAllByCurrency(PrivateCancelAllByCurrencyRequest args);
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<decimal>> PrivateCancelAllByCurrency(PrivateCancelAllByCurrencyRequest args);
     
     /// <summary>
     /// <para>Cancels all orders by instrument, optionally filtered by order type.</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<System.Decimal?>> PrivateCancelAllByInstrument(PrivateCancelAllByInstrumentRequest args);
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<decimal>> PrivateCancelAllByInstrument(PrivateCancelAllByInstrumentRequest args);
     
     /// <summary>
     /// <para>Cancels orders by label. All user&apos;s orders (trigger orders too), with given label are canceled in all currencies or in one given currency (in this case currency queue is used)</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<System.Decimal?>> PrivateCancelByLabel(PrivateCancelByLabelRequest args);
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<decimal>> PrivateCancelByLabel(PrivateCancelByLabelRequest args);
     
     /// <summary>
     /// <para>Makes closing position reduce only order .</para>
@@ -190,21 +190,21 @@ namespace DeriSock.Api {
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<System.String?>> PrivateResetMmp(PrivateResetMmpRequest args);
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<string>> PrivateResetMmp(PrivateResetMmpRequest args);
     
     /// <summary>
     /// <para>Sends RFQ on a given instrument.</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<System.String?>> PrivateSendRfq(PrivateSendRfqRequest args);
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<string>> PrivateSendRfq(PrivateSendRfqRequest args);
     
     /// <summary>
     /// <para>Set config for MMP - triggers MMP reset</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<System.String?>> PrivateSetMmpConfig(PrivateSetMmpConfigRequest args);
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<string>> PrivateSetMmpConfig(PrivateSetMmpConfigRequest args);
     
     /// <summary>
     /// <para>Retrieves public settlement, delivery and bankruptcy events filtered by instrument name</para>

@@ -72,6 +72,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "access_token": {
             "description": "",
@@ -132,6 +135,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "access_token": {
             "description": "",
@@ -186,6 +192,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "access_token": {
             "description": "",
@@ -250,6 +259,7 @@
       },
       "response": {
         "description": "Result of method execution. `ok` in case of success",
+        "required": true,
         "apiDataType": "string",
         "dataType": "string"
       }
@@ -259,6 +269,7 @@
       "description": "Stop sending heartbeat messages.",
       "response": {
         "description": "Result of method execution. `ok` in case of success",
+        "required": true,
         "apiDataType": "string",
         "dataType": "string"
       }
@@ -282,6 +293,7 @@
       },
       "response": {
         "description": "Result of method execution. `ok` in case of success",
+        "required": true,
         "apiDataType": "string",
         "dataType": "string"
       }
@@ -305,6 +317,7 @@
       },
       "response": {
         "description": "Result of method execution. `ok` in case of success",
+        "required": true,
         "apiDataType": "string",
         "dataType": "string"
       }
@@ -327,6 +340,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "enabled": {
             "description": "Current configuration status",
@@ -348,6 +364,7 @@
       "description": "Retrieves the current time (in milliseconds). This API endpoint can be used to check the clock skew between your software and Deribit's systems.",
       "response": {
         "description": "Current timestamp (milliseconds since the UNIX epoch)",
+        "required": true,
         "apiDataType": "integer",
         "dataType": "DateTime",
         "converters": [
@@ -375,6 +392,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "version": {
             "description": "The API version",
@@ -389,6 +409,9 @@
       "category": "Supporting",
       "description": "Method used to get information about locked currencies",
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "locked": {
             "description": "`true` when platform is locked in all currencies, `partial` when some currencies are locked, `false` - when there are not currencies locked",
@@ -423,6 +446,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "version": {
             "description": "The API version",
@@ -449,6 +475,7 @@
       },
       "response": {
         "description": "A list of subscribed channels.",
+        "required": true,
         "apiDataType": "array of string",
         "dataType": "array",
         "arrayDataType": "string"
@@ -470,6 +497,7 @@
       },
       "response": {
         "description": "A list of subscribed channels.",
+        "required": true,
         "apiDataType": "array of string",
         "dataType": "array",
         "arrayDataType": "string"
@@ -480,6 +508,7 @@
       "description": "Unsubscribe from all the channels subscribed so far.",
       "response": {
         "description": "Result of method execution. `ok` in case of success",
+        "required": true,
         "apiDataType": "string",
         "dataType": "string"
       }
@@ -505,6 +534,7 @@
       },
       "response": {
         "description": "A list of subscribed channels.",
+        "required": true,
         "apiDataType": "array of string",
         "dataType": "array",
         "arrayDataType": "string"
@@ -526,6 +556,7 @@
       },
       "response": {
         "description": "A list of subscribed channels.",
+        "required": true,
         "apiDataType": "array of string",
         "dataType": "array",
         "arrayDataType": "string"
@@ -536,6 +567,7 @@
       "description": "Unsubscribe from all the channels subscribed so far.",
       "response": {
         "description": "Result of method execution. `ok` in case of success",
+        "required": true,
         "apiDataType": "string",
         "dataType": "string"
       }
@@ -562,6 +594,10 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "array of object",
+        "dataType": "array",
+        "arrayDataType": "object",
         "properties": {
           "body": {
             "description": "The HTML body of the announcement",
@@ -631,6 +667,7 @@
       },
       "response": {
         "description": "PM details",
+        "required": true,
         "apiDataType": "object",
         "dataType": "JObject"
       }
@@ -656,6 +693,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "client_id": {
             "description": "Client identifier used for authentication",
@@ -732,6 +772,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "client_id": {
             "description": "Client identifier used for authentication",
@@ -809,6 +852,7 @@
       },
       "response": {
         "description": "Result of method execution. `ok` in case of success",
+        "required": true,
         "apiDataType": "string",
         "dataType": "string"
       }
@@ -838,6 +882,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "client_id": {
             "description": "Client identifier used for authentication",
@@ -898,6 +945,9 @@
       "category": "Account management",
       "description": "Create a new subaccount",
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "email": {
             "description": "User email",
@@ -1090,6 +1140,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "client_id": {
             "description": "Client identifier used for authentication",
@@ -1151,6 +1204,7 @@
       "description": "Enables affilate program for user",
       "response": {
         "description": "Result of method execution. `ok` in case of success",
+        "required": true,
         "apiDataType": "string",
         "dataType": "string"
       }
@@ -1169,6 +1223,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "client_id": {
             "description": "Client identifier used for authentication",
@@ -1245,6 +1302,10 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "array of object",
+        "dataType": "array",
+        "arrayDataType": "object",
         "properties": {
           "city": {
             "description": "City where the IP address is registered (estimated)",
@@ -1318,6 +1379,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "options_gamma": {
             "description": "Options summary gamma",
@@ -1697,6 +1761,9 @@
       "category": "Account management",
       "description": "Retrieves user`s affiliates count, payouts and link.",
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "is_enabled": {
             "description": "Status of affiliate program",
@@ -1744,6 +1811,7 @@
       "description": "Retrieves the language to be used for emails.",
       "response": {
         "description": "The abbreviation of the language",
+        "required": true,
         "apiDataType": "string",
         "dataType": "string"
       }
@@ -1752,6 +1820,10 @@
       "category": "Account management",
       "description": "Retrieves announcements that have not been marked read by the user.",
       "response": {
+        "required": true,
+        "apiDataType": "array of object",
+        "dataType": "array",
+        "arrayDataType": "object",
         "properties": {
           "body": {
             "description": "The HTML body of the announcement",
@@ -1827,6 +1899,7 @@
       },
       "response": {
         "description": "PM details",
+        "required": true,
         "apiDataType": "object",
         "dataType": "JObject"
       }
@@ -1845,6 +1918,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "average_price": {
             "description": "Average price of trades that built this position",
@@ -2014,6 +2090,10 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "array of object",
+        "dataType": "array",
+        "arrayDataType": "object",
         "properties": {
           "average_price": {
             "description": "Average price of trades that built this position",
@@ -2167,6 +2247,10 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "array of object",
+        "dataType": "array",
+        "arrayDataType": "object",
         "properties": {
           "email": {
             "description": "User email",
@@ -2384,6 +2468,10 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "array of object",
+        "dataType": "array",
+        "arrayDataType": "object",
         "properties": {
           "open_orders": {
             "description": "",
@@ -2814,6 +2902,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "continuation": {
             "description": "Continuation token for pagination. `NULL` when no continuation.",
@@ -3009,6 +3100,10 @@
       "category": "Account management",
       "description": "Retrieves list of api keys",
       "response": {
+        "required": true,
+        "apiDataType": "array of object",
+        "dataType": "array",
+        "arrayDataType": "object",
         "properties": {
           "client_id": {
             "description": "Client identifier used for authentication",
@@ -3080,6 +3175,7 @@
       },
       "response": {
         "description": "Result of method execution. `ok` in case of success",
+        "required": true,
         "apiDataType": "string",
         "dataType": "string"
       }
@@ -3099,6 +3195,7 @@
       },
       "response": {
         "description": "Result of method execution. `ok` in case of success",
+        "required": true,
         "apiDataType": "string",
         "dataType": "string"
       }
@@ -3117,6 +3214,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "client_id": {
             "description": "Client identifier used for authentication",
@@ -3188,6 +3288,7 @@
       },
       "response": {
         "description": "Result of method execution. `ok` in case of success",
+        "required": true,
         "apiDataType": "string",
         "dataType": "string"
       }
@@ -3207,6 +3308,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "client_id": {
             "description": "Client identifier used for authentication",
@@ -3284,6 +3388,7 @@
       },
       "response": {
         "description": "Result of method execution. `ok` in case of success",
+        "required": true,
         "apiDataType": "string",
         "dataType": "string"
       }
@@ -3303,6 +3408,7 @@
       },
       "response": {
         "description": "Result of method execution. `ok` in case of success",
+        "required": true,
         "apiDataType": "string",
         "dataType": "string"
       }
@@ -3328,6 +3434,7 @@
       },
       "response": {
         "description": "Result of method execution. `ok` in case of success",
+        "required": true,
         "apiDataType": "string",
         "dataType": "string"
       }
@@ -3353,6 +3460,7 @@
       },
       "response": {
         "description": "Result of method execution. `ok` in case of success",
+        "required": true,
         "apiDataType": "string",
         "dataType": "string"
       }
@@ -3382,6 +3490,7 @@
       },
       "response": {
         "description": "Result of method execution. `ok` in case of success",
+        "required": true,
         "apiDataType": "string",
         "dataType": "string"
       }
@@ -3473,6 +3582,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "app_name": {
             "description": "The name of the application that executed the block trade on behalf of the user (optional).",
@@ -3682,6 +3794,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "app_name": {
             "description": "The name of the application that executed the block trade on behalf of the user (optional).",
@@ -3913,6 +4028,10 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "array of object",
+        "dataType": "array",
+        "arrayDataType": "object",
         "properties": {
           "app_name": {
             "description": "The name of the application that executed the block trade on behalf of the user (optional).",
@@ -4123,6 +4242,7 @@
       },
       "response": {
         "description": "Result of method execution. `ok` in case of success",
+        "required": true,
         "apiDataType": "string",
         "dataType": "string"
       }
@@ -4184,6 +4304,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "trades": {
             "description": "",
@@ -4314,6 +4437,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "signature": {
             "description": "Signature of block trade\nIt is valid only for 5 minutes “around” given timestamp",
@@ -4441,6 +4567,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "order": {
             "description": "",
@@ -4954,6 +5083,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "order": {
             "description": "",
@@ -5418,6 +5550,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "order": {
             "description": "",
@@ -5883,6 +6018,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "order": {
             "description": "",
@@ -6292,6 +6430,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "mmp_cancelled": {
             "description": "`true` if order was cancelled by mmp trigger (optional)",
@@ -6529,6 +6670,7 @@
       },
       "response": {
         "description": "Total number of successfully cancelled orders",
+        "required": true,
         "apiDataType": "number",
         "dataType": "number"
       }
@@ -6583,6 +6725,7 @@
       },
       "response": {
         "description": "Total number of successfully cancelled orders",
+        "required": true,
         "apiDataType": "number",
         "dataType": "number"
       }
@@ -6622,6 +6765,7 @@
       },
       "response": {
         "description": "Total number of successfully cancelled orders",
+        "required": true,
         "apiDataType": "number",
         "dataType": "number"
       }
@@ -6653,6 +6797,7 @@
       },
       "response": {
         "description": "Total number of successfully cancelled orders",
+        "required": true,
         "apiDataType": "number",
         "dataType": "number"
       }
@@ -6686,6 +6831,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "order": {
             "description": "",
@@ -7107,6 +7255,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "buy": {
             "description": "Margin when buying",
@@ -7155,6 +7306,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "currency": {
             "description": "Currency, i.e `\"BTC\"`, `\"ETH\"`, `\"USDC\"`",
@@ -7237,6 +7391,10 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "array of object",
+        "dataType": "array",
+        "arrayDataType": "object",
         "properties": {
           "mmp_cancelled": {
             "description": "`true` if order was cancelled by mmp trigger (optional)",
@@ -7492,6 +7650,10 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "array of object",
+        "dataType": "array",
+        "arrayDataType": "object",
         "properties": {
           "mmp_cancelled": {
             "description": "`true` if order was cancelled by mmp trigger (optional)",
@@ -7767,6 +7929,10 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "array of object",
+        "dataType": "array",
+        "arrayDataType": "object",
         "properties": {
           "mmp_cancelled": {
             "description": "`true` if order was cancelled by mmp trigger (optional)",
@@ -8027,6 +8193,10 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "array of object",
+        "dataType": "array",
+        "arrayDataType": "object",
         "properties": {
           "mmp_cancelled": {
             "description": "`true` if order was cancelled by mmp trigger (optional)",
@@ -8264,6 +8434,10 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "array of object",
+        "dataType": "array",
+        "arrayDataType": "object",
         "properties": {
           "initial_margin": {
             "description": "Initial margin of order, in base currency",
@@ -8294,6 +8468,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "mmp_cancelled": {
             "description": "`true` if order was cancelled by mmp trigger (optional)",
@@ -8552,6 +8729,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "continuation": {
             "description": "Continuation token for pagination.",
@@ -8737,6 +8917,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "has_more": {
             "description": "",
@@ -8981,6 +9164,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "has_more": {
             "description": "",
@@ -9202,6 +9388,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "has_more": {
             "description": "",
@@ -9431,6 +9620,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "has_more": {
             "description": "",
@@ -9630,6 +9822,10 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "array of object",
+        "dataType": "array",
+        "arrayDataType": "object",
         "properties": {
           "amount": {
             "description": "",
@@ -9811,6 +10007,7 @@
       },
       "response": {
         "description": "Result of method execution. `ok` in case of success",
+        "required": true,
         "apiDataType": "string",
         "dataType": "string"
       }
@@ -9844,6 +10041,7 @@
       },
       "response": {
         "description": "Result of method execution. `ok` in case of success",
+        "required": true,
         "apiDataType": "string",
         "dataType": "string"
       }
@@ -9891,6 +10089,7 @@
       },
       "response": {
         "description": "Result of method execution. `ok` in case of success",
+        "required": true,
         "apiDataType": "string",
         "dataType": "string"
       }
@@ -9938,6 +10137,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "continuation": {
             "description": "Continuation token for pagination.",
@@ -10082,6 +10284,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "continuation": {
             "description": "Continuation token for pagination.",
@@ -10206,6 +10411,10 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "array of object",
+        "dataType": "array",
+        "arrayDataType": "object",
         "properties": {
           "ask_price": {
             "description": "The current best ask price, `null` if there aren't any asks",
@@ -10353,6 +10562,10 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "array of object",
+        "dataType": "array",
+        "arrayDataType": "object",
         "properties": {
           "ask_price": {
             "description": "The current best ask price, `null` if there aren't any asks",
@@ -10500,6 +10713,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "contract_size": {
             "description": "Contract size, for futures in USD, for options in base currency of the instrument (BTC, ETH, ...)",
@@ -10514,6 +10730,10 @@
       "category": "Market data",
       "description": "Retrieves all cryptocurrencies supported by the API.",
       "response": {
+        "required": true,
+        "apiDataType": "array of object",
+        "dataType": "array",
+        "arrayDataType": "object",
         "properties": {
           "coin_type": {
             "description": "The type of the currency.",
@@ -10630,6 +10850,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "data": {
             "description": "",
@@ -10685,6 +10908,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "current_interest": {
             "description": "Current interest",
@@ -10763,6 +10989,10 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "array of object",
+        "dataType": "array",
+        "arrayDataType": "object",
         "properties": {
           "index_price": {
             "description": "Price in base currency",
@@ -10832,7 +11062,7 @@
         }
       },
       "response": {
-        "description": "",
+        "required": true,
         "apiDataType": "float",
         "dataType": "float"
       }
@@ -10857,7 +11087,7 @@
         }
       },
       "response": {
-        "description": "",
+        "required": true,
         "apiDataType": "array of [timestamp, value]",
         "dataType": "array",
         "arrayDataType": "[timestamp, value]"
@@ -10884,6 +11114,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "BTC": {
             "description": "The current index price for BTC-USD (only for selected currency == BTC)",
@@ -10943,6 +11176,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "estimated_delivery_price": {
             "description": "Estimated delivery price for the market. For more details, see Documentation > General > Expiration Price",
@@ -10963,7 +11199,7 @@
       "category": "Market data",
       "description": "Retrieves the identifiers of all supported Price Indexes",
       "response": {
-        "description": "",
+        "required": true,
         "apiDataType": "array of string",
         "dataType": "array",
         "arrayDataType": "string"
@@ -10983,6 +11219,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "base_currency": {
             "description": "The underlying currency being traded.",
@@ -11156,6 +11395,10 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "array of object",
+        "dataType": "array",
+        "arrayDataType": "object",
         "properties": {
           "base_currency": {
             "description": "The underlying currency being traded.",
@@ -11344,6 +11587,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "continuation": {
             "description": "Continuation token for pagination.",
@@ -11482,6 +11728,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "continuation": {
             "description": "Continuation token for pagination.",
@@ -11638,6 +11887,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "has_more": {
             "description": "",
@@ -11805,6 +12057,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "has_more": {
             "description": "",
@@ -11949,6 +12204,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "has_more": {
             "description": "",
@@ -12101,6 +12359,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "has_more": {
             "description": "",
@@ -12232,6 +12493,7 @@
       },
       "response": {
         "description": "Markprice history values as an array of arrays with 2 values each. The inner values correspond to the timestamp in ms and the markprice itself.",
+        "required": true,
         "apiDataType": "array",
         "dataType": "array",
         "arrayDataType": "[timestamp, value]"
@@ -12256,6 +12518,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "ask_iv": {
             "description": "(Only for option) implied volatility for best ask",
@@ -12493,6 +12758,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "ask_iv": {
             "description": "(Only for option) implied volatility for best ask",
@@ -12740,6 +13008,10 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "array of object",
+        "dataType": "array",
+        "arrayDataType": "object",
         "properties": {
           "amount": {
             "description": "It represents the requested order size. For perpetual and futures the amount is in USD units, for options it is amount of corresponding cryptocurrency contracts, e.g., BTC or ETH.",
@@ -12791,6 +13063,10 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "array of object",
+        "dataType": "array",
+        "arrayDataType": "object",
         "properties": {
           "calls_volume": {
             "description": "Total 24h trade volume for call options. This is expressed in the base currency, e.g. BTC for `btc_usd`",
@@ -12907,6 +13183,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "close": {
             "description": "List of prices at close (one per candle)",
@@ -13017,6 +13296,10 @@
         }
       },
       "response": {
+        "description": "Volatility index candles.",
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "continuation": {
             "description": "Continuation - to be used as the `end_timestamp` parameter on the next request. `NULL` when no continuation.",
@@ -13048,6 +13331,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "ask_iv": {
             "description": "(Only for option) implied volatility for best ask",
@@ -13284,6 +13570,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "amount": {
             "description": "Amount of funds in given currency",
@@ -13374,6 +13663,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "address": {
             "description": "Address in proper format for currency",
@@ -13473,6 +13765,9 @@
         }
       },
       "response": {
+        "description": "Object if address is created, null otherwise",
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "address": {
             "description": "Address in proper format for currency",
@@ -13524,6 +13819,9 @@
         }
       },
       "response": {
+        "description": "Object if address is created, null otherwise",
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "address": {
             "description": "Address in proper format for currency",
@@ -13587,6 +13885,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "count": {
             "description": "Total number of results available",
@@ -13686,6 +13987,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "count": {
             "description": "Total number of results available",
@@ -13797,6 +14101,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "count": {
             "description": "Total number of results available",
@@ -13923,6 +14230,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "amount": {
             "description": "Amount of funds in given currency",
@@ -14019,6 +14329,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "amount": {
             "description": "Amount of funds in given currency",
@@ -14130,6 +14443,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "address": {
             "description": "Address in proper format for currency",
@@ -14214,6 +14530,9 @@
     "announcements": {
       "description": "General announcements concerning the Deribit platform.",
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "action": {
             "description": "Action taken by the platform administrators. Published a `new` announcement, or `delete`d the old one",
@@ -14317,6 +14636,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "asks": {
             "description": "List of asks",
@@ -14379,6 +14701,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "asks": {
             "description": "The first notification will contain the amounts for all price levels (a list of [\"new\", price, amount] tuples). All following notifications will contain a list of tuples with action, price level and new amount ([action, price, amount]). Action can be `new`, `change` or `delete`.",
@@ -14463,6 +14788,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "close": {
             "description": "The close price for the candle",
@@ -14545,6 +14873,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "index_name": {
             "description": "Index identifier, matches (base) cryptocurrency with quote currency",
@@ -14606,6 +14937,10 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "array of object",
+        "dataType": "array",
+        "arrayDataType": "object",
         "properties": {
           "enabled": {
             "description": "Stock exchange status",
@@ -14685,6 +15020,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "change24h": {
             "description": "The price index change calculated between the first and last point within most recent 24 hours window",
@@ -14755,6 +15093,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "estimated_delivery": {
             "description": "Time-weighted average of the volatility near the expiration otherwise equal to the volatility field.",
@@ -14822,6 +15163,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "is_estimated": {
             "description": "When `true` then price is given as an estimated value, otherwise it's current index price",
@@ -14869,6 +15213,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "ask_iv": {
             "description": "(Only for option) implied volatility for best ask",
@@ -15110,6 +15457,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "instrument_name": {
             "description": "Unique instrument identifier",
@@ -15171,6 +15521,10 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "array of object",
+        "dataType": "array",
+        "arrayDataType": "object",
         "properties": {
           "instrument_name": {
             "description": "Unique instrument identifier",
@@ -15225,6 +15579,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "index_price": {
             "description": "Current index price",
@@ -15253,6 +15610,9 @@
     "platform_state": {
       "description": "Information about platform state.",
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "locked": {
             "description": "Value is set to 'true' when index is locked on platform, sent only with `price_index` field",
@@ -15278,6 +15638,9 @@
     "platform_state.public_methods_state": {
       "description": "Information whether unauthorized public requests are allowed",
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "allow_unauthenticated_public_requests": {
             "description": "Value is set to 'true' when unauthorized public requests are allowed",
@@ -15301,6 +15664,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "best_ask_amount": {
             "description": "It represents the requested order size of all best asks",
@@ -15364,6 +15730,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "amount": {
             "description": "It represents the requested order size. For perpetual and futures the amount is in USD units, for options it is amount of corresponding cryptocurrency contracts, e.g., BTC or ETH.",
@@ -15424,6 +15793,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "ask_iv": {
             "description": "(Only for option) implied volatility for best ask",
@@ -15657,6 +16029,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "amount": {
             "description": "Trade amount. For perpetual and futures - in USD units, for options it is amount of corresponding cryptocurrency contracts, e.g., BTC or ETH.",
@@ -15780,6 +16155,10 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "array of object",
+        "dataType": "array",
+        "arrayDataType": "object",
         "properties": {
           "amount": {
             "description": "Trade amount. For perpetual and futures - in USD units, for options it is amount of corresponding cryptocurrency contracts, e.g., BTC or ETH.",
@@ -15866,6 +16245,9 @@
     "user.access_log": {
       "description": "Get notifications about security events related to the account",
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "city": {
             "description": "City where the IP address is registered (estimated)",
@@ -15937,6 +16319,10 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "array of object",
+        "dataType": "array",
+        "arrayDataType": "object",
         "properties": {
           "instrument_name": {
             "description": "Unique instrument identifier",
@@ -16520,6 +16906,10 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "array of object",
+        "dataType": "array",
+        "arrayDataType": "object",
         "properties": {
           "instrument_name": {
             "description": "Unique instrument identifier",
@@ -17081,6 +17471,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "frozen_until": {
             "description": "Timestamp (milliseconds since the UNIX epoch) until user will be frozen - 0 means that user is frozen until manual reset.",
@@ -17107,6 +17500,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "mmp_cancelled": {
             "description": "`true` if order was cancelled by mmp trigger (optional)",
@@ -17351,6 +17747,10 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "array of object",
+        "dataType": "array",
+        "arrayDataType": "object",
         "properties": {
           "mmp_cancelled": {
             "description": "`true` if order was cancelled by mmp trigger (optional)",
@@ -17604,6 +18004,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "mmp_cancelled": {
             "description": "`true` if order was cancelled by mmp trigger (optional)",
@@ -17866,6 +18269,10 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "array of object",
+        "dataType": "array",
+        "arrayDataType": "object",
         "properties": {
           "mmp_cancelled": {
             "description": "`true` if order was cancelled by mmp trigger (optional)",
@@ -18107,6 +18514,9 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "object",
+        "dataType": "object",
         "properties": {
           "available_funds": {
             "description": "The account's available funds",
@@ -18321,6 +18731,10 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "array of object",
+        "dataType": "array",
+        "arrayDataType": "object",
         "properties": {
           "amount": {
             "description": "Trade amount. For perpetual and futures - in USD units, for options it is amount of corresponding cryptocurrency contracts, e.g., BTC or ETH.",
@@ -18522,6 +18936,10 @@
         }
       },
       "response": {
+        "required": true,
+        "apiDataType": "array of object",
+        "dataType": "array",
+        "arrayDataType": "object",
         "properties": {
           "amount": {
             "description": "Trade amount. For perpetual and futures - in USD units, for options it is amount of corresponding cryptocurrency contracts, e.g., BTC or ETH.",

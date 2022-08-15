@@ -503,36 +503,28 @@ public class ApiDocHtmlParser
       new(@"\. Only when ", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.Compiled),
       new(@"\(options only\)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.Compiled),
       new(@"Field not included if", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.Compiled),
-      new(@" only\)$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.Compiled)
+      new(@" only\)$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.Compiled),
+      new(@", null otherwise$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.Compiled)
     };
 
     public static ApiDocProperty Parse(HtmlNode tableNode, string dataObjectPropertyName)
     {
-      var (resultNode, isComplex, apiTypeName, dataType, arrayDataType, description) = FindDataObjectEntry(tableNode, dataObjectPropertyName);
+      var (resultNode, isComplex, apiTypeName, dataType, arrayDataType, description, required) = FindDataObjectEntry(tableNode, dataObjectPropertyName);
 
       var result = new ApiDocProperty
       {
-        Name = "response"
+        Name = "response",
+        Required = required,
+        Description = string.IsNullOrEmpty(description) ? null : description,
+        ApiDataType = apiTypeName,
+        DataType = dataType,
+        ArrayDataType = arrayDataType
       };
 
-      switch (isComplex) {
-        case false:
-          result.Description = description;
-          result.ApiDataType = apiTypeName;
-          result.DataType = dataType;
-          result.ArrayDataType = arrayDataType;
-          break;
-
-        case true:
-          result.Properties = ParseComplexType(resultNode, 1);
-          break;
-      }
+      if (isComplex)
+        result.Properties = ParseComplexType(resultNode, 1);
 
       if (isComplex && result.Properties is { Count: < 1 }) {
-        result.Description = description;
-        result.ApiDataType = apiTypeName;
-        result.DataType = dataType;
-        result.ArrayDataType = arrayDataType;
         result.Properties = null;
       }
 
@@ -542,7 +534,7 @@ public class ApiDocHtmlParser
       return result;
     }
 
-    private static (HtmlNode resultNode, bool isComplex, string apiDataType, string dataType, string? arrayDataType, string description) FindDataObjectEntry(HtmlNode tableNode, string dataObjectPropertyName)
+    private static (HtmlNode resultNode, bool isComplex, string apiDataType, string dataType, string? arrayDataType, string description, bool required) FindDataObjectEntry(HtmlNode tableNode, string dataObjectPropertyName)
     {
       tableNode = tableNode.FirstChild.NextSibling;
       var responseTableRows = tableNode.SelectNodes("tr");
@@ -577,7 +569,7 @@ public class ApiDocHtmlParser
 
       var isComplex = typeName.Equals("object") || (arrayTypeName?.Equals("object") ?? false);
 
-      return (resultPropertyRow, isComplex, colValueType, typeName, arrayTypeName, description);
+      return (resultPropertyRow, isComplex, colValueType, typeName, arrayTypeName, description, !GetDescriptionIndicatesOptionality(description));
     }
 
     private static ApiDocPropertyCollection ParseComplexType(HtmlNode resultNode, int level)
@@ -636,8 +628,8 @@ public class ApiDocHtmlParser
         else if (prop.Description.Contains("milliseconds since the UNIX epoch"))
           ApplyTimestampFieldValues(prop);
 
-        prop.Deprecated = GetResponseParamIsDeprecated(prop);
-        prop.Required = !GetResponseParamIsOptional(prop);
+        prop.Deprecated = GetDescriptionIndicatesDeprecated(prop.Description);
+        prop.Required = !GetDescriptionIndicatesOptionality(prop.Description);
 
         if (typeName.Equals("object") || (arrayTypeName?.Equals("object") ?? false)) {
           var rowsConsumed = ParseComplexType(resultSiblings[i], level + 1, prop);
@@ -709,8 +701,8 @@ public class ApiDocHtmlParser
         else if (prop.Description.Contains("milliseconds since the UNIX epoch"))
           ApplyTimestampFieldValues(prop);
 
-        prop.Deprecated = GetResponseParamIsDeprecated(prop);
-        prop.Required = !GetResponseParamIsOptional(prop);
+        prop.Deprecated = GetDescriptionIndicatesDeprecated(prop.Description);
+        prop.Required = !GetDescriptionIndicatesOptionality(prop.Description);
 
         if (typeName.Equals("object") || (arrayTypeName?.Equals("object") ?? false)) {
           var rowsConsumed = ParseComplexType(siblingRowSiblings[i], level + 1, prop);
@@ -771,31 +763,31 @@ public class ApiDocHtmlParser
       }
     }
 
-    private static bool GetResponseParamIsDeprecated(ApiDocProperty prop)
+    private static bool GetDescriptionIndicatesDeprecated(string? description)
     {
+      if (string.IsNullOrEmpty(description))
+        return false;
+
       Match m;
       var idxPattern = 0;
 
-      if (string.IsNullOrEmpty(prop.Description))
-        return false;
-
       do {
-        m = DeprecatedParamPattern[idxPattern++].Match(prop.Description);
+        m = DeprecatedParamPattern[idxPattern++].Match(description);
       } while (!m.Success && idxPattern < DeprecatedParamPattern.Length);
 
       return m.Success;
     }
 
-    private static bool GetResponseParamIsOptional(ApiDocProperty prop)
+    private static bool GetDescriptionIndicatesOptionality(string? description)
     {
+      if (string.IsNullOrEmpty(description))
+        return false;
+
       Match m;
       var idxPattern = 0;
 
-      if (string.IsNullOrEmpty(prop.Description))
-        return false;
-
       do {
-        m = OptionalParamPattern[idxPattern++].Match(prop.Description);
+        m = OptionalParamPattern[idxPattern++].Match(description);
       } while (!m.Success && idxPattern < OptionalParamPattern.Length);
 
       return m.Success;

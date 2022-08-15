@@ -12811,6 +12811,7 @@ namespace DeriSock.Model {
   }
   
   /// <summary>
+  /// <para>Volatility index candles.</para>
   /// </summary>
   [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
   public partial class PublicGetVolatilityIndexDataResponse {
@@ -13656,6 +13657,7 @@ namespace DeriSock.Model {
   }
   
   /// <summary>
+  /// <para>Object if address is created, null otherwise</para>
   /// </summary>
   [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
   public partial class PrivateCreateDepositAddressResponse {
@@ -13731,6 +13733,7 @@ namespace DeriSock.Model {
   }
   
   /// <summary>
+  /// <para>Object if address is created, null otherwise</para>
   /// </summary>
   [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
   public partial class PrivateGetCurrentDepositAddressResponse {

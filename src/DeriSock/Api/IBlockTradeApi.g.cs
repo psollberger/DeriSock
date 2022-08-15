@@ -45,7 +45,7 @@ namespace DeriSock.Api {
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<System.String?>> PrivateInvalidateBlockTradeSignature(PrivateInvalidateBlockTradeSignatureRequest args);
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<string>> PrivateInvalidateBlockTradeSignature(PrivateInvalidateBlockTradeSignatureRequest args);
     
     /// <summary>
     /// <para>Moves positions from source subaccount to target subaccount</para>
