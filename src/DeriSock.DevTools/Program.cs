@@ -19,10 +19,10 @@ internal class Program
   private const string ApiDocumentationUrl = "https://docs.deribit.com";
   private const string DeriSockGeneratedModelsDirectory = @"..\..\..\src\DeriSock\Model";
   private const string DeriSockGeneratedApisDirectory = @"..\..\..\src\DeriSock\Api";
-  private const string ApiDocBaseDocumentPath = @"..\..\..\src\DeriSock.DevTools\deribit.api.v211.base.json";
-  private const string ApiDocDocumentPath = @"..\..\..\src\DeriSock.DevTools\deribit.api.v211.json";
-  private const string ApiDocEnumMapPath = @"..\..\..\src\DeriSock.DevTools\deribit.api.enum-map.json";
-  private const string ApiDocObjectMapPath = @"..\..\..\src\DeriSock.DevTools\deribit.api.object-map.json";
+  private const string ApiDocBaseDocumentPath = @"..\..\..\src\DeriSock.DevTools\Data\deribit.api.v211.base.json";
+  private const string ApiDocDocumentPath = @"..\..\..\src\DeriSock.DevTools\Data\deribit.api.v211.json";
+  private const string ApiDocEnumMapPath = @"..\..\..\src\DeriSock.DevTools\Data\deribit.api.enum-map.json";
+  private const string ApiDocObjectMapPath = @"..\..\..\src\DeriSock.DevTools\Data\deribit.api.object-map.json";
 
   public static async Task Main(string[] args)
   {
@@ -52,7 +52,19 @@ internal class Program
 
   private static Task Playground(ApiDocDocument apiDoc)
   {
-    var functionsPerCategory = apiDoc.Methods.GroupBy(x => x.Value.Category);
+    var filter = new FilterPropertiesVisitor(x => true);
+
+    apiDoc.Accept(filter);
+
+    
+
+    return Task.CompletedTask;
+  }
+
+  private static Task GenerateImpl(ApiDocDocument apiDoc)
+  {
+    var sb = new StringBuilder();
+    var itw = new IndentedTextWriter(new StringWriter(sb), "  ");
 
     foreach (var category in functionsPerCategory) {
       Debug.Assert(!string.IsNullOrEmpty(category.Key));

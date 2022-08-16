@@ -25,25 +25,25 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="deribit.api.v211.31.object-types.overrides.json">
+    <None Update="Data\deribit.api.v211.31.object-types.overrides.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="deribit.api.v211.11.description-adjustment.overrides.json">
+    <None Update="Data\deribit.api.v211.11.description-adjustment.overrides.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="deribit.api.v211.30.enum-types.overrides.json">
+    <None Update="Data\deribit.api.v211.30.enum-types.overrides.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="deribit.api.v211.10.spelling.overrides.json">
+    <None Update="Data\deribit.api.v211.10.spelling.overrides.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="deribit.api.v211.00.fixes.overrides.json">
+    <None Update="Data\deribit.api.v211.00.fixes.overrides.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="deribit.api.v211.10.spelling.overrides.json">
+    <None Update="Data\deribit.api.v211.10.spelling.overrides.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="deribit.api.v211.20.manual-adjustments.overrides.json">
+    <None Update="Data\deribit.api.v211.20.manual-adjustments.overrides.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
