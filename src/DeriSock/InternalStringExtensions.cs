@@ -1,3 +1,6 @@
+using System;
+using Serilog;
+
 namespace DeriSock;
 
 using DeriSock.Model;
@@ -32,5 +35,40 @@ internal static class InternalStringExtensions
       { } i when i.EndsWith("-P") => OptionType.Put,
       _ => OptionType.Undefined
     };
+  }
+  
+  /// <summary>
+  /// Get expiry from name
+  /// </summary>
+  /// <param name="instrumentName"></param>
+  /// <returns></returns>
+  public static DateTime GetExpiryDate(this string instrumentName)
+  {
+    var split = instrumentName?.Split('-');
+    if (split == null) return default;
+    var date = split[1];
+    var dt = DateTime.Parse(date);
+    var setExpiryTime = dt.AddHours(8);
+    return setExpiryTime;
+
+  }
+  
+  public static decimal GetStrikePrice(this string instrumentName)
+  {
+    try
+    {
+      if (instrumentName != null)
+      {
+        var splitString = instrumentName.Split('-');
+        var strikeByString = Convert.ToDecimal(splitString[2]);
+        return strikeByString;
+      }
+    }
+    catch (Exception e)
+    {
+      Log.Error($"error extracting strike price from {instrumentName}", e);
+    }
+
+    return 0;
   }
 }

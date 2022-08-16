@@ -174,4 +174,29 @@ public class OrderBook
   /// </summary>
   [JsonProperty("underlying_price")]
   public decimal UnderlyingPrice { get; set; }
+  
+  /// <summary>
+  ///   Expiry date of option contract
+  /// </summary>
+  public DateTime ExpiryDate => InstrumentName.GetExpiryDate();
+
+  /// <summary>
+  ///   Days until expiry of option contrat
+  /// </summary>
+  public double DaysToExpiry => GetDaysToExpiry();
+  
+  /// <summary>
+  ///   Strike price of option contract
+  /// </summary>
+  public decimal Strike => GetStrikePrice();
+
+  private decimal GetStrikePrice()
+  {
+    return InstrumentType == InstrumentType.Option ? InstrumentName.GetStrikePrice() : 0;
+  }
+
+  private double GetDaysToExpiry()
+  {
+    return HelperExtensions.GetDaysToExpiry(ExpiryDate.ToUniversalTime(), DateTimeOffset.UtcNow);
+  }
 }
