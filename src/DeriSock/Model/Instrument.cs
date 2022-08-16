@@ -110,4 +110,10 @@ public class Instrument
   /// </summary>
   [JsonProperty("tick_size")]
   public decimal TickSize { get; set; }
+  
+  /// <summary>
+  ///   Days to expiry of contract
+  /// </summary>
+  public double DaysToExpiry =>
+    HelperExtensions.GetDaysToExpiry(DateTime.SpecifyKind(ExpirationDateTime.ToUniversalTime(), DateTimeKind.Utc), DateTimeOffset.UtcNow);
 }

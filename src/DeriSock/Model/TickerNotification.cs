@@ -162,5 +162,33 @@ public class TickerNotification
   
   public InstrumentType InstrumentType => InstrumentName.GetInstrumentType();
 
+  /// <summary>
+  ///   Option type - Put / Call
+  /// </summary>
   public OptionType OptionType => InstrumentName.GetOptionType();
+  
+  /// <summary>
+  ///   Expiry date of option contract
+  /// </summary>
+  public DateTime ExpiryDate => InstrumentName.GetExpiryDate();
+
+  /// <summary>
+  ///   Days until expiry of option contrat
+  /// </summary>
+  public double DaysToExpiry => GetDaysToExpiry();
+  
+  /// <summary>
+  ///   Strike price of option contract
+  /// </summary>
+  public decimal Strike => GetStrikePrice();
+
+  private decimal GetStrikePrice()
+  {
+    return InstrumentType == InstrumentType.Option ? InstrumentName.GetStrikePrice() : 0;
+  }
+
+  private double GetDaysToExpiry()
+  {
+    return HelperExtensions.GetDaysToExpiry(ExpiryDate.ToUniversalTime(), DateTimeOffset.UtcNow);
+  }
 }
