@@ -550,6 +550,20 @@ public partial class DeribitClient : IWebSocketStateInfo, IPrivateApi, IPublicAp
       @params,
       n => callback(n.Data.ToObject<DeribitPriceRankingNotification[]>()));
   }
+  
+  /// <summary>
+  ///   Provides information about current value (price) for stock exchanges used to calculate Deribit Index
+  /// </summary>
+  public Task<SubscriptionToken> SubscribeDeribitVolatilityIndex
+  (
+    DeribitVolatilityIndexSubscriptionParams @params,
+    Action<DeribitVolatilityIndexNotification> callback
+  )
+  {
+    return _subscriptionManager.Subscribe(
+      @params,
+      n => callback(n.Data.ToObject<DeribitVolatilityIndexNotification>()));
+  }
 
   /// <summary>
   ///   Returns calculated (estimated) ending price for given index
