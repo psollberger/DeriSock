@@ -1,26 +1,23 @@
 // ReSharper disable UnusedMember.Local
 // ReSharper disable InheritdocConsiderUsage
 
-namespace DeriSock;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Dynamic;
 using System.Linq;
 using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
-
 using DeriSock.Api;
 using DeriSock.Constants;
 using DeriSock.Converter;
 using DeriSock.JsonRpc;
 using DeriSock.Model;
 using DeriSock.Request;
-
 using Serilog;
 using Serilog.Events;
+
+namespace DeriSock;
 
 /// <summary>
 ///   <para>The implementation of the API methods from Deribit</para>
@@ -77,8 +74,8 @@ public partial class DeribitClient : IWebSocketStateInfo, IPrivateApi, IPublicAp
     _client = endpointType switch
     {
       EndpointType.Productive => JsonRpcClientFactory.Create(new Uri(Endpoint.Productive), _logger),
-      EndpointType.Testnet    => JsonRpcClientFactory.Create(new Uri(Endpoint.TestNet), _logger),
-      _                       => throw new ArgumentOutOfRangeException(nameof(endpointType), endpointType, "Unsupported endpoint type")
+      EndpointType.Testnet => JsonRpcClientFactory.Create(new Uri(Endpoint.TestNet), _logger),
+      _ => throw new ArgumentOutOfRangeException(nameof(endpointType), endpointType, "Unsupported endpoint type")
     };
 
     _client.Connected += OnServerConnected;
@@ -153,31 +150,38 @@ public partial class DeribitClient : IWebSocketStateInfo, IPrivateApi, IPublicAp
     var retryCount = 0;
 
     Action<Notification>[] callbacks;
-    do {
+    do
+    {
       callbacks = _subscriptionManager.GetCallbacks(notification.Channel);
 
-      if (callbacks is { Length: > 0 })
+      if (callbacks is {Length: > 0})
         break;
 
       if (retryCount == 0 && (_logger?.IsEnabled(LogEventLevel.Debug) ?? false))
-        _logger.Debug("OnNotification: Could not find subscription for notification. Retrying up to {@maxRetries} times", maxRetries);
+        _logger.Debug(
+          "OnNotification: Could not find subscription for notification. Retrying up to {@maxRetries} times",
+          maxRetries);
 
       Thread.Sleep(retryDelay);
       retryCount++;
     } while (retryCount < maxRetries);
 
-    if (callbacks is not { Length: > 0 }) {
+    if (callbacks is not {Length: > 0})
+    {
       if (_logger?.IsEnabled(LogEventLevel.Warning) ?? false)
         _logger.Warning("OnNotification: Could not find subscription for notification: {@Notification}", notification);
 
       return;
     }
 
-    foreach (var callback in callbacks) {
-      try {
+    foreach (var callback in callbacks)
+    {
+      try
+      {
         Task.Run(() => callback(notification));
       }
-      catch (Exception ex) {
+      catch (Exception ex)
+      {
         if (_logger.IsEnabled(LogEventLevel.Error))
           _logger.Error(ex, "OnNotification: Error during event callback call: {@Notification}", notification);
       }
@@ -197,7 +201,7 @@ public partial class DeribitClient : IWebSocketStateInfo, IPrivateApi, IPublicAp
         if (_client.State != WebSocketState.Open)
           return;
 
-        var result = ((IAuthenticationMethods)this).WithRefreshToken().GetAwaiter().GetResult();
+        var result = ((IAuthenticationMethods) this).WithRefreshToken().GetAwaiter().GetResult();
         EnqueueAuthRefresh(result.ResultData.ExpiresIn);
       });
   }
@@ -222,11 +226,14 @@ public partial class DeribitClient : IWebSocketStateInfo, IPrivateApi, IPublicAp
       TaskCompletionSource<SubscriptionToken>? taskSource = null;
       SubscriptionEntry entry;
 
-      lock (_subscriptionMap) {
-        if (!_subscriptionMap.TryGetValue(channelName, out entry)) {
+      lock (_subscriptionMap)
+      {
+        if (!_subscriptionMap.TryGetValue(channelName, out entry))
+        {
           entry = new SubscriptionEntry();
 
-          if (!_subscriptionMap.TryAdd(channelName, entry)) {
+          if (!_subscriptionMap.TryAdd(channelName, entry))
+          {
             _client._logger?.Error("Subscribe: Could not add internal item for channel {Channel}", channelName);
             return SubscriptionToken.Invalid;
           }
@@ -237,23 +244,29 @@ public partial class DeribitClient : IWebSocketStateInfo, IPrivateApi, IPublicAp
         }
 
         // Entry already exists but is completely unsubscribed
-        if (entry.State == SubscriptionState.Unsubscribed) {
+        if (entry.State == SubscriptionState.Unsubscribed)
+        {
           taskSource = new TaskCompletionSource<SubscriptionToken>();
           entry.State = SubscriptionState.Subscribing;
           entry.SubscribeTask = taskSource.Task;
         }
 
         // Already subscribed - Put the callback in there and let's go
-        if (entry.State == SubscriptionState.Subscribed) {
-          _client._logger?.Debug("Subscribe: Subscription for channel already exists. Adding callback to list (Channel: {Channel})", channelName);
+        if (entry.State == SubscriptionState.Subscribed)
+        {
+          _client._logger?.Debug(
+            "Subscribe: Subscription for channel already exists. Adding callback to list (Channel: {Channel})",
+            channelName);
           var callbackEntry = new SubscriptionCallback(new SubscriptionToken(Guid.NewGuid()), callback);
           entry.Callbacks.Add(callbackEntry);
           return callbackEntry.Token;
         }
 
         // We are in the middle of unsubscribing from the channel
-        if (entry.State == SubscriptionState.Unsubscribing) {
-          _client._logger?.Debug("Subscribe: Channel is unsubscribing. Abort subscribe (Channel: {Channel})", channelName);
+        if (entry.State == SubscriptionState.Unsubscribing)
+        {
+          _client._logger?.Debug("Subscribe: Channel is unsubscribing. Abort subscribe (Channel: {Channel})",
+            channelName);
           return SubscriptionToken.Invalid;
         }
       }
@@ -261,50 +274,61 @@ public partial class DeribitClient : IWebSocketStateInfo, IPrivateApi, IPublicAp
       // Only one state left: Subscribing
 
       // We are already subscribing
-      if (taskSource == null && entry.State == SubscriptionState.Subscribing) {
-        _client._logger?.Debug("Subscribe: Channel is already subscribing. Waiting for the task to complete ({Channel})", channelName);
+      if (taskSource == null && entry.State == SubscriptionState.Subscribing)
+      {
+        _client._logger?.Debug(
+          "Subscribe: Channel is already subscribing. Waiting for the task to complete ({Channel})", channelName);
 
         var subscribeResult = entry.SubscribeTask != null && await entry.SubscribeTask != SubscriptionToken.Invalid;
 
-        if (!subscribeResult && entry.State != SubscriptionState.Subscribed) {
-          _client._logger?.Debug("Subscribe: Subscription has failed. Abort subscribe (Channel: {Channel})", channelName);
+        if (!subscribeResult && entry.State != SubscriptionState.Subscribed)
+        {
+          _client._logger?.Debug("Subscribe: Subscription has failed. Abort subscribe (Channel: {Channel})",
+            channelName);
           return SubscriptionToken.Invalid;
         }
 
-        _client._logger?.Debug("Subscribe: Subscription was successful. Adding callback (Channel: {Channel}", channelName);
+        _client._logger?.Debug("Subscribe: Subscription was successful. Adding callback (Channel: {Channel}",
+          channelName);
         var callbackEntry = new SubscriptionCallback(new SubscriptionToken(Guid.NewGuid()), callback);
         entry.Callbacks.Add(callbackEntry);
         return callbackEntry.Token;
       }
 
-      if (taskSource == null) {
-        _client._logger?.Error("Subscribe: Invalid execution state. Missing TaskCompletionSource (Channel: {Channel}", channelName);
+      if (taskSource == null)
+      {
+        _client._logger?.Error("Subscribe: Invalid execution state. Missing TaskCompletionSource (Channel: {Channel}",
+          channelName);
         return SubscriptionToken.Invalid;
       }
 
-      try {
+      try
+      {
         var subscribeResponse = await _client.Send(
-                                  IsPrivateChannel(channelName) ? "private/subscribe" : "public/subscribe",
-                                  new
-                                  {
-                                    channels = new[]
-                                    {
-                                      channelName
-                                    }
-                                  },
-                                  new ListJsonConverter<string>()).ConfigureAwait(false);
+          IsPrivateChannel(channelName) ? "private/subscribe" : "public/subscribe",
+          new
+          {
+            channels = new[]
+            {
+              channelName
+            }
+          },
+          new ListJsonConverter<string>()).ConfigureAwait(false);
 
         var response = subscribeResponse.ResultData;
 
-        if (response.Count != 1 || response[0] != channelName) {
+        if (response.Count != 1 || response[0] != channelName)
+        {
           _client._logger?.Debug("Subscribe: Invalid result (Channel: {Channel}): {@Response}", channelName, response);
           entry.State = SubscriptionState.Unsubscribed;
           entry.SubscribeTask = null;
           Debug.Assert(taskSource != null, nameof(taskSource) + " != null");
           taskSource.SetResult(SubscriptionToken.Invalid);
         }
-        else {
-          _client._logger?.Debug("Subscribe: Successfully subscribed. Adding callback (Channel: {Channel})", channelName);
+        else
+        {
+          _client._logger?.Debug("Subscribe: Successfully subscribed. Adding callback (Channel: {Channel})",
+            channelName);
 
           var callbackEntry = new SubscriptionCallback(new SubscriptionToken(Guid.NewGuid()), callback);
           entry.Callbacks.Add(callbackEntry);
@@ -314,7 +338,8 @@ public partial class DeribitClient : IWebSocketStateInfo, IPrivateApi, IPublicAp
           taskSource.SetResult(callbackEntry.Token);
         }
       }
-      catch (Exception e) {
+      catch (Exception e)
+      {
         entry.State = SubscriptionState.Unsubscribed;
         entry.SubscribeTask = null;
         Debug.Assert(taskSource != null, nameof(taskSource) + " != null");
@@ -331,33 +356,43 @@ public partial class DeribitClient : IWebSocketStateInfo, IPrivateApi, IPublicAp
       SubscriptionCallback callbackEntry;
       TaskCompletionSource<bool> taskSource;
 
-      lock (_subscriptionMap) {
+      lock (_subscriptionMap)
+      {
         (channelName, entry, callbackEntry) = GetEntryByToken(token);
 
-        if (string.IsNullOrEmpty(channelName) || entry == null || callbackEntry == null) {
+        if (string.IsNullOrEmpty(channelName) || entry == null || callbackEntry == null)
+        {
           _client._logger?.Warning("Unsubscribe: Could not find token {token}", token.Token);
           return false;
         }
 
-        switch (entry.State) {
+        switch (entry.State)
+        {
           case SubscriptionState.Subscribing:
-            _client._logger?.Debug("Unsubscribe: Channel is currently subscribing. Abort unsubscribe (Channel: {Channel})", channelName);
+            _client._logger?.Debug(
+              "Unsubscribe: Channel is currently subscribing. Abort unsubscribe (Channel: {Channel})", channelName);
             return false;
 
           case SubscriptionState.Unsubscribed:
           case SubscriptionState.Unsubscribing:
-            _client._logger?.Debug("Unsubscribe: Channel is unsubscribed or unsubscribing. Remove callback (Channel: {Channel})", channelName);
+            _client._logger?.Debug(
+              "Unsubscribe: Channel is unsubscribed or unsubscribing. Remove callback (Channel: {Channel})",
+              channelName);
             entry.Callbacks.Remove(callbackEntry);
             return true;
 
           case SubscriptionState.Subscribed:
-            if (entry.Callbacks.Count > 1) {
-              _client._logger?.Debug("Unsubscribe: There are still callbacks left. Remove callback but don't unsubscribe (Channel: {Channel})", channelName);
+            if (entry.Callbacks.Count > 1)
+            {
+              _client._logger?.Debug(
+                "Unsubscribe: There are still callbacks left. Remove callback but don't unsubscribe (Channel: {Channel})",
+                channelName);
               entry.Callbacks.Remove(callbackEntry);
               return true;
             }
 
-            _client._logger?.Debug("Unsubscribe: No callbacks left. Unsubscribe and remove callback (Channel: {Channel})", channelName);
+            _client._logger?.Debug(
+              "Unsubscribe: No callbacks left. Unsubscribe and remove callback (Channel: {Channel})", channelName);
             break;
 
           default:
@@ -372,33 +407,37 @@ public partial class DeribitClient : IWebSocketStateInfo, IPrivateApi, IPublicAp
         entry.UnsubscribeTask = taskSource.Task;
       }
 
-      try {
+      try
+      {
         var unsubscribeResponse = await _client.Send(
-                                    IsPrivateChannel(channelName) ? "private/unsubscribe" : "public/unsubscribe",
-                                    new
-                                    {
-                                      channels = new[]
-                                      {
-                                        channelName
-                                      }
-                                    },
-                                    new ListJsonConverter<string>()).ConfigureAwait(false);
+          IsPrivateChannel(channelName) ? "private/unsubscribe" : "public/unsubscribe",
+          new
+          {
+            channels = new[]
+            {
+              channelName
+            }
+          },
+          new ListJsonConverter<string>()).ConfigureAwait(false);
 
         var response = unsubscribeResponse.ResultData;
 
-        if (response.Count != 1 || response[0] != channelName) {
+        if (response.Count != 1 || response[0] != channelName)
+        {
           entry.State = SubscriptionState.Subscribed;
           entry.UnsubscribeTask = null;
           taskSource.SetResult(false);
         }
-        else {
+        else
+        {
           entry.Callbacks.Remove(callbackEntry);
           entry.State = SubscriptionState.Unsubscribed;
           entry.UnsubscribeTask = null;
           taskSource.SetResult(true);
         }
       }
-      catch (Exception e) {
+      catch (Exception e)
+      {
         entry.State = SubscriptionState.Subscribed;
         entry.UnsubscribeTask = null;
         taskSource.SetException(e);
@@ -409,7 +448,8 @@ public partial class DeribitClient : IWebSocketStateInfo, IPrivateApi, IPublicAp
 
     public Action<Notification>[] GetCallbacks(string channel)
     {
-      lock (_subscriptionMap) {
+      lock (_subscriptionMap)
+      {
         if (_subscriptionMap.TryGetValue(channel, out var entry))
           return (from c in entry.Callbacks select c.Action).ToArray();
       }
@@ -426,11 +466,15 @@ public partial class DeribitClient : IWebSocketStateInfo, IPrivateApi, IPublicAp
     private static bool IsPrivateChannel(string channel)
       => channel.StartsWith("user.");
 
-    private (string channelName, SubscriptionEntry entry, SubscriptionCallback callbackEntry) GetEntryByToken(SubscriptionToken token)
+    private (string channelName, SubscriptionEntry entry, SubscriptionCallback callbackEntry) GetEntryByToken(
+      SubscriptionToken token)
     {
-      lock (_subscriptionMap) {
-        foreach (var kvp in _subscriptionMap) {
-          foreach (var callbackEntry in kvp.Value.Callbacks) {
+      lock (_subscriptionMap)
+      {
+        foreach (var kvp in _subscriptionMap)
+        {
+          foreach (var callbackEntry in kvp.Value.Callbacks)
+          {
             if (callbackEntry.Token == token)
               return (kvp.Key, kvp.Value, callbackEntry);
           }
@@ -441,7 +485,7 @@ public partial class DeribitClient : IWebSocketStateInfo, IPrivateApi, IPublicAp
     }
   }
 
-#region Subscriptions
+  #region Subscriptions
 
   /// <summary>
   ///   Unsubscribe from a Subscription you subscribed before
@@ -475,7 +519,8 @@ public partial class DeribitClient : IWebSocketStateInfo, IPrivateApi, IPublicAp
   ///     for options it is amount of corresponding cryptocurrency contracts, e.g., BTC or ETH.
   ///   </para>
   /// </summary>
-  public Task<SubscriptionToken> SubscribeBookGroup(BookGroupSubscriptionParams @params, Action<BookGroupNotification> callback)
+  public Task<SubscriptionToken> SubscribeBookGroup(BookGroupSubscriptionParams @params,
+    Action<BookGroupNotification> callback)
   {
     return _subscriptionManager.Subscribe(
       @params,
@@ -503,7 +548,8 @@ public partial class DeribitClient : IWebSocketStateInfo, IPrivateApi, IPublicAp
   ///     contracts, e.g., BTC or ETH.
   ///   </para>
   /// </summary>
-  public Task<SubscriptionToken> SubscribeBookChange(BookChangeSubscriptionParams @params, Action<BookChangeNotification> callback)
+  public Task<SubscriptionToken> SubscribeBookChange(BookChangeSubscriptionParams @params,
+    Action<BookChangeNotification> callback)
   {
     return _subscriptionManager.Subscribe(
       @params,
@@ -520,7 +566,8 @@ public partial class DeribitClient : IWebSocketStateInfo, IPrivateApi, IPublicAp
   ///     generated which uses data from the last available trade candle (open and close values).
   ///   </para>
   /// </summary>
-  public Task<SubscriptionToken> SubscribeChartTrades(ChartTradesSubscriptionParams @params, Action<ChartTradesNotification> callback)
+  public Task<SubscriptionToken> SubscribeChartTrades(ChartTradesSubscriptionParams @params,
+    Action<ChartTradesNotification> callback)
   {
     return _subscriptionManager.Subscribe(
       @params,
@@ -530,7 +577,8 @@ public partial class DeribitClient : IWebSocketStateInfo, IPrivateApi, IPublicAp
   /// <summary>
   ///   Provides information about current value (price) for Deribit Index
   /// </summary>
-  public Task<SubscriptionToken> SubscribeDeribitPriceIndex(DeribitPriceIndexSubscriptionParams @params, Action<DeribitPriceIndexNotification> callback)
+  public Task<SubscriptionToken> SubscribeDeribitPriceIndex(DeribitPriceIndexSubscriptionParams @params,
+    Action<DeribitPriceIndexNotification> callback)
   {
     return _subscriptionManager.Subscribe(
       @params,
@@ -550,7 +598,7 @@ public partial class DeribitClient : IWebSocketStateInfo, IPrivateApi, IPublicAp
       @params,
       n => callback(n.Data.ToObject<DeribitPriceRankingNotification[]>()));
   }
-  
+
   /// <summary>
   ///   Provides information about current value (price) for stock exchanges used to calculate Deribit Index
   /// </summary>
@@ -582,7 +630,8 @@ public partial class DeribitClient : IWebSocketStateInfo, IPrivateApi, IPublicAp
   /// <summary>
   ///   Provides information about options markprices
   /// </summary>
-  public Task<SubscriptionToken> SubscribeMarkPriceOptions(MarkPriceOptionsSubscriptionParams @params, Action<MarkPriceOptionsNotification[]> callback)
+  public Task<SubscriptionToken> SubscribeMarkPriceOptions(MarkPriceOptionsSubscriptionParams @params,
+    Action<MarkPriceOptionsNotification[]> callback)
   {
     return _subscriptionManager.Subscribe(
       @params,
@@ -637,7 +686,8 @@ public partial class DeribitClient : IWebSocketStateInfo, IPrivateApi, IPublicAp
   /// <summary>
   ///   Get notifications about trades for an instrument
   /// </summary>
-  public Task<SubscriptionToken> SubscribeTradesInstrument(TradesInstrumentSubscriptionParams @params, Action<TradesNotification[]> callback)
+  public Task<SubscriptionToken> SubscribeTradesInstrument(TradesInstrumentSubscriptionParams @params,
+    Action<TradesNotification[]> callback)
   {
     return _subscriptionManager.Subscribe(
       @params,
@@ -647,7 +697,8 @@ public partial class DeribitClient : IWebSocketStateInfo, IPrivateApi, IPublicAp
   /// <summary>
   ///   Get notifications about trades in any instrument of a given kind and given currency
   /// </summary>
-  public Task<SubscriptionToken> SubscribeTradesKindCurrency(TradesKindCurrencySubscriptionParams @params, Action<TradesNotification[]> callback)
+  public Task<SubscriptionToken> SubscribeTradesKindCurrency(TradesKindCurrencySubscriptionParams @params,
+    Action<TradesNotification[]> callback)
   {
     return _subscriptionManager.Subscribe(
       @params,
@@ -657,7 +708,8 @@ public partial class DeribitClient : IWebSocketStateInfo, IPrivateApi, IPublicAp
   /// <summary>
   ///   Get notifications about user's updates related to order, trades, etc. in an instrument.
   /// </summary>
-  public Task<SubscriptionToken> SubscribeUserChangesInstrument(UserChangesInstrumentSubscriptionParams @params, Action<UserChangesNotification> callback)
+  public Task<SubscriptionToken> SubscribeUserChangesInstrument(UserChangesInstrumentSubscriptionParams @params,
+    Action<UserChangesNotification> callback)
   {
     return _subscriptionManager.Subscribe(
       @params,
@@ -668,7 +720,8 @@ public partial class DeribitClient : IWebSocketStateInfo, IPrivateApi, IPublicAp
   ///   Get notifications about changes in user's updates related to orders, trades, etc. in instruments of a given kind and
   ///   currency.
   /// </summary>
-  public Task<SubscriptionToken> SubscribeUserChangesKindCurrency(UserChangesKindCurrencySubscriptionParams @params, Action<UserChangesNotification> callback)
+  public Task<SubscriptionToken> SubscribeUserChangesKindCurrency(UserChangesKindCurrencySubscriptionParams @params,
+    Action<UserChangesNotification> callback)
   {
     return _subscriptionManager.Subscribe(
       @params,
@@ -678,7 +731,8 @@ public partial class DeribitClient : IWebSocketStateInfo, IPrivateApi, IPublicAp
   /// <summary>
   ///   Get notifications about changes in user's orders for given instrument
   /// </summary>
-  public Task<SubscriptionToken> SubscribeUserOrdersInstrument(UserOrdersInstrumentSubscriptionParams @params, Action<UserOrder[]> callback)
+  public Task<SubscriptionToken> SubscribeUserOrdersInstrument(UserOrdersInstrumentSubscriptionParams @params,
+    Action<UserOrder[]> callback)
   {
     return _subscriptionManager.Subscribe(
       @params,
@@ -697,7 +751,8 @@ public partial class DeribitClient : IWebSocketStateInfo, IPrivateApi, IPublicAp
   /// <summary>
   ///   Get notifications about changes in user's orders in instrument of a given kind and currency
   /// </summary>
-  public Task<SubscriptionToken> SubscribeUserOrdersKindCurrency(UserOrdersKindCurrencySubscriptionParams @params, Action<UserOrder[]> callback)
+  public Task<SubscriptionToken> SubscribeUserOrdersKindCurrency(UserOrdersKindCurrencySubscriptionParams @params,
+    Action<UserOrder[]> callback)
   {
     return _subscriptionManager.Subscribe(
       @params,
@@ -716,7 +771,8 @@ public partial class DeribitClient : IWebSocketStateInfo, IPrivateApi, IPublicAp
   /// <summary>
   ///   Provides information about current user portfolio
   /// </summary>
-  public Task<SubscriptionToken> SubscribeUserPortfolio(UserPortfolioSubscriptionParams @params, Action<UserPortfolioNotification> callback)
+  public Task<SubscriptionToken> SubscribeUserPortfolio(UserPortfolioSubscriptionParams @params,
+    Action<UserPortfolioNotification> callback)
   {
     return _subscriptionManager.Subscribe(
       @params,
@@ -726,7 +782,8 @@ public partial class DeribitClient : IWebSocketStateInfo, IPrivateApi, IPublicAp
   /// <summary>
   ///   Get notifications about user's trades in an instrument
   /// </summary>
-  public Task<SubscriptionToken> SubscribeUserTradesInstrument(UserTradesInstrumentSubscriptionParams @params, Action<UserTrade[]> callback)
+  public Task<SubscriptionToken> SubscribeUserTradesInstrument(UserTradesInstrumentSubscriptionParams @params,
+    Action<UserTrade[]> callback)
   {
     return _subscriptionManager.Subscribe(
       @params,
@@ -736,12 +793,13 @@ public partial class DeribitClient : IWebSocketStateInfo, IPrivateApi, IPublicAp
   /// <summary>
   ///   Get notifications about user's trades in any instrument of a given kind and given currency
   /// </summary>
-  public Task<SubscriptionToken> SubscribeUserTradesKindCurrency(UserTradesKindCurrencySubscriptionParams @params, Action<UserTrade[]> callback)
+  public Task<SubscriptionToken> SubscribeUserTradesKindCurrency(UserTradesKindCurrencySubscriptionParams @params,
+    Action<UserTrade[]> callback)
   {
     return _subscriptionManager.Subscribe(
       @params,
       n => callback(n.Data.ToObject<UserTrade[]>()));
   }
 
-#endregion
+  #endregion
 }
