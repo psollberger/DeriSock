@@ -8,34 +8,35 @@
 // --------------------------------------------------------------------------
 #pragma warning disable CS1591
 #nullable enable
-namespace DeriSock.Api {
+namespace DeriSock.Api
+{
+  using System.Threading;
   using System.Threading.Tasks;
   using DeriSock.JsonRpc;
   using DeriSock.Model;
   
-  
   [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-  public partial interface IAuthenticationApi {
-    
+  public partial interface IAuthenticationApi
+  {
     /// <summary>
     /// <para>Generates token for new subject id. This method can be used to switch between subaccounts.</para>
     /// </summary>
     /// <param name="args"></param>
+    /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PublicExchangeTokenResponse>> PublicExchangeToken(PublicExchangeTokenRequest args);
-    
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<AuthTokenData>> PublicExchangeToken(PublicExchangeTokenRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Generates token for new named session. This method can be used only with session scoped tokens.</para>
     /// </summary>
     /// <param name="args"></param>
+    /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PublicForkTokenResponse>> PublicForkToken(PublicForkTokenRequest args);
-    
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<AuthTokenData>> PublicForkToken(PublicForkTokenRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Gracefully close websocket connection, when COD (Cancel On Disconnect) is enabled orders are not cancelled</para>
     /// </summary>
     /// <param name="args"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    void PrivateLogout(PrivateLogoutRequest? args);
+    void PrivateLogout(PrivateLogoutRequest? args = null);
   }
 }

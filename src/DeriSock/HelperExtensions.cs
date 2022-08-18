@@ -53,21 +53,21 @@ public static class HelperExtensions
   {
     return new DateTimeOffset(dateTime).ToUnixTimeMilliseconds();
   }
-  
-  /// <summary>
-  /// Returns days to expiry of contract
-  /// </summary>
-  /// <param name="contractExpirationTime"></param>
-  /// <param name="time"></param>
-  /// <returns></returns>
-  /// <exception cref="ArgumentOutOfRangeException"></exception>
-  public static double GetDaysToExpiry(DateTimeOffset contractExpirationTime, DateTimeOffset time)
-  {
-    if (time > contractExpirationTime)
-      return 0;
-    //throw new ArgumentOutOfRangeException(nameof(time));
 
-    return (contractExpirationTime - time).TotalDays;
+  /// <summary>
+  /// Calculates the amount of days from now until this point in time is reached
+  /// </summary>
+  /// <param name="value">A <see cref="DateTime" /> object for which the remaining days should be calculated</param>
+  /// <returns></returns>
+  public static double ToTotalDaysFromNow(this DateTime value)
+  {
+    var now = DateTimeOffset.UtcNow;
+    var target = new DateTimeOffset(value);
+
+    if (now > target)
+      return 0d;
+
+    return (target - now).TotalDays;
   }
 
   /// <summary>

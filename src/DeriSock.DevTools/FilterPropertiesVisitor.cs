@@ -18,16 +18,7 @@ public class FilterPropertiesVisitor : IApiDocDocumentVisitor
 
   public void VisitDocument(ApiDocDocument document) { }
 
-  public void VisitFunction(ApiDocFunction function)
-  {
-    if (function.Request != null)
-      if (_predicate(function.Request))
-        Properties.Add(function.Request);
-
-    if (function.Response != null)
-      if (_predicate(function.Response))
-        Properties.Add(function.Response);
-  }
+  public void VisitFunction(ApiDocFunction function) { }
 
   public void VisitProperty(ApiDocProperty property)
   {

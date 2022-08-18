@@ -1,9 +1,7 @@
 namespace DeriSock.DevTools.CodeDom;
 
-using System;
-using System.Collections.Generic;
+using System.CodeDom;
 using System.Globalization;
-using System.Linq;
 using System.Text;
 
 using DeriSock.DevTools.ApiDoc.Model;
@@ -17,26 +15,26 @@ public static class CodeDomExtensions
   {
     var type = property.DataType switch
     {
-      "number" => typeof(decimal).FullName,
-      "float" => typeof(double).FullName,
-      "long" => typeof(long).FullName,
-      "integer" => typeof(int).FullName,
-      "boolean" => typeof(bool).FullName,
-      "string" => typeof(string).FullName,
-      "object" => typeof(object).FullName,
+      "number"           => typeof(decimal).FullName,
+      "float"            => typeof(double).FullName,
+      "long"             => typeof(long).FullName,
+      "integer"          => typeof(int).FullName,
+      "boolean"          => typeof(bool).FullName,
+      "string"           => typeof(string).FullName,
+      "text"             => typeof(string).FullName,
       "object or string" => typeof(ObjectOrStringItem).FullName,
       "array" => property.ArrayDataType switch
       {
-        "number" => typeof(decimal).FullName,
-        "float" => typeof(double).FullName,
-        "integer" => typeof(int).FullName,
-        "boolean" => typeof(bool).FullName,
-        "string" => typeof(string).FullName,
-        "object" => typeof(object).FullName,
-        "[price, amount]" => typeof(PriceAmountItem).FullName,
+        "number"                  => typeof(decimal).FullName,
+        "float"                   => typeof(double).FullName,
+        "integer"                 => typeof(int).FullName,
+        "boolean"                 => typeof(bool).FullName,
+        "string"                  => typeof(string).FullName,
+        "text"                    => typeof(string).FullName,
+        "[price, amount]"         => typeof(PriceAmountItem).FullName,
         "[action, price, amount]" => typeof(ActionPriceAmountItem).FullName,
-        "[timestamp, value]" => typeof(TimestampValueItem).FullName,
-        _ => property.ArrayDataType
+        "[timestamp, value]"      => typeof(TimestampValueItem).FullName,
+        _                         => property.ArrayDataType
       },
       _ => property.DataType
     } ?? string.Empty;
@@ -45,14 +43,10 @@ public static class CodeDomExtensions
   }
 
   public static string ToPublicCodeName(this string value)
-  {
-    return ToCodeName(value, false);
-  }
+    => ToCodeName(value, false);
 
   public static string ToPrivateCodeName(this string value)
-  {
-    return ToCodeName(value, true);
-  }
+    => ToCodeName(value, true);
 
   private static string ToCodeName(string value, bool isPrivate)
   {
@@ -60,6 +54,7 @@ public static class CodeDomExtensions
       return value;
 
     var sb = new StringBuilder(EnglishTextInfo.ToTitleCase(value));
+
     if (isPrivate)
       sb[0] = EnglishTextInfo.ToLower(sb[0]);
 
@@ -89,4 +84,10 @@ public static class CodeDomExtensions
 
     return value;
   }
+
+  public static int GetNestedArrayDepth(this CodeTypeReference value)
+    => value.ArrayElementType is null ? 0 : 1 + value.GetNestedArrayDepth();
+
+  public static bool HasCharAt(this string value, int index, char character)
+    => index < value.Length && value[index] == character;
 }

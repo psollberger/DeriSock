@@ -24,6 +24,13 @@
           }
         }
       }
+    },
+    "private/get_user_trades_by_order": {
+      "response": {
+        "apiDataType": "array of objects",
+        "dataType": "array",
+        "arrayDataType": "UserTrade"
+      }
     }
   },
   "subscriptions": {

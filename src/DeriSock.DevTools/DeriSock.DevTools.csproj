@@ -12,6 +12,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="DeriSock.DevTools.csproj.DotSettings" />
+  </ItemGroup>
+
+  <ItemGroup>
     <InternalsVisibleTo Include="DeriSock.Tests.Unit" />
     <InternalsVisibleTo Include="DeriSock.Tests.Integration" />
     <InternalsVisibleTo Include="DeriSock.Tests.Performance" />
@@ -56,6 +60,6 @@
     <Folder Include="ApiDoc\Model\Override\" />
   </ItemGroup>
 
-  <ProjectExtensions><VisualStudio><UserProperties deribit_1api_1v211_1json__JsonSchema="ApiSchema\deribit.api.schema.json" /></VisualStudio></ProjectExtensions>
+  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
 
 </Project>

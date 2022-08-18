@@ -1,123 +1,95 @@
 namespace DeriSock;
 
+using System.Threading;
 using System.Threading.Tasks;
 
-using DeriSock.Api;
 using DeriSock.Converter;
 using DeriSock.JsonRpc;
 using DeriSock.Model;
 
-public partial class DeribitClient : IMarketDataApi
+public partial class DeribitClient
 {
-  /// <inheritdoc cref="IMarketDataApi.PublicGetBookSummaryByCurrency" />
-  public async Task<JsonRpcResponse<PublicGetBookSummaryByCurrencyResponse>> PublicGetBookSummaryByCurrency(PublicGetBookSummaryByCurrencyRequest args)
-    => await Send("public/get_book_summary_by_currency", args, new ObjectJsonConverter<PublicGetBookSummaryByCurrencyResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<BookSummaryEntry[]>> InternalPublicGetBookSummaryByCurrency(PublicGetBookSummaryByCurrencyRequest args, CancellationToken cancellationToken = default)
+    => await Send("public/get_book_summary_by_currency", args, new ObjectJsonConverter<BookSummaryEntry[]>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="IMarketDataApi.PublicGetBookSummaryByInstrument" />
-  public async Task<JsonRpcResponse<PublicGetBookSummaryByInstrumentResponse>> PublicGetBookSummaryByInstrument(PublicGetBookSummaryByInstrumentRequest args)
-    => await Send("public/get_book_summary_by_instrument", args, new ObjectJsonConverter<PublicGetBookSummaryByInstrumentResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<BookSummaryEntry[]>> InternalPublicGetBookSummaryByInstrument(PublicGetBookSummaryByInstrumentRequest args, CancellationToken cancellationToken = default)
+    => await Send("public/get_book_summary_by_instrument", args, new ObjectJsonConverter<BookSummaryEntry[]>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="IMarketDataApi.PublicGetContractSize" />
-  public async Task<JsonRpcResponse<PublicGetContractSizeResponse>> PublicGetContractSize(PublicGetContractSizeRequest args)
-    => await Send("public/get_contract_size", args, new ObjectJsonConverter<PublicGetContractSizeResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<ContractSizeData>> InternalPublicGetContractSize(PublicGetContractSizeRequest args, CancellationToken cancellationToken = default)
+    => await Send("public/get_contract_size", args, new ObjectJsonConverter<ContractSizeData>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="IMarketDataApi.PublicGetCurrencies" />
-  public async Task<JsonRpcResponse<PublicGetCurrenciesResponse>> PublicGetCurrencies()
-    => await Send("public/get_currencies", null, new ObjectJsonConverter<PublicGetCurrenciesResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<CurrencyData[]>> InternalPublicGetCurrencies(CancellationToken cancellationToken = default)
+    => await Send("public/get_currencies", null, new ObjectJsonConverter<CurrencyData[]>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="IMarketDataApi.PublicGetDeliveryPrices" />
-  public async Task<JsonRpcResponse<PublicGetDeliveryPricesResponse>> PublicGetDeliveryPrices(PublicGetDeliveryPricesRequest args)
-    => await Send("public/get_delivery_prices", args, new ObjectJsonConverter<PublicGetDeliveryPricesResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<IndexDeliveryPrices>> InternalPublicGetDeliveryPrices(PublicGetDeliveryPricesRequest args, CancellationToken cancellationToken = default)
+    => await Send("public/get_delivery_prices", args, new ObjectJsonConverter<IndexDeliveryPrices>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="IMarketDataApi.PublicGetFundingChartData" />
-  public async Task<JsonRpcResponse<PublicGetFundingChartDataResponse>> PublicGetFundingChartData(PublicGetFundingChartDataRequest args)
-    => await Send("public/get_funding_chart_data", args, new ObjectJsonConverter<PublicGetFundingChartDataResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<FundingChartData>> InternalPublicGetFundingChartData(PublicGetFundingChartDataRequest args, CancellationToken cancellationToken = default)
+    => await Send("public/get_funding_chart_data", args, new ObjectJsonConverter<FundingChartData>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="IMarketDataApi.PublicGetFundingRateHistory" />
-  public async Task<JsonRpcResponse<PublicGetFundingRateHistoryResponse>> PublicGetFundingRateHistory(PublicGetFundingRateHistoryRequest args)
-    => await Send("public/get_funding_rate_history", args, new ObjectJsonConverter<PublicGetFundingRateHistoryResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<FundingRateHistoryEntry[]>> InternalPublicGetFundingRateHistory(PublicGetFundingRateHistoryRequest args, CancellationToken cancellationToken = default)
+    => await Send("public/get_funding_rate_history", args, new ObjectJsonConverter<FundingRateHistoryEntry[]>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="IMarketDataApi.PublicGetFundingRateValue" />
-  public async Task<JsonRpcResponse<double>> PublicGetFundingRateValue(PublicGetFundingRateValueRequest args)
-    => await Send("public/get_funding_rate_value", args, new ObjectJsonConverter<double>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<double>> InternalPublicGetFundingRateValue(PublicGetFundingRateValueRequest args, CancellationToken cancellationToken = default)
+    => await Send("public/get_funding_rate_value", args, new ObjectJsonConverter<double>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="IMarketDataApi.PublicGetHistoricalVolatility" />
-  public async Task<JsonRpcResponse<TimestampValueItem[]>> PublicGetHistoricalVolatility(PublicGetHistoricalVolatilityRequest args)
-    => await Send("public/get_historical_volatility", args, new ObjectJsonConverter<TimestampValueItem[]>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<TimestampValueItem[]>> InternalPublicGetHistoricalVolatility(PublicGetHistoricalVolatilityRequest args, CancellationToken cancellationToken = default)
+    => await Send("public/get_historical_volatility", args, new ObjectJsonConverter<TimestampValueItem[]>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="IMarketDataApi.PublicGetIndex" />
-  public async Task<JsonRpcResponse<PublicGetIndexResponse>> PublicGetIndex(PublicGetIndexRequest args)
-    => await Send("public/get_index", args, new ObjectJsonConverter<PublicGetIndexResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<GetIndexResponse>> InternalPublicGetIndex(PublicGetIndexRequest args, CancellationToken cancellationToken = default)
+    => await Send("public/get_index", args, new ObjectJsonConverter<GetIndexResponse>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="IMarketDataApi.PublicGetIndexPrice" />
-  public async Task<JsonRpcResponse<PublicGetIndexPriceResponse>> PublicGetIndexPrice(PublicGetIndexPriceRequest args)
-    => await Send("public/get_index_price", args, new ObjectJsonConverter<PublicGetIndexPriceResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<IndexPriceData>> InternalPublicGetIndexPrice(PublicGetIndexPriceRequest args, CancellationToken cancellationToken = default)
+    => await Send("public/get_index_price", args, new ObjectJsonConverter<IndexPriceData>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="IMarketDataApi.PublicGetIndexPriceNames" />
-  public async Task<JsonRpcResponse<string[]>> PublicGetIndexPriceNames()
-    => await Send("public/get_index_price_names", null, new ObjectJsonConverter<string[]>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<string[]>> InternalPublicGetIndexPriceNames(CancellationToken cancellationToken = default)
+    => await Send("public/get_index_price_names", null, new ObjectJsonConverter<string[]>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="IMarketDataApi.PublicGetInstrument" />
-  public async Task<JsonRpcResponse<PublicGetInstrumentResponse>> PublicGetInstrument(PublicGetInstrumentRequest args)
-    => await Send("public/get_instrument", args, new ObjectJsonConverter<PublicGetInstrumentResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<Instrument>> InternalPublicGetInstrument(PublicGetInstrumentRequest args, CancellationToken cancellationToken = default)
+    => await Send("public/get_instrument", args, new ObjectJsonConverter<Instrument>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="IMarketDataApi.PublicGetInstruments" />
-  public async Task<JsonRpcResponse<PublicGetInstrumentsResponse>> PublicGetInstruments(PublicGetInstrumentsRequest args)
-    => await Send("public/get_instruments", args, new ObjectJsonConverter<PublicGetInstrumentsResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<Instrument[]>> InternalPublicGetInstruments(PublicGetInstrumentsRequest args, CancellationToken cancellationToken = default)
+    => await Send("public/get_instruments", args, new ObjectJsonConverter<Instrument[]>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="IMarketDataApi.PublicGetLastSettlementsByCurrency" />
-  public async Task<JsonRpcResponse<PublicGetLastSettlementsByCurrencyResponse>> PublicGetLastSettlementsByCurrency(PublicGetLastSettlementsByCurrencyRequest args)
-    => await Send("public/get_last_settlements_by_currency", args, new ObjectJsonConverter<PublicGetLastSettlementsByCurrencyResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<SettlementPage>> InternalPublicGetLastSettlementsByCurrency(PublicGetLastSettlementsByCurrencyRequest args, CancellationToken cancellationToken = default)
+    => await Send("public/get_last_settlements_by_currency", args, new ObjectJsonConverter<SettlementPage>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="IMarketDataApi.PublicGetLastSettlementsByInstrument" />
-  public async Task<JsonRpcResponse<PublicGetLastSettlementsByInstrumentResponse>> PublicGetLastSettlementsByInstrument(PublicGetLastSettlementsByInstrumentRequest args)
-    => await Send("public/get_last_settlements_by_instrument", args, new ObjectJsonConverter<PublicGetLastSettlementsByInstrumentResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<SettlementPage>> InternalPublicGetLastSettlementsByInstrument(PublicGetLastSettlementsByInstrumentRequest args, CancellationToken cancellationToken = default)
+    => await Send("public/get_last_settlements_by_instrument", args, new ObjectJsonConverter<SettlementPage>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="IMarketDataApi.PublicGetLastTradesByCurrency" />
-  public async Task<JsonRpcResponse<PublicGetLastTradesByCurrencyResponse>> PublicGetLastTradesByCurrency(PublicGetLastTradesByCurrencyRequest args)
-    => await Send("public/get_last_trades_by_currency", args, new ObjectJsonConverter<PublicGetLastTradesByCurrencyResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<PublicTradesPage>> InternalPublicGetLastTradesByCurrency(PublicGetLastTradesByCurrencyRequest args, CancellationToken cancellationToken = default)
+    => await Send("public/get_last_trades_by_currency", args, new ObjectJsonConverter<PublicTradesPage>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="IMarketDataApi.PublicGetLastTradesByCurrencyAndTime" />
-  public async Task<JsonRpcResponse<PublicGetLastTradesByCurrencyAndTimeResponse>> PublicGetLastTradesByCurrencyAndTime(PublicGetLastTradesByCurrencyAndTimeRequest args)
-    => await Send("public/get_last_trades_by_currency_and_time", args, new ObjectJsonConverter<PublicGetLastTradesByCurrencyAndTimeResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<PublicTradesPage>> InternalPublicGetLastTradesByCurrencyAndTime(PublicGetLastTradesByCurrencyAndTimeRequest args, CancellationToken cancellationToken = default)
+    => await Send("public/get_last_trades_by_currency_and_time", args, new ObjectJsonConverter<PublicTradesPage>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="IMarketDataApi.PublicGetLastTradesByInstrument" />
-  public async Task<JsonRpcResponse<PublicGetLastTradesByInstrumentResponse>> PublicGetLastTradesByInstrument(PublicGetLastTradesByInstrumentRequest args)
-    => await Send("public/get_last_trades_by_instrument", args, new ObjectJsonConverter<PublicGetLastTradesByInstrumentResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<PublicTradesPage>> InternalPublicGetLastTradesByInstrument(PublicGetLastTradesByInstrumentRequest args, CancellationToken cancellationToken = default)
+    => await Send("public/get_last_trades_by_instrument", args, new ObjectJsonConverter<PublicTradesPage>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="IMarketDataApi.PublicGetLastTradesByInstrumentAndTime" />
-  public async Task<JsonRpcResponse<PublicGetLastTradesByInstrumentAndTimeResponse>> PublicGetLastTradesByInstrumentAndTime(PublicGetLastTradesByInstrumentAndTimeRequest args)
-    => await Send("public/get_last_trades_by_instrument_and_time", args, new ObjectJsonConverter<PublicGetLastTradesByInstrumentAndTimeResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<PublicTradesPage>> InternalPublicGetLastTradesByInstrumentAndTime(PublicGetLastTradesByInstrumentAndTimeRequest args, CancellationToken cancellationToken = default)
+    => await Send("public/get_last_trades_by_instrument_and_time", args, new ObjectJsonConverter<PublicTradesPage>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="IMarketDataApi.PublicGetMarkPriceHistory" />
-  public async Task<JsonRpcResponse<TimestampValueItem[]>> PublicGetMarkPriceHistory(PublicGetMarkPriceHistoryRequest args)
-    => await Send("public/get_mark_price_history", args, new ObjectJsonConverter<TimestampValueItem[]>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<TimestampValueItem[]>> InternalPublicGetMarkPriceHistory(PublicGetMarkPriceHistoryRequest args, CancellationToken cancellationToken = default)
+    => await Send("public/get_mark_price_history", args, new ObjectJsonConverter<TimestampValueItem[]>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="IMarketDataApi.PublicGetOrderBook" />
-  public async Task<JsonRpcResponse<PublicGetOrderBookResponse>> PublicGetOrderBook(PublicGetOrderBookRequest args)
-    => await Send("public/get_order_book", args, new ObjectJsonConverter<PublicGetOrderBookResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<OrderBook>> InternalPublicGetOrderBook(PublicGetOrderBookRequest args, CancellationToken cancellationToken = default)
+    => await Send("public/get_order_book", args, new ObjectJsonConverter<OrderBook>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="IMarketDataApi.PublicGetOrderBookByInstrumentId" />
-  public async Task<JsonRpcResponse<PublicGetOrderBookByInstrumentIdResponse>> PublicGetOrderBookByInstrumentId(PublicGetOrderBookByInstrumentIdRequest args)
-    => await Send("public/get_order_book_by_instrument_id", args, new ObjectJsonConverter<PublicGetOrderBookByInstrumentIdResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<OrderBook>> InternalPublicGetOrderBookByInstrumentId(PublicGetOrderBookByInstrumentIdRequest args, CancellationToken cancellationToken = default)
+    => await Send("public/get_order_book_by_instrument_id", args, new ObjectJsonConverter<OrderBook>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="IMarketDataApi.PublicGetRfqs" />
-  public async Task<JsonRpcResponse<PublicGetRfqsResponse>> PublicGetRfqs(PublicGetRfqsRequest args)
-    => await Send("public/get_rfqs", args, new ObjectJsonConverter<PublicGetRfqsResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<RfqEntry[]>> InternalPublicGetRfqs(PublicGetRfqsRequest args, CancellationToken cancellationToken = default)
+    => await Send("public/get_rfqs", args, new ObjectJsonConverter<RfqEntry[]>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="IMarketDataApi.PublicGetTradeVolumes" />
-  public async Task<JsonRpcResponse<PublicGetTradeVolumesResponse>> PublicGetTradeVolumes(PublicGetTradeVolumesRequest? args)
-    => await Send("public/get_trade_volumes", args, new ObjectJsonConverter<PublicGetTradeVolumesResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<AggregatedTradeVolume[]>> InternalPublicGetTradeVolumes(PublicGetTradeVolumesRequest? args = null, CancellationToken cancellationToken = default)
+    => await Send("public/get_trade_volumes", args, new ObjectJsonConverter<AggregatedTradeVolume[]>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="IMarketDataApi.PublicGetTradingviewChartData" />
-  public async Task<JsonRpcResponse<PublicGetTradingviewChartDataResponse>> PublicGetTradingviewChartData(PublicGetTradingviewChartDataRequest args)
-    => await Send("public/get_tradingview_chart_data", args, new ObjectJsonConverter<PublicGetTradingviewChartDataResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<TradingViewChartData>> InternalPublicGetTradingviewChartData(PublicGetTradingviewChartDataRequest args, CancellationToken cancellationToken = default)
+    => await Send("public/get_tradingview_chart_data", args, new ObjectJsonConverter<TradingViewChartData>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="IMarketDataApi.PublicGetVolatilityIndexData" />
-  public async Task<JsonRpcResponse<PublicGetVolatilityIndexDataResponse>> PublicGetVolatilityIndexData(PublicGetVolatilityIndexDataRequest args)
-    => await Send("public/get_volatility_index_data", args, new ObjectJsonConverter<PublicGetVolatilityIndexDataResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<VolatilityIndexPage>> InternalPublicGetVolatilityIndexData(PublicGetVolatilityIndexDataRequest args, CancellationToken cancellationToken = default)
+    => await Send("public/get_volatility_index_data", args, new ObjectJsonConverter<VolatilityIndexPage>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="IMarketDataApi.PublicTicker" />
-  public async Task<JsonRpcResponse<PublicTickerResponse>> PublicTicker(PublicTickerRequest args)
-    => await Send("public/ticker", args, new ObjectJsonConverter<PublicTickerResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<TickerData>> InternalPublicTicker(PublicTickerRequest args, CancellationToken cancellationToken = default)
+    => await Send("public/ticker", args, new ObjectJsonConverter<TickerData>(), cancellationToken).ConfigureAwait(false);
 }

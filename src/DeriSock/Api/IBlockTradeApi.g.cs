@@ -8,57 +8,59 @@
 // --------------------------------------------------------------------------
 #pragma warning disable CS1591
 #nullable enable
-namespace DeriSock.Api {
+namespace DeriSock.Api
+{
+  using System.Threading;
   using System.Threading.Tasks;
   using DeriSock.JsonRpc;
   using DeriSock.Model;
   
-  
   [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-  public partial interface IBlockTradeApi {
-    
+  public partial interface IBlockTradeApi
+  {
     /// <summary>
     /// <para>Creates block trade</para>
     /// <para>The whole request have to be exact the same as in <c>private/verify_block_trade</c>, only role field should be set appropriately - it basically means that both sides have to agree on the same timestamp, nonce, trades fields and server will assure that role field is different between sides (each party accepted own role).</para>
     /// <para>Using the same timestamp and nonce by both sides in <c>private/verify_block_trade</c> assures that even if unintentionally both sides execute given block trade with valid counterparty_signature, the given block trade will be executed only once.</para>
     /// </summary>
     /// <param name="args"></param>
+    /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateExecuteBlockTradeResponse>> PrivateExecuteBlockTrade(PrivateExecuteBlockTradeRequest args);
-    
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<BlockTrade>> PrivateExecuteBlockTrade(PrivateExecuteBlockTradeRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Returns information about users block trade</para>
     /// </summary>
     /// <param name="args"></param>
+    /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateGetBlockTradeResponse>> PrivateGetBlockTrade(PrivateGetBlockTradeRequest args);
-    
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<BlockTrade>> PrivateGetBlockTrade(PrivateGetBlockTradeRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Returns list of last users block trades</para>
     /// </summary>
     /// <param name="args"></param>
+    /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateGetLastBlockTradesByCurrencyResponse>> PrivateGetLastBlockTradesByCurrency(PrivateGetLastBlockTradesByCurrencyRequest args);
-    
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<BlockTrade[]>> PrivateGetLastBlockTradesByCurrency(PrivateGetLastBlockTradesByCurrencyRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>User at any time (before the private/execute_block_trade is called) can invalidate its own signature effectively cancelling block trade</para>
     /// </summary>
     /// <param name="args"></param>
+    /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<string>> PrivateInvalidateBlockTradeSignature(PrivateInvalidateBlockTradeSignatureRequest args);
-    
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<string>> PrivateInvalidateBlockTradeSignature(PrivateInvalidateBlockTradeSignatureRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Moves positions from source subaccount to target subaccount</para>
     /// </summary>
     /// <param name="args"></param>
+    /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateMovePositionsResponse>> PrivateMovePositions(PrivateMovePositionsRequest args);
-    
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<MovePositionResponse>> PrivateMovePositions(PrivateMovePositionsRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Verifies and creates block trade signature</para>
     /// </summary>
     /// <param name="args"></param>
+    /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PrivateVerifyBlockTradeResponse>> PrivateVerifyBlockTrade(PrivateVerifyBlockTradeRequest args);
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<VerifyBlockTradeResponse>> PrivateVerifyBlockTrade(PrivateVerifyBlockTradeRequest args, CancellationToken cancellationToken = default(CancellationToken));
   }
 }

@@ -2,6 +2,8 @@ namespace DeriSock.DevTools.ApiDoc.Model;
 
 using System;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json.Serialization;
 
 /// <summary>
@@ -9,7 +11,7 @@ using System.Text.Json.Serialization;
 ///   It represents a method request/response parameter/property or
 ///   a subscription registration parameter / notification property
 /// </summary>
-public class ApiDocProperty : IApiDocPropertyNode, IEquatable<ApiDocProperty>
+public class ApiDocProperty : IApiDocPropertyNode
 {
   [JsonIgnore]
   public IApiDocPropertyNode? Parent { get; private set; }
@@ -105,7 +107,7 @@ public class ApiDocProperty : IApiDocPropertyNode, IEquatable<ApiDocProperty>
   public ApiDocPropertyCollection? Properties { get; set; } = default;
 
   /// <summary>
-  /// Gets, if any of the properties contained in this property is required
+  ///   Gets, if any of the properties contained in this property is required
   /// </summary>
   [JsonIgnore]
   public bool IsAnyPropertyRequired
@@ -113,7 +115,10 @@ public class ApiDocProperty : IApiDocPropertyNode, IEquatable<ApiDocProperty>
     get
     {
       if (Properties == null)
-        return false;
+        return Required;
+
+      if (Required)
+        return true;
 
       if (Properties.Count < 1)
         return false;
@@ -148,26 +153,31 @@ public class ApiDocProperty : IApiDocPropertyNode, IEquatable<ApiDocProperty>
       }
   }
 
-  public bool Equals(ApiDocProperty? other)
+  public string ComputePropertyIdHash()
   {
-    if (ReferenceEquals(null, other))
-      return false;
+    var sha1 = SHA1.Create();
 
-    if (ReferenceEquals(this, other))
-      return true;
+    if (!(Properties is { Count: > 0 }))
+      return Convert.ToHexString(sha1.ComputeHash(Array.Empty<byte>()));
 
-    return Name == other.Name && ApiDataType == other.ApiDataType;
+    var sb = new StringBuilder(Properties.Count * 30);
+
+    foreach (var (_, property) in Properties) {
+      sb.Append(property.Name);
+      sb.Append(property.DataType);
+      sb.Append(property.ArrayDataType);
+      sb.Append(property.Required);
+      sb.Append(property.Deprecated);
+      sb.Append(string.Join(',', property.EnumValues ?? Array.Empty<string>()));
+      sb.Append(property.EnumIsSuggestion ?? false);
+
+      if (property.Properties is {Count: > 0} && (property.DataType == "object" || property.ArrayDataType == "object")) {
+        foreach (var (_, subProperty) in property.Properties) {
+          sb.Append(subProperty.ComputePropertyIdHash());
+        }
+      }
+    }
+
+    return Convert.ToHexString(sha1.ComputeHash(Encoding.UTF8.GetBytes(sb.ToString())));
   }
-
-  public override bool Equals(object? obj)
-    => ReferenceEquals(this, obj) || obj is ApiDocProperty other && Equals(other);
-
-  public override int GetHashCode()
-    => HashCode.Combine(Name, ApiDataType);
-
-  public static bool operator ==(ApiDocProperty? left, ApiDocProperty? right)
-    => Equals(left, right);
-
-  public static bool operator !=(ApiDocProperty? left, ApiDocProperty? right)
-    => !Equals(left, right);
 }

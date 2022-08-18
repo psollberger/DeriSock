@@ -8,207 +8,209 @@
 // --------------------------------------------------------------------------
 #pragma warning disable CS1591
 #nullable enable
-namespace DeriSock.Api {
+namespace DeriSock.Api
+{
+  using System.Threading;
   using System.Threading.Tasks;
   using DeriSock.JsonRpc;
   using DeriSock.Model;
   
-  
   [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-  public partial interface IMarketDataApi {
-    
+  public partial interface IMarketDataApi
+  {
     /// <summary>
     /// <para>Retrieves the summary information such as open interest, 24h volume, etc. for all instruments for the currency (optionally filtered by kind).</para>
     /// </summary>
     /// <param name="args"></param>
+    /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PublicGetBookSummaryByCurrencyResponse>> PublicGetBookSummaryByCurrency(PublicGetBookSummaryByCurrencyRequest args);
-    
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<BookSummaryEntry[]>> PublicGetBookSummaryByCurrency(PublicGetBookSummaryByCurrencyRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Retrieves the summary information such as open interest, 24h volume, etc. for a specific instrument.</para>
     /// </summary>
     /// <param name="args"></param>
+    /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PublicGetBookSummaryByInstrumentResponse>> PublicGetBookSummaryByInstrument(PublicGetBookSummaryByInstrumentRequest args);
-    
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<BookSummaryEntry[]>> PublicGetBookSummaryByInstrument(PublicGetBookSummaryByInstrumentRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Retrieves contract size of provided instrument.</para>
     /// </summary>
     /// <param name="args"></param>
+    /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PublicGetContractSizeResponse>> PublicGetContractSize(PublicGetContractSizeRequest args);
-    
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<ContractSizeData>> PublicGetContractSize(PublicGetContractSizeRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Retrieves all cryptocurrencies supported by the API.</para>
     /// </summary>
+    /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PublicGetCurrenciesResponse>> PublicGetCurrencies();
-    
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<CurrencyData[]>> PublicGetCurrencies(CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Retrieves delivery prices for then given index</para>
     /// </summary>
     /// <param name="args"></param>
+    /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PublicGetDeliveryPricesResponse>> PublicGetDeliveryPrices(PublicGetDeliveryPricesRequest args);
-    
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<IndexDeliveryPrices>> PublicGetDeliveryPrices(PublicGetDeliveryPricesRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
-    /// <para>Retrieve the latest user trades that have occurred for PERPETUAL instruments in a specific currency symbol and within given time range.</para>
+    /// <para>Retrieve the list of the latest PERPETUAL funding chart points within a given time period.</para>
     /// </summary>
     /// <param name="args"></param>
+    /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PublicGetFundingChartDataResponse>> PublicGetFundingChartData(PublicGetFundingChartDataRequest args);
-    
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<FundingChartData>> PublicGetFundingChartData(PublicGetFundingChartDataRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Retrieves hourly historical interest rate for requested PERPETUAL instrument.</para>
     /// </summary>
     /// <param name="args"></param>
+    /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PublicGetFundingRateHistoryResponse>> PublicGetFundingRateHistory(PublicGetFundingRateHistoryRequest args);
-    
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<FundingRateHistoryEntry[]>> PublicGetFundingRateHistory(PublicGetFundingRateHistoryRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Retrieves interest rate value for requested period. Applicable only for PERPETUAL instruments.</para>
     /// </summary>
     /// <param name="args"></param>
+    /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<double>> PublicGetFundingRateValue(PublicGetFundingRateValueRequest args);
-    
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<double>> PublicGetFundingRateValue(PublicGetFundingRateValueRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Provides information about historical volatility for given cryptocurrency.</para>
     /// </summary>
     /// <param name="args"></param>
+    /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<DeriSock.Model.TimestampValueItem[]>> PublicGetHistoricalVolatility(PublicGetHistoricalVolatilityRequest args);
-    
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<DeriSock.Model.TimestampValueItem[]>> PublicGetHistoricalVolatility(PublicGetHistoricalVolatilityRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Retrieves the current index price for the instruments, for the selected currency.</para>
     /// </summary>
     /// <param name="args"></param>
+    /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PublicGetIndexResponse>> PublicGetIndex(PublicGetIndexRequest args);
-    
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<GetIndexResponse>> PublicGetIndex(PublicGetIndexRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Retrieves the current index price value for given index name.</para>
     /// </summary>
     /// <param name="args"></param>
+    /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PublicGetIndexPriceResponse>> PublicGetIndexPrice(PublicGetIndexPriceRequest args);
-    
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<IndexPriceData>> PublicGetIndexPrice(PublicGetIndexPriceRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Retrieves the identifiers of all supported Price Indexes</para>
     /// </summary>
+    /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<string[]>> PublicGetIndexPriceNames();
-    
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<string[]>> PublicGetIndexPriceNames(CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Retrieves information about instrument</para>
     /// </summary>
     /// <param name="args"></param>
+    /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PublicGetInstrumentResponse>> PublicGetInstrument(PublicGetInstrumentRequest args);
-    
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<Instrument>> PublicGetInstrument(PublicGetInstrumentRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Retrieves available trading instruments. This method can be used to see which instruments are available for trading, or which instruments have recently expired.</para>
     /// </summary>
     /// <param name="args"></param>
+    /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PublicGetInstrumentsResponse>> PublicGetInstruments(PublicGetInstrumentsRequest args);
-    
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<Instrument[]>> PublicGetInstruments(PublicGetInstrumentsRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Retrieves historical settlement, delivery and bankruptcy events coming from all instruments within given currency.</para>
     /// </summary>
     /// <param name="args"></param>
+    /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PublicGetLastSettlementsByCurrencyResponse>> PublicGetLastSettlementsByCurrency(PublicGetLastSettlementsByCurrencyRequest args);
-    
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<SettlementPage>> PublicGetLastSettlementsByCurrency(PublicGetLastSettlementsByCurrencyRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Retrieves historical public settlement, delivery and bankruptcy events filtered by instrument name.</para>
     /// </summary>
     /// <param name="args"></param>
+    /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PublicGetLastSettlementsByInstrumentResponse>> PublicGetLastSettlementsByInstrument(PublicGetLastSettlementsByInstrumentRequest args);
-    
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<SettlementPage>> PublicGetLastSettlementsByInstrument(PublicGetLastSettlementsByInstrumentRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Retrieve the latest trades that have occurred for instruments in a specific currency symbol.</para>
     /// </summary>
     /// <param name="args"></param>
+    /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PublicGetLastTradesByCurrencyResponse>> PublicGetLastTradesByCurrency(PublicGetLastTradesByCurrencyRequest args);
-    
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PublicTradesPage>> PublicGetLastTradesByCurrency(PublicGetLastTradesByCurrencyRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Retrieve the latest trades that have occurred for instruments in a specific currency symbol and within given time range.</para>
     /// </summary>
     /// <param name="args"></param>
+    /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PublicGetLastTradesByCurrencyAndTimeResponse>> PublicGetLastTradesByCurrencyAndTime(PublicGetLastTradesByCurrencyAndTimeRequest args);
-    
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PublicTradesPage>> PublicGetLastTradesByCurrencyAndTime(PublicGetLastTradesByCurrencyAndTimeRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Retrieve the latest trades that have occurred for a specific instrument.</para>
     /// </summary>
     /// <param name="args"></param>
+    /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PublicGetLastTradesByInstrumentResponse>> PublicGetLastTradesByInstrument(PublicGetLastTradesByInstrumentRequest args);
-    
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PublicTradesPage>> PublicGetLastTradesByInstrument(PublicGetLastTradesByInstrumentRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Retrieve the latest trades that have occurred for a specific instrument and within given time range.</para>
     /// </summary>
     /// <param name="args"></param>
+    /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PublicGetLastTradesByInstrumentAndTimeResponse>> PublicGetLastTradesByInstrumentAndTime(PublicGetLastTradesByInstrumentAndTimeRequest args);
-    
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PublicTradesPage>> PublicGetLastTradesByInstrumentAndTime(PublicGetLastTradesByInstrumentAndTimeRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Public request for 5min history of markprice values for the instrument. For now the markprice history is available only for a subset of options which take part in the volatility index calculations. All other instruments, futures and perpetuals will return empty list.</para>
     /// </summary>
     /// <param name="args"></param>
+    /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<DeriSock.Model.TimestampValueItem[]>> PublicGetMarkPriceHistory(PublicGetMarkPriceHistoryRequest args);
-    
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<DeriSock.Model.TimestampValueItem[]>> PublicGetMarkPriceHistory(PublicGetMarkPriceHistoryRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Retrieves the order book, along with other market values for a given instrument.</para>
     /// </summary>
     /// <param name="args"></param>
+    /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PublicGetOrderBookResponse>> PublicGetOrderBook(PublicGetOrderBookRequest args);
-    
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<OrderBook>> PublicGetOrderBook(PublicGetOrderBookRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Retrieves the order book, along with other market values for a given instrument ID.</para>
     /// </summary>
     /// <param name="args"></param>
+    /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PublicGetOrderBookByInstrumentIdResponse>> PublicGetOrderBookByInstrumentId(PublicGetOrderBookByInstrumentIdRequest args);
-    
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<OrderBook>> PublicGetOrderBookByInstrumentId(PublicGetOrderBookByInstrumentIdRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Retrieve active RFQs for instruments in given currency.</para>
     /// </summary>
     /// <param name="args"></param>
+    /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PublicGetRfqsResponse>> PublicGetRfqs(PublicGetRfqsRequest args);
-    
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<RfqEntry[]>> PublicGetRfqs(PublicGetRfqsRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Retrieves aggregated 24h trade volumes for different instrument types and currencies.</para>
     /// </summary>
     /// <param name="args"></param>
+    /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PublicGetTradeVolumesResponse>> PublicGetTradeVolumes(PublicGetTradeVolumesRequest? args);
-    
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<AggregatedTradeVolume[]>> PublicGetTradeVolumes(PublicGetTradeVolumesRequest? args = null, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Publicly available market data used to generate a TradingView candle chart.</para>
     /// </summary>
     /// <param name="args"></param>
+    /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PublicGetTradingviewChartDataResponse>> PublicGetTradingviewChartData(PublicGetTradingviewChartDataRequest args);
-    
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<TradingViewChartData>> PublicGetTradingviewChartData(PublicGetTradingviewChartDataRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Public market data request for volatility index candles.</para>
     /// </summary>
     /// <param name="args"></param>
+    /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PublicGetVolatilityIndexDataResponse>> PublicGetVolatilityIndexData(PublicGetVolatilityIndexDataRequest args);
-    
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<VolatilityIndexPage>> PublicGetVolatilityIndexData(PublicGetVolatilityIndexDataRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Get ticker for an instrument.</para>
     /// </summary>
     /// <param name="args"></param>
+    /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PublicTickerResponse>> PublicTicker(PublicTickerRequest args);
+    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<TickerData>> PublicTicker(PublicTickerRequest args, CancellationToken cancellationToken = default(CancellationToken));
   }
 }

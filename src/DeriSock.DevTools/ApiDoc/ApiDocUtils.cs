@@ -2,9 +2,6 @@ namespace DeriSock.DevTools.ApiDoc;
 
 using System;
 using System.CodeDom.Compiler;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -15,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using DeriSock.DevTools.ApiDoc.Analysis;
+using DeriSock.DevTools.ApiDoc.CodeGeneration;
 using DeriSock.DevTools.ApiDoc.Model;
 using DeriSock.DevTools.ApiDoc.Model.Override;
 using DeriSock.DevTools.CodeDom;
@@ -30,6 +28,25 @@ public static class ApiDocUtils
     Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
   };
 
+  private static async Task WriteJsonObjectToFile(string path, object obj, CancellationToken cancellationToken)
+  {
+    await using var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.ReadWrite);
+
+    await JsonSerializer.SerializeAsync(
+      fileStream,
+      obj,
+      SerializerOptions,
+      cancellationToken).ConfigureAwait(false);
+  }
+
+  private static async Task<T?> ReadJsonObjectFromFile<T>(string path, CancellationToken cancellationToken)
+  {
+    var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+
+    await using (fileStream.ConfigureAwait(false))
+      return await JsonSerializer.DeserializeAsync<T>(fileStream, cancellationToken: cancellationToken).ConfigureAwait(false);
+  }
+
   public static async Task<ApiDocDocument> BuildApiDocumentAsync(string url, CancellationToken cancellationToken = default)
   {
     var htmlWeb = new HtmlWeb();
@@ -42,18 +59,14 @@ public static class ApiDocUtils
     if (!File.Exists(path))
       throw new FileNotFoundException(path);
 
-    var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+    var apiDoc = await ReadJsonObjectFromFile<ApiDocDocument>(path, cancellationToken).ConfigureAwait(false);
 
-    await using (fileStream.ConfigureAwait(false)) {
-      var apiDoc = await JsonSerializer.DeserializeAsync<ApiDocDocument>(fileStream, cancellationToken: cancellationToken).ConfigureAwait(false);
+    if (apiDoc is null)
+      throw new Exception("API Doc deserialization failed");
 
-      if (apiDoc is null)
-        throw new Exception("API Doc deserialization failed");
+    apiDoc.UpdateParent();
 
-      apiDoc.UpdateParent();
-
-      return apiDoc;
-    }
+    return apiDoc;
   }
 
   public static Task AnalyzeApiDocumentAsync(ApiDocDocument apiDoc, CancellationToken cancellationToken = default)
@@ -100,13 +113,7 @@ public static class ApiDocUtils
 
   public static async Task WriteApiDocumentAsync(ApiDocDocument apiDoc, string path, CancellationToken cancellationToken = default)
   {
-    await using var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.ReadWrite);
-
-    await JsonSerializer.SerializeAsync(
-      fileStream,
-      apiDoc,
-      SerializerOptions,
-      cancellationToken).ConfigureAwait(false);
+    await WriteJsonObjectToFile(path, apiDoc, cancellationToken).ConfigureAwait(false);
   }
 
 
@@ -200,19 +207,15 @@ public static class ApiDocUtils
     if (!File.Exists(path))
       throw new FileNotFoundException(path);
 
-    var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+    var map = await ReadJsonObjectFromFile<ApiDocEnumMap>(path, cancellationToken).ConfigureAwait(false);
 
-    await using (fileStream.ConfigureAwait(false)) {
-      var map = await JsonSerializer.DeserializeAsync<ApiDocEnumMap>(fileStream, cancellationToken: cancellationToken).ConfigureAwait(false);
+    if (map is null)
+      throw new Exception("Enum Map deserialization failed");
 
-      if (map is null)
-        throw new Exception("Enum Map deserialization failed");
-
-      return map;
-    }
+    return map;
   }
 
-  public static Task PrintEnumOverridesFromMapAsync(ApiDocEnumMap enumMap, CancellationToken cancellationToken = default)
+  public static async Task WriteEnumOverridesFromMapAsync(ApiDocEnumMap enumMap, string path, CancellationToken cancellationToken = default)
   {
     var overrideDoc = new ApiDocOverrideDocument();
 
@@ -311,179 +314,56 @@ public static class ApiDocUtils
       }
     }
 
-    var jsonString = JsonSerializer.Serialize(overrideDoc, SerializerOptions);
-    Console.WriteLine(jsonString);
-
-    return Task.CompletedTask;
+    await WriteJsonObjectToFile(path, overrideDoc, cancellationToken).ConfigureAwait(false);
   }
-
-  /// <summary>
-  ///   Generates code for the enumeration classes contained in the enum map.
-  /// </summary>
-  /// <param name="map">The enum map that will be used.</param>
-  /// <param name="directoryName">The directory where the resulting file should be written to.</param>
-  /// <param name="fileNameWithoutExtension">The file name without extension where all classes are written to.</param>
-  /// <param name="cancellationToken"></param>
-  /// <returns>The extension used for the filenames.</returns>
-  public static async Task<string> GenerateEnumCodeAsync(ApiDocEnumMap map, string directoryName, string fileNameWithoutExtension, CancellationToken cancellationToken = default)
-  {
-    var apiCodeProvider = new ApiDocCodeProvider();
-    var path = Path.Combine(directoryName, $"{fileNameWithoutExtension}{apiCodeProvider.FileExtension}");
-
-    foreach (var (typeName, mapEntry) in map)
-      apiCodeProvider.AddEnumValueClass(typeName, mapEntry);
-
-    var fs = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.ReadWrite);
-
-    await using (fs.ConfigureAwait(false)) {
-      await fs.WriteAsync(Encoding.UTF8.GetBytes(await apiCodeProvider.GenerateAsync()), cancellationToken).ConfigureAwait(false);
-      await fs.FlushAsync(cancellationToken).ConfigureAwait(false);
-    }
-
-    return apiCodeProvider.FileExtension;
-  }
-
 
   public static Task PrintObjectMapTemplateAsync(ApiDocDocument apiDoc, ApiDocObjectMap? existingMap, CancellationToken cancellationToken = default)
   {
-    var filteredProperties = new FilterPropertiesVisitor(x => x.Name is not "request" or "response" && (x.DataType == "object" || x.ArrayDataType == "object"));
-    apiDoc.Accept(filteredProperties);
+    var newMap = new ApiDocObjectMap();
 
-    var groupedEntries = (from p in filteredProperties.Properties
-                          group p by p.GetPropertyList()
-                          into gp
-                          orderby gp.Key
-                          select gp).ToArray();
+    var builder = new UniqueNodesBuilder(apiDoc);
+    builder.Build();
 
-    var sb = new StringBuilder();
-    var itw = new IndentedTextWriter(new StringWriter(sb), "  ");
-    itw.WriteLine("{");
-    itw.Indent++;
+    var unknownCount = 0;
 
-    var lastGroup = groupedEntries[^1];
+    foreach (var (propertyHash, property) in builder.UniqueProperties) {
+      var newEntry = new ApiDocObjectMapEntry();
+      newEntry.Hash = propertyHash;
 
-    foreach (var group in groupedEntries) {
-      var firstGroupEntry = group.First();
-
-      if (firstGroupEntry.Properties == null)
-        continue;
-
-      var entryValues = firstGroupEntry.Properties!;
-      var entryDescription = firstGroupEntry.Description;
-
-      var existingMapEntry = existingMap?.FirstOrDefault(x => x.Value.Properties.SequenceEqual(entryValues));
-      var existingEntryKey = existingMapEntry?.Key ?? string.Empty;
+      var existingMapEntry = existingMap?.FirstOrDefault(x => x.Value.Hash == propertyHash);
       var existingEntryValue = existingMapEntry?.Value;
 
-      if (string.IsNullOrEmpty(entryDescription))
-        entryDescription = existingEntryValue?.Description;
+      var typeName = existingMapEntry?.Key ?? $"<UNKNOWN{++unknownCount}>";
 
-      itw.WriteLine($"\"{existingEntryKey}\": {{");
-      itw.Indent++;
+      newMap.Add(typeName, newEntry);
 
-      itw.WriteLine($"\"description\": \"{JsonEncodedText.Encode(entryDescription ?? string.Empty)}\",");
+      newEntry.Description = existingEntryValue?.Description;
 
-      itw.WriteLine("\"properties\": {");
-      itw.Indent++;
+      if (property.Properties is { Count: > 0 }) {
+        newEntry.Properties = new ApiDocObjectMapPropertyCollection(property.Properties.Count);
 
-      var lastValueEntry = entryValues.Last().Value;
+        foreach (var (objectPropertyKey, objectProperty) in property.Properties) {
+          var existingValue = existingEntryValue?.Properties?.FirstOrDefault(x => x.Key == objectPropertyKey);
 
-      foreach (var (key, value) in entryValues) {
-        var isLast = ReferenceEquals(value, lastValueEntry);
+          var newProperty = new ApiDocObjectMapProperty();
+          newEntry.Properties.Add(objectPropertyKey, newProperty);
 
-        var existingValue = existingEntryValue?.Properties.FirstOrDefault(x => x.Value.Name == value.Name);
-
-        itw.WriteLine($"\"{key}\": {{");
-        itw.Indent++;
-
-        var description = existingValue?.Value.Description;
-
-        if (string.IsNullOrWhiteSpace(description))
-          description = value.Description;
-
-        var dataType = existingValue?.Value.DataType;
-
-        if (string.IsNullOrEmpty(dataType))
-          dataType = value.DataType;
-
-        var arrayDataType = existingValue?.Value.ArrayDataType;
-
-        if (string.IsNullOrEmpty(arrayDataType))
-          arrayDataType = value.ArrayDataType;
-
-        itw.WriteLine($"\"name\": \"{value.Name}\",");
-        itw.WriteLine($"\"description\": \"{JsonEncodedText.Encode(description ?? string.Empty)}\",");
-        itw.WriteLine($"\"required\": {value.Required.ToString().ToLower()},");
-        itw.WriteLine($"\"apiDataType\": \"{value.ApiDataType}\",");
-        itw.WriteLine($"\"dataType\": \"{dataType}\",");
-        itw.Write($"\"arrayDataType\": \"{arrayDataType}\"");
-
-        if (value is { Converters.Length: > 0 }) {
-          itw.WriteLine(",");
-          itw.WriteLine("\"converters\": [");
-          itw.Indent++;
-          var lastConverter = value.Converters[^1];
-
-          foreach (var converter in value.Converters) {
-            var isLastConverter = ReferenceEquals(converter, lastConverter);
-            itw.WriteLine($"\"{converter}\"{(isLastConverter ? string.Empty : ",")}");
-          }
-
-          itw.Indent--;
-          itw.Write("]");
-        }
-
-        itw.WriteLine();
-
-        itw.Indent--;
-        itw.WriteLine($"}}{(isLast ? string.Empty : ",")}");
-      }
-
-      itw.Indent--;
-      itw.WriteLine("},");
-
-      itw.WriteLine("\"methods\": [");
-      itw.Indent++;
-      var methods = group.Where(x => x.GetRootParent()!.FunctionType == ApiDocFunctionType.Method).ToArray();
-
-      if (methods.Length > 0) {
-        var lastEntry = methods[^1];
-
-        foreach (var property in methods) {
-          var isLast = ReferenceEquals(property, lastEntry);
-          itw.WriteLine($"\"{property.GetPath()}\"{(isLast ? string.Empty : ",")}");
+          newProperty.Description = existingValue?.Value.Description;
         }
       }
 
-      itw.Indent--;
-      itw.WriteLine("],");
+      var methods = builder.PropertiesPerHash[propertyHash].Where(x => x.GetRootParent()?.FunctionType == ApiDocFunctionType.Method).Select(x => x.GetPath()).ToArray();
 
-      itw.WriteLine("\"subscriptions\": [");
-      itw.Indent++;
-      var subscriptions = group.Where(x => x.GetRootParent()!.FunctionType == ApiDocFunctionType.Subscription).ToArray();
+      if (methods.Length > 0)
+        newEntry.MethodPaths = methods;
 
-      if (subscriptions.Length > 0) {
-        var lastEntry = subscriptions[^1];
+      var subscriptions = builder.PropertiesPerHash[propertyHash].Where(x => x.GetRootParent()?.FunctionType == ApiDocFunctionType.Subscription).Select(x => x.GetPath()).ToArray();
 
-        foreach (var property in subscriptions) {
-          var isLast = ReferenceEquals(property, lastEntry);
-          itw.WriteLine($"\"{property.GetPath()}\"{(isLast ? string.Empty : ",")}");
-        }
-      }
-
-      itw.Indent--;
-      itw.WriteLine("]");
-
-      itw.Indent--;
-
-      var isLastGroup = ReferenceEquals(group, lastGroup);
-      itw.WriteLine($"}}{(isLastGroup ? string.Empty : ",")}");
+      if (subscriptions.Length > 0)
+        newEntry.SubscriptionPaths = subscriptions;
     }
 
-    itw.Indent--;
-    itw.WriteLine("}");
-
-    Console.WriteLine(sb.ToString());
+    Console.WriteLine(JsonSerializer.Serialize(newMap, SerializerOptions));
 
     return Task.CompletedTask;
   }
@@ -493,24 +373,15 @@ public static class ApiDocUtils
     if (!File.Exists(path))
       throw new FileNotFoundException(path);
 
-    var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+    var map = await ReadJsonObjectFromFile<ApiDocObjectMap>(path, cancellationToken).ConfigureAwait(false);
 
-    await using (fileStream.ConfigureAwait(false)) {
-      var map = await JsonSerializer.DeserializeAsync<ApiDocObjectMap>(fileStream, cancellationToken: cancellationToken).ConfigureAwait(false);
+    if (map is null)
+      throw new Exception("Enum Map deserialization failed");
 
-      if (map is null)
-        throw new Exception("Enum Map deserialization failed");
-
-      foreach (var (_, value) in map) {
-        foreach (var (propName, propValue) in value.Properties)
-          propValue.Name = propName;
-      }
-
-      return map;
-    }
+    return map;
   }
 
-  public static Task PrintObjectOverridesFromMapAsync(ApiDocDocument apiDoc, ApiDocObjectMap map, CancellationToken cancellationToken = default)
+  public static async Task WriteObjectOverridesFromMapAsync(ApiDocDocument apiDoc, ApiDocObjectMap map, string path, CancellationToken cancellationToken = default)
   {
     var overrideDoc = new ApiDocOverrideDocument
     {
@@ -519,13 +390,17 @@ public static class ApiDocUtils
     };
 
     foreach (var (typeName, mapEntry) in map) {
-      foreach (var path in mapEntry.Methods.Concat(mapEntry.Subscriptions)) {
-        var apiDocProperty = apiDoc.GetPropertyFromPath(path);
+      var methodPaths = mapEntry.MethodPaths ?? Array.Empty<string>();
+      var subscriptionPaths = mapEntry.SubscriptionPaths ?? Array.Empty<string>();
+      var allPaths = methodPaths.Concat(subscriptionPaths).ToArray();
 
-        if (apiDocProperty == null)
+      foreach (var propertyPath in allPaths) {
+        var apiDocProperty = apiDoc.GetPropertyFromPath(propertyPath);
+
+        if (apiDocProperty is null)
           continue;
 
-        var (isMethod, pathParts) = path.ToApiDocParts();
+        var (isMethod, pathParts) = propertyPath.ToApiDocParts();
         var functionName = pathParts[0];
 
         var apiFunctionCollection = isMethod ? apiDoc.Methods : apiDoc.Subscriptions;
@@ -552,7 +427,7 @@ public static class ApiDocUtils
           _         => overrideFunction.Response!
         };
 
-        for (var i = 2; i < pathParts.Length; ++i) {
+        for (var i = 2; i < pathParts.Length; i++) {
           var nodeName = pathParts[i];
 
           curProp.Properties ??= new ApiDocOverridePropertyCollection();
@@ -568,111 +443,124 @@ public static class ApiDocUtils
           childProps.Add(nodeName, curProp);
         }
 
+        if (!string.IsNullOrEmpty(mapEntry.Description))
+          curProp.Description = mapEntry.Description;
+
         if (apiDocProperty.DataType == "array")
           curProp.ArrayDataType = typeName;
         else
           curProp.DataType = typeName;
+
+        if (mapEntry.Properties is { Count: > 0 })
+          foreach (var (key, value) in mapEntry.Properties) {
+            if (string.IsNullOrEmpty(value.Description))
+              continue;
+
+            curProp.Properties ??= new ApiDocOverridePropertyCollection();
+
+            var newProp = new ApiDocOverrideProperty();
+            newProp.Description = value.Description;
+            curProp.Properties.Add(key, newProp);
+          }
       }
     }
 
-    var jsonString = JsonSerializer.Serialize(overrideDoc, SerializerOptions);
-    Console.WriteLine(jsonString);
-
-    return Task.CompletedTask;
+    await WriteJsonObjectToFile(path, overrideDoc, cancellationToken).ConfigureAwait(false);
   }
 
   /// <summary>
-  ///   Generates code for various object classes.
+  ///   Generates code for the enumeration classes contained in the enum map, placing them in subfolder Enums
+  /// </summary>
+  /// <param name="map">The enum map that will be used.</param>
+  /// <param name="directoryName">The directory where the resulting file should be written to.</param>
+  /// <param name="cancellationToken"></param>
+  public static async Task GenerateEnumCodeAsync(ApiDocDocument apiDoc, ApiDocEnumMap map, string directoryName, CancellationToken cancellationToken = default)
+  {
+    var generator = new ValueEnumerationCodeGenerator
+    {
+      Namespace = "DeriSock.Model",
+      Document = apiDoc,
+      EnumMap = map
+    };
+
+    generator.DefinePathCallback = item =>
+    {
+      return item switch
+      {
+        string s => Path.Combine(directoryName, "Enums", $"{s}{generator.FileExtension}"),
+        _        => string.Empty
+      };
+    };
+
+    await generator.GenerateToCustomAsync(cancellationToken).ConfigureAwait(false);
+  }
+
+  /// <summary>
+  ///   Generates code for various object classes, placing them in subfolder Objects
   /// </summary>
   /// <param name="map">The object map that will be used.</param>
-  /// <param name="directoryName">The directory where the resulting file should be written to.</param>
-  /// <param name="fileNameWithoutExtension">The file name without extension where all classes are written to.</param>
+  /// <param name="directoryName">The directory where the resulting subfolder will be written to.</param>
   /// <param name="cancellationToken"></param>
-  /// <returns>The extension used for the filenames.</returns>
-  public static async Task<string> GenerateObjectCodeAsync(ApiDocObjectMap map, string directoryName, string fileNameWithoutExtension, CancellationToken cancellationToken = default)
+  public static async Task GenerateObjectCodeAsync(ApiDocDocument apiDoc, ApiDocObjectMap map, string directoryName, CancellationToken cancellationToken = default)
   {
-    var apiCodeProvider = new ApiDocCodeProvider();
-    var path = Path.Combine(directoryName, $"{fileNameWithoutExtension}{apiCodeProvider.FileExtension}");
+    var generator = new ValueObjectCodeGenerator
+    {
+      Namespace = "DeriSock.Model",
+      Document = apiDoc,
+      ObjectMap = map
+    };
 
-    foreach (var (typeName, mapEntry) in map)
-      apiCodeProvider.AddObjectValueClass(typeName, mapEntry);
+    generator.DefinePathCallback = item =>
+    {
+      return item switch
+      {
+        string s => Path.Combine(directoryName, "Objects", $"{s}{generator.FileExtension}"),
+        _        => string.Empty
+      };
+    };
 
-    var fs = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.ReadWrite);
-
-    await using (fs.ConfigureAwait(false)) {
-      await fs.WriteAsync(Encoding.UTF8.GetBytes(await apiCodeProvider.GenerateAsync()), cancellationToken).ConfigureAwait(false);
-      await fs.FlushAsync(cancellationToken).ConfigureAwait(false);
-    }
-
-    return apiCodeProvider.FileExtension;
+    await generator.GenerateToCustomAsync(cancellationToken).ConfigureAwait(false);
   }
-
 
   /// <summary>
-  ///   Generates code for all the requests.
+  ///   Generates code for all requests and responses, placing them in subfolders Requests and Responses
   /// </summary>
   /// <param name="apiDoc">The API documentation document.</param>
-  /// <param name="directoryName">The directory where the resulting file should be written to.</param>
-  /// <param name="fileNameWithoutExtension">The file name without extension, where all classes are written to.</param>
+  /// <param name="directoryName">The directory where the resulting subfolders should be written to.</param>
   /// <param name="cancellationToken"></param>
-  /// <returns>The extension used for the filenames.</returns>
-  public static async Task<string> GenerateRequestClassesAsync(ApiDocDocument apiDoc, string directoryName, string fileNameWithoutExtension, CancellationToken cancellationToken = default)
+  public static async Task GenerateRequestAndResponseClassesAsync(ApiDocDocument apiDoc, string directoryName, CancellationToken cancellationToken = default)
   {
-    var apiCodeProvider = new ApiDocCodeProvider();
-    var path = Path.Combine(directoryName, $"{fileNameWithoutExtension}{apiCodeProvider.FileExtension}");
+    var generator = new PropertyClassCodeGenerator
+    {
+      Namespace = "DeriSock.Model",
+      Type = PropertyClassCodeGenerator.GenType.Request,
+      Document = apiDoc
+    };
 
-    var allFunctions = apiDoc.Methods.Concat(apiDoc.Subscriptions).Select(x => x.Value);
+    generator.DefinePathCallback = item =>
+    {
+      return item switch
+      {
+        string s => Path.Combine(directoryName, "Requests", $"{s}{generator.FileExtension}"),
+        _        => string.Empty
+      };
+    };
 
-    foreach (var function in allFunctions) {
-      if (function.Request == null)
-        continue;
+    await generator.GenerateToCustomAsync(cancellationToken).ConfigureAwait(false);
 
-      apiCodeProvider.AddFunctionPropertyClass(string.Concat(function.Name.ToPublicCodeName(), "Request"), function.Request);
-    }
+    generator.Type = PropertyClassCodeGenerator.GenType.Response;
 
-    var fs = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.ReadWrite);
+    generator.DefinePathCallback = item =>
+    {
+      return item switch
+      {
+        string s => Path.Combine(directoryName, "Responses", $"{s}{generator.FileExtension}"),
+        _        => string.Empty
+      };
+    };
 
-    await using (fs.ConfigureAwait(false)) {
-      await fs.WriteAsync(Encoding.UTF8.GetBytes(await apiCodeProvider.GenerateAsync()), cancellationToken).ConfigureAwait(false);
-      await fs.FlushAsync(cancellationToken).ConfigureAwait(false);
-    }
-
-    return apiCodeProvider.FileExtension;
+    await generator.GenerateToCustomAsync(cancellationToken).ConfigureAwait(false);
   }
-
-
-  /// <summary>
-  ///   Generates code for all the responses.
-  /// </summary>
-  /// <param name="apiDoc">The API documentation document.</param>
-  /// <param name="directoryName">The directory where the resulting file should be written to.</param>
-  /// <param name="fileNameWithoutExtension">The file name without extension, where all classes are written to.</param>
-  /// <param name="cancellationToken"></param>
-  /// <returns>The extension used for the filenames.</returns>
-  public static async Task<string> GenerateResponseClassesAsync(ApiDocDocument apiDoc, string directoryName, string fileNameWithoutExtension, CancellationToken cancellationToken = default)
-  {
-    var apiCodeProvider = new ApiDocCodeProvider();
-    var path = Path.Combine(directoryName, $"{fileNameWithoutExtension}{apiCodeProvider.FileExtension}");
-
-    var allFunctions = apiDoc.Methods.Concat(apiDoc.Subscriptions).Select(x => x.Value);
-
-    foreach (var function in allFunctions) {
-      if (function.Response == null)
-        continue;
-
-      apiCodeProvider.AddFunctionPropertyClass(string.Concat(function.Name.ToPublicCodeName(), "Response"), function.Response);
-    }
-
-    var fs = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.ReadWrite);
-
-    await using (fs.ConfigureAwait(false)) {
-      await fs.WriteAsync(Encoding.UTF8.GetBytes(await apiCodeProvider.GenerateAsync()), cancellationToken).ConfigureAwait(false);
-      await fs.FlushAsync(cancellationToken).ConfigureAwait(false);
-    }
-
-    return apiCodeProvider.FileExtension;
-  }
-
 
   /// <summary>
   ///   Generates the interfaces for the API (e.g. categoris, private, public, ...).
@@ -680,85 +568,65 @@ public static class ApiDocUtils
   /// <param name="apiDoc">The API documentation document.</param>
   /// <param name="directoryName">The directory in which the resulting files will be written to.</param>
   /// <param name="cancellationToken"></param>
-  /// <returns>The extension used for the filenames.</returns>
-  [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
-  public static async Task<string> GenerateApiInterfaces(ApiDocDocument apiDoc, string directoryName, CancellationToken cancellationToken = default)
+  public static async Task GenerateApiInterfaces(ApiDocDocument apiDoc, string directoryName, CancellationToken cancellationToken = default)
   {
-    if (!Directory.Exists(directoryName))
-      throw new DirectoryNotFoundException();
+    var generator = new ApiInterfaceCodeGenerator
+    {
+      Namespace = "DeriSock.Api",
+      Document = apiDoc
+    };
 
-    var apiCodeProvider = new ApiDocCodeProvider("DeriSock.Api");
-
-    var functionsPerCategory = apiDoc.Methods.Where(x => !x.Value.ExcludeInInterface).GroupBy(x => x.Value.Category);
-
-    await CodeGenEnumerate(
-      apiCodeProvider,
-      functionsPerCategory,
-      category =>
+    generator.DefinePathCallback = item =>
+    {
+      return item switch
       {
-        Debug.Assert(!string.IsNullOrEmpty(category.Key));
+        string s => Path.Combine(directoryName, $"I{s.ToPublicCodeName()}Api{generator.FileExtension}"),
+        bool b   => Path.Combine(directoryName, $"I{(b ? "Private" : "Public")}Api{generator.FileExtension}"),
+        _        => string.Empty
+      };
+    };
 
-        return Path.Combine(directoryName, $"I{category.Key.ToPublicCodeName()}Api{apiCodeProvider.FileExtension}");
-      },
-      (code, category) =>
-      {
-        code.AddPartialInterface($"I{category.Key!.ToPublicCodeName()}Api", category.Select(x => x.Value));
-      },
-      cancellationToken).ConfigureAwait(false);
+    generator.Type = ApiInterfaceCodeGenerator.GenType.Categories;
+    await generator.GenerateToCustomAsync(cancellationToken).ConfigureAwait(false);
 
+    generator.Type = ApiInterfaceCodeGenerator.GenType.Scopes;
+    await generator.GenerateToCustomAsync(cancellationToken).ConfigureAwait(false);
 
-    var functionsPerScope = apiDoc.Methods.Where(x => !x.Value.ExcludeInInterface).GroupBy(x => x.Value.IsPrivate);
-
-    await CodeGenEnumerate(
-      apiCodeProvider,
-      functionsPerScope,
-      scope => Path.Combine(directoryName, $"I{(scope.Key ? "Private" : "Public")}Api{apiCodeProvider.FileExtension}"),
-      (code, scope) =>
-      {
-        code.AddPartialInterface($"I{(scope.Key ? "Private" : "Public")}Api", scope.Select(x => x.Value));
-      },
-      cancellationToken).ConfigureAwait(false);
-
-
-    var categoryNames = new[] { functionsPerCategory.Select(x => x.Key!) };
-
-    await CodeGenEnumerate(
-      apiCodeProvider,
-      categoryNames,
-      _ => Path.Combine(directoryName, $"ICategoriesApi{apiCodeProvider.FileExtension}"),
-      (code, categoryNames) =>
-      {
-        code.BeginCategoriesInterface("ICategoriesApi");
-        code.AddCategoriesInterfaceProperty("Public");
-        code.AddCategoriesInterfaceProperty("Private");
-        foreach (var categoryName in categoryNames) {          
-          code.AddCategoriesInterfaceProperty(categoryName);
-        }
-        code.EndCategoriesInterface();
-      },
-      cancellationToken).ConfigureAwait(false);
-
-    return apiCodeProvider.FileExtension;
+    generator.Type = ApiInterfaceCodeGenerator.GenType.Summary;
+    await generator.GenerateToAsync(Path.Combine(directoryName, $"ICategoriesApi{generator.FileExtension}"), cancellationToken).ConfigureAwait(false);
   }
 
-  private static async Task CodeGenEnumerate<T>(ApiDocCodeProvider apiCodeProvider, IEnumerable<T> list, Func<T, string> definePath, Action<ApiDocCodeProvider, T> generate, CancellationToken cancellationToken)
+  /// <summary>
+  ///   Generates the interface implementations for the API
+  /// </summary>
+  /// <param name="apiDoc">The API documentation document.</param>
+  /// <param name="directoryName">The directory in which the resulting files will be written to.</param>
+  /// <param name="cancellationToken"></param>
+  public static async Task GenerateApiImplementations(ApiDocDocument apiDoc, string directoryName, CancellationToken cancellationToken = default)
   {
-    foreach (var item in list) {
-      var path = definePath(item);
+    var generator = new ApiInterfaceImplementationCodeGenerator
+    {
+      Namespace = "DeriSock",
+      Document = apiDoc
+    };
 
-      if (string.IsNullOrEmpty(path))
-        continue;
+    generator.DefinePathCallback = item =>
+    {
+      return item switch
+      {
+        string s => Path.Combine(directoryName, $"{s.ToPublicCodeName()}ApiImpl{generator.FileExtension}"),
+        bool b   => Path.Combine(directoryName, $"{(b ? "Private" : "Public")}ApiImpl{generator.FileExtension}"),
+        _        => string.Empty
+      };
+    };
 
-      generate(apiCodeProvider, item);
+    generator.Type = ApiInterfaceImplementationCodeGenerator.GenType.Categories;
+    await generator.GenerateToCustomAsync(cancellationToken).ConfigureAwait(false);
 
-      var fs = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.ReadWrite);
+    generator.Type = ApiInterfaceImplementationCodeGenerator.GenType.Scopes;
+    await generator.GenerateToCustomAsync(cancellationToken).ConfigureAwait(false);
 
-      await using (fs.ConfigureAwait(false)) {
-        await fs.WriteAsync(Encoding.UTF8.GetBytes(await apiCodeProvider.GenerateAsync()), cancellationToken).ConfigureAwait(false);
-        await fs.FlushAsync(cancellationToken).ConfigureAwait(false);
-      }
-
-      apiCodeProvider.Clear();
-    }
+    generator.Type = ApiInterfaceImplementationCodeGenerator.GenType.Summary;
+    await generator.GenerateToAsync(Path.Combine(directoryName, $"ICategoriesApiImpl{generator.FileExtension}"), cancellationToken).ConfigureAwait(false);
   }
 }

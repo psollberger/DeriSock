@@ -1,6 +1,7 @@
 namespace DeriSock;
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 using DeriSock.Api;
@@ -9,14 +10,10 @@ using DeriSock.JsonRpc;
 using DeriSock.Model;
 using DeriSock.Utils;
 
-public partial class DeribitClient : IAuthenticationApi, IAuthenticationMethods
+public partial class DeribitClient : IAuthenticationMethods
 {
-  /// <inheritdoc cref="IAuthenticationApi" />
-   public IAuthenticationMethods PublicLogin()
-    => this;
-
   /// <inheritdoc />
-  async Task<JsonRpcResponse<PublicAuthResponse>> IAuthenticationMethods.WithClientCredentials(string clientId, string clientSecret, string state, string scope)
+  async Task<JsonRpcResponse<AuthTokenData>> IAuthenticationMethods.WithClientCredentials(string clientId, string clientSecret, string state, string scope, CancellationToken cancellationToken)
   {
     _logger.Debug("Authenticate (client_credentials)");
 
@@ -38,7 +35,7 @@ public partial class DeribitClient : IAuthenticationApi, IAuthenticationMethods
       Scope = string.IsNullOrEmpty(scope) ? null : scope
     };
 
-    var response = await Send("public/auth", reqParams, new ObjectJsonConverter<PublicAuthResponse>()).ConfigureAwait(false);
+    var response = await Send("public/auth", reqParams, new ObjectJsonConverter<AuthTokenData>(), cancellationToken).ConfigureAwait(false);
 
     var loginRes = response.ResultData;
 
@@ -51,7 +48,7 @@ public partial class DeribitClient : IAuthenticationApi, IAuthenticationMethods
   }
 
   /// <inheritdoc />
-  async Task<JsonRpcResponse<PublicAuthResponse>> IAuthenticationMethods.WithClientSignature(string clientId, string clientSecret, string data, string state, string scope)
+  async Task<JsonRpcResponse<AuthTokenData>> IAuthenticationMethods.WithClientSignature(string clientId, string clientSecret, string data, string state, string scope, CancellationToken cancellationToken)
   {
     _logger.Debug("Authenticate (client_signature)");
 
@@ -78,7 +75,7 @@ public partial class DeribitClient : IAuthenticationApi, IAuthenticationMethods
       Scope = string.IsNullOrEmpty(scope) ? null : scope
     };
 
-    var response = await Send("public/auth", reqParams, new ObjectJsonConverter<PublicAuthResponse>()).ConfigureAwait(false);
+    var response = await Send("public/auth", reqParams, new ObjectJsonConverter<AuthTokenData>(), cancellationToken).ConfigureAwait(false);
 
     var loginRes = response.ResultData;
 
@@ -91,7 +88,7 @@ public partial class DeribitClient : IAuthenticationApi, IAuthenticationMethods
   }
 
   /// <inheritdoc />
-  async Task<JsonRpcResponse<PublicAuthResponse>> IAuthenticationMethods.WithRefreshToken(string state, string scope)
+  async Task<JsonRpcResponse<AuthTokenData>> IAuthenticationMethods.WithRefreshToken(string state, string scope, CancellationToken cancellationToken)
   {
     _logger.Debug("Authenticate (refresh_token)");
 
@@ -106,7 +103,7 @@ public partial class DeribitClient : IAuthenticationApi, IAuthenticationMethods
       Scope = string.IsNullOrEmpty(scope) ? null : scope
     };
 
-    var response = await Send("public/auth", reqParams, new ObjectJsonConverter<PublicAuthResponse>()).ConfigureAwait(false);
+    var response = await Send("public/auth", reqParams, new ObjectJsonConverter<AuthTokenData>(), cancellationToken).ConfigureAwait(false);
 
     var loginRes = response.ResultData;
 
@@ -117,21 +114,21 @@ public partial class DeribitClient : IAuthenticationApi, IAuthenticationMethods
   }
 
   /// <inheritdoc cref="IAuthenticationApi.PublicExchangeToken" />
-  public async Task<JsonRpcResponse<PublicExchangeTokenResponse>> PublicExchangeToken(PublicExchangeTokenRequest args)
+  private async Task<JsonRpcResponse<AuthTokenData>> InternalPublicExchangeToken(PublicExchangeTokenRequest args, CancellationToken cancellationToken = default)
   {
     _logger.Debug("Exchanging token");
-    return await Send("public/exchange_token", args, new ObjectJsonConverter<PublicExchangeTokenResponse>()).ConfigureAwait(false);
+    return await Send("public/exchange_token", args, new ObjectJsonConverter<AuthTokenData>(), cancellationToken).ConfigureAwait(false);
   }
 
   /// <inheritdoc cref="IAuthenticationApi.PublicForkToken" />
-  public async Task<JsonRpcResponse<PublicForkTokenResponse>> PublicForkToken(PublicForkTokenRequest args)
+  private async Task<JsonRpcResponse<AuthTokenData>> InternalPublicForkToken(PublicForkTokenRequest args, CancellationToken cancellationToken = default)
   {
     _logger.Debug("Forking token");
-    return await Send("public/fork_token", args, new ObjectJsonConverter<PublicForkTokenResponse>()).ConfigureAwait(false);
+    return await Send("public/fork_token", args, new ObjectJsonConverter<AuthTokenData>(), cancellationToken).ConfigureAwait(false);
   }
 
   /// <inheritdoc cref="IAuthenticationApi.PrivateLogout" />
-  public void PrivateLogout(PrivateLogoutRequest? args)
+  private void InternalPrivateLogout(PrivateLogoutRequest? args)
   {
     _logger.Debug("Logging out");
 

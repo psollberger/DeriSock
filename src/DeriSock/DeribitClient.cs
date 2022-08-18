@@ -6,7 +6,6 @@ namespace DeriSock;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Dynamic;
 using System.Linq;
 using System.Net.WebSockets;
 using System.Threading;
@@ -26,7 +25,7 @@ using Serilog.Events;
 ///   <para>The implementation of the API methods from Deribit</para>
 ///   <para>All methods are asynchronous. Synchronous methods are suffixed with <c>Sync</c></para>
 /// </summary>
-public partial class DeribitClient : IWebSocketStateInfo, IPrivateApi, IPublicApi
+public partial class DeribitClient : IWebSocketStateInfo
 {
   /// <summary>
   ///   Occurs when the client is connected to the server
@@ -108,23 +107,23 @@ public partial class DeribitClient : IWebSocketStateInfo, IPrivateApi, IPublicAp
     RefreshToken = null;
   }
 
-  private async Task<JsonRpcResponse<T>> Send<T>(string method, object? @params, IJsonConverter<T> converter)
+  private async Task<JsonRpcResponse<T>> Send<T>(string method, object? @params, IJsonConverter<T> converter, CancellationToken cancellationToken = default)
   {
-    var response = await _client.Send(method, @params).ConfigureAwait(false);
+    var response = await _client.Send(method, @params, cancellationToken).ConfigureAwait(false);
     return response.CreateTyped(converter.Convert(response.Result));
   }
 
-  private void OnServerConnected(object sender, EventArgs e)
+  private void OnServerConnected(object? sender, EventArgs e)
   {
     Connected?.Invoke(this, e);
   }
 
-  private void OnServerDisconnected(object sender, JsonRpcDisconnectEventArgs e)
+  private void OnServerDisconnected(object? sender, JsonRpcDisconnectEventArgs e)
   {
     Disconnected?.Invoke(this, e);
   }
 
-  private void OnServerRequest(object sender, JsonRpcRequest request)
+  private void OnServerRequest(object? sender, JsonRpcRequest request)
   {
     if (string.Equals(request.Method, "subscription"))
       OnNotification(request.Original.ToObject<Notification>()!);
@@ -140,7 +139,7 @@ public partial class DeribitClient : IWebSocketStateInfo, IPrivateApi, IPublicAp
       _logger.Debug("OnHeartbeat: {@Heartbeat}", heartbeat);
 
     if (heartbeat.Type == "test_request")
-      _ = PublicTest(null);
+      _ = InternalPublicTest();
   }
 
   private void OnNotification(Notification notification)
@@ -153,6 +152,7 @@ public partial class DeribitClient : IWebSocketStateInfo, IPrivateApi, IPublicAp
     var retryCount = 0;
 
     Action<Notification>[] callbacks;
+
     do {
       callbacks = _subscriptionManager.GetCallbacks(notification.Channel);
 
@@ -550,7 +550,7 @@ public partial class DeribitClient : IWebSocketStateInfo, IPrivateApi, IPublicAp
       @params,
       n => callback(n.Data.ToObject<DeribitPriceRankingNotification[]>()));
   }
-  
+
   /// <summary>
   ///   Provides information about current value (price) for stock exchanges used to calculate Deribit Index
   /// </summary>

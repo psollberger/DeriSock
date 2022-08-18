@@ -1,6 +1,7 @@
 namespace DeriSock.JsonRpc;
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 /// <inheritdoc />
@@ -57,6 +58,7 @@ public interface IJsonRpcClient : IWebSocketStateInfo
   ///   A structured value that hold the parameter values to be used during the invocation of the
   ///   method
   /// </param>
+  /// <param name="cancellationToken"></param>
   /// <returns>A Task object</returns>
-  Task<JsonRpcResponse> Send(string method, object? parameters);
+  Task<JsonRpcResponse> Send(string method, object? parameters, CancellationToken cancellationToken = default);
 }

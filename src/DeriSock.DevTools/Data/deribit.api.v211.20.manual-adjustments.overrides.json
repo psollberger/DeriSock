@@ -8,6 +8,26 @@
             "required": false
           }
         }
+      },
+      "response": {
+        "properties": {
+          "state": {
+            "required": false
+          }
+        }
+      }
+    },
+    "^public/(exchange_token|fork_token)$": {
+      "response": {
+        "properties": {
+          "state": {
+            "insertBefore": "token_type",
+            "description": "Copied from the input (only for /public/auth and only if applicable)",
+            "required": false,
+            "apiDataType": "string",
+            "dataType": "string"
+          }
+        }
       }
     },
     "private/logout": {
@@ -150,6 +170,16 @@
         "properties": {
           "open_orders": {
             "required": false
+          },
+          "positions": {
+            "properties": {
+              "estimated_liquidation_price": {
+                "insertBefore": "floating_profit_loss",
+                "description": "Estimated liquidation price, added only for futures, for non portfolio margining users",
+                "apiDataType": "number",
+                "dataType": "number"
+              }
+            }
           }
         }
       }
@@ -206,6 +236,16 @@
           }
         }
       }
+    },
+    "public/get_instrument": {
+      "resonse": {
+        "dataType": "Instrument"
+      }
+    },
+    "public/get_positions": {
+      "response": {
+        "arrayDataType": "UserPosition"
+      }
     }
   },
   "subscriptions": {
@@ -217,6 +257,38 @@
           },
           "estimated_liquidation_ratio_map": {
             "dataType": "JObject"
+          }
+        }
+      }
+    },
+    "user.changes.{instrument_name}.{interval}": {
+      "response": {
+        "properties": {
+          "position": {
+            "properties": {
+              "estimated_liquidation_price": {
+                "insertBefore": "floating_profit_loss",
+                "description": "Estimated liquidation price, added only for futures, for non portfolio margining users",
+                "apiDataType": "number",
+                "dataType": "number"
+              }
+            }
+          }
+        }
+      }
+    },
+    "user.changes.{kind}.{currency}.{interval}": {
+      "response": {
+        "properties": {
+          "position": {
+            "properties": {
+              "estimated_liquidation_price": {
+                "insertBefore": "floating_profit_loss",
+                "description": "Estimated liquidation price, added only for futures, for non portfolio margining users",
+                "apiDataType": "number",
+                "dataType": "number"
+              }
+            }
           }
         }
       }

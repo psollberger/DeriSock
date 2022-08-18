@@ -22,4 +22,19 @@ internal static class DictionaryExtensions
         dictionary[arrKeys[i]] = arrValues[i];
     }
   }
+
+  public static void InsertBefore<TValue>(this IDictionary<string, TValue> dictionary, string beforeKey, string key, TValue value)
+  {
+    var oldItems = dictionary.ToArray();
+
+    dictionary.Clear();
+
+    foreach (var (oldKey, oldValue) in oldItems) {
+      if (oldKey == beforeKey) {
+        dictionary.Add(key, value);
+      }
+
+      dictionary.Add(oldKey, oldValue);
+    }
+  }
 }

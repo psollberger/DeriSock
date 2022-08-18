@@ -4,6 +4,9 @@ using System.Text.Json.Serialization;
 
 public class ApiDocOverrideProperty
 {
+  [JsonPropertyName("insertBefore")]
+  public string? InsertBefore { get; set; } = null;
+
   [JsonPropertyName("name")]
   public string? Name { get; set; } = null;
 
@@ -45,4 +48,22 @@ public class ApiDocOverrideProperty
 
   [JsonPropertyName("properties")]
   public ApiDocOverridePropertyCollection? Properties { get; set; } = default;
+
+  public ApiDocProperty CreateApiProperty()
+    => new()
+    {
+      Name = Name ?? string.Empty,
+      Description = Description,
+      Deprecated = Deprecated ?? false,
+      Required = Required ?? false,
+      ApiDataType = ApiDataType,
+      DataType = DataType,
+      ArrayDataType = ArrayDataType,
+      Converters = (string[]?)Converters?.Clone() ?? null,
+      EnumValues = (string[]?)EnumValues?.Clone() ?? null,
+      EnumIsSuggestion = EnumIsSuggestion,
+      ValueLookupSource = ValueLookupSource,
+      DefaultValue = DefaultValue,
+      MaxLength = MaxLength
+    };
 }

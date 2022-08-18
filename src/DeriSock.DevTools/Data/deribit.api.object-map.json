@@ -1,764 +1,291 @@
 ﻿{
-  "WithdrawalEntry": {
-    "description": "",
+  "AuthTokenData": {
+    "hash": "72430544C212B3BE21B1050B67949EE2E74ECA47",
     "properties": {
-      "address": {
-        "name": "address",
-        "description": "Address in proper format for currency",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "amount": {
-        "name": "amount",
-        "description": "Amount of funds in given currency",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "confirmed_timestamp": {
-        "name": "confirmed_timestamp",
-        "description": "The timestamp (milliseconds since the Unix epoch) of withdrawal confirmation, \u0060null\u0060 when not confirmed",
-        "required": true,
-        "apiDataType": "integer",
-        "dataType": "DateTime",
-        "arrayDataType": "",
-        "converters": [
-          "MillisecondsTimestampConverter"
-        ]
-      },
-      "created_timestamp": {
-        "name": "created_timestamp",
-        "description": "The timestamp (milliseconds since the Unix epoch)",
-        "required": true,
-        "apiDataType": "integer",
-        "dataType": "DateTime",
-        "arrayDataType": "",
-        "converters": [
-          "MillisecondsTimestampConverter"
-        ]
-      },
-      "currency": {
-        "name": "currency",
-        "description": "Currency, i.e \u0060\u0022BTC\u0022\u0060, \u0060\u0022ETH\u0022\u0060, \u0060\u0022USDC\u0022\u0060",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "fee": {
-        "name": "fee",
-        "description": "Fee in currency",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "id": {
-        "name": "id",
-        "description": "Withdrawal id in Deribit system",
-        "required": true,
-        "apiDataType": "integer",
-        "dataType": "integer",
-        "arrayDataType": ""
-      },
-      "priority": {
-        "name": "priority",
-        "description": "Id of priority level",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "state": {
-        "name": "state",
-        "description": "Withdrawal state, allowed values : \u0060unconfirmed\u0060, \u0060confirmed\u0060, \u0060cancelled\u0060, \u0060completed\u0060, \u0060interrupted\u0060, \u0060rejected\u0060",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "transaction_id": {
-        "name": "transaction_id",
-        "description": "Transaction id in proper format for currency, \u0060null\u0060 if id is not available",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "updated_timestamp": {
-        "name": "updated_timestamp",
-        "description": "The timestamp (milliseconds since the Unix epoch)",
-        "required": true,
-        "apiDataType": "integer",
-        "dataType": "DateTime",
-        "arrayDataType": "",
-        "converters": [
-          "MillisecondsTimestampConverter"
-        ]
-      }
+      "access_token": {},
+      "expires_in": {},
+      "refresh_token": {},
+      "scope": {},
+      "sid": {},
+      "state": {},
+      "token_type": {}
     },
     "methods": [
-      "private/get_withdrawals.response.data"
-    ],
-    "subscriptions": [
+      "public/auth.response",
+      "public/exchange_token.response",
+      "public/fork_token.response"
     ]
   },
-  "DepositEntry": {
-    "description": "",
+  "CancelOnDisconnectData": {
+    "hash": "90ADABC61C5A9061C4E8E554B24605F95FF325E3",
     "properties": {
-      "address": {
-        "name": "address",
-        "description": "Address in proper format for currency",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "amount": {
-        "name": "amount",
-        "description": "Amount of funds in given currency",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "currency": {
-        "name": "currency",
-        "description": "Currency, i.e \u0060\u0022BTC\u0022\u0060, \u0060\u0022ETH\u0022\u0060, \u0060\u0022USDC\u0022\u0060",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "received_timestamp": {
-        "name": "received_timestamp",
-        "description": "The timestamp (milliseconds since the Unix epoch)",
-        "required": true,
-        "apiDataType": "integer",
-        "dataType": "DateTime",
-        "arrayDataType": "",
-        "converters": [
-          "MillisecondsTimestampConverter"
-        ]
-      },
-      "state": {
-        "name": "state",
-        "description": "Deposit state, allowed values : \u0060pending\u0060, \u0060completed\u0060, \u0060rejected\u0060, \u0060replaced\u0060",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "transaction_id": {
-        "name": "transaction_id",
-        "description": "Transaction id in proper format for currency, \u0060null\u0060 if id is not available",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "updated_timestamp": {
-        "name": "updated_timestamp",
-        "description": "The timestamp (milliseconds since the Unix epoch)",
-        "required": true,
-        "apiDataType": "integer",
-        "dataType": "DateTime",
-        "arrayDataType": "",
-        "converters": [
-          "MillisecondsTimestampConverter"
-        ]
-      }
+      "enabled": {},
+      "scope": {}
     },
     "methods": [
-      "private/get_deposits.response.data"
-    ],
-    "subscriptions": [
+      "private/get_cancel_on_disconnect.response"
     ]
   },
-  "TransactionLogEntry": {
-    "description": "",
+  "ServerVersionData": {
+    "hash": "F4107641256F5AF970433E3B4CA7535B080FD6A6",
     "properties": {
-      "amount": {
-        "name": "amount",
-        "description": "The amount of traded contracts",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "balance": {
-        "name": "balance",
-        "description": "Cash balance after the transaction",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "cashflow": {
-        "name": "cashflow",
-        "description": "For futures and perpetual contracts: Realized session PNL (since last settlement). For options: the amount paid or received for the options traded.",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "change": {
-        "name": "change",
-        "description": "Change in cash balance. For trades: fees and options premium paid/received. For settlement: Futures session PNL and perpetual session funding.",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "commission": {
-        "name": "commission",
-        "description": "Commission paid so far (in base currency)",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "currency": {
-        "name": "currency",
-        "description": "Currency, i.e \u0060\u0022BTC\u0022\u0060, \u0060\u0022ETH\u0022\u0060, \u0060\u0022USDC\u0022\u0060",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "equity": {
-        "name": "equity",
-        "description": "Updated equity value after the transaction",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "id": {
-        "name": "id",
-        "description": "Unique identifier",
-        "required": true,
-        "apiDataType": "integer",
-        "dataType": "integer",
-        "arrayDataType": ""
-      },
-      "info": {
-        "name": "info",
-        "description": "Additional information regarding transaction. Strongly dependent on the log entry type",
-        "required": true,
-        "apiDataType": "object",
-        "dataType": "object",
-        "arrayDataType": ""
-      },
-      "instrument_name": {
-        "name": "instrument_name",
-        "description": "Unique instrument identifier",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "interest_pl": {
-        "name": "interest_pl",
-        "description": "Actual funding rate of trades and settlements on perpetual instruments",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "mark_price": {
-        "name": "mark_price",
-        "description": "Market price during the trade",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "order_id": {
-        "name": "order_id",
-        "description": "Unique order identifier",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "position": {
-        "name": "position",
-        "description": "Updated position size after the transaction",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "price": {
-        "name": "price",
-        "description": "Settlement/delivery price or the price level of the traded contracts",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "price_currency": {
-        "name": "price_currency",
-        "description": "Currency symbol associated with the \u0060price\u0060 field value",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "profit_as_cashflow": {
-        "name": "profit_as_cashflow",
-        "description": "Indicator informing whether the cashflow is waiting for settlement or not",
-        "required": true,
-        "apiDataType": "boolean",
-        "dataType": "boolean",
-        "arrayDataType": ""
-      },
-      "session_rpl": {
-        "name": "session_rpl",
-        "description": "Session realized profit and loss",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "session_upl": {
-        "name": "session_upl",
-        "description": "Session unrealized profit and loss",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "side": {
-        "name": "side",
-        "description": "One of: \u0060short\u0060 or \u0060long\u0060 in case of settlements, \u0060close sell\u0060 or \u0060close buy\u0060 in case of deliveries, \u0060open sell\u0060, \u0060open buy\u0060, \u0060close sell\u0060, \u0060close buy\u0060 in case of trades",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "timestamp": {
-        "name": "timestamp",
-        "description": "The timestamp (milliseconds since the Unix epoch)",
-        "required": true,
-        "apiDataType": "integer",
-        "dataType": "DateTime",
-        "arrayDataType": "",
-        "converters": [
-          "MillisecondsTimestampConverter"
-        ]
-      },
-      "total_interest_pl": {
-        "name": "total_interest_pl",
-        "description": "Total session funding rate",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "trade_id": {
-        "name": "trade_id",
-        "description": "Unique (per currency) trade identifier",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "type": {
-        "name": "type",
-        "description": "Transaction category/type. The most common are: \u0060trade\u0060, \u0060deposit\u0060, \u0060withdrawal\u0060, \u0060settlement\u0060, \u0060delivery\u0060, \u0060transfer\u0060, \u0060swap\u0060, \u0060correction\u0060. New types can be added any time in the future",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "user_id": {
-        "name": "user_id",
-        "description": "Unique user identifier",
-        "required": true,
-        "apiDataType": "integer",
-        "dataType": "integer",
-        "arrayDataType": ""
-      },
-      "user_role": {
-        "name": "user_role",
-        "description": "Trade role of the user: maker or taker",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "user_seq": {
-        "name": "user_seq",
-        "description": "Sequential identifier of user transaction",
-        "required": true,
-        "apiDataType": "integer",
-        "dataType": "integer",
-        "arrayDataType": ""
-      },
-      "username": {
-        "name": "username",
-        "description": "System name or user defined subaccount alias",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      }
+      "version": {}
     },
     "methods": [
-      "private/get_transaction_log.response.logs"
-    ],
-    "subscriptions": [
+      "public/hello.response",
+      "public/test.response"
     ]
   },
-  "UserTrade": {
-    "description": "",
+  "PlatformLockStatus": {
+    "hash": "5FD42C35650353344AB679DCFBA4E941C02844E5",
     "properties": {
-      "amount": {
-        "name": "amount",
-        "description": "Trade amount. For perpetual and futures - in USD units, for options it is amount of corresponding cryptocurrency contracts, e.g., BTC or ETH.",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "block_trade_id": {
-        "name": "block_trade_id",
-        "description": "Block trade id - when trade was part of block trade",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "direction": {
-        "name": "direction",
-        "description": "Direction: \u0060buy\u0060, or \u0060sell\u0060",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "fee": {
-        "name": "fee",
-        "description": "User\u0027s fee in units of the specified \u0060fee_currency\u0060",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "fee_currency": {
-        "name": "fee_currency",
-        "description": "Currency, i.e \u0060\u0022BTC\u0022\u0060, \u0060\u0022ETH\u0022\u0060, \u0060\u0022USDC\u0022\u0060",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "index_price": {
-        "name": "index_price",
-        "description": "Index Price at the moment of trade",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "instrument_name": {
-        "name": "instrument_name",
-        "description": "Unique instrument identifier",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "iv": {
-        "name": "iv",
-        "description": "Option implied volatility for the price (Option only)",
-        "required": false,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "label": {
-        "name": "label",
-        "description": "User defined label (presented only when previously set for order by user)",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "liquidation": {
-        "name": "liquidation",
-        "description": "Optional field (only for trades caused by liquidation): \u0060\u0022M\u0022\u0060 when maker side of trade was under liquidation, \u0060\u0022T\u0022\u0060 when taker side was under liquidation, \u0060\u0022MT\u0022\u0060 when both sides of trade were under liquidation",
-        "required": false,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "liquidity": {
-        "name": "liquidity",
-        "description": "Describes what was role of users order: \u0060\u0022M\u0022\u0060 when it was maker order, \u0060\u0022T\u0022\u0060 when it was taker order",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "mark_price": {
-        "name": "mark_price",
-        "description": "Mark Price at the moment of trade",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "matching_id": {
-        "name": "matching_id",
-        "description": "Always \u0060null\u0060, except for a self-trade which is possible only if self-trading is switched on for the account (in that case this will be id of the maker order of the subscriber)",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "order_id": {
-        "name": "order_id",
-        "description": "Id of the user order (maker or taker), i.e. subscriber\u0027s order id that took part in the trade",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "order_type": {
-        "name": "order_type",
-        "description": "Order type: \u0060\u0022limit\u0060, \u0060\u0022market\u0022\u0060, or \u0060\u0022liquidation\u0022\u0060",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "post_only": {
-        "name": "post_only",
-        "description": "\u0060true\u0060 if user order is post-only",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "price": {
-        "name": "price",
-        "description": "Price in base currency",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "profit_loss": {
-        "name": "profit_loss",
-        "description": "Profit and loss in base currency.",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "reduce_only": {
-        "name": "reduce_only",
-        "description": "\u0060true\u0060 if user order is reduce-only",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "self_trade": {
-        "name": "self_trade",
-        "description": "\u0060true\u0060 if the trade is against own order. This can only happen when your account has self-trading enabled. Contact an administrator if you think you need that",
-        "required": true,
-        "apiDataType": "boolean",
-        "dataType": "boolean",
-        "arrayDataType": ""
-      },
-      "state": {
-        "name": "state",
-        "description": "Order state: \u0060\u0022open\u0022\u0060, \u0060\u0022filled\u0022\u0060, \u0060\u0022rejected\u0022\u0060, \u0060\u0022cancelled\u0022\u0060, \u0060\u0022untriggered\u0022\u0060 or \u0060\u0022archive\u0022\u0060 (if order was archived)",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "tick_direction": {
-        "name": "tick_direction",
-        "description": "Direction of the \u0022tick\u0022 (\u00600\u0060 = Plus Tick, \u00601\u0060 = Zero-Plus Tick, \u00602\u0060 = Minus Tick, \u00603\u0060 = Zero-Minus Tick).",
-        "required": true,
-        "apiDataType": "integer",
-        "dataType": "integer",
-        "arrayDataType": ""
-      },
-      "timestamp": {
-        "name": "timestamp",
-        "description": "The timestamp of the trade (milliseconds since the UNIX epoch)",
-        "required": true,
-        "apiDataType": "integer",
-        "dataType": "DateTime",
-        "arrayDataType": "",
-        "converters": [
-          "MillisecondsTimestampConverter"
-        ]
-      },
-      "trade_id": {
-        "name": "trade_id",
-        "description": "Unique (per currency) trade identifier",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "trade_seq": {
-        "name": "trade_seq",
-        "description": "The sequence number of the trade within instrument",
-        "required": true,
-        "apiDataType": "integer",
-        "dataType": "integer",
-        "arrayDataType": ""
-      },
-      "underlying_price": {
-        "name": "underlying_price",
-        "description": "Underlying price for implied volatility calculations (Options only)",
-        "required": false,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      }
+      "locked": {},
+      "locked_currencies": {}
     },
     "methods": [
-      "private/execute_block_trade.response.trades",
-      "private/get_block_trade.response.trades",
-      "private/get_last_block_trades_by_currency.response.trades",
-      "private/buy.response.trades",
-      "private/sell.response.trades",
-      "private/edit.response.trades",
-      "private/edit_by_label.response.trades",
-      "private/close_position.response.trades",
-      "private/get_user_trades_by_currency.response.trades",
-      "private/get_user_trades_by_currency_and_time.response.trades",
-      "private/get_user_trades_by_instrument.response.trades",
-      "private/get_user_trades_by_instrument_and_time.response.trades"
-    ],
-    "subscriptions": [
-      "user.changes.{instrument_name}.{interval}.response.trades",
-      "user.changes.{kind}.{currency}.{interval}.response.trades"
+      "public/status.response"
+    ]
+  },
+  "BookSummaryEntry": {
+    "hash": "008DD66AAA671D1B7EBAB9B06F1EEA743806638A",
+    "properties": {
+      "ask_price": {},
+      "base_currency": {},
+      "bid_price": {},
+      "creation_timestamp": {},
+      "current_funding": {},
+      "estimated_delivery_price": {},
+      "funding_8h": {},
+      "high": {},
+      "instrument_name": {},
+      "interest_rate": {},
+      "last": {},
+      "low": {},
+      "mark_price": {},
+      "mid_price": {},
+      "notional_volume": {},
+      "open_interest": {},
+      "price_change": {},
+      "quote_currency": {},
+      "underlying_index": {},
+      "underlying_price": {},
+      "volume": {},
+      "volume_usd": {}
+    },
+    "methods": [
+      "public/get_book_summary_by_currency.response",
+      "public/get_book_summary_by_instrument.response"
+    ]
+  },
+  "ContractSizeData": {
+    "hash": "CBAC91C5D7184FF7C072FECB93E2CE0F48145E03",
+    "properties": {
+      "contract_size": {}
+    },
+    "methods": [
+      "public/get_contract_size.response"
+    ]
+  },
+  "CurrencyData": {
+    "hash": "4F0CA1077E1B1B1AFBFF7C15949131773CDBAB3B",
+    "properties": {
+      "coin_type": {},
+      "currency": {},
+      "currency_long": {},
+      "fee_precision": {},
+      "min_confirmations": {},
+      "min_withdrawal_fee": {},
+      "withdrawal_fee": {},
+      "withdrawal_priorities": {}
+    },
+    "methods": [
+      "public/get_currencies.response"
+    ]
+  },
+  "WithdrawalPriority": {
+    "hash": "B20AB0F64B7D522510D0DF1144EFAC7C6EA0C658",
+    "properties": {
+      "name": {},
+      "value": {}
+    },
+    "methods": [
+      "public/get_currencies.response.withdrawal_priorities"
+    ]
+  },
+  "IndexDeliveryPrices": {
+    "hash": "D44EC36499275DCE2E28502DC383F0F6562CE0E4",
+    "properties": {
+      "data": {},
+      "records_total": {}
+    },
+    "methods": [
+      "public/get_delivery_prices.response"
+    ]
+  },
+  "IndexDeliveryPrice": {
+    "hash": "2545431DFF57118A8409CB48A867C1689EBCC91A",
+    "properties": {
+      "date": {},
+      "delivery_price": {}
+    },
+    "methods": [
+      "public/get_delivery_prices.response.data"
+    ]
+  },
+  "FundingChartData": {
+    "hash": "34F5A8A78453C30868BEBDF33FBA6060EFC405AE",
+    "properties": {
+      "current_interest": {},
+      "data": {},
+      "interest_8h": {}
+    },
+    "methods": [
+      "public/get_funding_chart_data.response"
+    ]
+  },
+  "FundingChartDataEntry": {
+    "hash": "C75FA38CAA72779637A85AD2E6C30D8E8AA342DA",
+    "properties": {
+      "index_price": {},
+      "interest_8h": {},
+      "timestamp": {}
+    },
+    "methods": [
+      "public/get_funding_chart_data.response.data"
+    ]
+  },
+  "FundingRateHistoryEntry": {
+    "hash": "1D96F2A841CC2ADA2E34B199B9DB553DC36E1AB9",
+    "properties": {
+      "index_price": {},
+      "interest_1h": {},
+      "interest_8h": {},
+      "prev_index_price": {},
+      "timestamp": {}
+    },
+    "methods": [
+      "public/get_funding_rate_history.response"
+    ]
+  },
+  "GetIndexResponse": {
+    "hash": "E6CF82E8B564D25B26FC21525F703D3A6403FCFC",
+    "properties": {
+      "BTC": {},
+      "ETH": {},
+      "edp": {}
+    },
+    "methods": [
+      "public/get_index.response"
+    ]
+  },
+  "IndexPriceData": {
+    "hash": "57D8BBEC016420A758506EAC10F5493BC1C128B4",
+    "properties": {
+      "estimated_delivery_price": {},
+      "index_price": {}
+    },
+    "methods": [
+      "public/get_index_price.response"
+    ]
+  },
+  "Instrument": {
+    "hash": "3C03D74EF59848BDCD80EF79930AFD9B258F53E0",
+    "properties": {
+      "base_currency": {},
+      "block_trade_commission": {},
+      "contract_size": {},
+      "counter_currency": {},
+      "creation_timestamp": {},
+      "expiration_timestamp": {},
+      "future_type": {},
+      "instrument_id": {},
+      "instrument_name": {},
+      "is_active": {},
+      "kind": {},
+      "leverage": {},
+      "maker_commission": {},
+      "min_trade_amount": {},
+      "option_type": {},
+      "price_index": {},
+      "quote_currency": {},
+      "settlement_currency": {},
+      "settlement_period": {},
+      "strike": {},
+      "taker_commission": {},
+      "tick_size": {}
+    },
+    "methods": [
+      "public/get_instrument.response",
+      "public/get_instruments.response"
+    ]
+  },
+  "SettlementPage": {
+    "hash": "A966E1189950FFFE6A8FE998A71EA0CBB97BB716",
+    "properties": {
+      "continuation": {},
+      "settlements": {}
+    },
+    "methods": [
+      "public/get_last_settlements_by_currency.response",
+      "public/get_last_settlements_by_instrument.response",
+      "private/get_settlement_history_by_instrument.response",
+      "private/get_settlement_history_by_currency.response"
+    ]
+  },
+  "SettlementEntry": {
+    "hash": "557C4C7A46D4C13376E5E15535F41FC468C95C2D",
+    "properties": {
+      "funded": {},
+      "funding": {},
+      "index_price": {},
+      "instrument_name": {},
+      "mark_price": {},
+      "position": {},
+      "profit_loss": {},
+      "session_bankruptcy": {},
+      "session_profit_loss": {},
+      "session_tax": {},
+      "session_tax_rate": {},
+      "socialized": {},
+      "timestamp": {},
+      "type": {}
+    },
+    "methods": [
+      "public/get_last_settlements_by_currency.response.settlements",
+      "public/get_last_settlements_by_instrument.response.settlements",
+      "private/get_settlement_history_by_instrument.response.settlements",
+      "private/get_settlement_history_by_currency.response.settlements"
+    ]
+  },
+  "PublicTradesPage": {
+    "hash": "3EE8C48892D2246F2FCB46E066AA0CC5A6ABF3AB",
+    "properties": {
+      "has_more": {},
+      "trades": {}
+    },
+    "methods": [
+      "public/get_last_trades_by_currency.response",
+      "public/get_last_trades_by_currency_and_time.response",
+      "public/get_last_trades_by_instrument.response",
+      "public/get_last_trades_by_instrument_and_time.response"
     ]
   },
   "PublicTrade": {
-    "description": "",
+    "hash": "B87117B81248F3FCCC219FDFFDF6D6EE27B57B02",
     "properties": {
-      "amount": {
-        "name": "amount",
-        "description": "Trade amount. For perpetual and futures - in USD units, for options it is amount of corresponding cryptocurrency contracts, e.g., BTC or ETH.",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "block_trade_id": {
-        "name": "block_trade_id",
-        "description": "Block trade id - when trade was part of block trade",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "direction": {
-        "name": "direction",
-        "description": "Direction: \u0060buy\u0060, or \u0060sell\u0060",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "index_price": {
-        "name": "index_price",
-        "description": "Index Price at the moment of trade",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "instrument_name": {
-        "name": "instrument_name",
-        "description": "Unique instrument identifier",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "iv": {
-        "name": "iv",
-        "description": "Option implied volatility for the price (Option only)",
-        "required": false,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "liquidation": {
-        "name": "liquidation",
-        "description": "Optional field (only for trades caused by liquidation): \u0060\u0022M\u0022\u0060 when maker side of trade was under liquidation, \u0060\u0022T\u0022\u0060 when taker side was under liquidation, \u0060\u0022MT\u0022\u0060 when both sides of trade were under liquidation",
-        "required": false,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "mark_price": {
-        "name": "mark_price",
-        "description": "Mark Price at the moment of trade",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "price": {
-        "name": "price",
-        "description": "Price in base currency",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "tick_direction": {
-        "name": "tick_direction",
-        "description": "Direction of the \u0022tick\u0022 (\u00600\u0060 = Plus Tick, \u00601\u0060 = Zero-Plus Tick, \u00602\u0060 = Minus Tick, \u00603\u0060 = Zero-Minus Tick).",
-        "required": true,
-        "apiDataType": "integer",
-        "dataType": "integer",
-        "arrayDataType": ""
-      },
-      "timestamp": {
-        "name": "timestamp",
-        "description": "The timestamp of the trade (milliseconds since the UNIX epoch)",
-        "required": true,
-        "apiDataType": "integer",
-        "dataType": "DateTime",
-        "arrayDataType": "",
-        "converters": [
-          "MillisecondsTimestampConverter"
-        ]
-      },
-      "trade_id": {
-        "name": "trade_id",
-        "description": "Unique (per currency) trade identifier",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "trade_seq": {
-        "name": "trade_seq",
-        "description": "The sequence number of the trade within instrument",
-        "required": true,
-        "apiDataType": "integer",
-        "dataType": "integer",
-        "arrayDataType": ""
-      }
+      "amount": {},
+      "block_trade_id": {},
+      "direction": {},
+      "index_price": {},
+      "instrument_name": {},
+      "iv": {},
+      "liquidation": {},
+      "mark_price": {},
+      "price": {},
+      "tick_direction": {},
+      "timestamp": {},
+      "trade_id": {},
+      "trade_seq": {}
     },
     "methods": [
       "public/get_last_trades_by_currency.response.trades",
@@ -767,781 +294,54 @@
       "public/get_last_trades_by_instrument_and_time.response.trades"
     ],
     "subscriptions": [
+      "trades.{instrument_name}.{interval}.response",
+      "trades.{kind}.{currency}.{interval}.response"
     ]
   },
-  "TransferEntry": {
-    "description": "",
+  "OrderBook": {
+    "hash": "7744B30E3D52CB03DA0DD4203A877D67E4033690",
     "properties": {
-      "amount": {
-        "name": "amount",
-        "description": "Amount of funds in given currency",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "created_timestamp": {
-        "name": "created_timestamp",
-        "description": "The timestamp (milliseconds since the Unix epoch)",
-        "required": true,
-        "apiDataType": "integer",
-        "dataType": "DateTime",
-        "arrayDataType": "",
-        "converters": [
-          "MillisecondsTimestampConverter"
-        ]
-      },
-      "currency": {
-        "name": "currency",
-        "description": "Currency, i.e \u0060\u0022BTC\u0022\u0060, \u0060\u0022ETH\u0022\u0060, \u0060\u0022USDC\u0022\u0060",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "direction": {
-        "name": "direction",
-        "description": "Transfer direction",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "id": {
-        "name": "id",
-        "description": "Id of transfer",
-        "required": true,
-        "apiDataType": "integer",
-        "dataType": "integer",
-        "arrayDataType": ""
-      },
-      "other_side": {
-        "name": "other_side",
-        "description": "For transfer from/to subaccount returns this subaccount name, for transfer to other account returns address, for transfer from other account returns that accounts username.",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "state": {
-        "name": "state",
-        "description": "Transfer state, allowed values : \u0060prepared\u0060, \u0060confirmed\u0060, \u0060cancelled\u0060, \u0060waiting_for_admin\u0060 otherwise rejection reason",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "type": {
-        "name": "type",
-        "description": "Type of transfer: \u0060user\u0060 - sent to user, \u0060subaccount\u0060 - sent to subaccount",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "updated_timestamp": {
-        "name": "updated_timestamp",
-        "description": "The timestamp (milliseconds since the Unix epoch)",
-        "required": true,
-        "apiDataType": "integer",
-        "dataType": "DateTime",
-        "arrayDataType": "",
-        "converters": [
-          "MillisecondsTimestampConverter"
-        ]
-      }
+      "ask_iv": {},
+      "asks": {},
+      "best_ask_amount": {},
+      "best_ask_price": {},
+      "best_bid_amount": {},
+      "best_bid_price": {},
+      "bid_iv": {},
+      "bids": {},
+      "current_funding": {},
+      "delivery_price": {},
+      "funding_8h": {},
+      "greeks": {},
+      "index_price": {},
+      "instrument_name": {},
+      "interest_rate": {},
+      "last_price": {},
+      "mark_iv": {},
+      "mark_price": {},
+      "max_price": {},
+      "min_price": {},
+      "open_interest": {},
+      "settlement_price": {},
+      "state": {},
+      "stats": {},
+      "timestamp": {},
+      "underlying_index": {},
+      "underlying_price": {}
     },
     "methods": [
-      "private/get_transfers.response.data"
-    ],
-    "subscriptions": [
+      "public/get_order_book.response",
+      "public/get_order_book_by_instrument_id.response"
     ]
   },
-  "TriggerOrder": {
-    "description": "",
+  "Greeks": {
+    "hash": "8631C7D913475AA039BA1ECAC90A7AD8BC9AF272",
     "properties": {
-      "amount": {
-        "name": "amount",
-        "description": "It represents the requested order size. For perpetual and futures the amount is in USD units, for options it is amount of corresponding cryptocurrency contracts, e.g., BTC or ETH.",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "direction": {
-        "name": "direction",
-        "description": "Direction: \u0060buy\u0060, or \u0060sell\u0060",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "instrument_name": {
-        "name": "instrument_name",
-        "description": "Unique instrument identifier",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "label": {
-        "name": "label",
-        "description": "User defined label (presented only when previously set for order by user)",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "last_update_timestamp": {
-        "name": "last_update_timestamp",
-        "description": "The timestamp (milliseconds since the Unix epoch)",
-        "required": true,
-        "apiDataType": "integer",
-        "dataType": "DateTime",
-        "arrayDataType": "",
-        "converters": [
-          "MillisecondsTimestampConverter"
-        ]
-      },
-      "order_id": {
-        "name": "order_id",
-        "description": "Unique order identifier",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "order_state": {
-        "name": "order_state",
-        "description": "Order state: \u0060\u0022triggered\u0022\u0060, \u0060\u0022cancelled\u0022\u0060, or \u0060\u0022rejected\u0022\u0060 with rejection reason (e.g. \u0060\u0022rejected:reduce_direction\u0022\u0060).",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "order_type": {
-        "name": "order_type",
-        "description": "Requested order type: \u0060\u0022limit\u0060 or \u0060\u0022market\u0022\u0060",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "post_only": {
-        "name": "post_only",
-        "description": "\u0060true\u0060 for post-only orders only",
-        "required": true,
-        "apiDataType": "boolean",
-        "dataType": "boolean",
-        "arrayDataType": ""
-      },
-      "price": {
-        "name": "price",
-        "description": "Price in base currency",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "reduce_only": {
-        "name": "reduce_only",
-        "description": "\u0060true\u0060 for reduce-only orders only",
-        "required": true,
-        "apiDataType": "boolean",
-        "dataType": "boolean",
-        "arrayDataType": ""
-      },
-      "request": {
-        "name": "request",
-        "description": "Type of last request performed on the trigger order by user or system. \u0060\u0022cancel\u0022\u0060 - when order was cancelled, \u0060\u0022trigger:order\u0022\u0060 - when trigger order spawned market or limit order after being triggered",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "timestamp": {
-        "name": "timestamp",
-        "description": "The timestamp (milliseconds since the Unix epoch)",
-        "required": true,
-        "apiDataType": "integer",
-        "dataType": "DateTime",
-        "arrayDataType": "",
-        "converters": [
-          "MillisecondsTimestampConverter"
-        ]
-      },
-      "trigger": {
-        "name": "trigger",
-        "description": "Trigger type (only for trigger orders). Allowed values: \u0060\u0022index_price\u0022\u0060, \u0060\u0022mark_price\u0022\u0060, \u0060\u0022last_price\u0022\u0060.",
-        "required": false,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "trigger_offset": {
-        "name": "trigger_offset",
-        "description": "The maximum deviation from the price peak beyond which the order will be triggered (Only for trailing trigger orders)",
-        "required": false,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "trigger_order_id": {
-        "name": "trigger_order_id",
-        "description": "Id of the user order used for the trigger-order reference before triggering",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "trigger_price": {
-        "name": "trigger_price",
-        "description": "Trigger price (Only for future trigger orders)",
-        "required": false,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      }
-    },
-    "methods": [
-      "private/get_trigger_order_history.response.entries"
-    ],
-    "subscriptions": [
-    ]
-  },
-  "MovePositionResponseTrade": {
-    "description": "",
-    "properties": {
-      "amount": {
-        "name": "amount",
-        "description": "Trade amount. For perpetual and futures - in USD units, for options it is amount of corresponding cryptocurrency contracts, e.g., BTC or ETH.",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "direction": {
-        "name": "direction",
-        "description": "Direction: \u0060buy\u0060, or \u0060sell\u0060",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "instrument_name": {
-        "name": "instrument_name",
-        "description": "Unique instrument identifier",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "price": {
-        "name": "price",
-        "description": "Price in base currency",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "source_uid": {
-        "name": "source_uid",
-        "description": "Trade source uid",
-        "required": true,
-        "apiDataType": "integer",
-        "dataType": "integer",
-        "arrayDataType": ""
-      },
-      "target_uid": {
-        "name": "target_uid",
-        "description": "Trade target uid",
-        "required": true,
-        "apiDataType": "integer",
-        "dataType": "integer",
-        "arrayDataType": ""
-      }
-    },
-    "methods": [
-      "private/move_positions.response.trades"
-    ],
-    "subscriptions": [
-    ]
-  },
-  "SubAccountPortfolioEntry": {
-    "description": "Contains portfolio information about a subaccounts currency symbol",
-    "properties": {
-      "available_funds": {
-        "name": "available_funds",
-        "description": "",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "available_withdrawal_funds": {
-        "name": "available_withdrawal_funds",
-        "description": "",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "balance": {
-        "name": "balance",
-        "description": "",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "currency": {
-        "name": "currency",
-        "description": "",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "equity": {
-        "name": "equity",
-        "description": "",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "initial_margin": {
-        "name": "initial_margin",
-        "description": "",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "maintenance_margin": {
-        "name": "maintenance_margin",
-        "description": "",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "margin_balance": {
-        "name": "margin_balance",
-        "description": "",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      }
-    },
-    "methods": [
-      "private/create_subaccount.response.portfolio.btc",
-      "private/create_subaccount.response.portfolio.eth",
-      "private/get_subaccounts.response.portfolio.btc",
-      "private/get_subaccounts.response.portfolio.eth"
-    ],
-    "subscriptions": [
-    ]
-  },
-  "UserPosition": {
-    "description": "",
-    "properties": {
-      "average_price": {
-        "name": "average_price",
-        "description": "Average price of trades that built this position",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "average_price_usd": {
-        "name": "average_price_usd",
-        "description": "Only for options, average price in USD",
-        "required": false,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "delta": {
-        "name": "delta",
-        "description": "Delta parameter",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "direction": {
-        "name": "direction",
-        "description": "Direction: \u0060buy\u0060, \u0060sell\u0060 or \u0060zero\u0060",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "floating_profit_loss": {
-        "name": "floating_profit_loss",
-        "description": "Floating profit or loss",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "floating_profit_loss_usd": {
-        "name": "floating_profit_loss_usd",
-        "description": "Only for options, floating profit or loss in USD",
-        "required": false,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "gamma": {
-        "name": "gamma",
-        "description": "Only for options, Gamma parameter",
-        "required": false,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "index_price": {
-        "name": "index_price",
-        "description": "Current index price",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "initial_margin": {
-        "name": "initial_margin",
-        "description": "Initial margin",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "instrument_name": {
-        "name": "instrument_name",
-        "description": "Unique instrument identifier",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "kind": {
-        "name": "kind",
-        "description": "Instrument kind, \u0060\u0022future\u0022\u0060 or \u0060\u0022option\u0022\u0060",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "leverage": {
-        "name": "leverage",
-        "description": "Current available leverage for future position",
-        "required": true,
-        "apiDataType": "integer",
-        "dataType": "integer",
-        "arrayDataType": ""
-      },
-      "maintenance_margin": {
-        "name": "maintenance_margin",
-        "description": "Maintenance margin",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "mark_price": {
-        "name": "mark_price",
-        "description": "Current mark price for position\u0027s instrument",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "open_orders_margin": {
-        "name": "open_orders_margin",
-        "description": "Open orders margin",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "realized_funding": {
-        "name": "realized_funding",
-        "description": "Realized Funding in current session included in session realized profit or loss, only for positions of perpetual instruments",
-        "required": false,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "realized_profit_loss": {
-        "name": "realized_profit_loss",
-        "description": "Realized profit or loss",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "settlement_price": {
-        "name": "settlement_price",
-        "description": "Last settlement price for position\u0027s instrument 0 if instrument wasn\u0027t settled yet",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "size": {
-        "name": "size",
-        "description": "Position size for futures size in quote currency (e.g. USD), for options size is in base currency (e.g. BTC)",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "size_currency": {
-        "name": "size_currency",
-        "description": "Only for futures, position size in base currency",
-        "required": false,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "theta": {
-        "name": "theta",
-        "description": "Only for options, Theta parameter",
-        "required": false,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "total_profit_loss": {
-        "name": "total_profit_loss",
-        "description": "Profit or loss from position",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "vega": {
-        "name": "vega",
-        "description": "Only for options, Vega parameter",
-        "required": false,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      }
-    },
-    "methods": [
-      "private/get_subaccounts_details.response.positions"
-    ],
-    "subscriptions": [
-      "user.changes.{instrument_name}.{interval}.response.position",
-      "user.changes.{kind}.{currency}.{interval}.response.position"
-    ]
-  },
-  "AffiliateReceivedPayouts": {
-    "description": "",
-    "properties": {
-      "btc": {
-        "name": "btc",
-        "description": "Total payout received in BTC",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "eth": {
-        "name": "eth",
-        "description": "Total payout received in ETH",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      }
-    },
-    "methods": [
-      "private/get_affiliate_program_info.response.received"
-    ],
-    "subscriptions": [
-    ]
-  },
-  "SubAccountPortfolio": {
-    "description": "",
-    "properties": {
-      "btc": {
-        "name": "btc",
-        "description": "",
-        "required": true,
-        "apiDataType": "object",
-        "dataType": "SubAccountPortfolioEntry",
-        "arrayDataType": ""
-      },
-      "eth": {
-        "name": "eth",
-        "description": "",
-        "required": true,
-        "apiDataType": "object",
-        "dataType": "SubAccountPortfolioEntry",
-        "arrayDataType": ""
-      }
-    },
-    "methods": [
-      "private/create_subaccount.response.portfolio",
-      "private/get_subaccounts.response.portfolio"
-    ],
-    "subscriptions": [
-    ]
-  },
-  "MatchingEngineLimit": {
-    "description": "Field not included if limits for futures are not set.",
-    "properties": {
-      "burst": {
-        "name": "burst",
-        "description": "Maximal number of (type related) matching engine requests allowed for user in burst mode",
-        "required": true,
-        "apiDataType": "integer",
-        "dataType": "integer",
-        "arrayDataType": ""
-      },
-      "rate": {
-        "name": "rate",
-        "description": "Number of (type related) matching engine requests per second allowed for user",
-        "required": true,
-        "apiDataType": "integer",
-        "dataType": "integer",
-        "arrayDataType": ""
-      }
-    },
-    "methods": [
-      "private/get_account_summary.response.limits.futures",
-      "private/get_account_summary.response.limits.matching_engine",
-      "private/get_account_summary.response.limits.non_matching_engine",
-      "private/get_account_summary.response.limits.options",
-      "private/get_account_summary.response.limits.perpetuals"
-    ],
-    "subscriptions": [
-    ]
-  },
-  "UserFees": {
-    "description": "User fees in case of any discounts (available when parameter \u0060extended\u0060 = \u0060true\u0060 and user has any discounts)",
-    "properties": {
-      "currency": {
-        "name": "currency",
-        "description": "The currency the fee applies to",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "fee_type": {
-        "name": "fee_type",
-        "description": "Fee type - \u0060relative\u0060 if fee is calculated as a fraction of base instrument fee, \u0060fixed\u0060 if fee is calculated solely using user fee",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "instrument_type": {
-        "name": "instrument_type",
-        "description": "Type of the instruments the fee applies to - \u0060future\u0060 for future instruments (excluding perpetual), \u0060perpetual\u0060 for future perpetual instruments, \u0060option\u0060 for options",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "maker_fee": {
-        "name": "maker_fee",
-        "description": "User fee as a maker",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "taker_fee": {
-        "name": "taker_fee",
-        "description": "User fee as a taker",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      }
-    },
-    "methods": [
-      "private/get_account_summary.response.fees"
-    ],
-    "subscriptions": [
-    ]
-  },
-  "IndexDeliveryPrice": {
-    "description": "",
-    "properties": {
-      "date": {
-        "name": "date",
-        "description": "The event date with year, month and day",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "delivery_price": {
-        "name": "delivery_price",
-        "description": "The settlement price for the instrument. Only when \u0060state = closed\u0060",
-        "required": false,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      }
-    },
-    "methods": [
-      "public/get_delivery_prices.response.data"
-    ],
-    "subscriptions": [
-    ]
-  },
-  "OptionGreek": {
-    "description": "Only for options",
-    "properties": {
-      "delta": {
-        "name": "delta",
-        "description": "(Only for option) The delta value for the option",
-        "required": false,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "gamma": {
-        "name": "gamma",
-        "description": "(Only for option) The gamma value for the option",
-        "required": false,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "rho": {
-        "name": "rho",
-        "description": "(Only for option) The rho value for the option",
-        "required": false,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "theta": {
-        "name": "theta",
-        "description": "(Only for option) The theta value for the option",
-        "required": false,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "vega": {
-        "name": "vega",
-        "description": "(Only for option) The vega value for the option",
-        "required": false,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      }
+      "delta": {},
+      "gamma": {},
+      "rho": {},
+      "theta": {},
+      "vega": {}
     },
     "methods": [
       "public/get_order_book.response.greeks",
@@ -1553,227 +353,14 @@
       "ticker.{instrument_name}.{interval}.response.greeks"
     ]
   },
-  "SettlementEntry": {
-    "description": "Contains information about public settlement, delivery or bankruptcy",
+  "Statistics": {
+    "hash": "A421D2FE129DE79981194DB1B04FDD929B7C0076",
     "properties": {
-      "funded": {
-        "name": "funded",
-        "description": "funded amount (bankruptcy only)",
-        "required": false,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "funding": {
-        "name": "funding",
-        "description": "funding (in base currency ; settlement for perpetual product only)",
-        "required": false,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "index_price": {
-        "name": "index_price",
-        "description": "underlying index price at time of event (in quote currency; settlement and delivery only)",
-        "required": false,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "instrument_name": {
-        "name": "instrument_name",
-        "description": "instrument name (settlement and delivery only)",
-        "required": false,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "mark_price": {
-        "name": "mark_price",
-        "description": "mark price for at the settlement time (in quote currency; settlement and delivery only)",
-        "required": false,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "position": {
-        "name": "position",
-        "description": "position size (in quote currency; settlement and delivery only)",
-        "required": false,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "profit_loss": {
-        "name": "profit_loss",
-        "description": "profit and loss (in base currency; settlement and delivery only)",
-        "required": false,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "session_bankruptcy": {
-        "name": "session_bankrupcy",
-        "description": "value of session bankruptcy (in base currency; bankruptcy only)",
-        "required": false,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "session_profit_loss": {
-        "name": "session_profit_loss",
-        "description": "total value of session profit and losses (in base currency)",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "session_tax": {
-        "name": "session_tax",
-        "description": "total amount of paid taxes/fees (in base currency; bankruptcy only)",
-        "required": false,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "session_tax_rate": {
-        "name": "session_tax_rate",
-        "description": "rate of paid taxes/fees (in base currency; bankruptcy only)",
-        "required": false,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "socialized": {
-        "name": "socialized",
-        "description": "the amount of the socialized losses (in base currency; bankruptcy only)",
-        "required": false,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "timestamp": {
-        "name": "timestamp",
-        "description": "The timestamp (milliseconds since the Unix epoch)",
-        "required": true,
-        "apiDataType": "integer",
-        "dataType": "DateTime",
-        "arrayDataType": "",
-        "converters": [
-          "MillisecondsTimestampConverter"
-        ]
-      },
-      "type": {
-        "name": "type",
-        "description": "The type of settlement. \u0060settlement\u0060, \u0060delivery\u0060 or \u0060bankruptcy\u0060.",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      }
-    },
-    "methods": [
-      "private/get_settlement_history_by_instrument.response.settlements",
-      "private/get_settlement_history_by_currency.response.settlements",
-      "public/get_last_settlements_by_currency.response.settlements",
-      "public/get_last_settlements_by_instrument.response.settlements"
-    ],
-    "subscriptions": [
-    ]
-  },
-  "UserMatchingEngineLimits": {
-    "description": "",
-    "properties": {
-      "futures": {
-        "name": "futures",
-        "description": "Field not included if limits for futures are not set.",
-        "required": false,
-        "apiDataType": "object",
-        "dataType": "object",
-        "arrayDataType": ""
-      },
-      "matching_engine": {
-        "name": "matching_engine",
-        "description": "",
-        "required": true,
-        "apiDataType": "object",
-        "dataType": "object",
-        "arrayDataType": ""
-      },
-      "non_matching_engine": {
-        "name": "non_matching_engine",
-        "description": "",
-        "required": true,
-        "apiDataType": "object",
-        "dataType": "object",
-        "arrayDataType": ""
-      },
-      "options": {
-        "name": "options",
-        "description": "Field not included if limits for options are not set.",
-        "required": false,
-        "apiDataType": "object",
-        "dataType": "object",
-        "arrayDataType": ""
-      },
-      "perpetuals": {
-        "name": "perpetuals",
-        "description": "Field not included if limits for perpetuals are not set.",
-        "required": false,
-        "apiDataType": "object",
-        "dataType": "object",
-        "arrayDataType": ""
-      }
-    },
-    "methods": [
-      "private/get_account_summary.response.limits"
-    ],
-    "subscriptions": [
-    ]
-  },
-  "OrderBookStats": {
-    "description": "",
-    "properties": {
-      "high": {
-        "name": "high",
-        "description": "Highest price during 24h",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "low": {
-        "name": "low",
-        "description": "Lowest price during 24h",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "price_change": {
-        "name": "price_change",
-        "description": "24-hour price change expressed as a percentage, \u0060null\u0060 if there weren\u0027t any trades",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "volume": {
-        "name": "volume",
-        "description": "Volume during last 24h in base currency",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "volume_usd": {
-        "name": "volume_usd",
-        "description": "Volume in usd (futures only)",
-        "required": false,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      }
+      "high": {},
+      "low": {},
+      "price_change": {},
+      "volume": {},
+      "volume_usd": {}
     },
     "methods": [
       "public/get_order_book.response.stats",
@@ -1785,463 +372,1199 @@
       "ticker.{instrument_name}.{interval}.response.stats"
     ]
   },
-  "FundingChartDataEntry": {
-    "description": "",
+  "RfqEntry": {
+    "hash": "B1FDC0C3C0A07BEF22444C41D31F17C19CB2E598",
     "properties": {
-      "index_price": {
-        "name": "index_price",
-        "description": "Current index price",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "interest_8h": {
-        "name": "interest_8h",
-        "description": "Historical interest 8h value",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "timestamp": {
-        "name": "timestamp",
-        "description": "The timestamp (milliseconds since the Unix epoch)",
-        "required": true,
-        "apiDataType": "integer",
-        "dataType": "DateTime",
-        "arrayDataType": "",
-        "converters": [
-          "MillisecondsTimestampConverter"
-        ]
-      }
+      "amount": {},
+      "instrument_name": {},
+      "last_rfq_timestamp": {},
+      "side": {},
+      "traded_volume": {}
     },
     "methods": [
-      "public/get_funding_chart_data.response.data"
-    ],
-    "subscriptions": [
+      "public/get_rfqs.response"
     ]
   },
-  "MovePositionRequestTrade": {
-    "description": "List of trades for position move",
+  "AggregatedTradeVolume": {
+    "hash": "8C3CEF535B9ABC94A0CEF9AA57EE202CD74561A4",
     "properties": {
-      "instrument_name": {
-        "name": "instrument_name",
-        "description": "Instrument name",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "price": {
-        "name": "price",
-        "description": "Price for trade - if not provided mark price of the instrument is used",
-        "required": false,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "amount": {
-        "name": "amount",
-        "description": "It represents the requested trade size. For perpetual and futures the amount is in USD units, for options it is amount of corresponding cryptocurrency contracts, e.g., BTC or ETH. Amount can\u0027t exceed position size.",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      }
+      "calls_volume": {},
+      "calls_volume_30d": {},
+      "calls_volume_7d": {},
+      "currency": {},
+      "futures_volume": {},
+      "futures_volume_30d": {},
+      "futures_volume_7d": {},
+      "puts_volume": {},
+      "puts_volume_30d": {},
+      "puts_volume_7d": {}
     },
     "methods": [
-      "private/move_positions.request.trades"
-    ],
-    "subscriptions": [
+      "public/get_trade_volumes.response"
     ]
   },
-  "BlockTradeTradesEntry": {
-    "description": "List of trades for block trade",
+  "TradingViewChartData": {
+    "hash": "A4A41E68BFE5C8FA64F15AE6AC47FB6C13AB4F11",
     "properties": {
-      "instrument_name": {
-        "name": "instrument_name",
-        "description": "Instrument name",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "price": {
-        "name": "price",
-        "description": "Price for trade",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "amount": {
-        "name": "amount",
-        "description": "It represents the requested trade size. For perpetual and futures the amount is in USD units, for options it is amount of corresponding cryptocurrency contracts, e.g., BTC or ETH",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "direction": {
-        "name": "direction",
-        "description": "Direction of trade from the maker perspective",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "TradeDirection",
-        "arrayDataType": ""
-      }
+      "close": {},
+      "cost": {},
+      "high": {},
+      "low": {},
+      "open": {},
+      "status": {},
+      "ticks": {},
+      "volume": {}
     },
     "methods": [
-      "private/execute_block_trade.request.trades",
-      "private/verify_block_trade.request.trades"
+      "public/get_tradingview_chart_data.response"
+    ]
+  },
+  "VolatilityIndexPage": {
+    "hash": "B79FA0CAD593004B13F0B158064AE370036F675B",
+    "properties": {
+      "continuation": {},
+      "data": {}
+    },
+    "methods": [
+      "public/get_volatility_index_data.response"
+    ]
+  },
+  "TickerData": {
+    "hash": "3961F07F4812E515350348BDFA4834FFA7995795",
+    "properties": {
+      "ask_iv": {},
+      "best_ask_amount": {},
+      "best_ask_price": {},
+      "best_bid_amount": {},
+      "best_bid_price": {},
+      "bid_iv": {},
+      "current_funding": {},
+      "delivery_price": {},
+      "estimated_delivery_price": {},
+      "funding_8h": {},
+      "greeks": {},
+      "index_price": {},
+      "instrument_name": {},
+      "interest_rate": {},
+      "interest_value": {},
+      "last_price": {},
+      "mark_iv": {},
+      "mark_price": {},
+      "max_price": {},
+      "min_price": {},
+      "open_interest": {},
+      "settlement_price": {},
+      "state": {},
+      "stats": {},
+      "timestamp": {},
+      "underlying_index": {},
+      "underlying_price": {}
+    },
+    "methods": [
+      "public/ticker.response"
     ],
     "subscriptions": [
+      "ticker.{instrument_name}.{interval}.response"
+    ]
+  },
+  "UserOrderTrades": {
+    "hash": "80240E5D1BC33832B1F3EE9521499762074E379C",
+    "properties": {
+      "order": {},
+      "trades": {}
+    },
+    "methods": [
+      "private/buy.response",
+      "private/sell.response",
+      "private/edit.response",
+      "private/edit_by_label.response",
+      "private/close_position.response"
     ]
   },
   "UserOrder": {
-    "description": "",
+    "hash": "ED9E36919C8CD1C9E3458FB85497245D7484CF2F",
     "properties": {
-      "mmp_cancelled": {
-        "name": "mmp_cancelled",
-        "description": "\u0060true\u0060 if order was cancelled by mmp trigger (optional)",
-        "required": false,
-        "apiDataType": "boolean",
-        "dataType": "boolean",
-        "arrayDataType": ""
-      },
-      "order_state": {
-        "name": "order_state",
-        "description": "Order state: \u0060\u0022open\u0022\u0060, \u0060\u0022filled\u0022\u0060, \u0060\u0022rejected\u0022\u0060, \u0060\u0022cancelled\u0022\u0060, \u0060\u0022untriggered\u0022\u0060",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "max_show": {
-        "name": "max_show",
-        "description": "Maximum amount within an order to be shown to other traders, 0 for invisible order.",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "reject_post_only": {
-        "name": "reject_post_only",
-        "description": "\u0060true\u0060 if order has \u0060reject_post_only\u0060 flag (field is present only when \u0060post_only\u0060 is \u0060true\u0060)",
-        "required": true,
-        "apiDataType": "boolean",
-        "dataType": "boolean",
-        "arrayDataType": ""
-      },
-      "api": {
-        "name": "api",
-        "description": "\u0060true\u0060 if created with API",
-        "required": true,
-        "apiDataType": "boolean",
-        "dataType": "boolean",
-        "arrayDataType": ""
-      },
-      "amount": {
-        "name": "amount",
-        "description": "It represents the requested order size. For perpetual and futures the amount is in USD units, for options it is amount of corresponding cryptocurrency contracts, e.g., BTC or ETH.",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "web": {
-        "name": "web",
-        "description": "\u0060true\u0060 if created via Deribit frontend (optional)",
-        "required": false,
-        "apiDataType": "boolean",
-        "dataType": "boolean",
-        "arrayDataType": ""
-      },
-      "instrument_name": {
-        "name": "instrument_name",
-        "description": "Unique instrument identifier",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "advanced": {
-        "name": "advanced",
-        "description": "advanced type: \u0060\u0022usd\u0022\u0060 or \u0060\u0022implv\u0022\u0060 (Only for options; field is omitted if not applicable).",
-        "required": false,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "triggered": {
-        "name": "triggered",
-        "description": "Whether the trigger order has been triggered",
-        "required": true,
-        "apiDataType": "boolean",
-        "dataType": "boolean",
-        "arrayDataType": ""
-      },
-      "block_trade": {
-        "name": "block_trade",
-        "description": "\u0060true\u0060 if order made from block_trade trade, added only in that case.",
-        "required": true,
-        "apiDataType": "boolean",
-        "dataType": "boolean",
-        "arrayDataType": ""
-      },
-      "original_order_type": {
-        "name": "original_order_type",
-        "description": "Original order type. Optional field",
-        "required": false,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "trigger_offset": {
-        "name": "trigger_offset",
-        "description": "The maximum deviation from the price peak beyond which the order will be triggered (Only for trailing trigger orders)",
-        "required": false,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "price": {
-        "name": "price",
-        "description": "Price in base currency",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "time_in_force": {
-        "name": "time_in_force",
-        "description": "Order time in force: \u0060\u0022good_til_cancelled\u0022\u0060, \u0060\u0022good_til_day\u0022\u0060, \u0060\u0022fill_or_kill\u0022\u0060 or \u0060\u0022immediate_or_cancel\u0022\u0060",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "auto_replaced": {
-        "name": "auto_replaced",
-        "description": "Options, advanced orders only - \u0060true\u0060 if last modification of the order was performed by the pricing engine, otherwise \u0060false\u0060.",
-        "required": true,
-        "apiDataType": "boolean",
-        "dataType": "boolean",
-        "arrayDataType": ""
-      },
-      "last_update_timestamp": {
-        "name": "last_update_timestamp",
-        "description": "The timestamp (milliseconds since the Unix epoch)",
-        "required": true,
-        "apiDataType": "integer",
-        "dataType": "DateTime",
-        "arrayDataType": "",
-        "converters": [
-          "MillisecondsTimestampConverter"
-        ]
-      },
-      "post_only": {
-        "name": "post_only",
-        "description": "\u0060true\u0060 for post-only orders only",
-        "required": true,
-        "apiDataType": "boolean",
-        "dataType": "boolean",
-        "arrayDataType": ""
-      },
-      "replaced": {
-        "name": "replaced",
-        "description": "\u0060true\u0060 if the order was edited (by user or - in case of advanced options orders - by pricing engine), otherwise \u0060false\u0060.",
-        "required": true,
-        "apiDataType": "boolean",
-        "dataType": "boolean",
-        "arrayDataType": ""
-      },
-      "filled_amount": {
-        "name": "filled_amount",
-        "description": "Filled amount of the order. For perpetual and futures the filled_amount is in USD units, for options - in units or corresponding cryptocurrency contracts, e.g., BTC or ETH.",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "average_price": {
-        "name": "average_price",
-        "description": "Average fill price of the order",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "order_id": {
-        "name": "order_id",
-        "description": "Unique order identifier",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "reduce_only": {
-        "name": "reduce_only",
-        "description": "\u0060true\u0060 for reduce-only orders only",
-        "required": true,
-        "apiDataType": "boolean",
-        "dataType": "boolean",
-        "arrayDataType": ""
-      },
-      "commission": {
-        "name": "commission",
-        "description": "Commission paid so far (in base currency)",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "app_name": {
-        "name": "app_name",
-        "description": "The name of the application that placed the order on behalf of the user (optional).",
-        "required": false,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "label": {
-        "name": "label",
-        "description": "User defined label (up to 64 characters)",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "trigger_order_id": {
-        "name": "trigger_order_id",
-        "description": "Id of the trigger order that created the order (Only for orders that were created by triggered orders).",
-        "required": false,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "trigger_price": {
-        "name": "trigger_price",
-        "description": "Trigger price (Only for future trigger orders)",
-        "required": false,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "creation_timestamp": {
-        "name": "creation_timestamp",
-        "description": "The timestamp (milliseconds since the Unix epoch)",
-        "required": true,
-        "apiDataType": "integer",
-        "dataType": "DateTime",
-        "arrayDataType": "",
-        "converters": [
-          "MillisecondsTimestampConverter"
-        ]
-      },
-      "direction": {
-        "name": "direction",
-        "description": "Direction: \u0060buy\u0060, or \u0060sell\u0060",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "is_liquidation": {
-        "name": "is_liquidation",
-        "description": "\u0060true\u0060 if order was automatically created during liquidation",
-        "required": true,
-        "apiDataType": "boolean",
-        "dataType": "boolean",
-        "arrayDataType": ""
-      },
-      "order_type": {
-        "name": "order_type",
-        "description": "Order type: \u0060\u0022limit\u0022\u0060, \u0060\u0022market\u0022\u0060, \u0060\u0022stop_limit\u0022\u0060, \u0060\u0022stop_market\u0022\u0060",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "usd": {
-        "name": "usd",
-        "description": "Option price in USD (Only if \u0060advanced=\u0022usd\u0022\u0060)",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "profit_loss": {
-        "name": "profit_loss",
-        "description": "Profit and loss in base currency.",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "trigger_reference_price": {
-        "name": "trigger_reference_price",
-        "description": "The price of the given trigger at the time when the order was placed (Only for trailing trigger orders)",
-        "required": false,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "implv": {
-        "name": "implv",
-        "description": "Implied volatility in percent. (Only if \u0060advanced=\u0022implv\u0022\u0060)",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      },
-      "trigger": {
-        "name": "trigger",
-        "description": "Trigger type (only for trigger orders). Allowed values: \u0060\u0022index_price\u0022\u0060, \u0060\u0022mark_price\u0022\u0060, \u0060\u0022last_price\u0022\u0060.",
-        "required": false,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      }
+      "mmp_cancelled": {},
+      "order_state": {},
+      "max_show": {},
+      "reject_post_only": {},
+      "api": {},
+      "amount": {},
+      "web": {},
+      "instrument_name": {},
+      "advanced": {},
+      "triggered": {},
+      "block_trade": {},
+      "original_order_type": {},
+      "trigger_offset": {},
+      "price": {},
+      "mmp": {},
+      "time_in_force": {},
+      "auto_replaced": {},
+      "last_update_timestamp": {},
+      "post_only": {},
+      "replaced": {},
+      "filled_amount": {},
+      "average_price": {},
+      "order_id": {},
+      "reduce_only": {},
+      "commission": {},
+      "app_name": {},
+      "label": {},
+      "trigger_order_id": {},
+      "trigger_price": {},
+      "creation_timestamp": {},
+      "direction": {},
+      "is_liquidation": {},
+      "order_type": {},
+      "usd": {},
+      "profit_loss": {},
+      "trigger_reference_price": {},
+      "risk_reducing": {},
+      "implv": {},
+      "trigger": {}
     },
     "methods": [
-      "private/get_subaccounts_details.response.open_orders",
       "private/buy.response.order",
       "private/sell.response.order",
       "private/edit.response.order",
       "private/edit_by_label.response.order",
-      "private/close_position.response.order"
+      "private/cancel.response",
+      "private/close_position.response.order",
+      "private/get_open_orders_by_currency.response",
+      "private/get_open_orders_by_instrument.response",
+      "private/get_order_history_by_currency.response",
+      "private/get_order_history_by_instrument.response",
+      "private/get_order_state.response",
+      "private/get_subaccounts_details.response.open_orders"
     ],
     "subscriptions": [
       "user.changes.{instrument_name}.{interval}.response.orders",
-      "user.changes.{kind}.{currency}.{interval}.response.orders"
+      "user.changes.{kind}.{currency}.{interval}.response.orders",
+      "user.orders.{instrument_name}.raw.response",
+      "user.orders.{instrument_name}.{interval}.response",
+      "user.orders.{kind}.{currency}.raw.response",
+      "user.orders.{kind}.{currency}.{interval}.response"
     ]
   },
-  "WithdrawalPriority": {
-    "description": "",
+  "UserTrade": {
+    "hash": "48C41509DE98FC023E9E83A9FF32AEAE1FABE818",
     "properties": {
-      "name": {
-        "name": "name",
-        "description": "",
-        "required": true,
-        "apiDataType": "string",
-        "dataType": "string",
-        "arrayDataType": ""
-      },
-      "value": {
-        "name": "value",
-        "description": "",
-        "required": true,
-        "apiDataType": "number",
-        "dataType": "number",
-        "arrayDataType": ""
-      }
+      "advanced": {},
+      "amount": {},
+      "api": {},
+      "block_trade_id": {},
+      "direction": {},
+      "fee": {},
+      "fee_currency": {},
+      "index_price": {},
+      "instrument_name": {},
+      "iv": {},
+      "label": {},
+      "liquidation": {},
+      "liquidity": {},
+      "mark_price": {},
+      "matching_id": {},
+      "mmp": {},
+      "order_id": {},
+      "order_type": {},
+      "post_only": {},
+      "price": {},
+      "profit_loss": {},
+      "reduce_only": {},
+      "risk_reducing": {},
+      "self_trade": {},
+      "state": {},
+      "tick_direction": {},
+      "timestamp": {},
+      "trade_id": {},
+      "trade_seq": {},
+      "underlying_price": {}
     },
     "methods": [
-      "public/get_currencies.response.withdrawal_priorities"
+      "private/buy.response.trades",
+      "private/sell.response.trades",
+      "private/edit.response.trades",
+      "private/edit_by_label.response.trades",
+      "private/close_position.response.trades",
+      "private/get_user_trades_by_currency.response.trades",
+      "private/get_user_trades_by_currency_and_time.response.trades",
+      "private/get_user_trades_by_instrument.response.trades",
+      "private/get_user_trades_by_instrument_and_time.response.trades",
+      "private/execute_block_trade.response.trades",
+      "private/get_block_trade.response.trades",
+      "private/get_last_block_trades_by_currency.response.trades"
     ],
     "subscriptions": [
+      "user.changes.{instrument_name}.{interval}.response.trades",
+      "user.changes.{kind}.{currency}.{interval}.response.trades",
+      "user.trades.{instrument_name}.{interval}.response",
+      "user.trades.{kind}.{currency}.{interval}.response"
+    ]
+  },
+  "InstrumentMargin": {
+    "hash": "6B48E8D80E43AD1CA801805D9DF4FAC931C9DDE8",
+    "properties": {
+      "buy": {},
+      "max_price": {},
+      "min_price": {},
+      "sell": {}
+    },
+    "methods": [
+      "private/get_margins.response"
+    ]
+  },
+  "MmpConfig": {
+    "hash": "17B283795CCA98777F2F8FADE276272A8754F5F1",
+    "properties": {
+      "currency": {},
+      "delta_limit": {},
+      "frozen_time": {},
+      "interval": {},
+      "quantity_limit": {}
+    },
+    "methods": [
+      "private/get_mmp_config.response"
+    ]
+  },
+  "OrderInitialMargin": {
+    "hash": "9D68F1BABF32F48263AA1A09F8F8205B4EFE88D9",
+    "properties": {
+      "initial_margin": {},
+      "order_id": {}
+    },
+    "methods": [
+      "private/get_order_margin_by_ids.response"
+    ]
+  },
+  "TriggerOrderHistoryPage": {
+    "hash": "98FA78561A269DE2B7F5E2A0195F4248621D1240",
+    "properties": {
+      "continuation": {},
+      "entries": {}
+    },
+    "methods": [
+      "private/get_trigger_order_history.response"
+    ]
+  },
+  "TriggerOrderHistoryEntry": {
+    "hash": "919856AB414702F193E2B9C6279E8882622E8CA8",
+    "properties": {
+      "amount": {},
+      "direction": {},
+      "instrument_name": {},
+      "label": {},
+      "last_update_timestamp": {},
+      "order_id": {},
+      "order_state": {},
+      "order_type": {},
+      "post_only": {},
+      "price": {},
+      "reduce_only": {},
+      "request": {},
+      "timestamp": {},
+      "trigger": {},
+      "trigger_offset": {},
+      "trigger_order_id": {},
+      "trigger_price": {}
+    },
+    "methods": [
+      "private/get_trigger_order_history.response.entries"
+    ]
+  },
+  "UserTrades": {
+    "hash": "9C56CA2B8E0FC96DF5E2C7E327F9172DD758E74B",
+    "properties": {
+      "has_more": {},
+      "trades": {}
+    },
+    "methods": [
+      "private/get_user_trades_by_currency.response",
+      "private/get_user_trades_by_currency_and_time.response",
+      "private/get_user_trades_by_instrument.response",
+      "private/get_user_trades_by_instrument_and_time.response"
+    ]
+  },
+  "Combo": {
+    "hash": "CC833C08207EAFAF4F37F9FBC2F680913F411132",
+    "properties": {
+      "creation_timestamp": {},
+      "id": {},
+      "instrument_id": {},
+      "legs": {},
+      "state": {},
+      "state_timestamp": {}
+    },
+    "methods": [
+      "public/get_combo_details.response",
+      "public/get_combos.response",
+      "private/create_combo.response"
+    ]
+  },
+  "ComboLeg": {
+    "hash": "94794273AA3BD2527F7AAB6F6B774DA7F124606D",
+    "properties": {
+      "amount": {},
+      "instrument_name": {}
+    },
+    "methods": [
+      "public/get_combo_details.response.legs",
+      "public/get_combos.response.legs",
+      "private/create_combo.response.legs"
+    ]
+  },
+  "CreateComboTrade": {
+    "hash": "DA88B27EF3190261DE110695128A97EFBD9FC167",
+    "properties": {
+      "instrument_name": {},
+      "amount": {},
+      "direction": {}
+    },
+    "methods": [
+      "private/create_combo.request.trades"
+    ]
+  },
+  "BlockTradeRequestTrade": {
+    "hash": "C44AA0E40FC89FF5F277CFB4790D86207177143D",
+    "properties": {
+      "instrument_name": {},
+      "price": {},
+      "amount": {},
+      "direction": {}
+    },
+    "methods": [
+      "private/execute_block_trade.request.trades",
+      "private/verify_block_trade.request.trades"
+    ]
+  },
+  "BlockTrade": {
+    "hash": "9768F3520A081577E2589EB2D92C7C0B1A3AF981",
+    "properties": {
+      "app_name": {},
+      "currency": {},
+      "id": {},
+      "timestamp": {},
+      "trades": {}
+    },
+    "methods": [
+      "private/execute_block_trade.response",
+      "private/get_block_trade.response",
+      "private/get_last_block_trades_by_currency.response"
+    ]
+  },
+  "MovePositionRequestTrade": {
+    "hash": "B3B60BD6CC40DE4B02C38E9787E36B03C6EE39DC",
+    "properties": {
+      "instrument_name": {},
+      "price": {},
+      "amount": {}
+    },
+    "methods": [
+      "private/move_positions.request.trades"
+    ]
+  },
+  "MovePositionResponse": {
+    "hash": "D26C1E6A28DF74343F0EA2A1D011E3E9982017C9",
+    "properties": {
+      "trades": {}
+    },
+    "methods": [
+      "private/move_positions.response"
+    ]
+  },
+  "MovePositionResponseTrade": {
+    "hash": "3DEE04611094D73E71AC1FB82BF219B2CC967EA0",
+    "properties": {
+      "amount": {},
+      "direction": {},
+      "instrument_name": {},
+      "price": {},
+      "source_uid": {},
+      "target_uid": {}
+    },
+    "methods": [
+      "private/move_positions.response.trades"
+    ]
+  },
+  "VerifyBlockTradeResponse": {
+    "hash": "D06B0BD4CC89CBC4C1380E2D04FBE666F818D7C3",
+    "properties": {
+      "signature": {}
+    },
+    "methods": [
+      "private/verify_block_trade.response"
+    ]
+  },
+  "UserTransfer": {
+    "hash": "A561DE478102F243826C02199E90F7AD6655B700",
+    "properties": {
+      "amount": {},
+      "created_timestamp": {},
+      "currency": {},
+      "direction": {},
+      "id": {},
+      "other_side": {},
+      "state": {},
+      "type": {},
+      "updated_timestamp": {}
+    },
+    "methods": [
+      "private/cancel_transfer_by_id.response",
+      "private/get_transfers.response.data",
+      "private/submit_transfer_to_subaccount.response",
+      "private/submit_transfer_to_user.response"
+    ]
+  },
+  "Withdrawal": {
+    "hash": "487D77822DCD58CC02DC64DAEF39E4C0830604CD",
+    "properties": {
+      "address": {},
+      "amount": {},
+      "confirmed_timestamp": {},
+      "created_timestamp": {},
+      "currency": {},
+      "fee": {},
+      "id": {},
+      "priority": {},
+      "state": {},
+      "transaction_id": {},
+      "updated_timestamp": {}
+    },
+    "methods": [
+      "private/cancel_withdrawal.response",
+      "private/get_withdrawals.response.data",
+      "private/withdraw.response"
+    ]
+  },
+  "DepositAddress": {
+    "hash": "01FE0063D8C7D4CCFB99BE01D9AA8D0517EFBD0B",
+    "properties": {
+      "address": {},
+      "creation_timestamp": {},
+      "currency": {},
+      "type": {}
+    },
+    "methods": [
+      "private/create_deposit_address.response",
+      "private/get_current_deposit_address.response"
+    ]
+  },
+  "Deposits": {
+    "hash": "7B5A139A3054A92F1607591038F358FC21413E30",
+    "properties": {
+      "count": {},
+      "data": {}
+    },
+    "methods": [
+      "private/get_deposits.response"
+    ]
+  },
+  "Deposit": {
+    "hash": "01D17981A2CF17CB1E6449BA2A7CB707F40A2CEF",
+    "properties": {
+      "address": {},
+      "amount": {},
+      "currency": {},
+      "received_timestamp": {},
+      "state": {},
+      "transaction_id": {},
+      "updated_timestamp": {}
+    },
+    "methods": [
+      "private/get_deposits.response.data"
+    ]
+  },
+  "UserTransfers": {
+    "hash": "2F1A86C9AEC045FEC243AE043612A45695406D94",
+    "properties": {
+      "count": {},
+      "data": {}
+    },
+    "methods": [
+      "private/get_transfers.response"
+    ]
+  },
+  "Withdrawals": {
+    "hash": "624994573D0B09BE687FDBCD2A8815AD1D04E2FC",
+    "properties": {
+      "count": {},
+      "data": {}
+    },
+    "methods": [
+      "private/get_withdrawals.response"
+    ]
+  },
+  "Announcement": {
+    "hash": "B70453F9EAF61B2F5919BEA2F5B56885345DD795",
+    "properties": {
+      "body": {},
+      "confirmation": {},
+      "id": {},
+      "important": {},
+      "publication_timestamp": {},
+      "title": {}
+    },
+    "methods": [
+      "public/get_announcements.response",
+      "private/get_new_announcements.response"
+    ]
+  },
+  "ApiKeyData": {
+    "hash": "A156D02CC71D8F92E7408B9BFBF14B23038D4C6D",
+    "properties": {
+      "client_id": {},
+      "client_secret": {},
+      "default": {},
+      "enabled": {},
+      "id": {},
+      "max_scope": {},
+      "name": {},
+      "timestamp": {}
+    },
+    "methods": [
+      "private/change_api_key_name.response",
+      "private/change_scope_in_api_key.response",
+      "private/create_api_key.response",
+      "private/disable_api_key.response",
+      "private/enable_api_key.response",
+      "private/list_api_keys.response",
+      "private/reset_api_key.response",
+      "private/set_api_key_as_default.response"
+    ]
+  },
+  "CreateSubAccountResponse": {
+    "hash": "BBE8C264C210294FDFDA7C3774B14B1D7D95BFC0",
+    "properties": {
+      "email": {},
+      "id": {},
+      "is_password": {},
+      "login_enabled": {},
+      "portfolio": {},
+      "receive_notifications": {},
+      "security_keys_enabled": {},
+      "system_name": {},
+      "type": {},
+      "username": {}
+    },
+    "methods": [
+      "private/create_subaccount.response"
+    ]
+  },
+  "SubAccountPortfolio": {
+    "hash": "BD9EA26732B05C6C08508AD796CC33CABB48E926",
+    "properties": {
+      "btc": {},
+      "eth": {}
+    },
+    "methods": [
+      "private/create_subaccount.response.portfolio",
+      "private/get_subaccounts.response.portfolio"
+    ]
+  },
+  "SubAccountPortfolioEntry": {
+    "hash": "13F5AC4C0C7DA7277F58FFD6635F1D2703E3DA4B",
+    "properties": {
+      "available_funds": {},
+      "available_withdrawal_funds": {},
+      "balance": {},
+      "currency": {},
+      "equity": {},
+      "initial_margin": {},
+      "maintenance_margin": {},
+      "margin_balance": {}
+    },
+    "methods": [
+      "private/create_subaccount.response.portfolio.btc",
+      "private/create_subaccount.response.portfolio.eth",
+      "private/get_subaccounts.response.portfolio.btc",
+      "private/get_subaccounts.response.portfolio.eth"
+    ]
+  },
+  "AccessLogEntry": {
+    "hash": "0DBBFAE925DE0403510957C6B4A4E343227AE296",
+    "properties": {
+      "city": {},
+      "country": {},
+      "data": {},
+      "id": {},
+      "ip": {},
+      "log": {},
+      "timestamp": {}
+    },
+    "methods": [
+      "private/get_access_log.response"
+    ],
+    "subscriptions": [
+      "user.access_log.response"
+    ]
+  },
+  "AccountSummaryData": {
+    "hash": "18FAF2A9AC0ECBE100F3F1247EC4375953F98008",
+    "properties": {
+      "options_gamma": {},
+      "projected_maintenance_margin": {},
+      "system_name": {},
+      "margin_balance": {},
+      "options_value": {},
+      "username": {},
+      "limits": {},
+      "equity": {},
+      "futures_pl": {},
+      "security_keys_enabled": {},
+      "fees": {},
+      "options_session_upl": {},
+      "id": {},
+      "options_vega": {},
+      "referrer_id": {},
+      "currency": {},
+      "login_enabled": {},
+      "type": {},
+      "futures_session_rpl": {},
+      "options_theta": {},
+      "portfolio_margining_enabled": {},
+      "projected_delta_total": {},
+      "session_rpl": {},
+      "delta_total": {},
+      "options_pl": {},
+      "available_withdrawal_funds": {},
+      "maintenance_margin": {},
+      "initial_margin": {},
+      "fee_balance": {},
+      "interuser_transfers_enabled": {},
+      "futures_session_upl": {},
+      "options_session_rpl": {},
+      "available_funds": {},
+      "email": {},
+      "creation_timestamp": {},
+      "session_upl": {},
+      "total_pl": {},
+      "options_delta": {},
+      "balance": {},
+      "projected_initial_margin": {},
+      "deposit_address": {}
+    },
+    "methods": [
+      "private/get_account_summary.response"
+    ]
+  },
+  "MatchingEngineLimits": {
+    "hash": "AEB9DA4FDC765B87A29B87025584B9EE1887C8A4",
+    "properties": {
+      "futures": {},
+      "matching_engine": {},
+      "non_matching_engine": {},
+      "options": {},
+      "perpetuals": {}
+    },
+    "methods": [
+      "private/get_account_summary.response.limits"
+    ]
+  },
+  "MatchingEngineLimit": {
+    "hash": "F12E1EA08941D9994CDCC18139E2468BB12DB955",
+    "properties": {
+      "burst": {},
+      "rate": {}
+    },
+    "methods": [
+      "private/get_account_summary.response.limits.futures",
+      "private/get_account_summary.response.limits.matching_engine",
+      "private/get_account_summary.response.limits.non_matching_engine",
+      "private/get_account_summary.response.limits.options",
+      "private/get_account_summary.response.limits.perpetuals"
+    ]
+  },
+  "UserFee": {
+    "hash": "EC212F41F898978C5CF68A40482436793ACD9B3A",
+    "properties": {
+      "currency": {},
+      "fee_type": {},
+      "instrument_type": {},
+      "maker_fee": {},
+      "taker_fee": {}
+    },
+    "methods": [
+      "private/get_account_summary.response.fees"
+    ]
+  },
+  "AffiliateProgramInfo": {
+    "hash": "90EA1E1D0349F0721F47DDFB1EA69FC5F267A8D1",
+    "properties": {
+      "is_enabled": {},
+      "link": {},
+      "number_of_affiliates": {},
+      "received": {}
+    },
+    "methods": [
+      "private/get_affiliate_program_info.response"
+    ]
+  },
+  "AffiliateProgramReceivedPayouts": {
+    "hash": "F85ECBA5462CEA6A39A973678BD80A6AE222FBCD",
+    "properties": {
+      "btc": {},
+      "eth": {}
+    },
+    "methods": [
+      "private/get_affiliate_program_info.response.received"
+    ]
+  },
+  "UserPosition": {
+    "hash": "80778014AEE33C6778BC4F6754A264C605D6A63E",
+    "properties": {
+      "average_price": {},
+      "average_price_usd": {},
+      "delta": {},
+      "direction": {},
+      "estimated_liquidation_price": {},
+      "floating_profit_loss": {},
+      "floating_profit_loss_usd": {},
+      "gamma": {},
+      "index_price": {},
+      "initial_margin": {},
+      "instrument_name": {},
+      "interest_value": {},
+      "kind": {},
+      "leverage": {},
+      "maintenance_margin": {},
+      "mark_price": {},
+      "open_orders_margin": {},
+      "realized_funding": {},
+      "realized_profit_loss": {},
+      "settlement_price": {},
+      "size": {},
+      "size_currency": {},
+      "theta": {},
+      "total_profit_loss": {},
+      "vega": {}
+    },
+    "methods": [
+      "private/get_position.response",
+      "private/get_positions.response",
+      "private/get_subaccounts_details.response.positions"
+    ],
+    "subscriptions": [
+      "user.changes.{instrument_name}.{interval}.response.position",
+      "user.changes.{kind}.{currency}.{interval}.response.position"
+    ]
+  },
+  "SubAccount": {
+    "hash": "8A98CCAB42547E406B431C054F256D3C1861DD74",
+    "properties": {
+      "email": {},
+      "id": {},
+      "is_password": {},
+      "login_enabled": {},
+      "not_confirmed_email": {},
+      "portfolio": {},
+      "receive_notifications": {},
+      "security_keys_assignments": {},
+      "security_keys_enabled": {},
+      "system_name": {},
+      "type": {},
+      "username": {}
+    },
+    "methods": [
+      "private/get_subaccounts.response"
+    ]
+  },
+  "SubAccountDetail": {
+    "hash": "5789C9FDFB31691BCD1165C670476E04B3CD1AB5",
+    "properties": {
+      "open_orders": {},
+      "positions": {},
+      "uid": {}
+    },
+    "methods": [
+      "private/get_subaccounts_details.response"
+    ]
+  },
+  "TransactionLogPage": {
+    "hash": "CBBE2095F5563B4A727A9C288FDB2173446AF8F0",
+    "properties": {
+      "continuation": {},
+      "logs": {}
+    },
+    "methods": [
+      "private/get_transaction_log.response"
+    ]
+  },
+  "TransactionLogEntry": {
+    "hash": "8AC62911E6CDF93333C2144F455C0831FA52F82B",
+    "properties": {
+      "amount": {},
+      "balance": {},
+      "cashflow": {},
+      "change": {},
+      "commission": {},
+      "currency": {},
+      "equity": {},
+      "id": {},
+      "info": {},
+      "instrument_name": {},
+      "interest_pl": {},
+      "mark_price": {},
+      "order_id": {},
+      "position": {},
+      "price": {},
+      "price_currency": {},
+      "profit_as_cashflow": {},
+      "session_rpl": {},
+      "session_upl": {},
+      "side": {},
+      "timestamp": {},
+      "total_interest_pl": {},
+      "trade_id": {},
+      "type": {},
+      "user_id": {},
+      "user_role": {},
+      "user_seq": {},
+      "username": {}
+    },
+    "methods": [
+      "private/get_transaction_log.response.logs"
+    ]
+  },
+  "UserLockEntry": {
+    "hash": "0222D0E93F9E4E406927C9C59F062C3B636EF412",
+    "properties": {
+      "currency": {},
+      "enabled": {},
+      "message": {}
+    },
+    "methods": [
+      "private/get_user_locks.response"
+    ]
+  },
+  "PortfolioMarginingToggleEntry": {
+    "hash": "28C93C41DD6394527DF69F10EBF206D872840287",
+    "properties": {
+      "currency": {},
+      "new_state": {},
+      "old_state": {}
+    },
+    "methods": [
+      "private/toggle_portfolio_margining.response"
+    ]
+  },
+  "PortfolioMarginingToggleState": {
+    "hash": "02A50E7AB28E8A53AC0C5E74CE251D1D51D119B1",
+    "properties": {
+      "available_balance": {},
+      "initial_margin_rate": {},
+      "maintenance_margin_rate": {}
+    },
+    "methods": [
+      "private/toggle_portfolio_margining.response.new_state",
+      "private/toggle_portfolio_margining.response.old_state"
+    ]
+  },
+  "AnnouncementChange": {
+    "hash": "9AD3CF1E5FFCD1AE599765B5002F68670E4FBC2F",
+    "properties": {
+      "action": {},
+      "body": {},
+      "confirmation": {},
+      "id": {},
+      "important": {},
+      "publication_timestamp": {},
+      "title": {},
+      "unread": {}
+    },
+    "subscriptions": [
+      "announcements.response"
+    ]
+  },
+  "GroupedOrderBookChange": {
+    "hash": "CF7902F8019A53E60336557480D7B245D5ECABE2",
+    "properties": {
+      "asks": {},
+      "bids": {},
+      "change_id": {},
+      "instrument_name": {},
+      "timestamp": {}
+    },
+    "subscriptions": [
+      "book.{instrument_name}.{group}.{depth}.{interval}.response"
+    ]
+  },
+  "OrderBookChange": {
+    "hash": "2023C67BAA9AB8B338BE20138347E53A9962EFC7",
+    "properties": {
+      "asks": {},
+      "bids": {},
+      "change_id": {},
+      "instrument_name": {},
+      "prev_change_id": {},
+      "timestamp": {},
+      "type": {}
+    },
+    "subscriptions": [
+      "book.{instrument_name}.{interval}.response"
+    ]
+  },
+  "TradingViewCandleChange": {
+    "hash": "F07F03F064A5F4BA7B3DF62AD51F949CD71B556F",
+    "properties": {
+      "close": {},
+      "cost": {},
+      "high": {},
+      "low": {},
+      "open": {},
+      "tick": {},
+      "volume": {}
+    },
+    "subscriptions": [
+      "chart.trades.{instrument_name}.{resolution}.response"
+    ]
+  },
+  "DeribitPriceIndex": {
+    "hash": "E3113F0CB9438070E6B2FDFB86363EC538E439F8",
+    "properties": {
+      "index_name": {},
+      "price": {},
+      "timestamp": {}
+    },
+    "subscriptions": [
+      "deribit_price_index.{index_name}.response"
+    ]
+  },
+  "DeribitPriceRankingEntry": {
+    "hash": "C917ED553F4DA56F55209FF319517B2D8ABC7739",
+    "properties": {
+      "enabled": {},
+      "identifier": {},
+      "original_price": {},
+      "price": {},
+      "timestamp": {},
+      "weight": {}
+    },
+    "subscriptions": [
+      "deribit_price_ranking.{index_name}.response"
+    ]
+  },
+  "DeribitPriceStatistics": {
+    "hash": "7025641F3C19B77F70A5B651D294114980236497",
+    "properties": {
+      "change24h": {},
+      "high24h": {},
+      "high_volatility": {},
+      "index_name": {},
+      "low24h": {}
+    },
+    "subscriptions": [
+      "deribit_price_statistics.{index_name}.response"
+    ]
+  },
+  "DeribitVolatilityIndex": {
+    "hash": "27B17B99902FC9B06F851AA70767031A2120170E",
+    "properties": {
+      "estimated_delivery": {},
+      "index_name": {},
+      "timestamp": {},
+      "volatility": {}
+    },
+    "subscriptions": [
+      "deribit_volatility_index.{index_name}.response"
+    ]
+  },
+  "ExpirationPrice": {
+    "hash": "4CBF3216B43BF8D902F94D0F59D6A7CBC9E3648A",
+    "properties": {
+      "is_estimated": {},
+      "left_ticks": {},
+      "price": {},
+      "seconds": {},
+      "total_ticks": {}
+    },
+    "subscriptions": [
+      "estimated_expiration_price.{index_name}.response"
+    ]
+  },
+  "IncrementalTickerNotification": {
+    "hash": "43CA3FACBC795F6FD159DD9BE6D4E21B7824B2FA",
+    "properties": {
+      "ask_iv": {},
+      "best_ask_amount": {},
+      "best_ask_price": {},
+      "best_bid_amount": {},
+      "best_bid_price": {},
+      "bid_iv": {},
+      "current_funding": {},
+      "delivery_price": {},
+      "estimated_delivery_price": {},
+      "funding_8h": {},
+      "greeks": {},
+      "index_price": {},
+      "instrument_name": {},
+      "interest_rate": {},
+      "last_price": {},
+      "mark_iv": {},
+      "mark_price": {},
+      "max_price": {},
+      "min_price": {},
+      "open_interest": {},
+      "settlement_price": {},
+      "state": {},
+      "stats": {},
+      "timestamp": {},
+      "underlying_index": {},
+      "underlying_price": {}
+    },
+    "subscriptions": [
+      "incremental_ticker.{instrument_name}.response"
+    ]
+  },
+  "InstrumentState": {
+    "hash": "D0E31BB6E0C2D6835863C388FE75A22DF08265BD",
+    "properties": {
+      "instrument_name": {},
+      "state": {},
+      "timestamp": {}
+    },
+    "subscriptions": [
+      "instrument.state.{kind}.{currency}.response"
+    ]
+  },
+  "OptionMarkprice": {
+    "hash": "BE148C705A32CCB34CEE243A9FC3133A9FF70908",
+    "properties": {
+      "instrument_name": {},
+      "iv": {},
+      "mark_price": {},
+      "timestamp": {}
+    },
+    "subscriptions": [
+      "markprice.options.{index_name}.response"
+    ]
+  },
+  "PerpetualInterestRate": {
+    "hash": "F49C0FF9DF2CED733EFE48D0ED06AEB483BDB5DC",
+    "properties": {
+      "index_price": {},
+      "interest": {},
+      "timestamp": {}
+    },
+    "subscriptions": [
+      "perpetual.{instrument_name}.{interval}.response"
+    ]
+  },
+  "PlatformStateChange": {
+    "hash": "70349CBAE5560E3E01EEAC72C2996143C5115435",
+    "properties": {
+      "locked": {},
+      "maintenance": {},
+      "price_index": {}
+    },
+    "subscriptions": [
+      "platform_state.response"
+    ]
+  },
+  "PlatformPublicMethodsStateChange": {
+    "hash": "FA0785FB792CA7888D29FAC2B9A581060F055D0F",
+    "properties": {
+      "allow_unauthenticated_public_requests": {}
+    },
+    "subscriptions": [
+      "platform_state.public_methods_state.response"
+    ]
+  },
+  "QuoteNotification": {
+    "hash": "08C26900327198FF893A52AC7FDFA3D3D5C4F4F6",
+    "properties": {
+      "best_ask_amount": {},
+      "best_ask_price": {},
+      "best_bid_amount": {},
+      "best_bid_price": {},
+      "instrument_name": {},
+      "timestamp": {}
+    },
+    "subscriptions": [
+      "quote.{instrument_name}.response"
+    ]
+  },
+  "RfqNotification": {
+    "hash": "D5DC50ACE5EAAD9C9B0888CC368A7EA96563F413",
+    "properties": {
+      "amount": {},
+      "instrument_name": {},
+      "last_rfq_timestamp": {},
+      "side": {},
+      "state": {}
+    },
+    "subscriptions": [
+      "rfq.{currency}.response"
+    ]
+  },
+  "UserChange": {
+    "hash": "CD78F2FE443154E8C2A8243D36A5F72B4D0C0128",
+    "properties": {
+      "instrument_name": {},
+      "orders": {},
+      "position": {},
+      "trades": {}
+    },
+    "subscriptions": [
+      "user.changes.{instrument_name}.{interval}.response",
+      "user.changes.{kind}.{currency}.{interval}.response"
+    ]
+  },
+  "UserLockNotification": {
+    "hash": "4DB52E7BACA610785C697FA0C4B92A5992CB86A1",
+    "properties": {
+      "currency": {},
+      "locked": {}
+    },
+    "subscriptions": [
+      "user.lock.response"
+    ]
+  },
+  "UserMmpFreeze": {
+    "hash": "EB9781B7C10343092575E9898BFE704934E6E18C",
+    "properties": {
+      "frozen_until": {}
+    },
+    "subscriptions": [
+      "user.mmp_trigger.{currency}.response"
+    ]
+  },
+  "UserPortfolioNotification": {
+    "hash": "F692FA6823B0CEF5D32D458CEE200BD8534CD756",
+    "properties": {
+      "available_funds": {},
+      "available_withdrawal_funds": {},
+      "balance": {},
+      "currency": {},
+      "delta_total": {},
+      "delta_total_map": {},
+      "equity": {},
+      "estimated_liquidation_ratio": {},
+      "estimated_liquidation_ratio_map": {},
+      "fee_balance": {},
+      "futures_pl": {},
+      "futures_session_rpl": {},
+      "futures_session_upl": {},
+      "initial_margin": {},
+      "maintenance_margin": {},
+      "margin_balance": {},
+      "options_delta": {},
+      "options_gamma": {},
+      "options_pl": {},
+      "options_session_rpl": {},
+      "options_session_upl": {},
+      "options_theta": {},
+      "options_value": {},
+      "options_vega": {},
+      "portfolio_margining_enabled": {},
+      "projected_delta_total": {},
+      "projected_initial_margin": {},
+      "projected_maintenance_margin": {},
+      "session_rpl": {},
+      "session_upl": {},
+      "total_pl": {}
+    },
+    "subscriptions": [
+      "user.portfolio.{currency}.response"
     ]
   }
 }

@@ -8,73 +8,47 @@
 // --------------------------------------------------------------------------
 #pragma warning disable CS1591
 #nullable enable
-namespace DeriSock.Api {
+namespace DeriSock.Api
+{
   using System.Threading.Tasks;
   using DeriSock.JsonRpc;
   using DeriSock.Model;
   
-  
   [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-  public partial interface ICategoriesApi {
-    
+  public partial interface ICategoriesApi
+  {
     /// <inheritdoc cref="IPublicApi" />
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    IPublicApi Public {
-      get;
-    }
-    
+    IPublicApi Public { get; }
     /// <inheritdoc cref="IPrivateApi" />
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    IPrivateApi Private {
-      get;
-    }
-    
+    IPrivateApi Private { get; }
     /// <inheritdoc cref="IAuthenticationApi" />
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    IAuthenticationApi Authentication {
-      get;
-    }
-    
+    IAuthenticationApi Authentication { get; }
     /// <inheritdoc cref="ISessionManagementApi" />
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    ISessionManagementApi SessionManagement {
-      get;
-    }
-    
+    ISessionManagementApi SessionManagement { get; }
     /// <inheritdoc cref="ISupportingApi" />
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    ISupportingApi Supporting {
-      get;
-    }
-    
-    /// <inheritdoc cref="IAccountManagementApi" />
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    IAccountManagementApi AccountManagement {
-      get;
-    }
-    
-    /// <inheritdoc cref="IBlockTradeApi" />
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    IBlockTradeApi BlockTrade {
-      get;
-    }
-    
-    /// <inheritdoc cref="ITradingApi" />
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    ITradingApi Trading {
-      get;
-    }
-    
+    ISupportingApi Supporting { get; }
     /// <inheritdoc cref="IMarketDataApi" />
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    IMarketDataApi MarketData {
-      get;
-    }
-    
+    IMarketDataApi MarketData { get; }
+    /// <inheritdoc cref="ITradingApi" />
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    ITradingApi Trading { get; }
+    /// <inheritdoc cref="IComboBooksApi" />
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    IComboBooksApi ComboBooks { get; }
+    /// <inheritdoc cref="IBlockTradeApi" />
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    IBlockTradeApi BlockTrade { get; }
     /// <inheritdoc cref="IWalletApi" />
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    IWalletApi Wallet {
-      get;
-    }
+    IWalletApi Wallet { get; }
+    /// <inheritdoc cref="IAccountManagementApi" />
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    IAccountManagementApi AccountManagement { get; }
   }
 }

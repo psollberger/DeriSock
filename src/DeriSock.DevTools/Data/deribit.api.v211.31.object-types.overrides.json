@@ -1,164 +1,153 @@
-﻿{
+{
   "methods": {
-    "private/get_withdrawals": {
+    "public/auth": {
       "response": {
+        "dataType": "AuthTokenData"
+      }
+    },
+    "public/exchange_token": {
+      "response": {
+        "dataType": "AuthTokenData"
+      }
+    },
+    "public/fork_token": {
+      "response": {
+        "dataType": "AuthTokenData"
+      }
+    },
+    "private/get_cancel_on_disconnect": {
+      "response": {
+        "dataType": "CancelOnDisconnectData"
+      }
+    },
+    "public/hello": {
+      "response": {
+        "dataType": "ServerVersionData"
+      }
+    },
+    "public/test": {
+      "response": {
+        "dataType": "ServerVersionData"
+      }
+    },
+    "public/status": {
+      "response": {
+        "dataType": "PlatformLockStatus"
+      }
+    },
+    "public/get_book_summary_by_currency": {
+      "response": {
+        "arrayDataType": "BookSummaryEntry"
+      }
+    },
+    "public/get_book_summary_by_instrument": {
+      "response": {
+        "arrayDataType": "BookSummaryEntry"
+      }
+    },
+    "public/get_contract_size": {
+      "response": {
+        "dataType": "ContractSizeData"
+      }
+    },
+    "public/get_currencies": {
+      "response": {
+        "arrayDataType": "CurrencyData",
+        "properties": {
+          "withdrawal_priorities": {
+            "arrayDataType": "WithdrawalPriority"
+          }
+        }
+      }
+    },
+    "public/get_delivery_prices": {
+      "response": {
+        "dataType": "IndexDeliveryPrices",
         "properties": {
           "data": {
-            "arrayDataType": "WithdrawalEntry"
+            "arrayDataType": "IndexDeliveryPrice"
           }
         }
       }
     },
-    "private/get_deposits": {
+    "public/get_funding_chart_data": {
       "response": {
+        "dataType": "FundingChartData",
         "properties": {
           "data": {
-            "arrayDataType": "DepositEntry"
+            "arrayDataType": "FundingChartDataEntry"
           }
         }
       }
     },
-    "private/get_transaction_log": {
+    "public/get_funding_rate_history": {
       "response": {
+        "arrayDataType": "FundingRateHistoryEntry"
+      }
+    },
+    "public/get_index": {
+      "response": {
+        "dataType": "GetIndexResponse"
+      }
+    },
+    "public/get_index_price": {
+      "response": {
+        "dataType": "IndexPriceData"
+      }
+    },
+    "public/get_instrument": {
+      "response": {
+        "dataType": "Instrument"
+      }
+    },
+    "public/get_instruments": {
+      "response": {
+        "arrayDataType": "Instrument"
+      }
+    },
+    "public/get_last_settlements_by_currency": {
+      "response": {
+        "dataType": "SettlementPage",
         "properties": {
-          "logs": {
-            "arrayDataType": "TransactionLogEntry"
+          "settlements": {
+            "arrayDataType": "SettlementEntry"
           }
         }
       }
     },
-    "private/execute_block_trade": {
-      "request": {
-        "properties": {
-          "trades": {
-            "arrayDataType": "BlockTradeTradesEntry"
-          }
-        }
-      },
+    "public/get_last_settlements_by_instrument": {
       "response": {
+        "dataType": "SettlementPage",
         "properties": {
-          "trades": {
-            "arrayDataType": "UserTrade"
+          "settlements": {
+            "arrayDataType": "SettlementEntry"
           }
         }
       }
     },
-    "private/get_block_trade": {
+    "private/get_settlement_history_by_instrument": {
       "response": {
+        "dataType": "SettlementPage",
         "properties": {
-          "trades": {
-            "arrayDataType": "UserTrade"
+          "settlements": {
+            "arrayDataType": "SettlementEntry"
           }
         }
       }
     },
-    "private/get_last_block_trades_by_currency": {
+    "private/get_settlement_history_by_currency": {
       "response": {
+        "dataType": "SettlementPage",
         "properties": {
-          "trades": {
-            "arrayDataType": "UserTrade"
-          }
-        }
-      }
-    },
-    "private/buy": {
-      "response": {
-        "properties": {
-          "trades": {
-            "arrayDataType": "UserTrade"
-          },
-          "order": {
-            "dataType": "UserOrder"
-          }
-        }
-      }
-    },
-    "private/sell": {
-      "response": {
-        "properties": {
-          "trades": {
-            "arrayDataType": "UserTrade"
-          },
-          "order": {
-            "dataType": "UserOrder"
-          }
-        }
-      }
-    },
-    "private/edit": {
-      "response": {
-        "properties": {
-          "trades": {
-            "arrayDataType": "UserTrade"
-          },
-          "order": {
-            "dataType": "UserOrder"
-          }
-        }
-      }
-    },
-    "private/edit_by_label": {
-      "response": {
-        "properties": {
-          "trades": {
-            "arrayDataType": "UserTrade"
-          },
-          "order": {
-            "dataType": "UserOrder"
-          }
-        }
-      }
-    },
-    "private/close_position": {
-      "response": {
-        "properties": {
-          "trades": {
-            "arrayDataType": "UserTrade"
-          },
-          "order": {
-            "dataType": "UserOrder"
-          }
-        }
-      }
-    },
-    "private/get_user_trades_by_currency": {
-      "response": {
-        "properties": {
-          "trades": {
-            "arrayDataType": "UserTrade"
-          }
-        }
-      }
-    },
-    "private/get_user_trades_by_currency_and_time": {
-      "response": {
-        "properties": {
-          "trades": {
-            "arrayDataType": "UserTrade"
-          }
-        }
-      }
-    },
-    "private/get_user_trades_by_instrument": {
-      "response": {
-        "properties": {
-          "trades": {
-            "arrayDataType": "UserTrade"
-          }
-        }
-      }
-    },
-    "private/get_user_trades_by_instrument_and_time": {
-      "response": {
-        "properties": {
-          "trades": {
-            "arrayDataType": "UserTrade"
+          "settlements": {
+            "arrayDataType": "SettlementEntry"
           }
         }
       }
     },
     "public/get_last_trades_by_currency": {
       "response": {
+        "dataType": "PublicTradesPage",
         "properties": {
           "trades": {
             "arrayDataType": "PublicTrade"
@@ -168,6 +157,7 @@
     },
     "public/get_last_trades_by_currency_and_time": {
       "response": {
+        "dataType": "PublicTradesPage",
         "properties": {
           "trades": {
             "arrayDataType": "PublicTrade"
@@ -177,6 +167,7 @@
     },
     "public/get_last_trades_by_instrument": {
       "response": {
+        "dataType": "PublicTradesPage",
         "properties": {
           "trades": {
             "arrayDataType": "PublicTrade"
@@ -186,6 +177,7 @@
     },
     "public/get_last_trades_by_instrument_and_time": {
       "response": {
+        "dataType": "PublicTradesPage",
         "properties": {
           "trades": {
             "arrayDataType": "PublicTrade"
@@ -193,22 +185,322 @@
         }
       }
     },
-    "private/get_transfers": {
+    "public/get_order_book": {
       "response": {
+        "dataType": "OrderBook",
         "properties": {
-          "data": {
-            "arrayDataType": "TransferEntry"
+          "greeks": {
+            "dataType": "Greeks"
+          },
+          "stats": {
+            "dataType": "Statistics"
           }
         }
       }
     },
-    "private/get_trigger_order_history": {
+    "public/get_order_book_by_instrument_id": {
       "response": {
+        "dataType": "OrderBook",
         "properties": {
-          "entries": {
-            "arrayDataType": "TriggerOrder"
+          "greeks": {
+            "dataType": "Greeks"
+          },
+          "stats": {
+            "dataType": "Statistics"
           }
         }
+      }
+    },
+    "public/ticker": {
+      "response": {
+        "dataType": "TickerData",
+        "properties": {
+          "greeks": {
+            "dataType": "Greeks"
+          },
+          "stats": {
+            "dataType": "Statistics"
+          }
+        }
+      }
+    },
+    "public/get_rfqs": {
+      "response": {
+        "arrayDataType": "RfqEntry"
+      }
+    },
+    "public/get_trade_volumes": {
+      "response": {
+        "arrayDataType": "AggregatedTradeVolume"
+      }
+    },
+    "public/get_tradingview_chart_data": {
+      "response": {
+        "dataType": "TradingViewChartData"
+      }
+    },
+    "public/get_volatility_index_data": {
+      "response": {
+        "dataType": "VolatilityIndexPage"
+      }
+    },
+    "private/buy": {
+      "response": {
+        "dataType": "UserOrderTrades",
+        "properties": {
+          "order": {
+            "dataType": "UserOrder"
+          },
+          "trades": {
+            "arrayDataType": "UserTrade"
+          }
+        }
+      }
+    },
+    "private/sell": {
+      "response": {
+        "dataType": "UserOrderTrades",
+        "properties": {
+          "order": {
+            "dataType": "UserOrder"
+          },
+          "trades": {
+            "arrayDataType": "UserTrade"
+          }
+        }
+      }
+    },
+    "private/edit": {
+      "response": {
+        "dataType": "UserOrderTrades",
+        "properties": {
+          "order": {
+            "dataType": "UserOrder"
+          },
+          "trades": {
+            "arrayDataType": "UserTrade"
+          }
+        }
+      }
+    },
+    "private/edit_by_label": {
+      "response": {
+        "dataType": "UserOrderTrades",
+        "properties": {
+          "order": {
+            "dataType": "UserOrder"
+          },
+          "trades": {
+            "arrayDataType": "UserTrade"
+          }
+        }
+      }
+    },
+    "private/close_position": {
+      "response": {
+        "dataType": "UserOrderTrades",
+        "properties": {
+          "order": {
+            "dataType": "UserOrder"
+          },
+          "trades": {
+            "arrayDataType": "UserTrade"
+          }
+        }
+      }
+    },
+    "private/cancel": {
+      "response": {
+        "dataType": "UserOrder"
+      }
+    },
+    "private/get_open_orders_by_currency": {
+      "response": {
+        "arrayDataType": "UserOrder"
+      }
+    },
+    "private/get_open_orders_by_instrument": {
+      "response": {
+        "arrayDataType": "UserOrder"
+      }
+    },
+    "private/get_order_history_by_currency": {
+      "response": {
+        "arrayDataType": "UserOrder"
+      }
+    },
+    "private/get_order_history_by_instrument": {
+      "response": {
+        "arrayDataType": "UserOrder"
+      }
+    },
+    "private/get_order_state": {
+      "response": {
+        "dataType": "UserOrder"
+      }
+    },
+    "private/get_subaccounts_details": {
+      "response": {
+        "arrayDataType": "SubAccountDetail",
+        "properties": {
+          "open_orders": {
+            "arrayDataType": "UserOrder"
+          },
+          "positions": {
+            "arrayDataType": "UserPosition"
+          }
+        }
+      }
+    },
+    "private/get_user_trades_by_currency": {
+      "response": {
+        "dataType": "UserTrades",
+        "properties": {
+          "trades": {
+            "arrayDataType": "UserTrade"
+          }
+        }
+      }
+    },
+    "private/get_user_trades_by_currency_and_time": {
+      "response": {
+        "dataType": "UserTrades",
+        "properties": {
+          "trades": {
+            "arrayDataType": "UserTrade"
+          }
+        }
+      }
+    },
+    "private/get_user_trades_by_instrument": {
+      "response": {
+        "dataType": "UserTrades",
+        "properties": {
+          "trades": {
+            "arrayDataType": "UserTrade"
+          }
+        }
+      }
+    },
+    "private/get_user_trades_by_instrument_and_time": {
+      "response": {
+        "dataType": "UserTrades",
+        "properties": {
+          "trades": {
+            "arrayDataType": "UserTrade"
+          }
+        }
+      }
+    },
+    "private/execute_block_trade": {
+      "request": {
+        "properties": {
+          "trades": {
+            "arrayDataType": "BlockTradeRequestTrade"
+          }
+        }
+      },
+      "response": {
+        "dataType": "BlockTrade",
+        "properties": {
+          "trades": {
+            "arrayDataType": "UserTrade"
+          }
+        }
+      }
+    },
+    "private/get_block_trade": {
+      "response": {
+        "dataType": "BlockTrade",
+        "properties": {
+          "trades": {
+            "arrayDataType": "UserTrade"
+          }
+        }
+      }
+    },
+    "private/get_last_block_trades_by_currency": {
+      "response": {
+        "arrayDataType": "BlockTrade",
+        "properties": {
+          "trades": {
+            "arrayDataType": "UserTrade"
+          }
+        }
+      }
+    },
+    "private/get_margins": {
+      "response": {
+        "dataType": "InstrumentMargin"
+      }
+    },
+    "private/get_mmp_config": {
+      "response": {
+        "dataType": "MmpConfig"
+      }
+    },
+    "private/get_order_margin_by_ids": {
+      "response": {
+        "arrayDataType": "OrderInitialMargin"
+      }
+    },
+    "private/get_trigger_order_history": {
+      "response": {
+        "dataType": "TriggerOrderHistoryPage",
+        "properties": {
+          "entries": {
+            "arrayDataType": "TriggerOrderHistoryEntry"
+          }
+        }
+      }
+    },
+    "public/get_combo_details": {
+      "response": {
+        "dataType": "Combo",
+        "properties": {
+          "legs": {
+            "arrayDataType": "ComboLeg"
+          }
+        }
+      }
+    },
+    "public/get_combos": {
+      "response": {
+        "arrayDataType": "Combo",
+        "properties": {
+          "legs": {
+            "arrayDataType": "ComboLeg"
+          }
+        }
+      }
+    },
+    "private/create_combo": {
+      "request": {
+        "properties": {
+          "trades": {
+            "arrayDataType": "CreateComboTrade"
+          }
+        }
+      },
+      "response": {
+        "dataType": "Combo",
+        "properties": {
+          "legs": {
+            "arrayDataType": "ComboLeg"
+          }
+        }
+      }
+    },
+    "private/verify_block_trade": {
+      "request": {
+        "properties": {
+          "trades": {
+            "arrayDataType": "BlockTradeRequestTrade"
+          }
+        }
+      },
+      "response": {
+        "dataType": "VerifyBlockTradeResponse"
       }
     },
     "private/move_positions": {
@@ -220,6 +512,7 @@
         }
       },
       "response": {
+        "dataType": "MovePositionResponse",
         "properties": {
           "trades": {
             "arrayDataType": "MovePositionResponseTrade"
@@ -227,8 +520,124 @@
         }
       }
     },
+    "private/cancel_transfer_by_id": {
+      "response": {
+        "dataType": "UserTransfer"
+      }
+    },
+    "private/get_transfers": {
+      "response": {
+        "dataType": "UserTransfers",
+        "properties": {
+          "data": {
+            "arrayDataType": "UserTransfer"
+          }
+        }
+      }
+    },
+    "private/submit_transfer_to_subaccount": {
+      "response": {
+        "dataType": "UserTransfer"
+      }
+    },
+    "private/submit_transfer_to_user": {
+      "response": {
+        "dataType": "UserTransfer"
+      }
+    },
+    "private/cancel_withdrawal": {
+      "response": {
+        "dataType": "Withdrawal"
+      }
+    },
+    "private/get_withdrawals": {
+      "response": {
+        "dataType": "Withdrawals",
+        "properties": {
+          "data": {
+            "arrayDataType": "Withdrawal"
+          }
+        }
+      }
+    },
+    "private/withdraw": {
+      "response": {
+        "dataType": "Withdrawal"
+      }
+    },
+    "private/create_deposit_address": {
+      "response": {
+        "dataType": "DepositAddress"
+      }
+    },
+    "private/get_current_deposit_address": {
+      "response": {
+        "dataType": "DepositAddress"
+      }
+    },
+    "private/get_deposits": {
+      "response": {
+        "dataType": "Deposits",
+        "properties": {
+          "data": {
+            "arrayDataType": "Deposit"
+          }
+        }
+      }
+    },
+    "public/get_announcements": {
+      "response": {
+        "arrayDataType": "Announcement"
+      }
+    },
+    "private/get_new_announcements": {
+      "response": {
+        "arrayDataType": "Announcement"
+      }
+    },
+    "private/change_api_key_name": {
+      "response": {
+        "dataType": "ApiKeyData"
+      }
+    },
+    "private/change_scope_in_api_key": {
+      "response": {
+        "dataType": "ApiKeyData"
+      }
+    },
+    "private/create_api_key": {
+      "response": {
+        "dataType": "ApiKeyData"
+      }
+    },
+    "private/disable_api_key": {
+      "response": {
+        "dataType": "ApiKeyData"
+      }
+    },
+    "private/enable_api_key": {
+      "response": {
+        "dataType": "ApiKeyData"
+      }
+    },
+    "private/list_api_keys": {
+      "response": {
+        "arrayDataType": "ApiKeyData"
+      }
+    },
+    "private/reset_api_key": {
+      "response": {
+        "dataType": "ApiKeyData"
+      }
+    },
+    "private/set_api_key_as_default": {
+      "response": {
+        "dataType": "ApiKeyData"
+      }
+    },
     "private/create_subaccount": {
       "response": {
+        "dataType": "CreateSubAccountResponse",
         "properties": {
           "portfolio": {
             "dataType": "SubAccountPortfolio",
@@ -246,6 +655,7 @@
     },
     "private/get_subaccounts": {
       "response": {
+        "arrayDataType": "SubAccount",
         "properties": {
           "portfolio": {
             "dataType": "SubAccountPortfolio",
@@ -261,32 +671,17 @@
         }
       }
     },
-    "private/get_subaccounts_details": {
+    "private/get_access_log": {
       "response": {
-        "properties": {
-          "positions": {
-            "arrayDataType": "UserPosition"
-          },
-          "open_orders": {
-            "arrayDataType": "UserOrder"
-          }
-        }
-      }
-    },
-    "private/get_affiliate_program_info": {
-      "response": {
-        "properties": {
-          "received": {
-            "dataType": "AffiliateReceivedPayouts"
-          }
-        }
+        "arrayDataType": "AccessLogEntry"
       }
     },
     "private/get_account_summary": {
       "response": {
+        "dataType": "AccountSummaryData",
         "properties": {
           "limits": {
-            "dataType": "UserMatchingEngineLimits",
+            "dataType": "MatchingEngineLimits",
             "properties": {
               "futures": {
                 "dataType": "MatchingEngineLimit"
@@ -306,173 +701,257 @@
             }
           },
           "fees": {
-            "arrayDataType": "UserFees"
+            "arrayDataType": "UserFee"
           }
         }
       }
     },
-    "public/get_delivery_prices": {
+    "private/get_affiliate_program_info": {
       "response": {
+        "dataType": "AffiliateProgramInfo",
         "properties": {
-          "data": {
-            "arrayDataType": "IndexDeliveryPrice"
+          "received": {
+            "dataType": "AffiliateProgramReceivedPayouts"
           }
         }
       }
     },
-    "public/get_order_book": {
+    "private/get_position": {
       "response": {
+        "dataType": "UserPosition"
+      }
+    },
+    "private/get_positions": {
+      "response": {
+        "arrayDataType": "UserPosition"
+      }
+    },
+    "private/get_transaction_log": {
+      "response": {
+        "dataType": "TransactionLogPage",
         "properties": {
-          "greeks": {
-            "dataType": "OptionGreek"
+          "logs": {
+            "arrayDataType": "TransactionLogEntry"
+          }
+        }
+      }
+    },
+    "private/get_user_locks": {
+      "response": {
+        "arrayDataType": "UserLockEntry"
+      }
+    },
+    "private/toggle_portfolio_margining": {
+      "response": {
+        "arrayDataType": "PortfolioMarginingToggleEntry",
+        "properties": {
+          "new_state": {
+            "dataType": "PortfolioMarginingToggleState"
           },
-          "stats": {
-            "dataType": "OrderBookStats"
-          }
-        }
-      }
-    },
-    "public/get_order_book_by_instrument_id": {
-      "response": {
-        "properties": {
-          "greeks": {
-            "dataType": "OptionGreek"
-          },
-          "stats": {
-            "dataType": "OrderBookStats"
-          }
-        }
-      }
-    },
-    "public/ticker": {
-      "response": {
-        "properties": {
-          "greeks": {
-            "dataType": "OptionGreek"
-          },
-          "stats": {
-            "dataType": "OrderBookStats"
-          }
-        }
-      }
-    },
-    "private/get_settlement_history_by_instrument": {
-      "response": {
-        "properties": {
-          "settlements": {
-            "arrayDataType": "SettlementEntry"
-          }
-        }
-      }
-    },
-    "private/get_settlement_history_by_currency": {
-      "response": {
-        "properties": {
-          "settlements": {
-            "arrayDataType": "SettlementEntry"
-          }
-        }
-      }
-    },
-    "public/get_last_settlements_by_currency": {
-      "response": {
-        "properties": {
-          "settlements": {
-            "arrayDataType": "SettlementEntry"
-          }
-        }
-      }
-    },
-    "public/get_last_settlements_by_instrument": {
-      "response": {
-        "properties": {
-          "settlements": {
-            "arrayDataType": "SettlementEntry"
-          }
-        }
-      }
-    },
-    "public/get_funding_chart_data": {
-      "response": {
-        "properties": {
-          "data": {
-            "arrayDataType": "FundingChartDataEntry"
-          }
-        }
-      }
-    },
-    "private/verify_block_trade": {
-      "request": {
-        "properties": {
-          "trades": {
-            "arrayDataType": "BlockTradeTradesEntry"
-          }
-        }
-      }
-    },
-    "public/get_currencies": {
-      "response": {
-        "properties": {
-          "withdrawal_priorities": {
-            "arrayDataType": "WithdrawalPriority"
+          "old_state": {
+            "dataType": "PortfolioMarginingToggleState"
           }
         }
       }
     }
   },
   "subscriptions": {
-    "user.changes.{instrument_name}.{interval}": {
+    "trades.{instrument_name}.{interval}": {
       "response": {
-        "properties": {
-          "trades": {
-            "arrayDataType": "UserTrade"
-          },
-          "position": {
-            "arrayDataType": "UserPosition"
-          },
-          "orders": {
-            "arrayDataType": "UserOrder"
-          }
-        }
+        "dataType": "PublicTrade"
       }
     },
-    "user.changes.{kind}.{currency}.{interval}": {
+    "trades.{kind}.{currency}.{interval}": {
       "response": {
-        "properties": {
-          "trades": {
-            "arrayDataType": "UserTrade"
-          },
-          "position": {
-            "arrayDataType": "UserPosition"
-          },
-          "orders": {
-            "arrayDataType": "UserOrder"
-          }
-        }
+        "arrayDataType": "PublicTrade"
       }
     },
     "incremental_ticker.{instrument_name}": {
       "response": {
+        "dataType": "IncrementalTickerNotification",
         "properties": {
           "greeks": {
-            "dataType": "OptionGreek"
+            "dataType": "Greeks"
           },
           "stats": {
-            "dataType": "OrderBookStats"
+            "dataType": "Statistics"
           }
         }
       }
     },
     "ticker.{instrument_name}.{interval}": {
       "response": {
+        "dataType": "TickerData",
         "properties": {
           "greeks": {
-            "dataType": "OptionGreek"
+            "dataType": "Greeks"
           },
           "stats": {
-            "dataType": "OrderBookStats"
+            "dataType": "Statistics"
           }
         }
+      }
+    },
+    "user.changes.{instrument_name}.{interval}": {
+      "response": {
+        "arrayDataType": "UserChange",
+        "properties": {
+          "orders": {
+            "arrayDataType": "UserOrder"
+          },
+          "trades": {
+            "arrayDataType": "UserTrade"
+          },
+          "position": {
+            "arrayDataType": "UserPosition"
+          }
+        }
+      }
+    },
+    "user.changes.{kind}.{currency}.{interval}": {
+      "response": {
+        "arrayDataType": "UserChange",
+        "properties": {
+          "orders": {
+            "arrayDataType": "UserOrder"
+          },
+          "trades": {
+            "arrayDataType": "UserTrade"
+          },
+          "position": {
+            "arrayDataType": "UserPosition"
+          }
+        }
+      }
+    },
+    "user.orders.{instrument_name}.raw": {
+      "response": {
+        "dataType": "UserOrder"
+      }
+    },
+    "user.orders.{instrument_name}.{interval}": {
+      "response": {
+        "arrayDataType": "UserOrder"
+      }
+    },
+    "user.orders.{kind}.{currency}.raw": {
+      "response": {
+        "dataType": "UserOrder"
+      }
+    },
+    "user.orders.{kind}.{currency}.{interval}": {
+      "response": {
+        "arrayDataType": "UserOrder"
+      }
+    },
+    "user.trades.{instrument_name}.{interval}": {
+      "response": {
+        "arrayDataType": "UserTrade"
+      }
+    },
+    "user.trades.{kind}.{currency}.{interval}": {
+      "response": {
+        "arrayDataType": "UserTrade"
+      }
+    },
+    "user.access_log": {
+      "response": {
+        "dataType": "AccessLogEntry"
+      }
+    },
+    "announcements": {
+      "response": {
+        "dataType": "AnnouncementChange"
+      }
+    },
+    "book.{instrument_name}.{group}.{depth}.{interval}": {
+      "response": {
+        "dataType": "GroupedOrderBookChange"
+      }
+    },
+    "book.{instrument_name}.{interval}": {
+      "response": {
+        "dataType": "OrderBookChange"
+      }
+    },
+    "chart.trades.{instrument_name}.{resolution}": {
+      "response": {
+        "dataType": "TradingViewCandleChange"
+      }
+    },
+    "deribit_price_index.{index_name}": {
+      "response": {
+        "dataType": "DeribitPriceIndex"
+      }
+    },
+    "deribit_price_ranking.{index_name}": {
+      "response": {
+        "arrayDataType": "DeribitPriceRankingEntry"
+      }
+    },
+    "deribit_price_statistics.{index_name}": {
+      "response": {
+        "dataType": "DeribitPriceStatistics"
+      }
+    },
+    "deribit_volatility_index.{index_name}": {
+      "response": {
+        "dataType": "DeribitVolatilityIndex"
+      }
+    },
+    "estimated_expiration_price.{index_name}": {
+      "response": {
+        "dataType": "ExpirationPrice"
+      }
+    },
+    "instrument.state.{kind}.{currency}": {
+      "response": {
+        "dataType": "InstrumentState"
+      }
+    },
+    "markprice.options.{index_name}": {
+      "response": {
+        "arrayDataType": "OptionMarkprice"
+      }
+    },
+    "perpetual.{instrument_name}.{interval}": {
+      "response": {
+        "dataType": "PerpetualInterestRate"
+      }
+    },
+    "platform_state": {
+      "response": {
+        "dataType": "PlatformStateChange"
+      }
+    },
+    "platform_state.public_methods_state": {
+      "response": {
+        "dataType": "PlatformPublicMethodsStateChange"
+      }
+    },
+    "quote.{instrument_name}": {
+      "response": {
+        "dataType": "QuoteNotification"
+      }
+    },
+    "rfq.{currency}": {
+      "response": {
+        "dataType": "RfqNotification"
+      }
+    },
+    "user.lock": {
+      "response": {
+        "dataType": "UserLockNotification"
+      }
+    },
+    "user.mmp_trigger.{currency}": {
+      "response": {
+        "dataType": "UserMmpFreeze"
+      }
+    },
+    "user.portfolio.{currency}": {
+      "response": {
+        "dataType": "UserPortfolioNotification"
       }
     }
   }
