@@ -246,6 +246,9 @@
       "response": {
         "arrayDataType": "UserPosition"
       }
+    },
+    "private/get_affiliate_program_info": {
+      "description": "Retrieves user's affiliates count, payouts and link."
     }
   },
   "subscriptions": {

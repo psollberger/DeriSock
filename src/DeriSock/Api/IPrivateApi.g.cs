@@ -442,7 +442,7 @@ namespace DeriSock.Api
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<AccountSummaryData>> GetAccountSummary(PrivateGetAccountSummaryRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
-    /// <para>Retrieves user</c>s affiliates count, payouts and link.</para>
+    /// <para>Retrieves user's affiliates count, payouts and link.</para>
     /// </summary>
     /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]

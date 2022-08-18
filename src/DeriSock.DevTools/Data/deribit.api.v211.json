@@ -13416,7 +13416,7 @@
     },
     "private/get_affiliate_program_info": {
       "category": "Account management",
-      "description": "Retrieves user`s affiliates count, payouts and link.",
+      "description": "Retrieves user's affiliates count, payouts and link.",
       "response": {
         "required": true,
         "apiDataType": "object",
