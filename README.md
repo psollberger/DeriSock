@@ -47,7 +47,7 @@ var authInfo = await client.Authentication.PublicLogin()
 When authenticated, you can logout like this (this is the only synchroneous method):
 
 ```csharp
-client.PrivateLogout();
+client.Authentication.PrivateLogout();
 ```
 
 **Note:** The server will automatically close the connection when you logout
