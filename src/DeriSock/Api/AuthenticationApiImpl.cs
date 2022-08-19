@@ -2,6 +2,7 @@ namespace DeriSock;
 
 using DeriSock.Api;
 
+// begin-snippet: example-customized-api-interface-impl
 public partial class DeribitClient
 {
   private sealed partial class AuthenticationApiImpl
@@ -11,3 +12,4 @@ public partial class DeribitClient
       => _client;
   }
 }
+// end-snippet

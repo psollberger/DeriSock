@@ -2,6 +2,7 @@ namespace DeriSock.Model;
 
 using Newtonsoft.Json;
 
+// begin-snippet: example-customized-model-class
 public partial class AccountSummaryData
 {
   /// <summary>
@@ -10,3 +11,4 @@ public partial class AccountSummaryData
   [JsonIgnore]
   public decimal DeltaTotalWithCollateral => DeltaTotal + Equity;
 }
+// end-snippet
