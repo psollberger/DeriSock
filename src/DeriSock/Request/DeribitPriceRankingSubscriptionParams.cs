@@ -12,7 +12,5 @@ public class DeribitPriceRankingSubscriptionParams : ISubscriptionChannel
   public string IndexName { get; set; }
 
   public string ToChannelName()
-  {
-    return $"deribit_price_ranking.{IndexName}";
-  }
+    => $"deribit_price_ranking.{IndexName}";
 }

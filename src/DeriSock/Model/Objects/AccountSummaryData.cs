@@ -11,4 +11,5 @@ public partial class AccountSummaryData
   [JsonIgnore]
   public decimal DeltaTotalWithCollateral => DeltaTotal + Equity;
 }
+
 // end-snippet

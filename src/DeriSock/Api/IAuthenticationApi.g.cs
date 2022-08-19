@@ -12,9 +12,10 @@ namespace DeriSock.Api
 {
   using System.Threading;
   using System.Threading.Tasks;
-  using DeriSock.JsonRpc;
+  using DeriSock.Net.JsonRpc;
   using DeriSock.Model;
-  
+  using DeriSock.Net.JsonRpc;
+
   [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
   public partial interface IAuthenticationApi
   {
@@ -24,14 +25,14 @@ namespace DeriSock.Api
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<AuthTokenData>> PublicExchangeToken(PublicExchangeTokenRequest args, CancellationToken cancellationToken = default(CancellationToken));
+    System.Threading.Tasks.Task<JsonRpcResponse<AuthTokenData>> PublicExchangeToken(PublicExchangeTokenRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Generates token for new named session. This method can be used only with session scoped tokens.</para>
     /// </summary>
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<AuthTokenData>> PublicForkToken(PublicForkTokenRequest args, CancellationToken cancellationToken = default(CancellationToken));
+    System.Threading.Tasks.Task<JsonRpcResponse<AuthTokenData>> PublicForkToken(PublicForkTokenRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Gracefully close websocket connection, when COD (Cancel On Disconnect) is enabled orders are not cancelled</para>
     /// </summary>

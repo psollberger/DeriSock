@@ -12,9 +12,10 @@ namespace DeriSock.Api
 {
   using System.Threading;
   using System.Threading.Tasks;
-  using DeriSock.JsonRpc;
+  using DeriSock.Net.JsonRpc;
   using DeriSock.Model;
-  
+  using DeriSock.Net.JsonRpc;
+
   [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
   public partial interface ISessionManagementApi
   {
@@ -24,13 +25,13 @@ namespace DeriSock.Api
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<string>> PublicSetHeartbeat(PublicSetHeartbeatRequest args, CancellationToken cancellationToken = default(CancellationToken));
+    System.Threading.Tasks.Task<JsonRpcResponse<string>> PublicSetHeartbeat(PublicSetHeartbeatRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Stop sending heartbeat messages.</para>
     /// </summary>
     /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<string>> PublicDisableHeartbeat(CancellationToken cancellationToken = default(CancellationToken));
+    System.Threading.Tasks.Task<JsonRpcResponse<string>> PublicDisableHeartbeat(CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Enable Cancel On Disconnect for the connection. After enabling Cancel On Disconnect all orders created by the connection will be removed when connection is closed.</para>
     /// <para><b>NOTICE</b> It does not affect orders created by other connections - they will remain active !</para>
@@ -39,7 +40,7 @@ namespace DeriSock.Api
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<string>> PrivateEnableCancelOnDisconnect(PrivateEnableCancelOnDisconnectRequest? args = null, CancellationToken cancellationToken = default(CancellationToken));
+    System.Threading.Tasks.Task<JsonRpcResponse<string>> PrivateEnableCancelOnDisconnect(PrivateEnableCancelOnDisconnectRequest? args = null, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Disable Cancel On Disconnect for the connection.</para>
     /// <para>When change is applied for the account, then every newly opened connection will start with <b>inactive</b> Cancel on Disconnect.</para>
@@ -47,13 +48,13 @@ namespace DeriSock.Api
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<string>> PrivateDisableCancelOnDisconnect(PrivateDisableCancelOnDisconnectRequest? args = null, CancellationToken cancellationToken = default(CancellationToken));
+    System.Threading.Tasks.Task<JsonRpcResponse<string>> PrivateDisableCancelOnDisconnect(PrivateDisableCancelOnDisconnectRequest? args = null, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Read current Cancel On Disconnect configuration for the account.</para>
     /// </summary>
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<CancelOnDisconnectData>> PrivateGetCancelOnDisconnect(PrivateGetCancelOnDisconnectRequest? args = null, CancellationToken cancellationToken = default(CancellationToken));
+    System.Threading.Tasks.Task<JsonRpcResponse<CancelOnDisconnectData>> PrivateGetCancelOnDisconnect(PrivateGetCancelOnDisconnectRequest? args = null, CancellationToken cancellationToken = default(CancellationToken));
   }
 }

@@ -11,7 +11,5 @@ public class QuoteSubscriptionParams : ISubscriptionChannel
   public string InstrumentName { get; set; }
 
   public string ToChannelName()
-  {
-    return $"quote.{InstrumentName}";
-  }
+    => $"quote.{InstrumentName}";
 }

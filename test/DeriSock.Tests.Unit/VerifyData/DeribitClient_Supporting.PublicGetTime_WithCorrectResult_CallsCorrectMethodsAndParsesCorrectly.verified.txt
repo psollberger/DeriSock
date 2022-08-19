@@ -1,0 +1,9 @@
+﻿{
+  jsonrpc: 2.0,
+  id: 1,
+  result: 1550147385946,
+  testnet: true,
+  usIn: 1535043730126248,
+  usOut: 1535043730126250,
+  usDiff: 2
+}

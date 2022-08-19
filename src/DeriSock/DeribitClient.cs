@@ -14,9 +14,13 @@ using System.Threading.Tasks;
 using DeriSock.Api;
 using DeriSock.Constants;
 using DeriSock.Converter;
-using DeriSock.JsonRpc;
 using DeriSock.Model;
+using DeriSock.Net.JsonRpc;
 using DeriSock.Request;
+using DeriSock.Utils;
+
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 using Serilog;
 using Serilog.Events;
@@ -25,21 +29,32 @@ using Serilog.Events;
 ///   <para>The implementation of the API methods from Deribit</para>
 ///   <para>All methods are asynchronous. Synchronous methods are suffixed with <c>Sync</c></para>
 /// </summary>
-public partial class DeribitClient : IWebSocketStateInfo
+public partial class DeribitClient
 {
+  private static readonly JsonSerializerSettings SerializationSettings = new()
+  {
+    NullValueHandling = NullValueHandling.Ignore
+  };
+
   /// <summary>
-  ///   Occurs when the client is connected to the server
+  ///   Occurs after the client established a connection with the endpoint.
   /// </summary>
   public event EventHandler? Connected;
 
   /// <summary>
-  ///   Occurs when the client disconnects from the server
+  ///   Occurs after client lost the connection with the endpoint.
   /// </summary>
-  public event EventHandler<JsonRpcDisconnectEventArgs>? Disconnected;
+  public event EventHandler<DeribitClientDisconnectedEventArgs>? Disconnected;
 
-  private readonly IJsonRpcClient _client;
+  private readonly ILogger? _logger;
+  private readonly JsonRpcRequestTaskSourceMap _requestTaskSourceMap = new();
   private readonly SubscriptionManager _subscriptionManager;
-  private readonly ILogger _logger;
+
+  private readonly Uri _endpointUri;
+  private readonly IJsonRpcMessageSource _messageSource;
+
+  private CancellationTokenSource _processMessageStreamCts;
+  private Task? _processMessageStreamTask;
 
   /// <summary>
   ///   The AccessToken received from the server after authentication
@@ -51,92 +66,164 @@ public partial class DeribitClient : IWebSocketStateInfo
   /// </summary>
   public string? RefreshToken { get; private set; }
 
-  /// <inheritdoc />
-  public WebSocketState State => _client.State;
-
-  /// <inheritdoc />
-  public WebSocketCloseStatus? CloseStatus => _client.CloseStatus;
-
-  /// <inheritdoc />
-  public string? CloseStatusDescription => _client.CloseStatusDescription;
-
-  /// <inheritdoc />
-  public Exception? Error => _client.Error;
+  /// <summary>
+  ///   Gets if the underlying message source is fully connected and ready to receive messages.
+  /// </summary>
+  public bool IsConnected
+    => _messageSource.State switch
+    {
+      WebSocketState.Open => true,
+      _                   => false
+    };
 
   /// <summary>
-  ///   Creates a new <see cref="DeribitClient" /> instance
+  ///   Creates a new <see cref="DeribitClient" /> instance.
   /// </summary>
-  /// <param name="endpointType">The network type. Productive or Testnet</param>
-  /// <param name="logger">The logger to be used. Uses a default logger if <c>null</c></param>
-  /// <exception cref="ArgumentOutOfRangeException">Throws an exception if the <paramref name="endpointType" /> is not recognized</exception>
-  public DeribitClient(EndpointType endpointType, ILogger? logger = null)
+  /// <param name="endpointType">The endpoint type.</param>
+  /// <param name="messageSource">The message source. <c>null</c> to use <see cref="DefaultJsonRpcMessageSource" /></param>
+  /// <param name="logger">Optional implementation of the <see cref="ILogger" /> interface to enable logging capabilities.</param>
+  /// <exception cref="ArgumentOutOfRangeException">Throws an exception if the <paramref name="endpointType" /> is not supported.</exception>
+  public DeribitClient(EndpointType endpointType, IJsonRpcMessageSource? messageSource = null, ILogger? logger = null)
   {
-    _logger = logger ?? Log.Logger;
-
-    _client = endpointType switch
+    _endpointUri = endpointType switch
     {
-      EndpointType.Productive => JsonRpcClientFactory.Create(new Uri(Endpoint.Productive), _logger),
-      EndpointType.Testnet    => JsonRpcClientFactory.Create(new Uri(Endpoint.TestNet), _logger),
+      EndpointType.Productive => Endpoint.Productive,
+      EndpointType.Testnet    => Endpoint.TestNet,
       _                       => throw new ArgumentOutOfRangeException(nameof(endpointType), endpointType, "Unsupported endpoint type")
     };
 
-    _client.Connected += OnServerConnected;
-    _client.Disconnected += OnServerDisconnected;
-    _client.RequestReceived += OnServerRequest;
+    _messageSource = messageSource ?? new DefaultJsonRpcMessageSource(logger);
+    _logger = logger;
+
     _subscriptionManager = new SubscriptionManager(this);
   }
 
   /// <summary>
-  ///   Connects to the server
+  ///   Connects to the endpoint.
   /// </summary>
-  public async Task Connect()
+  /// <returns>The task object representing the asynchronous operation.</returns>
+  public async Task Connect(CancellationToken cancellationToken = default)
   {
-    await _client.Connect();
+    await _messageSource.Connect(_endpointUri, cancellationToken).ConfigureAwait(false);
+
     AccessToken = null;
     RefreshToken = null;
     _subscriptionManager.Reset();
+
+    _processMessageStreamCts = new CancellationTokenSource();
+    _processMessageStreamTask = Task.Factory.StartNew(async () => await ProcessMessageStream(_processMessageStreamCts.Token).ConfigureAwait(false), TaskCreationOptions.LongRunning);
+
+    Connected?.Invoke(this, EventArgs.Empty);
   }
 
   /// <summary>
   ///   Disconnects from the server
   /// </summary>
-  public async Task Disconnect()
+  /// <returns>The task object representing the asynchronous operation.</returns>
+  public async Task Disconnect(CancellationToken cancellationToken = default)
   {
-    await _client.Disconnect();
+    if (_processMessageStreamTask is not null) {
+      _processMessageStreamCts.Cancel();
+      await Task.WhenAll(_processMessageStreamTask);
+    }
+
+    await _messageSource.Disconnect(null, null, cancellationToken).ConfigureAwait(false);
+
     AccessToken = null;
     RefreshToken = null;
+
+    Disconnected?.Invoke(this, new DeribitClientDisconnectedEventArgs(_messageSource.CloseStatus, _messageSource.CloseStatusDescription, _messageSource.Exception));
   }
 
   private async Task<JsonRpcResponse<T>> Send<T>(string method, object? @params, IJsonConverter<T> converter, CancellationToken cancellationToken = default)
   {
-    var response = await _client.Send(method, @params, cancellationToken).ConfigureAwait(false);
-    return response.CreateTyped(converter.Convert(response.Result));
+    var request = new JsonRpcRequest
+    {
+      Id = RequestIdGenerator.Next(),
+      Method = method,
+      Params = @params
+    };
+
+    _logger?.Verbose("Sending: {@Request}", request);
+
+    var taskSource = new TaskCompletionSource<JsonRpcResponse>();
+    _requestTaskSourceMap.Add(request, taskSource);
+
+    await _messageSource.Send(JsonConvert.SerializeObject(request, Formatting.None, SerializationSettings), cancellationToken).ConfigureAwait(false);
+    var response = await taskSource.Task.ConfigureAwait(false);
+    return response.CreateTyped(converter.Convert(response.Result)!);
   }
 
-  private void OnServerConnected(object? sender, EventArgs e)
+  private void SendSync(string method, object? @params)
   {
-    Connected?.Invoke(this, e);
+    var request = new JsonRpcRequest
+    {
+      Id = RequestIdGenerator.Next(),
+      Method = method,
+      Params = @params
+    };
+
+    _logger?.Verbose("Sending synchroneous: {@Request}", request);
+    _ = _messageSource.Send(JsonConvert.SerializeObject(request, Formatting.None, SerializationSettings), CancellationToken.None).ConfigureAwait(false);
   }
 
-  private void OnServerDisconnected(object? sender, JsonRpcDisconnectEventArgs e)
+  private async Task ProcessMessageStream(CancellationToken cancellationToken)
   {
-    Disconnected?.Invoke(this, e);
+    try {
+      await foreach (var message in _messageSource.GetMessageStream(cancellationToken).ConfigureAwait(false)) {
+        if (JsonConvert.DeserializeObject(message) is not JObject jObject)
+          continue;
+
+        if (jObject.TryGetValue("method", out _))
+          InternalOnRequestReceived(jObject);
+        else
+          InternalOnResponseReceived(message, jObject);
+      }
+    }
+    catch (TaskCanceledException) {
+      //ignore - just exit
+    }
+
+    if (_messageSource.Exception is not null)
+      await Disconnect(CancellationToken.None).ConfigureAwait(false);
   }
 
-  private void OnServerRequest(object? sender, JsonRpcRequest request)
+  private void InternalOnRequestReceived(JObject requestObject)
   {
+    var request = requestObject.ToObject<JsonRpcRequest>();
+    Debug.Assert(request != null, nameof(request) + " != null");
+    request!.Original = requestObject;
+
     if (string.Equals(request.Method, "subscription"))
-      OnNotification(request.Original.ToObject<Notification>()!);
+      Task.Run(() => OnNotification(request.Original.ToObject<Notification>()!)).ConfigureAwait(false);
     else if (string.Equals(request.Method, "heartbeat"))
-      OnHeartbeat(request.Original.ToObject<Heartbeat>()!);
+      Task.Run(() => OnHeartbeat(request.Original.ToObject<Heartbeat>()!)).ConfigureAwait(false);
     else
-      _logger.Warning("Unknown Server Request: {@Request}", request);
+      _logger?.Warning("Unknown Server Request: {@Request}", request);
+  }
+
+  private void InternalOnResponseReceived(string message, JObject responseObject)
+  {
+    var response = responseObject.ToObject<JsonRpcResponse>();
+    Debug.Assert(response != null, nameof(response) + " != null");
+    response!.Original = message;
+
+    if (response.Id > 0) {
+      if (!_requestTaskSourceMap.TryRemove(response.Id, out var request, out var taskSource)) {
+        _logger?.Error("Could not find request id {RequestId}", response.Id);
+        return;
+      }
+
+      if (response.Error != null)
+        taskSource!.SetException(new JsonRpcRequestException(request, response));
+      else
+        taskSource!.SetResult(response);
+    }
   }
 
   private void OnHeartbeat(Heartbeat heartbeat)
   {
-    if (_logger.IsEnabled(LogEventLevel.Debug))
-      _logger.Debug("OnHeartbeat: {@Heartbeat}", heartbeat);
+    _logger?.Debug("OnHeartbeat: {@Heartbeat}", heartbeat);
 
     if (heartbeat.Type == "test_request")
       _ = InternalPublicTest();
@@ -144,8 +231,7 @@ public partial class DeribitClient : IWebSocketStateInfo
 
   private void OnNotification(Notification notification)
   {
-    if (_logger.IsEnabled(LogEventLevel.Verbose))
-      _logger.Verbose("OnNotification: {@Notification}", notification);
+    _logger?.Verbose("OnNotification: {@Notification}", notification);
 
     const int retryDelay = 5;
     const int maxRetries = 10;
@@ -160,7 +246,7 @@ public partial class DeribitClient : IWebSocketStateInfo
         break;
 
       if (retryCount == 0 && (_logger?.IsEnabled(LogEventLevel.Debug) ?? false))
-        _logger.Debug("OnNotification: Could not find subscription for notification. Retrying up to {@maxRetries} times", maxRetries);
+        _logger?.Debug("OnNotification: Could not find subscription for notification. Retrying up to {@maxRetries} times", maxRetries);
 
       Thread.Sleep(retryDelay);
       retryCount++;
@@ -168,7 +254,7 @@ public partial class DeribitClient : IWebSocketStateInfo
 
     if (callbacks is not { Length: > 0 }) {
       if (_logger?.IsEnabled(LogEventLevel.Warning) ?? false)
-        _logger.Warning("OnNotification: Could not find subscription for notification: {@Notification}", notification);
+        _logger?.Warning("OnNotification: Could not find subscription for notification: {@Notification}", notification);
 
       return;
     }
@@ -178,8 +264,7 @@ public partial class DeribitClient : IWebSocketStateInfo
         Task.Run(() => callback(notification));
       }
       catch (Exception ex) {
-        if (_logger.IsEnabled(LogEventLevel.Error))
-          _logger.Error(ex, "OnNotification: Error during event callback call: {@Notification}", notification);
+        _logger?.Error(ex, "OnNotification: Error during event callback call: {@Notification}", notification);
       }
     }
   }
@@ -194,9 +279,6 @@ public partial class DeribitClient : IWebSocketStateInfo
     _ = Task.Delay(expireTimeSpan.Subtract(TimeSpan.FromSeconds(5))).ContinueWith(
       _ =>
       {
-        if (_client.State != WebSocketState.Open)
-          return;
-
         var result = ((IAuthenticationMethods)this).WithRefreshToken().GetAwaiter().GetResult();
         EnqueueAuthRefresh(result.ResultData.ExpiresIn);
       });

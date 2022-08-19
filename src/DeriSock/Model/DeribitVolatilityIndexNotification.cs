@@ -1,6 +1,7 @@
 ﻿namespace DeriSock.Model;
 
 using System;
+
 using Newtonsoft.Json;
 
 public class DeribitVolatilityIndexNotification
@@ -16,13 +17,13 @@ public class DeribitVolatilityIndexNotification
   /// </summary>
   [JsonProperty("price")]
   public decimal Price { get; set; }
-  
+
   /// <summary>
   ///   Current volatility
   /// </summary>
   [JsonProperty("volatility")]
   public decimal Volatility { get; set; }
-  
+
   /// <summary>
   ///   Estimated delivery price
   /// </summary>

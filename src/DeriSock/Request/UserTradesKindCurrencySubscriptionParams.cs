@@ -29,7 +29,5 @@ public class UserTradesKindCurrencySubscriptionParams : ISubscriptionChannel
   public string Interval { get; set; }
 
   public string ToChannelName()
-  {
-    return $"user.trades.{Kind}.{Currency}.{Interval}";
-  }
+    => $"user.trades.{Kind}.{Currency}.{Interval}";
 }

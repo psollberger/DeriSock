@@ -1,4 +1,4 @@
-namespace DeriSock.JsonRpc;
+namespace DeriSock.Net.JsonRpc;
 
 using System;
 
@@ -45,11 +45,9 @@ public class JsonRpcResponse
   public JsonRpcError? Error { get; set; }
 
   public JsonRpcResponse<T> CreateTyped<T>(T value)
-  {
-    return new JsonRpcResponse<T>(this, value);
-  }
+    => new JsonRpcResponse<T>(this, value);
 
-  #region Fields not part of the JSON-RPC standard
+#region Fields not part of the JSON-RPC standard
 
   [JsonProperty("testnet")]
   public bool Testnet { get; set; }
@@ -65,5 +63,5 @@ public class JsonRpcResponse
   [JsonProperty("usDiff")]
   public long UsDiff { get; set; }
 
-  #endregion
+#endregion
 }

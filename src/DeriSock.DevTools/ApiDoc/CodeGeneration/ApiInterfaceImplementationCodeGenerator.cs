@@ -84,7 +84,7 @@ internal class ApiInterfaceImplementationCodeGenerator : ApiDocCodeGenerator
     AddImport(CodeDomConst.ImportSystemThreading);
     AddImport(CodeDomConst.ImportSystemThreadingTasks);
     AddImport(CodeDomConst.ImportDeriSockApi);
-    AddImport(CodeDomConst.ImportDeriSockJsonRpc);
+    AddImport(CodeDomConst.ImportDeriSockNetJsonRpc);
     AddImport(CodeDomConst.ImportDeriSockModel);
     AddImport(CodeDomConst.ImportNewtonsoftJsonLinq);
 

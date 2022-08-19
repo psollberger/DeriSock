@@ -1,6 +1,7 @@
 ﻿namespace DeriSock.Model;
 
 using System;
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -70,12 +71,15 @@ public class BookChangeNotification
       throw new NotSupportedException();
     }
 
-    public override ActionItem ReadJson(
+    public override ActionItem ReadJson
+    (
       JsonReader reader, Type objectType,
       ActionItem existingValue, bool hasExistingValue,
-      JsonSerializer serializer)
+      JsonSerializer serializer
+    )
     {
       var arr = JArray.Load(reader);
+
       return new ActionItem
       {
         Action = arr[0].Value<string>(), Price = arr[1].Value<decimal>(), Amount = arr[2].Value<decimal>()

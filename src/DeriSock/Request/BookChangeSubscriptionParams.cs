@@ -14,7 +14,5 @@ public class BookChangeSubscriptionParams : ISubscriptionChannel
   public string Interval { get; set; }
 
   public string ToChannelName()
-  {
-    return $"book.{InstrumentName}.{Interval}";
-  }
+    => $"book.{InstrumentName}.{Interval}";
 }

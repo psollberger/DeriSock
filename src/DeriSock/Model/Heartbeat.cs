@@ -1,6 +1,7 @@
 ﻿namespace DeriSock.Model;
 
-using DeriSock.JsonRpc;
+using DeriSock.Net.JsonRpc;
+
 using Newtonsoft.Json;
 
 public class Heartbeat : JsonRpcRequest

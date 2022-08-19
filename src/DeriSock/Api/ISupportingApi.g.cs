@@ -12,10 +12,12 @@ namespace DeriSock.Api
 {
   using System.Threading;
   using System.Threading.Tasks;
-  using DeriSock.JsonRpc;
+  using DeriSock.Net.JsonRpc;
   using DeriSock.Model;
   using System;
-  
+
+  using DeriSock.Net.JsonRpc;
+
   [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
   public partial interface ISupportingApi
   {
@@ -24,26 +26,26 @@ namespace DeriSock.Api
     /// </summary>
     /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<DateTime>> PublicGetTime(CancellationToken cancellationToken = default(CancellationToken));
+    System.Threading.Tasks.Task<JsonRpcResponse<DateTime>> PublicGetTime(CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Method used to introduce the client software connected to Deribit platform over websocket. Provided data may have an impact on the maintained connection and will be collected for internal statistical purposes. In response, Deribit will also introduce itself.</para>
     /// </summary>
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<ServerVersionData>> PublicHello(PublicHelloRequest args, CancellationToken cancellationToken = default(CancellationToken));
+    System.Threading.Tasks.Task<JsonRpcResponse<ServerVersionData>> PublicHello(PublicHelloRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Method used to get information about locked currencies</para>
     /// </summary>
     /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<PlatformLockStatus>> PublicStatus(CancellationToken cancellationToken = default(CancellationToken));
+    System.Threading.Tasks.Task<JsonRpcResponse<PlatformLockStatus>> PublicStatus(CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Tests the connection to the API server, and returns its version. You can use this to make sure the API is reachable, and matches the expected version.</para>
     /// </summary>
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<ServerVersionData>> PublicTest(PublicTestRequest? args = null, CancellationToken cancellationToken = default(CancellationToken));
+    System.Threading.Tasks.Task<JsonRpcResponse<ServerVersionData>> PublicTest(PublicTestRequest? args = null, CancellationToken cancellationToken = default(CancellationToken));
   }
 }

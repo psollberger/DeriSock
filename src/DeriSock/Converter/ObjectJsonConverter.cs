@@ -1,4 +1,4 @@
-﻿namespace DeriSock.Converter;
+namespace DeriSock.Converter;
 
 using Newtonsoft.Json.Linq;
 
@@ -6,8 +6,11 @@ using Newtonsoft.Json.Linq;
 public class ObjectJsonConverter<T> : IJsonConverter<T>
 {
   /// <inheritdoc />
-  public T Convert(JToken value)
+  public T? Convert(JToken? value)
   {
+    if (value is null)
+      return default(T);
+
     return value.ToObject<T>();
   }
 }

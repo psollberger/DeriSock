@@ -13,6 +13,6 @@ internal static class DateTimeConstants
 #if NET5_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
   public static readonly DateTime UnixEpoch = DateTime.UnixEpoch;
 #else
-  public static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+  public static readonly DateTime UnixEpoch = new(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
 #endif
 }

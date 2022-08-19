@@ -21,7 +21,5 @@ public class UserOrdersInstrumentSubscriptionParams : ISubscriptionChannel
   public string Interval { get; set; }
 
   public string ToChannelName()
-  {
-    return $"user.orders.{InstrumentName}.{Interval}";
-  }
+    => $"user.orders.{InstrumentName}.{Interval}";
 }

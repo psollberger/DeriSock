@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 using DeriSock.DevTools.ApiDoc.Model;
 using DeriSock.DevTools.CodeDom;
-using DeriSock.JsonRpc;
+using DeriSock.Net.JsonRpc;
 
 internal abstract class ApiDocCodeGenerator : IDisposable, IAsyncDisposable
 {

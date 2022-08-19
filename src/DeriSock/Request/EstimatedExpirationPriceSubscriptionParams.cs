@@ -12,7 +12,5 @@ public class EstimatedExpirationPriceSubscriptionParams : ISubscriptionChannel
   public string IndexName { get; set; }
 
   public string ToChannelName()
-  {
-    return $"estimated_expiration_price.{IndexName}";
-  }
+    => $"estimated_expiration_price.{IndexName}";
 }

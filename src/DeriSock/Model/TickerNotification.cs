@@ -1,6 +1,7 @@
 namespace DeriSock.Model;
 
 using System;
+
 using Newtonsoft.Json;
 
 public class TickerNotification
@@ -159,14 +160,14 @@ public class TickerNotification
   /// </summary>
   [JsonProperty("underlying_price")]
   public decimal UnderlyingPrice { get; set; }
-  
+
   public InstrumentType InstrumentType => InstrumentName.GetInstrumentType();
 
   /// <summary>
   ///   Option type - Put / Call
   /// </summary>
   public OptionType OptionType => InstrumentName.GetOptionType();
-  
+
   /// <summary>
   ///   Expiry date of option contract
   /// </summary>
@@ -176,14 +177,12 @@ public class TickerNotification
   ///   Days until expiry of option contrat
   /// </summary>
   public double DaysToExpiry => ExpiryDate.ToTotalDaysFromNow();
-  
+
   /// <summary>
   ///   Strike price of option contract
   /// </summary>
   public decimal Strike => GetStrikePrice();
 
   private decimal GetStrikePrice()
-  {
-    return InstrumentType == InstrumentType.Option ? InstrumentName.GetStrikePrice() : 0;
-  }
+    => InstrumentType == InstrumentType.Option ? InstrumentName.GetStrikePrice() : 0;
 }

@@ -12,7 +12,5 @@ public class DeribitVolatilityIndexSubscriptionParams : ISubscriptionChannel
   public string IndexName { get; set; }
 
   public string ToChannelName()
-  {
-    return $"deribit_volatility_index.{IndexName}";
-  }
+    => $"deribit_volatility_index.{IndexName}";
 }

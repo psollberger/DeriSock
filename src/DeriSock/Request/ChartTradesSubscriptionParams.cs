@@ -21,7 +21,5 @@ public class ChartTradesSubscriptionParams : ISubscriptionChannel
   public string Resolution { get; set; }
 
   public string ToChannelName()
-  {
-    return $"chart.trades.{InstrumentName}.{Resolution}";
-  }
+    => $"chart.trades.{InstrumentName}.{Resolution}";
 }

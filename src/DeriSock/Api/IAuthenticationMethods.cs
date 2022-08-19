@@ -3,16 +3,20 @@ namespace DeriSock.Api;
 using System.Threading;
 using System.Threading.Tasks;
 
-using DeriSock.JsonRpc;
 using DeriSock.Model;
+using DeriSock.Net.JsonRpc;
 
 /// <summary>
-/// <para>Retrieve an Oauth access token, to be used for authentication of &apos;private&apos; requests.</para>
-/// <para>Three methods of authentication are supported:</para>
-/// <para>- <c>client_credentials</c> - using the access key and access secret that can be found on the API page on the website</para>
-/// <para>- <c>client_signature</c> - using the access key that can be found on the API page on the website and user generated signature. The signature is calculated using some fields provided in the request, using formula described here <a href="https://docs.deribit.com/#additional-authorization-method-signature-credentials-websocket-api">Deribit signature credentials</a></para>
-/// <para>- <c>refresh_token</c> - using a refresh token that was received from an earlier invocation</para>
-/// <para>The response will contain an access token, expiration period (number of seconds that the token is valid) and a refresh token that can be used to get a new set of tokens.</para>
+///   <para>Retrieve an Oauth access token, to be used for authentication of &apos;private&apos; requests.</para>
+///   <para>Three methods of authentication are supported:</para>
+///   <para>- <c>client_credentials</c> - using the access key and access secret that can be found on the API page on the website</para>
+///   <para>
+///     - <c>client_signature</c> - using the access key that can be found on the API page on the website and user generated signature. The signature is calculated using some
+///     fields provided in the request, using formula described here
+///     <a href="https://docs.deribit.com/#additional-authorization-method-signature-credentials-websocket-api">Deribit signature credentials</a>
+///   </para>
+///   <para>- <c>refresh_token</c> - using a refresh token that was received from an earlier invocation</para>
+///   <para>The response will contain an access token, expiration period (number of seconds that the token is valid) and a refresh token that can be used to get a new set of tokens.</para>
 /// </summary>
 public interface IAuthenticationMethods
 {

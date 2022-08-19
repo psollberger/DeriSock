@@ -1,7 +1,9 @@
-﻿namespace DeriSock.Constants;
+namespace DeriSock.Constants;
+
+using System;
 
 public static class Endpoint
 {
-  public const string Productive = "wss://www.deribit.com/ws/api/v2";
-  public const string TestNet = "wss://test.deribit.com/ws/api/v2";
+  public static readonly Uri Productive = new("wss://www.deribit.com/ws/api/v2");
+  public static readonly Uri TestNet = new("wss://test.deribit.com/ws/api/v2");
 }

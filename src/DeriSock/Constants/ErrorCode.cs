@@ -172,40 +172,33 @@ public sealed class ErrorCode
   public override bool Equals(object obj)
   {
     if (ReferenceEquals(null, obj))
-    {
       return false;
-    }
 
     if (ReferenceEquals(this, obj))
-    {
       return true;
-    }
 
-    switch (obj)
-    {
+    switch (obj) {
       case ErrorCode codeObj:
         return Code == codeObj.Code;
+
       case int codeInt:
         return Code == codeInt;
+
       default:
         return false;
     }
   }
 
   public override int GetHashCode()
-  {
-    return Code.GetHashCode();
-  }
+    => Code.GetHashCode();
 
   public static bool operator ==(ErrorCode a, int b)
-  {
+
     // ReSharper disable once SuspiciousTypeConversion.Global
-    return !ReferenceEquals(null, a) && a.Equals(b);
-  }
+    => !ReferenceEquals(null, a) && a.Equals(b);
 
   public static bool operator !=(ErrorCode a, int b)
-  {
+
     // ReSharper disable once SuspiciousTypeConversion.Global
-    return ReferenceEquals(null, a) || !a.Equals(b);
-  }
+    => ReferenceEquals(null, a) || !a.Equals(b);
 }

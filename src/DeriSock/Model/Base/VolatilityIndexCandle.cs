@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 public class VolatilityIndexCandle
 {
   /// <summary>
-  /// The Timestamp of the candle.
+  ///   The Timestamp of the candle.
   /// </summary>
   public DateTime Timestamp { get; set; }
 

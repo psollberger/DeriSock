@@ -4,8 +4,8 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using DeriSock.Converter;
-using DeriSock.JsonRpc;
 using DeriSock.Model;
+using DeriSock.Net.JsonRpc;
 
 using Newtonsoft.Json.Linq;
 

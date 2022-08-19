@@ -1,7 +1,5 @@
 namespace DeriSock.Model;
 
-using Newtonsoft.Json;
-
 public partial class Instrument
 {
   // REMEMBER: to activate this code again

@@ -1,4 +1,4 @@
-﻿namespace DeriSock.JsonRpc;
+namespace DeriSock.Net.JsonRpc;
 
 using System;
 

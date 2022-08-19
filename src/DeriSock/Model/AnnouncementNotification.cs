@@ -1,6 +1,7 @@
 ﻿namespace DeriSock.Model;
 
 using System;
+
 using Newtonsoft.Json;
 
 public class AnnouncementNotification

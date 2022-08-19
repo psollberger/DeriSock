@@ -2,7 +2,7 @@ namespace DeriSock.Model;
 
 using System;
 
-using DeriSock.JsonRpc;
+using DeriSock.Net.JsonRpc;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;

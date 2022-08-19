@@ -1,0 +1,11 @@
+﻿{
+  jsonrpc: 2.0,
+  id: 1,
+  result: {
+    version: 1.2.26
+  },
+  testnet: true,
+  usIn: 1535043730126248,
+  usOut: 1535043730126250,
+  usDiff: 2
+}

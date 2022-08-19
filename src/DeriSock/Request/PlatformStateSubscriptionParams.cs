@@ -3,7 +3,5 @@
 public class PlatformStateSubscriptionParams : ISubscriptionChannel
 {
   public string ToChannelName()
-  {
-    return "platform_state";
-  }
+    => "platform_state";
 }

@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 using DeriSock.Api;
 using DeriSock.Converter;
-using DeriSock.JsonRpc;
 using DeriSock.Model;
+using DeriSock.Net.JsonRpc;
 using DeriSock.Utils;
 
 public partial class DeribitClient : IAuthenticationMethods
@@ -15,7 +15,7 @@ public partial class DeribitClient : IAuthenticationMethods
   /// <inheritdoc />
   async Task<JsonRpcResponse<AuthTokenData>> IAuthenticationMethods.WithClientCredentials(string clientId, string clientSecret, string state, string scope, CancellationToken cancellationToken)
   {
-    _logger.Debug("Authenticate (client_credentials)");
+    _logger?.Debug("Authenticate (client_credentials)");
 
     if (!string.IsNullOrEmpty(AccessToken))
       throw new InvalidOperationException("Already authorized");
@@ -50,7 +50,7 @@ public partial class DeribitClient : IAuthenticationMethods
   /// <inheritdoc />
   async Task<JsonRpcResponse<AuthTokenData>> IAuthenticationMethods.WithClientSignature(string clientId, string clientSecret, string data, string state, string scope, CancellationToken cancellationToken)
   {
-    _logger.Debug("Authenticate (client_signature)");
+    _logger?.Debug("Authenticate (client_signature)");
 
     if (!string.IsNullOrEmpty(AccessToken))
       throw new InvalidOperationException("Already authorized");
@@ -90,7 +90,7 @@ public partial class DeribitClient : IAuthenticationMethods
   /// <inheritdoc />
   async Task<JsonRpcResponse<AuthTokenData>> IAuthenticationMethods.WithRefreshToken(string state, string scope, CancellationToken cancellationToken)
   {
-    _logger.Debug("Authenticate (refresh_token)");
+    _logger?.Debug("Authenticate (refresh_token)");
 
     if (string.IsNullOrEmpty(RefreshToken))
       throw new ArgumentNullException(nameof(RefreshToken));
@@ -116,28 +116,26 @@ public partial class DeribitClient : IAuthenticationMethods
   /// <inheritdoc cref="IAuthenticationApi.PublicExchangeToken" />
   private async Task<JsonRpcResponse<AuthTokenData>> InternalPublicExchangeToken(PublicExchangeTokenRequest args, CancellationToken cancellationToken = default)
   {
-    _logger.Debug("Exchanging token");
+    _logger?.Debug("Exchanging token");
     return await Send("public/exchange_token", args, new ObjectJsonConverter<AuthTokenData>(), cancellationToken).ConfigureAwait(false);
   }
 
   /// <inheritdoc cref="IAuthenticationApi.PublicForkToken" />
   private async Task<JsonRpcResponse<AuthTokenData>> InternalPublicForkToken(PublicForkTokenRequest args, CancellationToken cancellationToken = default)
   {
-    _logger.Debug("Forking token");
+    _logger?.Debug("Forking token");
     return await Send("public/fork_token", args, new ObjectJsonConverter<AuthTokenData>(), cancellationToken).ConfigureAwait(false);
   }
 
   /// <inheritdoc cref="IAuthenticationApi.PrivateLogout" />
   private void InternalPrivateLogout(PrivateLogoutRequest? args)
   {
-    _logger.Debug("Logging out");
+    _logger?.Debug("Logging out");
 
     if (string.IsNullOrEmpty(AccessToken))
       return;
 
-    //TODO: check if logout works without access_token being sent
-    //_client.SendLogout("private/logout", new {access_token = AccessToken});
-    _client.SendLogoutSync("private/logout", args);
+    SendSync("private/logout", args);
 
     AccessToken = null;
     RefreshToken = null;

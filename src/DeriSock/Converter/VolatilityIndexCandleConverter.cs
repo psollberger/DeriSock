@@ -23,7 +23,7 @@ public class VolatilityIndexCandleConverter : JsonConverter<VolatilityIndexCandl
     writer.WriteValue(value.High);
     writer.WriteValue(value.Low);
     writer.WriteValue(value.Close);
-    writer.WriteEndArray();    
+    writer.WriteEndArray();
   }
 
   /// <inheritdoc />

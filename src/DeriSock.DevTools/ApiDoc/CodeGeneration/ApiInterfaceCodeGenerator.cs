@@ -81,7 +81,7 @@ internal class ApiInterfaceCodeGenerator : ApiDocCodeGenerator
   {
     AddImport(CodeDomConst.ImportSystemThreading);
     AddImport(CodeDomConst.ImportSystemThreadingTasks);
-    AddImport(CodeDomConst.ImportDeriSockJsonRpc);
+    AddImport(CodeDomConst.ImportDeriSockNetJsonRpc);
     AddImport(CodeDomConst.ImportDeriSockModel);
 
     var domType = new CodeTypeDeclaration(typeName)
@@ -160,7 +160,7 @@ internal class ApiInterfaceCodeGenerator : ApiDocCodeGenerator
   private void BeginSummary(string typeName)
   {
     AddImport(CodeDomConst.ImportSystemThreadingTasks);
-    AddImport(CodeDomConst.ImportDeriSockJsonRpc);
+    AddImport(CodeDomConst.ImportDeriSockNetJsonRpc);
     AddImport(CodeDomConst.ImportDeriSockModel);
 
     _objSummary = new CodeTypeDeclaration(typeName)

@@ -14,8 +14,10 @@ namespace DeriSock
   using System.Threading;
   using System.Threading.Tasks;
   using DeriSock.Api;
-  using DeriSock.JsonRpc;
+  using DeriSock.Net.JsonRpc;
   using DeriSock.Model;
+  using DeriSock.Net.JsonRpc;
+
   using Newtonsoft.Json.Linq;
   
   public partial class DeribitClient
@@ -30,61 +32,61 @@ namespace DeriSock
       }
       /// <inheritdoc cref="IWalletApi.PrivateCancelTransferById" />
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<UserTransfer>> IWalletApi.PrivateCancelTransferById(PrivateCancelTransferByIdRequest args, CancellationToken cancellationToken)
+      System.Threading.Tasks.Task<JsonRpcResponse<UserTransfer>> IWalletApi.PrivateCancelTransferById(PrivateCancelTransferByIdRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPrivateCancelTransferById(args, cancellationToken);
       }
       /// <inheritdoc cref="IWalletApi.PrivateCancelWithdrawal" />
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<Withdrawal>> IWalletApi.PrivateCancelWithdrawal(PrivateCancelWithdrawalRequest args, CancellationToken cancellationToken)
+      System.Threading.Tasks.Task<JsonRpcResponse<Withdrawal>> IWalletApi.PrivateCancelWithdrawal(PrivateCancelWithdrawalRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPrivateCancelWithdrawal(args, cancellationToken);
       }
       /// <inheritdoc cref="IWalletApi.PrivateCreateDepositAddress" />
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<DepositAddress>> IWalletApi.PrivateCreateDepositAddress(PrivateCreateDepositAddressRequest args, CancellationToken cancellationToken)
+      System.Threading.Tasks.Task<JsonRpcResponse<DepositAddress>> IWalletApi.PrivateCreateDepositAddress(PrivateCreateDepositAddressRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPrivateCreateDepositAddress(args, cancellationToken);
       }
       /// <inheritdoc cref="IWalletApi.PrivateGetCurrentDepositAddress" />
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<DepositAddress>> IWalletApi.PrivateGetCurrentDepositAddress(PrivateGetCurrentDepositAddressRequest args, CancellationToken cancellationToken)
+      System.Threading.Tasks.Task<JsonRpcResponse<DepositAddress>> IWalletApi.PrivateGetCurrentDepositAddress(PrivateGetCurrentDepositAddressRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPrivateGetCurrentDepositAddress(args, cancellationToken);
       }
       /// <inheritdoc cref="IWalletApi.PrivateGetDeposits" />
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<Deposits>> IWalletApi.PrivateGetDeposits(PrivateGetDepositsRequest args, CancellationToken cancellationToken)
+      System.Threading.Tasks.Task<JsonRpcResponse<Deposits>> IWalletApi.PrivateGetDeposits(PrivateGetDepositsRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPrivateGetDeposits(args, cancellationToken);
       }
       /// <inheritdoc cref="IWalletApi.PrivateGetTransfers" />
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<UserTransfers>> IWalletApi.PrivateGetTransfers(PrivateGetTransfersRequest args, CancellationToken cancellationToken)
+      System.Threading.Tasks.Task<JsonRpcResponse<UserTransfers>> IWalletApi.PrivateGetTransfers(PrivateGetTransfersRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPrivateGetTransfers(args, cancellationToken);
       }
       /// <inheritdoc cref="IWalletApi.PrivateGetWithdrawals" />
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<Withdrawals>> IWalletApi.PrivateGetWithdrawals(PrivateGetWithdrawalsRequest args, CancellationToken cancellationToken)
+      System.Threading.Tasks.Task<JsonRpcResponse<Withdrawals>> IWalletApi.PrivateGetWithdrawals(PrivateGetWithdrawalsRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPrivateGetWithdrawals(args, cancellationToken);
       }
       /// <inheritdoc cref="IWalletApi.PrivateSubmitTransferToSubaccount" />
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<UserTransfer>> IWalletApi.PrivateSubmitTransferToSubaccount(PrivateSubmitTransferToSubaccountRequest args, CancellationToken cancellationToken)
+      System.Threading.Tasks.Task<JsonRpcResponse<UserTransfer>> IWalletApi.PrivateSubmitTransferToSubaccount(PrivateSubmitTransferToSubaccountRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPrivateSubmitTransferToSubaccount(args, cancellationToken);
       }
       /// <inheritdoc cref="IWalletApi.PrivateSubmitTransferToUser" />
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<UserTransfer>> IWalletApi.PrivateSubmitTransferToUser(PrivateSubmitTransferToUserRequest args, CancellationToken cancellationToken)
+      System.Threading.Tasks.Task<JsonRpcResponse<UserTransfer>> IWalletApi.PrivateSubmitTransferToUser(PrivateSubmitTransferToUserRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPrivateSubmitTransferToUser(args, cancellationToken);
       }
       /// <inheritdoc cref="IWalletApi.PrivateWithdraw" />
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<Withdrawal>> IWalletApi.PrivateWithdraw(PrivateWithdrawRequest args, CancellationToken cancellationToken)
+      System.Threading.Tasks.Task<JsonRpcResponse<Withdrawal>> IWalletApi.PrivateWithdraw(PrivateWithdrawRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPrivateWithdraw(args, cancellationToken);
       }

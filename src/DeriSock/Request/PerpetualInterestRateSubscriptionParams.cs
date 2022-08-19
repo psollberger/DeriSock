@@ -18,7 +18,5 @@ public class PerpetualInterestRateSubscriptionParams : ISubscriptionChannel
   public string Interval { get; set; }
 
   public string ToChannelName()
-  {
-    return $"perpetual.{InstrumentName}.{Interval}";
-  }
+    => $"perpetual.{InstrumentName}.{Interval}";
 }

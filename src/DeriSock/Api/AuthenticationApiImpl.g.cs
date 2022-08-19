@@ -14,8 +14,10 @@ namespace DeriSock
   using System.Threading;
   using System.Threading.Tasks;
   using DeriSock.Api;
-  using DeriSock.JsonRpc;
+  using DeriSock.Net.JsonRpc;
   using DeriSock.Model;
+  using DeriSock.Net.JsonRpc;
+
   using Newtonsoft.Json.Linq;
   
   public partial class DeribitClient
@@ -30,13 +32,13 @@ namespace DeriSock
       }
       /// <inheritdoc cref="IAuthenticationApi.PublicExchangeToken" />
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<AuthTokenData>> IAuthenticationApi.PublicExchangeToken(PublicExchangeTokenRequest args, CancellationToken cancellationToken)
+      System.Threading.Tasks.Task<JsonRpcResponse<AuthTokenData>> IAuthenticationApi.PublicExchangeToken(PublicExchangeTokenRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPublicExchangeToken(args, cancellationToken);
       }
       /// <inheritdoc cref="IAuthenticationApi.PublicForkToken" />
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<AuthTokenData>> IAuthenticationApi.PublicForkToken(PublicForkTokenRequest args, CancellationToken cancellationToken)
+      System.Threading.Tasks.Task<JsonRpcResponse<AuthTokenData>> IAuthenticationApi.PublicForkToken(PublicForkTokenRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPublicForkToken(args, cancellationToken);
       }

@@ -29,7 +29,5 @@ public class UserChangesKindCurrencySubscriptionParams : ISubscriptionChannel
   public string Interval { get; set; }
 
   public string ToChannelName()
-  {
-    return $"user.changes.{Kind}.{Currency}.{Interval}";
-  }
+    => $"user.changes.{Kind}.{Currency}.{Interval}";
 }

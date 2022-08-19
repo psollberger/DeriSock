@@ -1,4 +1,4 @@
-﻿namespace DeriSock.Converter;
+namespace DeriSock.Converter;
 
 using Newtonsoft.Json.Linq;
 
@@ -13,5 +13,5 @@ public interface IJsonConverter<out T>
   /// </summary>
   /// <param name="value">The json value that needs to be converted</param>
   /// <returns>The result from the conversion as the target .Net type</returns>
-  T Convert(JToken value);
+  T? Convert(JToken? value);
 }

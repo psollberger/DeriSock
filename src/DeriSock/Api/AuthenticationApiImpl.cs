@@ -12,4 +12,5 @@ public partial class DeribitClient
       => _client;
   }
 }
+
 // end-snippet

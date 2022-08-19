@@ -21,7 +21,5 @@ public class TickerSubscriptionParams : ISubscriptionChannel
   public string Interval { get; set; }
 
   public string ToChannelName()
-  {
-    return $"ticker.{InstrumentName}.{Interval}";
-  }
+    => $"ticker.{InstrumentName}.{Interval}";
 }

@@ -21,7 +21,5 @@ public class TradesInstrumentSubscriptionParams : ISubscriptionChannel
   public string Interval { get; set; }
 
   public string ToChannelName()
-  {
-    return $"trades.{InstrumentName}.{Interval}";
-  }
+    => $"trades.{InstrumentName}.{Interval}";
 }

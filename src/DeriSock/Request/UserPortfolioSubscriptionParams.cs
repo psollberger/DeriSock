@@ -11,7 +11,5 @@ public class UserPortfolioSubscriptionParams : ISubscriptionChannel
   public string Currency { get; set; }
 
   public string ToChannelName()
-  {
-    return $"user.portfolio.{Currency}".ToLower();
-  }
+    => $"user.portfolio.{Currency}".ToLower();
 }

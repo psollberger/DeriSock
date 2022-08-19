@@ -12,7 +12,5 @@ public class MarkPriceOptionsSubscriptionParams : ISubscriptionChannel
   public string IndexName { get; set; }
 
   public string ToChannelName()
-  {
-    return $"markprice.options.{IndexName}";
-  }
+    => $"markprice.options.{IndexName}";
 }
