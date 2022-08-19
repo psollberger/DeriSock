@@ -35,7 +35,7 @@ public class ApiDocHtmlParser
     parser.ParseSubscriptions();
 
     var apiDoc = new ApiDocDocument(parser._version, parser._methods, parser._subscriptions);
-    apiDoc.UpdateParent();
+    apiDoc.UpdateRelations();
 
     return apiDoc;
   }

@@ -16,6 +16,9 @@ public class ApiDocProperty : IApiDocPropertyNode
   [JsonIgnore]
   public IApiDocPropertyNode? Parent { get; private set; }
 
+  [JsonIgnore]
+  public ApiDocFunctionType FunctionType { get; set; } = ApiDocFunctionType.Undefined;
+
   /// <summary>
   ///   <para>
   ///     The name of the parameter or response property.
@@ -142,14 +145,17 @@ public class ApiDocProperty : IApiDocPropertyNode
         value.Accept(visitor);
   }
 
-  public void UpdateParent(IApiDocPropertyNode? parent)
+  public void UpdateRelations(IApiDocPropertyNode? parent)
   {
     Parent = parent;
+
+    if (Parent != null)
+      FunctionType = Parent.FunctionType;
 
     if (Properties != null)
       foreach (var (key, value) in Properties) {
         value.Name = key;
-        value.UpdateParent(this);
+        value.UpdateRelations(this);
       }
   }
 

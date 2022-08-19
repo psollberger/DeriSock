@@ -64,7 +64,7 @@ public static class ApiDocUtils
     if (apiDoc is null)
       throw new Exception("API Doc deserialization failed");
 
-    apiDoc.UpdateParent();
+    apiDoc.UpdateRelations();
 
     return apiDoc;
   }
@@ -158,7 +158,7 @@ public static class ApiDocUtils
 
       itw.WriteLine("\"methods\": [");
       itw.Indent++;
-      var methods = group.Where(x => x.GetRootParent()!.FunctionType == ApiDocFunctionType.Method).ToArray();
+      var methods = group.Where(x => x.FunctionType == ApiDocFunctionType.Method).ToArray();
 
       if (methods.Length > 0) {
         var lastEntry = methods[^1];
@@ -174,7 +174,7 @@ public static class ApiDocUtils
 
       itw.WriteLine("\"subscriptions\": [");
       itw.Indent++;
-      var subscriptions = group.Where(x => x.GetRootParent()!.FunctionType == ApiDocFunctionType.Subscription).ToArray();
+      var subscriptions = group.Where(x => x.FunctionType == ApiDocFunctionType.Subscription).ToArray();
 
       if (subscriptions.Length > 0) {
         var lastEntry = subscriptions[^1];
@@ -352,12 +352,12 @@ public static class ApiDocUtils
         }
       }
 
-      var methods = builder.PropertiesPerHash[propertyHash].Where(x => x.GetRootParent()?.FunctionType == ApiDocFunctionType.Method).Select(x => x.GetPath()).ToArray();
+      var methods = builder.PropertiesPerHash[propertyHash].Where(x => x.FunctionType == ApiDocFunctionType.Method).Select(x => x.GetPath()).ToArray();
 
       if (methods.Length > 0)
         newEntry.MethodPaths = methods;
 
-      var subscriptions = builder.PropertiesPerHash[propertyHash].Where(x => x.GetRootParent()?.FunctionType == ApiDocFunctionType.Subscription).Select(x => x.GetPath()).ToArray();
+      var subscriptions = builder.PropertiesPerHash[propertyHash].Where(x => x.FunctionType == ApiDocFunctionType.Subscription).Select(x => x.GetPath()).ToArray();
 
       if (subscriptions.Length > 0)
         newEntry.SubscriptionPaths = subscriptions;

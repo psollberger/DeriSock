@@ -129,16 +129,16 @@ public class ApiDocFunction : IApiDocPropertyNode
     Response?.Accept(visitor);
   }
 
-  public void UpdateParent(IApiDocPropertyNode? parent)
+  public void UpdateRelations(IApiDocPropertyNode? parent)
   {
     if (Request != null) {
       Request.Name = "request";
-      Request.UpdateParent(this);
+      Request.UpdateRelations(this);
     }
 
     if (Response != null) {
       Response.Name = "response";
-      Response.UpdateParent(this);
+      Response.UpdateRelations(this);
     }
   }
 }

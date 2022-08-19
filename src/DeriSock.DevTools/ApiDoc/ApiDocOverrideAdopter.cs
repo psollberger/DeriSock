@@ -44,7 +44,7 @@ public class ApiDocOverrideAdopter
     foreach (var overrideFileName in overrideFileNames)
       await adopter.AdoptFromFileAsync(overrideFileName, cancellationToken).ConfigureAwait(false);
 
-    apiDoc.UpdateParent();
+    apiDoc.UpdateRelations();
   }
 
   public async Task AdoptFromFileAsync(string overrideFilePath, CancellationToken cancellationToken = default)

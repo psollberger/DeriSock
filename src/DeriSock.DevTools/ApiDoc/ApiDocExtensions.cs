@@ -24,14 +24,6 @@ public static class ApiDocExtensions
     return sb.ToString();
   }
 
-  public static ApiDocFunction? GetRootParent(this IApiDocPropertyNode node)
-  {
-    while (node.Parent != null)
-      node = node.Parent;
-
-    return node as ApiDocFunction;
-  }
-
   public static (bool isMethod, string[] pathParts) ToApiDocParts(this string path)
   {
     var isMethod = path.Contains('/');
