@@ -1,6 +1,6 @@
 # DeriSock
 
-This is a Deribit API v2.0.0 C# .Net Core Client Library
+This is a Deribit API C# .Net Core Client Library
 
 ## What is this for?
 
@@ -16,7 +16,7 @@ Usage is quite simple. To obtain the current best bid price you simply do the fo
 var client = new DeribitClient(EndpointType.Testnet);
 await client.Connect();
 
-var response = await client.PublicGetOrderBook("BTC-PERPETUAL");
+var response = await client.Public.GetOrderBook("BTC-PERPETUAL");
 var bestBidPrice = response.ResultData.BestBidPrice;
 
 await client.Disconnect();
@@ -29,7 +29,7 @@ The library supports authentication via credentials and signature
 ### Authentication using Credentials
 
 ```csharp
-var authInfo = await client.PublicLogin()
+var authInfo = await client.Authentication.PublicLogin()
                  .WithClientCredentials("<client id", "<client secret>",
                                         "<optional state>", "<optional scope>");
 ```
@@ -37,7 +37,7 @@ var authInfo = await client.PublicLogin()
 ### Authentication using Signature
 
 ```csharp
-var authInfo = await client.PublicLogin()
+var authInfo = await client.Authentication.PublicLogin()
                  .WithClientSignature("<client id", "<client secret>", "<optional data>",
                                       "<optional state>", "<optional scope>");
 ```
@@ -47,7 +47,7 @@ var authInfo = await client.PublicLogin()
 When authenticated, you can logout like this (this is the only synchroneous method):
 
 ```csharp
-client.PrivateLogout();
+client.Authentication.PrivateLogout();
 ```
 
 **Note:** The server will automatically close the connection when you logout

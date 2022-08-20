@@ -1,5 +1,6 @@
 namespace DeriSock.Api;
 
+using System.Threading;
 using System.Threading.Tasks;
 
 using DeriSock.JsonRpc;
@@ -22,8 +23,9 @@ public interface IAuthenticationMethods
   /// <param name="clientSecret">The clients access secret.</param>
   /// <param name="state">Will be passed back in the response.</param>
   /// <param name="scope">Describes type of the access for assigned token.</param>
+  /// <param name="cancellationToken"></param>
   /// <returns></returns>
-  public Task<JsonRpcResponse<PublicAuthResponse>> WithClientCredentials(string clientId, string clientSecret, string state = "", string scope = "");
+  public Task<JsonRpcResponse<AuthTokenData>> WithClientCredentials(string clientId, string clientSecret, string state = "", string scope = "", CancellationToken cancellationToken = default);
 
   /// <summary>
   ///   Using the access key that can be found on the API page on the website and user generated signature.
@@ -33,15 +35,16 @@ public interface IAuthenticationMethods
   /// <param name="data">Optional: Contains any user specific value.</param>
   /// <param name="state">Will be passed back in the response.</param>
   /// <param name="scope">Describes type of the access for assigned token.</param>
+  /// <param name="cancellationToken"></param>
   /// <returns></returns>
-  public Task<JsonRpcResponse<PublicAuthResponse>> WithClientSignature(string clientId, string clientSecret, string data = "", string state = "", string scope = "");
+  public Task<JsonRpcResponse<AuthTokenData>> WithClientSignature(string clientId, string clientSecret, string data = "", string state = "", string scope = "", CancellationToken cancellationToken = default);
 
   /// <summary>
   ///   Using a refresh token that was received earlier.
   /// </summary>
-  /// <param name="refreshToken">The refresh token to be used.</param>
   /// <param name="state">Will be passed back in the response.</param>
   /// <param name="scope">Describes type of the access for assigned token.</param>
+  /// <param name="cancellationToken"></param>
   /// <returns></returns>
-  public Task<JsonRpcResponse<PublicAuthResponse>> WithRefreshToken(string state = "", string scope = "");
+  public Task<JsonRpcResponse<AuthTokenData>> WithRefreshToken(string state = "", string scope = "", CancellationToken cancellationToken = default);
 }

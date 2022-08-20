@@ -1,8 +1,8 @@
-﻿namespace DeriSock.Utils;
+namespace DeriSock.Utils;
 
 using System.Threading;
 
-public class RequestIdGenerator
+internal class RequestIdGenerator
 {
   private readonly object _idLock = new();
   private volatile int _lastId;

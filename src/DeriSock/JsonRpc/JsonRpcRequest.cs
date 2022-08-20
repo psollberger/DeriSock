@@ -15,8 +15,8 @@ public class JsonRpcRequest
   public int Id { get; set; }
 
   [JsonProperty("method")]
-  public string Method { get; set; }
+  public string Method { get; set; } = string.Empty;
 
   [JsonProperty("params")]
-  public object Params { get; set; }
+  public object? Params { get; set; }
 }

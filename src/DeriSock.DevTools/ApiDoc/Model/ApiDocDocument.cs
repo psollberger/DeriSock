@@ -44,18 +44,18 @@ public class ApiDocDocument
       value.Accept(visitor);
   }
 
-  internal void UpdateParent()
+  internal void UpdateRelations()
   {
     foreach (var (key, value) in Methods) {
       value.Name = key;
       value.FunctionType = ApiDocFunctionType.Method;
-      value.UpdateParent(null!);
+      value.UpdateRelations(null!);
     }
 
     foreach (var (key, value) in Subscriptions) {
       value.Name = key;
       value.FunctionType = ApiDocFunctionType.Subscription;
-      value.UpdateParent(null!);
+      value.UpdateRelations(null!);
     }
   }
 

@@ -1,4 +1,4 @@
-﻿namespace DeriSock.Model;
+namespace DeriSock.Model;
 
 using System;
 using Newtonsoft.Json;
@@ -63,7 +63,7 @@ public class TickerNotification
   ///   greeks
   /// </summary>
   [JsonProperty("greeks")]
-  public Greeks Greeks { get; set; }
+  public Greeks? Greeks { get; set; }
 
   /// <summary>
   ///   Current index price
@@ -170,12 +170,12 @@ public class TickerNotification
   /// <summary>
   ///   Expiry date of option contract
   /// </summary>
-  public DateTime ExpiryDate => InstrumentName.GetExpiryDate();
+  public DateTime ExpiryDate => InstrumentName.ToInstrumentExpiration();
 
   /// <summary>
   ///   Days until expiry of option contrat
   /// </summary>
-  public double DaysToExpiry => GetDaysToExpiry();
+  public double DaysToExpiry => ExpiryDate.ToTotalDaysFromNow();
   
   /// <summary>
   ///   Strike price of option contract
@@ -185,10 +185,5 @@ public class TickerNotification
   private decimal GetStrikePrice()
   {
     return InstrumentType == InstrumentType.Option ? InstrumentName.GetStrikePrice() : 0;
-  }
-
-  private double GetDaysToExpiry()
-  {
-    return HelperExtensions.GetDaysToExpiry(ExpiryDate.ToUniversalTime(), DateTimeOffset.UtcNow);
   }
 }

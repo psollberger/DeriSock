@@ -1,0 +1,300 @@
+﻿{
+  "methods": {
+    "public/auth": {
+      "excludeInInterface": true,
+      "request": {
+        "properties": {
+          ".+": {
+            "required": false
+          }
+        }
+      },
+      "response": {
+        "properties": {
+          "state": {
+            "required": false
+          }
+        }
+      }
+    },
+    "^public/(exchange_token|fork_token)$": {
+      "response": {
+        "properties": {
+          "state": {
+            "insertBefore": "token_type",
+            "description": "Copied from the input (only for /public/auth and only if applicable)",
+            "required": false,
+            "apiDataType": "string",
+            "dataType": "string"
+          }
+        }
+      }
+    },
+    "private/logout": {
+      "isSynchronous": true
+    },
+    "public/test": {
+      "request": {
+        "properties": {
+          "expected_result": {
+            "enumValues": [ "", "exception" ]
+          }
+        }
+      }
+    },
+    "[^/]+/subscribe": {
+      "request": {
+        "properties": {
+          "channels": {
+            "arrayDataType": "string"
+          }
+        }
+      }
+    },
+    "[^/]+/unsubscribe": {
+      "request": {
+        "properties": {
+          "channels": {
+            "arrayDataType": "string"
+          }
+        }
+      }
+    },
+    "^(public|private)/(subscribe|unsubscribe)(_all)?$": {
+      "excludeInInterface": true
+    },
+    "public/get_announcements": {
+      "request": {
+        "properties": {
+          "count": {
+            "defaultValue": 5
+          }
+        }
+      }
+    },
+    "private/change_api_key_name": {
+      "request": {
+        "properties": {
+          "name": {
+            "maxLength": 16
+          }
+        }
+      }
+    },
+    "private/create_api_key": {
+      "request": {
+        "properties": {
+          "name": {
+            "maxLength": 16
+          }
+        }
+      }
+    },
+    "private/get_positions": {
+      "request": {
+        "properties": {
+          "currency": {
+            "description": "The currency symbol"
+          }
+        }
+      }
+    },
+    "private/buy": {
+      "request": {
+        "properties": {
+          "label": {
+            "maxLength": 64
+          },
+          "time_in_force": {
+            "defaultValue": "good_til_cancelled"
+          }
+        }
+      }
+    },
+    "private/sell": {
+      "request": {
+        "properties": {
+          "label": {
+            "maxLength": 64
+          },
+          "time_in_force": {
+            "defaultValue": "good_til_cancelled"
+          }
+        }
+      }
+    },
+    "private/edit_by_label": {
+      "request": {
+        "properties": {
+          "label": {
+            "maxLength": 64
+          }
+        }
+      }
+    },
+    "private/cancel_by_label": {
+      "request": {
+        "properties": {
+          "label": {
+            "maxLength": 64
+          }
+        }
+      }
+    },
+    "private/get_order_margin_by_ids": {
+      "request": {
+        "properties": {
+          "ids": {
+            "arrayDataType": "string"
+          }
+        }
+      }
+    },
+    "public/status": {
+      "response": {
+        "properties": {
+          "locked_currencies": {
+            "arrayDataType": "string"
+          }
+        }
+      }
+    },
+    "public/get_mark_price_history": {
+      "response": {
+        "type": "array",
+        "arrayDataType": "[timestamp, value]"
+      }
+    },
+    "private/get_subaccounts_details": {
+      "response": {
+        "properties": {
+          "open_orders": {
+            "required": false
+          },
+          "positions": {
+            "properties": {
+              "estimated_liquidation_price": {
+                "insertBefore": "floating_profit_loss",
+                "description": "Estimated liquidation price, added only for futures, for non portfolio margining users",
+                "apiDataType": "number",
+                "dataType": "number"
+              }
+            }
+          }
+        }
+      }
+    },
+    "public/get_index_price": {
+      "request": {
+        "properties": {
+          "index_name": {
+            "enumIsSuggestion": true,
+            "valueLookupSource": "public/get_index_price_names"
+          }
+        }
+      }
+    },
+    "^(public|private)/get_portfolio_margins$": {
+      "request": {
+        "properties": {
+          "simulated_positions": {
+            "dataType": "SimulatedPositions"
+          }
+        }
+      },
+      "response": {
+        "dataType": "JObject"
+      }
+    },
+    "private/get_transaction_log": {
+      "response": {
+        "properties": {
+          "logs": {
+            "properties": {
+              "info": {
+                "dataType": "JObject"
+              }
+            }
+          }
+        }
+      }
+    },
+    "private/get_subaccounts": {
+      "response": {
+        "properties": {
+          "security_keys_assignments": {
+            "arrayDataType": "string"
+          }
+        }
+      }
+    },
+    "public/get_volatility_index_data": {
+      "response": {
+        "properties": {
+          "data": {
+            "arrayDataType": "VolatilityIndexCandle"
+          }
+        }
+      }
+    },
+    "public/get_instrument": {
+      "resonse": {
+        "dataType": "Instrument"
+      }
+    },
+    "public/get_positions": {
+      "response": {
+        "arrayDataType": "UserPosition"
+      }
+    },
+    "private/get_affiliate_program_info": {
+      "description": "Retrieves user's affiliates count, payouts and link."
+    }
+  },
+  "subscriptions": {
+    "user.portfolio.{currency}": {
+      "response": {
+        "properties": {
+          "delta_total_map": {
+            "dataType": "JObject"
+          },
+          "estimated_liquidation_ratio_map": {
+            "dataType": "JObject"
+          }
+        }
+      }
+    },
+    "user.changes.{instrument_name}.{interval}": {
+      "response": {
+        "properties": {
+          "position": {
+            "properties": {
+              "estimated_liquidation_price": {
+                "insertBefore": "floating_profit_loss",
+                "description": "Estimated liquidation price, added only for futures, for non portfolio margining users",
+                "apiDataType": "number",
+                "dataType": "number"
+              }
+            }
+          }
+        }
+      }
+    },
+    "user.changes.{kind}.{currency}.{interval}": {
+      "response": {
+        "properties": {
+          "position": {
+            "properties": {
+              "estimated_liquidation_price": {
+                "insertBefore": "floating_profit_loss",
+                "description": "Estimated liquidation price, added only for futures, for non portfolio margining users",
+                "apiDataType": "number",
+                "dataType": "number"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -2,6 +2,8 @@ namespace DeriSock.DevTools.ApiDoc.Model;
 
 using System.Text.Json.Serialization;
 
+using DeriSock.DevTools.CodeDom;
+
 public enum ApiDocFunctionType
 {
   Undefined, Method, Subscription
@@ -83,6 +85,43 @@ public class ApiDocFunction : IApiDocPropertyNode
     set { }
   }
 
+  public DataTypeInfo? GetRequestTypeInfo()
+  {
+    if (Request is null)
+      return null;
+
+    var dataTypeInfo = Request.GetDataTypeInfo();
+    if (dataTypeInfo is null or { TypeName: null } or { TypeName: "" } or {TypeName: "object"})
+      return new DataTypeInfo($"{Name.ToPublicCodeName()}Request", false, !Request.IsAnyPropertyRequired);
+
+    dataTypeInfo.IsImported = true;
+    dataTypeInfo.IsNullable = !Request.IsAnyPropertyRequired;
+    return dataTypeInfo;
+  }
+
+  public DataTypeInfo? GetResponseTypeInfo()
+  {
+    if (Response is null)
+      return null;
+
+    var dataTypeInfo = Response.GetDataTypeInfo();
+
+    if (dataTypeInfo is null or { TypeName: null } or { TypeName: "" } or { TypeName: "object" })
+      return new DataTypeInfo($"{Name.ToPublicCodeName()}Response", false, !Response.IsAnyPropertyRequired);
+
+    dataTypeInfo.IsImported = true;
+    dataTypeInfo.IsNullable = !Response.IsAnyPropertyRequired;
+    return dataTypeInfo;
+  }
+
+  public string ToInterfaceMethodName(bool removeScope)
+  {
+    if (removeScope)
+      return Name[(Name.IndexOf('/') + 1)..].ToPublicCodeName();
+
+    return Name.ToPublicCodeName();
+  }
+
   public void Accept(IApiDocDocumentVisitor visitor)
   {
     visitor.VisitFunction(this);
@@ -90,16 +129,16 @@ public class ApiDocFunction : IApiDocPropertyNode
     Response?.Accept(visitor);
   }
 
-  public void UpdateParent(IApiDocPropertyNode? parent)
+  public void UpdateRelations(IApiDocPropertyNode? parent)
   {
     if (Request != null) {
       Request.Name = "request";
-      Request.UpdateParent(this);
+      Request.UpdateRelations(this);
     }
 
     if (Response != null) {
       Response.Name = "response";
-      Response.UpdateParent(this);
+      Response.UpdateRelations(this);
     }
   }
 }

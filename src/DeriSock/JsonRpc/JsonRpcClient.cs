@@ -90,7 +90,7 @@ internal class JsonRpcClient : IJsonRpcClient
   }
 
   /// <inheritdoc />
-  public virtual void SendLogoutSync(string method, object parameters)
+  public virtual void SendLogoutSync(string method, object? parameters)
   {
     var request = new JsonRpcRequest
     {
@@ -104,7 +104,7 @@ internal class JsonRpcClient : IJsonRpcClient
   }
 
   /// <inheritdoc />
-  public virtual Task<JsonRpcResponse> Send(string method, object parameters)
+  public virtual Task<JsonRpcResponse> Send(string method, object? parameters, CancellationToken cancellationToken)
   {
     var request = new JsonRpcRequest
     {
@@ -117,7 +117,7 @@ internal class JsonRpcClient : IJsonRpcClient
     var taskSource = new TaskCompletionSource<JsonRpcResponse>();
     RequestMgr.Add(request.Id, request, taskSource);
 
-    _ = Socket.SendMessageAsync(JsonConvert.SerializeObject(request, Formatting.None, SerializationSettings), CancellationToken.None);
+    _ = Socket.SendMessageAsync(JsonConvert.SerializeObject(request, Formatting.None, SerializationSettings), cancellationToken);
 
     return taskSource.Task;
   }
@@ -182,7 +182,7 @@ internal class JsonRpcClient : IJsonRpcClient
       Task.Factory.StartNew(
         res =>
         {
-          var r = (JsonRpcResponse)res;
+          var r = (JsonRpcResponse)res!;
 
           if (!RequestMgr.TryRemove(r.Id, out var request, out var taskSource)) {
             if (Logger?.IsEnabled(LogEventLevel.Warning) ?? false)
@@ -218,7 +218,7 @@ internal class JsonRpcClient : IJsonRpcClient
     public bool TryRemove(int id, out JsonRpcRequest request, out TaskCompletionSource<JsonRpcResponse>? taskSource)
     {
       taskSource = null;
-      return _requestObjects.TryRemove(id, out request) && _taskSources.TryRemove(id, out taskSource);
+      return _requestObjects.TryRemove(id, out request!) && _taskSources.TryRemove(id, out taskSource);
     }
 
     public void Reset()

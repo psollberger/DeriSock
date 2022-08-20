@@ -4,5 +4,5 @@ namespace DeriSock.Api;
 public partial interface IPublicApi
 {
   /// <inheritdoc cref="IAuthenticationApi.PublicLogin" />
-  public IAuthenticationMethods PublicLogin();
+  public IAuthenticationMethods Login();
 }

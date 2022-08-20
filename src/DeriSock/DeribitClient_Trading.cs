@@ -1,127 +1,98 @@
 namespace DeriSock;
 
+using System.Threading;
 using System.Threading.Tasks;
 
-using DeriSock.Api;
 using DeriSock.Converter;
 using DeriSock.JsonRpc;
 using DeriSock.Model;
 
-public partial class DeribitClient : ITradingApi
+public partial class DeribitClient
 {
-  /// <inheritdoc cref="ITradingApi.PrivateBuy" />
-  public async Task<JsonRpcResponse<PrivateBuyResponse>> PrivateBuy(PrivateBuyRequest args)
-    => await Send("private/buy", args, new ObjectJsonConverter<PrivateBuyResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<UserOrderTrades>> InternalPrivateBuy(PrivateBuyRequest args, CancellationToken cancellationToken = default)
+    => await Send("private/buy", args, new ObjectJsonConverter<UserOrderTrades>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="ITradingApi.PrivateSell" />
-  public async Task<JsonRpcResponse<PrivateSellResponse>> PrivateSell(PrivateSellRequest args)
-    => await Send("private/sell", args, new ObjectJsonConverter<PrivateSellResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<UserOrderTrades>> InternalPrivateSell(PrivateSellRequest args, CancellationToken cancellationToken = default)
+    => await Send("private/sell", args, new ObjectJsonConverter<UserOrderTrades>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="ITradingApi.PrivateEdit" />
-  public async Task<JsonRpcResponse<PrivateEditResponse>> PrivateEdit(PrivateEditRequest args)
-    => await Send("private/edit", args, new ObjectJsonConverter<PrivateEditResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<UserOrderTrades>> InternalPrivateEdit(PrivateEditRequest args, CancellationToken cancellationToken = default)
+    => await Send("private/edit", args, new ObjectJsonConverter<UserOrderTrades>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="ITradingApi.PrivateEditByLabel" />
-  public async Task<JsonRpcResponse<PrivateEditByLabelResponse>> PrivateEditByLabel(PrivateEditByLabelRequest args)
-    => await Send("private/edit_by_label", args, new ObjectJsonConverter<PrivateEditByLabelResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<UserOrderTrades>> InternalPrivateEditByLabel(PrivateEditByLabelRequest args, CancellationToken cancellationToken = default)
+    => await Send("private/edit_by_label", args, new ObjectJsonConverter<UserOrderTrades>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="ITradingApi.PrivateCancel" />
-  public async Task<JsonRpcResponse<PrivateCancelResponse>> PrivateCancel(PrivateCancelRequest args)
-    => await Send("private/cancel", args, new ObjectJsonConverter<PrivateCancelResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<UserOrder>> InternalPrivateCancel(PrivateCancelRequest args, CancellationToken cancellationToken = default)
+    => await Send("private/cancel", args, new ObjectJsonConverter<UserOrder>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="ITradingApi.PrivateCancelAll" />
-  public async Task<JsonRpcResponse<decimal>> PrivateCancelAll(PrivateCancelAllRequest? args)
-    => await Send("private/cancel_all", args, new ObjectJsonConverter<decimal>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<decimal>> InternalPrivateCancelAll(PrivateCancelAllRequest? args = null, CancellationToken cancellationToken = default)
+    => await Send("private/cancel_all", args, new ObjectJsonConverter<decimal>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="ITradingApi.PrivateCancelAllByCurrency" />
-  public async Task<JsonRpcResponse<decimal>> PrivateCancelAllByCurrency(PrivateCancelAllByCurrencyRequest args)
-    => await Send("private/cancel_all_by_currency", args, new ObjectJsonConverter<decimal>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<decimal>> InternalPrivateCancelAllByCurrency(PrivateCancelAllByCurrencyRequest args, CancellationToken cancellationToken = default)
+    => await Send("private/cancel_all_by_currency", args, new ObjectJsonConverter<decimal>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="ITradingApi.PrivateCancelAllByInstrument" />
-  public async Task<JsonRpcResponse<decimal>> PrivateCancelAllByInstrument(PrivateCancelAllByInstrumentRequest args)
-    => await Send("private/cancel_all_by_instrument", args, new ObjectJsonConverter<decimal>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<decimal>> InternalPrivateCancelAllByInstrument(PrivateCancelAllByInstrumentRequest args, CancellationToken cancellationToken = default)
+    => await Send("private/cancel_all_by_instrument", args, new ObjectJsonConverter<decimal>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="ITradingApi.PrivateCancelByLabel" />
-  public async Task<JsonRpcResponse<decimal>> PrivateCancelByLabel(PrivateCancelByLabelRequest args)
-    => await Send("private/cancel_by_label", args, new ObjectJsonConverter<decimal>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<decimal>> InternalPrivateCancelByLabel(PrivateCancelByLabelRequest args, CancellationToken cancellationToken = default)
+    => await Send("private/cancel_by_label", args, new ObjectJsonConverter<decimal>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="ITradingApi.PrivateClosePosition" />
-  public async Task<JsonRpcResponse<PrivateClosePositionResponse>> PrivateClosePosition(PrivateClosePositionRequest args)
-    => await Send("private/close_position", args, new ObjectJsonConverter<PrivateClosePositionResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<UserOrderTrades>> InternalPrivateClosePosition(PrivateClosePositionRequest args, CancellationToken cancellationToken = default)
+    => await Send("private/close_position", args, new ObjectJsonConverter<UserOrderTrades>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="ITradingApi.PrivateGetMargins" />
-  public async Task<JsonRpcResponse<PrivateGetMarginsResponse>> PrivateGetMargins(PrivateGetMarginsRequest args)
-    => await Send("private/get_margins", args, new ObjectJsonConverter<PrivateGetMarginsResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<InstrumentMargin>> InternalPrivateGetMargins(PrivateGetMarginsRequest args, CancellationToken cancellationToken = default)
+    => await Send("private/get_margins", args, new ObjectJsonConverter<InstrumentMargin>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="ITradingApi.PrivateGetMmpConfig" />
-  public async Task<JsonRpcResponse<PrivateGetMmpConfigResponse>> PrivateGetMmpConfig(PrivateGetMmpConfigRequest args)
-    => await Send("private/get_mmp_config", args, new ObjectJsonConverter<PrivateGetMmpConfigResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<MmpConfig>> InternalPrivateGetMmpConfig(PrivateGetMmpConfigRequest args, CancellationToken cancellationToken = default)
+    => await Send("private/get_mmp_config", args, new ObjectJsonConverter<MmpConfig>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="ITradingApi.PrivateGetOpenOrdersByCurrency" />
-  public async Task<JsonRpcResponse<PrivateGetOpenOrdersByCurrencyResponse>> PrivateGetOpenOrdersByCurrency(PrivateGetOpenOrdersByCurrencyRequest args)
-    => await Send("private/get_open_orders_by_currency", args, new ObjectJsonConverter<PrivateGetOpenOrdersByCurrencyResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<UserOrder[]>> InternalPrivateGetOpenOrdersByCurrency(PrivateGetOpenOrdersByCurrencyRequest args, CancellationToken cancellationToken = default)
+    => await Send("private/get_open_orders_by_currency", args, new ObjectJsonConverter<UserOrder[]>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="ITradingApi.PrivateGetOpenOrdersByInstrument" />
-  public async Task<JsonRpcResponse<PrivateGetOpenOrdersByInstrumentResponse>> PrivateGetOpenOrdersByInstrument(PrivateGetOpenOrdersByInstrumentRequest args)
-    => await Send("private/get_open_orders_by_instrument", args, new ObjectJsonConverter<PrivateGetOpenOrdersByInstrumentResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<UserOrder[]>> InternalPrivateGetOpenOrdersByInstrument(PrivateGetOpenOrdersByInstrumentRequest args, CancellationToken cancellationToken = default)
+    => await Send("private/get_open_orders_by_instrument", args, new ObjectJsonConverter<UserOrder[]>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="ITradingApi.PrivateGetOrderHistoryByCurrency" />
-  public async Task<JsonRpcResponse<PrivateGetOrderHistoryByCurrencyResponse>> PrivateGetOrderHistoryByCurrency(PrivateGetOrderHistoryByCurrencyRequest args)
-    => await Send("private/get_order_history_by_currency", args, new ObjectJsonConverter<PrivateGetOrderHistoryByCurrencyResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<UserOrder[]>> InternalPrivateGetOrderHistoryByCurrency(PrivateGetOrderHistoryByCurrencyRequest args, CancellationToken cancellationToken = default)
+    => await Send("private/get_order_history_by_currency", args, new ObjectJsonConverter<UserOrder[]>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="ITradingApi.PrivateGetOrderHistoryByInstrument" />
-  public async Task<JsonRpcResponse<PrivateGetOrderHistoryByInstrumentResponse>> PrivateGetOrderHistoryByInstrument(PrivateGetOrderHistoryByInstrumentRequest args)
-    => await Send("private/get_order_history_by_instrument", args, new ObjectJsonConverter<PrivateGetOrderHistoryByInstrumentResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<UserOrder[]>> InternalPrivateGetOrderHistoryByInstrument(PrivateGetOrderHistoryByInstrumentRequest args, CancellationToken cancellationToken = default)
+    => await Send("private/get_order_history_by_instrument", args, new ObjectJsonConverter<UserOrder[]>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="ITradingApi.PrivateGetOrderMarginByIds" />
-  public async Task<JsonRpcResponse<PrivateGetOrderMarginByIdsResponse>> PrivateGetOrderMarginByIds(PrivateGetOrderMarginByIdsRequest args)
-    => await Send("private/get_order_margin_by_ids", args, new ObjectJsonConverter<PrivateGetOrderMarginByIdsResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<OrderInitialMargin[]>> InternalPrivateGetOrderMarginByIds(PrivateGetOrderMarginByIdsRequest args, CancellationToken cancellationToken = default)
+    => await Send("private/get_order_margin_by_ids", args, new ObjectJsonConverter<OrderInitialMargin[]>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="ITradingApi.PrivateGetOrderState" />
-  public async Task<JsonRpcResponse<PrivateGetOrderStateResponse>> PrivateGetOrderState(PrivateGetOrderStateRequest args)
-    => await Send("private/get_order_state", args, new ObjectJsonConverter<PrivateGetOrderStateResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<UserOrder>> InternalPrivateGetOrderState(PrivateGetOrderStateRequest args, CancellationToken cancellationToken = default)
+    => await Send("private/get_order_state", args, new ObjectJsonConverter<UserOrder>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="ITradingApi.PrivateGetTriggerOrderHistory" />
-  public async Task<JsonRpcResponse<PrivateGetTriggerOrderHistoryResponse>> PrivateGetTriggerOrderHistory(PrivateGetTriggerOrderHistoryRequest args)
-    => await Send("private/get_trigger_order_history", args, new ObjectJsonConverter<PrivateGetTriggerOrderHistoryResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<TriggerOrderHistoryPage>> InternalPrivateGetTriggerOrderHistory(PrivateGetTriggerOrderHistoryRequest args, CancellationToken cancellationToken = default)
+    => await Send("private/get_trigger_order_history", args, new ObjectJsonConverter<TriggerOrderHistoryPage>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="ITradingApi.PrivateGetUserTradesByCurrency" />
-  public async Task<JsonRpcResponse<PrivateGetUserTradesByCurrencyResponse>> PrivateGetUserTradesByCurrency(PrivateGetUserTradesByCurrencyRequest args)
-    => await Send("private/get_user_trades_by_currency", args, new ObjectJsonConverter<PrivateGetUserTradesByCurrencyResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<UserTrades>> InternalPrivateGetUserTradesByCurrency(PrivateGetUserTradesByCurrencyRequest args, CancellationToken cancellationToken = default)
+    => await Send("private/get_user_trades_by_currency", args, new ObjectJsonConverter<UserTrades>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="ITradingApi.PrivateGetUserTradesByCurrencyAndTime" />
-  public async Task<JsonRpcResponse<PrivateGetUserTradesByCurrencyAndTimeResponse>> PrivateGetUserTradesByCurrencyAndTime(PrivateGetUserTradesByCurrencyAndTimeRequest args)
-    => await Send("private/get_user_trades_by_currency_and_time", args, new ObjectJsonConverter<PrivateGetUserTradesByCurrencyAndTimeResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<UserTrades>> InternalPrivateGetUserTradesByCurrencyAndTime(PrivateGetUserTradesByCurrencyAndTimeRequest args, CancellationToken cancellationToken = default)
+    => await Send("private/get_user_trades_by_currency_and_time", args, new ObjectJsonConverter<UserTrades>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="ITradingApi.PrivateGetUserTradesByInstrument" />
-  public async Task<JsonRpcResponse<PrivateGetUserTradesByInstrumentResponse>> PrivateGetUserTradesByInstrument(PrivateGetUserTradesByInstrumentRequest args)
-    => await Send("private/get_user_trades_by_instrument", args, new ObjectJsonConverter<PrivateGetUserTradesByInstrumentResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<UserTrades>> InternalPrivateGetUserTradesByInstrument(PrivateGetUserTradesByInstrumentRequest args, CancellationToken cancellationToken = default)
+    => await Send("private/get_user_trades_by_instrument", args, new ObjectJsonConverter<UserTrades>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="ITradingApi.PrivateGetUserTradesByInstrumentAndTime" />
-  public async Task<JsonRpcResponse<PrivateGetUserTradesByInstrumentAndTimeResponse>> PrivateGetUserTradesByInstrumentAndTime(PrivateGetUserTradesByInstrumentAndTimeRequest args)
-    => await Send("private/get_user_trades_by_instrument_and_time", args, new ObjectJsonConverter<PrivateGetUserTradesByInstrumentAndTimeResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<UserTrades>> InternalPrivateGetUserTradesByInstrumentAndTime(PrivateGetUserTradesByInstrumentAndTimeRequest args, CancellationToken cancellationToken = default)
+    => await Send("private/get_user_trades_by_instrument_and_time", args, new ObjectJsonConverter<UserTrades>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="ITradingApi.PrivateGetUserTradesByOrder" />
-  public async Task<JsonRpcResponse<PrivateGetUserTradesByOrderResponse>> PrivateGetUserTradesByOrder(PrivateGetUserTradesByOrderRequest args)
-    => await Send("private/get_user_trades_by_order", args, new ObjectJsonConverter<PrivateGetUserTradesByOrderResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<UserTrade[]>> InternalPrivateGetUserTradesByOrder(PrivateGetUserTradesByOrderRequest args, CancellationToken cancellationToken = default)
+    => await Send("private/get_user_trades_by_order", args, new ObjectJsonConverter<UserTrade[]>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="ITradingApi.PrivateResetMmp" />
-  public async Task<JsonRpcResponse<string>> PrivateResetMmp(PrivateResetMmpRequest args)
-    => await Send("private/reset_mmp", args, new ObjectJsonConverter<string>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<string>> InternalPrivateResetMmp(PrivateResetMmpRequest args, CancellationToken cancellationToken = default)
+    => await Send("private/reset_mmp", args, new ObjectJsonConverter<string>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="ITradingApi.PrivateSendRfq" />
-  public async Task<JsonRpcResponse<string>> PrivateSendRfq(PrivateSendRfqRequest args)
-    => await Send("private/send_rfq", args, new ObjectJsonConverter<string>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<string>> InternalPrivateSendRfq(PrivateSendRfqRequest args, CancellationToken cancellationToken = default)
+    => await Send("private/send_rfq", args, new ObjectJsonConverter<string>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="ITradingApi.PrivateSetMmpConfig" />
-  public async Task<JsonRpcResponse<string>> PrivateSetMmpConfig(PrivateSetMmpConfigRequest args)
-    => await Send("private/set_mmp_config", args, new ObjectJsonConverter<string>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<string>> InternalPrivateSetMmpConfig(PrivateSetMmpConfigRequest args, CancellationToken cancellationToken = default)
+    => await Send("private/set_mmp_config", args, new ObjectJsonConverter<string>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="ITradingApi.PrivateGetSettlementHistoryByInstrument" />
-  public async Task<JsonRpcResponse<PrivateGetSettlementHistoryByInstrumentResponse>> PrivateGetSettlementHistoryByInstrument(PrivateGetSettlementHistoryByInstrumentRequest args)
-    => await Send("private/get_settlement_history_by_instrument", args, new ObjectJsonConverter<PrivateGetSettlementHistoryByInstrumentResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<SettlementPage>> InternalPrivateGetSettlementHistoryByInstrument(PrivateGetSettlementHistoryByInstrumentRequest args, CancellationToken cancellationToken = default)
+    => await Send("private/get_settlement_history_by_instrument", args, new ObjectJsonConverter<SettlementPage>(), cancellationToken).ConfigureAwait(false);
 
-  /// <inheritdoc cref="ITradingApi.PrivateGetSettlementHistoryByCurrency" />
-  public async Task<JsonRpcResponse<PrivateGetSettlementHistoryByCurrencyResponse>> PrivateGetSettlementHistoryByCurrency(PrivateGetSettlementHistoryByCurrencyRequest args)
-    => await Send("private/get_settlement_history_by_currency", args, new ObjectJsonConverter<PrivateGetSettlementHistoryByCurrencyResponse>()).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<SettlementPage>> InternalPrivateGetSettlementHistoryByCurrency(PrivateGetSettlementHistoryByCurrencyRequest args, CancellationToken cancellationToken = default)
+    => await Send("private/get_settlement_history_by_currency", args, new ObjectJsonConverter<SettlementPage>(), cancellationToken).ConfigureAwait(false);
 }

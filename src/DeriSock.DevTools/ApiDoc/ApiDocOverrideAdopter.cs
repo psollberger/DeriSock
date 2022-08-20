@@ -43,6 +43,8 @@ public class ApiDocOverrideAdopter
 
     foreach (var overrideFileName in overrideFileNames)
       await adopter.AdoptFromFileAsync(overrideFileName, cancellationToken).ConfigureAwait(false);
+
+    apiDoc.UpdateRelations();
   }
 
   public async Task AdoptFromFileAsync(string overrideFilePath, CancellationToken cancellationToken = default)
@@ -110,8 +112,13 @@ public class ApiDocOverrideAdopter
                                    property.Properties.Where(op => Regex.IsMatch(op.Key, searchKey)).ToArray() :
                                    property.Properties.Where(op => op.Key.Equals(searchKey)).ToArray();
 
-      if (propertiesToOverride.Length < 1)
+      if (propertiesToOverride.Length < 1) {
+        if (!string.IsNullOrEmpty(ovrPropValue.InsertBefore)) {
+          property.Properties.InsertBefore(ovrPropValue.InsertBefore, searchKey, ovrPropValue.CreateApiProperty());
+        }
+
         continue;
+      }
 
       foreach (var prop in propertiesToOverride)
         AdoptPropertyOverrides(prop.Value, ovrPropValue);
