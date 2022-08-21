@@ -1,0 +1,74 @@
+namespace DeriSock;
+
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+
+using DeriSock.Model;
+
+public interface INotificationStream
+{
+  ConcurrentQueue<INotification<object>> Queue { get; }
+}
+
+public class NotificationStream<T> : INotificationStream, IAsyncEnumerable<Notification<T>>, IAsyncEnumerator<Notification<T>> where T : class
+{
+  private readonly SubscriptionManager _manager;
+  private CancellationToken _cancellationToken;
+  private Notification<T>? _current;
+
+  /// <inheritdoc />
+  Notification<T> IAsyncEnumerator<Notification<T>>.Current => _current!;
+
+  /// <inheritdoc />
+  ConcurrentQueue<INotification<object>> INotificationStream.Queue { get; } = new();
+
+  internal NotificationStream(SubscriptionManager manager)
+  {
+    _manager = manager;
+  }
+
+  /// <inheritdoc />
+  async ValueTask<bool> IAsyncEnumerator<Notification<T>>.MoveNextAsync()
+  {
+    try {
+      do {
+        if (_cancellationToken.IsCancellationRequested)
+          return false;
+
+        if (!((INotificationStream)this).Queue.TryDequeue(out var next))
+          await Task.Delay(1, _cancellationToken).ConfigureAwait(false);
+
+        if (next is null)
+          continue;
+
+        _current = next.ConvertTo<T>();
+
+        if (_cancellationToken.IsCancellationRequested)
+          return false;
+      } while (_current is null);
+
+      if (_cancellationToken.IsCancellationRequested)
+        return false;
+
+      return true;
+    }
+    catch (TaskCanceledException) {
+      return false;
+    }
+  }
+
+  /// <inheritdoc />
+  public IAsyncEnumerator<Notification<T>> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+  {
+    _cancellationToken = cancellationToken;
+    return this;
+  }
+
+  /// <inheritdoc />
+  public async ValueTask DisposeAsync()
+  {
+    await _manager.Unsubscribe(this).ConfigureAwait(false);
+  }
+}

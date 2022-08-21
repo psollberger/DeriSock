@@ -61,7 +61,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("id")]
-    public int Id { get; set; }
+    public long Id { get; set; }
     /// <summary>
     /// <para>Id of priority level</para>
     /// </summary>

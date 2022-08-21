@@ -27,12 +27,12 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("count")]
-    public int? Count { get; set; }
+    public long? Count { get; set; }
     /// <summary>
     /// <para>The offset for pagination, default - <c>0</c></para>
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("offset")]
-    public int? Offset { get; set; }
+    public long? Offset { get; set; }
   }
 }

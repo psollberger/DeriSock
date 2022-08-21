@@ -31,6 +31,6 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("uid")]
-    public int Uid { get; set; }
+    public long Uid { get; set; }
   }
 }

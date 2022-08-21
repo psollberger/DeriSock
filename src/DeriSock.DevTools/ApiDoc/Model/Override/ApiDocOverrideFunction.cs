@@ -7,6 +7,9 @@ public class ApiDocOverrideFunction
   [JsonPropertyName("category")]
   public string? Category { get; set; } = null;
 
+  [JsonPropertyName("friendlyChannelName")]
+  public string? FriendlyChannelName { get; set; } = null;
+
   [JsonPropertyName("name")]
   public string? Name { get; set; } = null;
 

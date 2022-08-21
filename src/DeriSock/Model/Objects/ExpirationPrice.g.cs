@@ -39,7 +39,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("seconds")]
-    public int Seconds { get; set; }
+    public long Seconds { get; set; }
     /// <summary>
     /// <para>number of total time ticks (field added when price is estimated)</para>
     /// </summary>

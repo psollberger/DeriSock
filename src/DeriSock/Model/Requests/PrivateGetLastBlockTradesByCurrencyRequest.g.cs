@@ -27,7 +27,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("count")]
-    public int? Count { get; set; }
+    public long? Count { get; set; }
     /// <summary>
     /// <para>The id of the newest block trade to be returned</para>
     /// </summary>

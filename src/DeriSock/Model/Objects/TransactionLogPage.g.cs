@@ -21,7 +21,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("continuation")]
-    public int Continuation { get; set; }
+    public long Continuation { get; set; }
     /// <summary>
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]

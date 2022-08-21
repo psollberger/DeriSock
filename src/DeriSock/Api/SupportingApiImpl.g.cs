@@ -16,8 +16,6 @@ namespace DeriSock
   using DeriSock.Api;
   using DeriSock.Net.JsonRpc;
   using DeriSock.Model;
-  using DeriSock.Net.JsonRpc;
-
   using Newtonsoft.Json.Linq;
   
   public partial class DeribitClient
@@ -32,25 +30,25 @@ namespace DeriSock
       }
       /// <inheritdoc cref="ISupportingApi.PublicGetTime" />
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      System.Threading.Tasks.Task<JsonRpcResponse<DateTime>> ISupportingApi.PublicGetTime(CancellationToken cancellationToken)
+      System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<DateTime>> ISupportingApi.PublicGetTime(CancellationToken cancellationToken)
       {
         return _client.InternalPublicGetTime(cancellationToken);
       }
       /// <inheritdoc cref="ISupportingApi.PublicHello" />
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      System.Threading.Tasks.Task<JsonRpcResponse<ServerVersionData>> ISupportingApi.PublicHello(PublicHelloRequest args, CancellationToken cancellationToken)
+      System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<ServerVersionData>> ISupportingApi.PublicHello(PublicHelloRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPublicHello(args, cancellationToken);
       }
       /// <inheritdoc cref="ISupportingApi.PublicStatus" />
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      System.Threading.Tasks.Task<JsonRpcResponse<PlatformLockStatus>> ISupportingApi.PublicStatus(CancellationToken cancellationToken)
+      System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<PlatformLockStatus>> ISupportingApi.PublicStatus(CancellationToken cancellationToken)
       {
         return _client.InternalPublicStatus(cancellationToken);
       }
       /// <inheritdoc cref="ISupportingApi.PublicTest" />
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      System.Threading.Tasks.Task<JsonRpcResponse<ServerVersionData>> ISupportingApi.PublicTest(PublicTestRequest? args, CancellationToken cancellationToken)
+      System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<ServerVersionData>> ISupportingApi.PublicTest(PublicTestRequest? args, CancellationToken cancellationToken)
       {
         return _client.InternalPublicTest(args, cancellationToken);
       }

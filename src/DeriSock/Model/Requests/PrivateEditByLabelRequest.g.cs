@@ -35,16 +35,16 @@ namespace DeriSock.Model
     [Newtonsoft.Json.JsonPropertyAttribute("amount")]
     public decimal Amount { get; set; }
     /// <summary>
-    /// <para>The order price in base currency.</para>
-    /// <para>When editing an option order with advanced=usd, the field price should be the option price value in USD.</para>
-    /// <para>When editing an option order with advanced=implv, the field price should be a value of implied volatility in percentages. For example,  price=100, means implied volatility of 100%</para>
+    /// <para>The order price in base currency.<br/>
+    ///When editing an option order with advanced=usd, the field price should be the option price value in USD.<br/>
+    ///When editing an option order with advanced=implv, the field price should be a value of implied volatility in percentages. For example,  price=100, means implied volatility of 100%</para>
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("price")]
     public decimal? Price { get; set; }
     /// <summary>
-    /// <para>If true, the order is considered post-only. If the new price would cause the order to be filled immediately (as taker), the price will be changed to be just below or above the spread (accordingly to the original order type).</para>
-    /// <para>Only valid in combination with time_in_force=<c>&quot;good_til_cancelled&quot;</c></para>
+    /// <para>If true, the order is considered post-only. If the new price would cause the order to be filled immediately (as taker), the price will be changed to be just below or above the spread (accordingly to the original order type).<br/>
+    ///Only valid in combination with time_in_force=<c>&quot;good_til_cancelled&quot;</c></para>
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("post_only")]
@@ -56,8 +56,8 @@ namespace DeriSock.Model
     [Newtonsoft.Json.JsonPropertyAttribute("reduce_only")]
     public bool? ReduceOnly { get; set; }
     /// <summary>
-    /// <para>If an order is considered post-only and this field is set to true then the order is put to order book unmodified or request is rejected.</para>
-    /// <para>Only valid in combination with <c>&quot;post_only&quot;</c> set to true</para>
+    /// <para>If an order is considered post-only and this field is set to true then the order is put to order book unmodified or request is rejected.<br/>
+    ///Only valid in combination with <c>&quot;post_only&quot;</c> set to true</para>
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("reject_post_only")]
@@ -85,6 +85,6 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("valid_until")]
-    public int? ValidUntil { get; set; }
+    public long? ValidUntil { get; set; }
   }
 }

@@ -1,0 +1,100 @@
+﻿{
+  "subscriptions": {
+    "announcements": {
+      "friendlyChannelName": "Announcements"
+    },
+    "book.{instrument_name}.{group}.{depth}.{interval}": {
+      "friendlyChannelName": "BookChangesGrouped"
+    },
+    "book.{instrument_name}.{interval}": {
+      "friendlyChannelName": "BookChanges"
+    },
+    "chart.trades.{instrument_name}.{resolution}": {
+      "friendlyChannelName": "ChartTrades"
+    },
+    "deribit_price_index.{index_name}": {
+      "friendlyChannelName": "DeribitPriceIndex"
+    },
+    "deribit_price_ranking.{index_name}": {
+      "friendlyChannelName": "DeribitPriceRanking"
+    },
+    "deribit_price_statistics.{index_name}": {
+      "friendlyChannelName": "DeribitPriceStatistics"
+    },
+    "deribit_volatility_index.{index_name}": {
+      "friendlyChannelName": "DeribitVolatilityIndex"
+    },
+    "estimated_expiration_price.{index_name}": {
+      "friendlyChannelName": "EstimatedExpirationPrice"
+    },
+    "incremental_ticker.{instrument_name}": {
+      "friendlyChannelName": "IncrementalTicker"
+    },
+    "instrument.state.{kind}.{currency}": {
+      "friendlyChannelName": "InstrumentState"
+    },
+    "markprice.options.{index_name}": {
+      "friendlyChannelName": "MarkpriceOptions"
+    },
+    "perpetual.{instrument_name}.{interval}": {
+      "friendlyChannelName": "Perpetual"
+    },
+    "platform_state": {
+      "friendlyChannelName": "PlatformState"
+    },
+    "platform_state.public_methods_state": {
+      "friendlyChannelName": "PlatformPublicMethodsState"
+    },
+    "quote.{instrument_name}": {
+      "friendlyChannelName": "Quote"
+    },
+    "rfq.{currency}": {
+      "friendlyChannelName": "RequestForQuote"
+    },
+    "ticker.{instrument_name}.{interval}": {
+      "friendlyChannelName": "Ticker"
+    },
+    "trades.{instrument_name}.{interval}": {
+      "friendlyChannelName": "InstrumentTrades"
+    },
+    "trades.{kind}.{currency}.{interval}": {
+      "friendlyChannelName": "KindCurrencyTrades"
+    },
+    "user.access_log": {
+      "friendlyChannelName": "UserAccessLog"
+    },
+    "user.changes.{instrument_name}.{interval}": {
+      "friendlyChannelName": "UserInstrumentChanges"
+    },
+    "user.changes.{kind}.{currency}.{interval}": {
+      "friendlyChannelName": "UserKindCurrencyChanges"
+    },
+    "user.lock": {
+      "friendlyChannelName": "UserLock"
+    },
+    "user.mmp_trigger.{currency}": {
+      "friendlyChannelName": "UserMmpTrigger"
+    },
+    "user.orders.{instrument_name}.raw": {
+      "friendlyChannelName": "UserOrdersInstrumentChangeRaw"
+    },
+    "user.orders.{instrument_name}.{interval}": {
+      "friendlyChannelName": "UserOrdersInstrumentChange"
+    },
+    "user.orders.{kind}.{currency}.raw": {
+      "friendlyChannelName": "UserOrdersKindCurrencyChangeRaw"
+    },
+    "user.orders.{kind}.{currency}.{interval}": {
+      "friendlyChannelName": "UserOrdersKindCurrencyChange"
+    },
+    "user.portfolio.{currency}": {
+      "friendlyChannelName": "UserPortfolio"
+    },
+    "user.trades.{instrument_name}.{interval}": {
+      "friendlyChannelName": "UserTradesInstrumentChange"
+    },
+    "user.trades.{kind}.{currency}.{interval}": {
+      "friendlyChannelName": "UserTradesKindCurrencyChange"
+    }
+  }
+}

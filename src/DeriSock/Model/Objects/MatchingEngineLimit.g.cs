@@ -21,12 +21,12 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("burst")]
-    public int Burst { get; set; }
+    public long Burst { get; set; }
     /// <summary>
     /// <para>Number of (type related) matching engine requests per second allowed for user</para>
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("rate")]
-    public int Rate { get; set; }
+    public long Rate { get; set; }
   }
 }

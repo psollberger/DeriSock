@@ -29,6 +29,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Data\deribit.api.v211.21.friendly-channel-names.overrides.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Data\deribit.api.v211.31.object-types.overrides.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -55,11 +58,5 @@
   <ItemGroup>
     <ProjectReference Include="..\DeriSock\DeriSock.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="ApiDoc\Model\Override\" />
-  </ItemGroup>
-
-  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
 
 </Project>

@@ -173,7 +173,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("tick_direction")]
-    public int TickDirection { get; set; }
+    public long TickDirection { get; set; }
     /// <summary>
     /// <para>The timestamp of the trade (milliseconds since the UNIX epoch)</para>
     /// </summary>
@@ -192,7 +192,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("trade_seq")]
-    public int TradeSeq { get; set; }
+    public long TradeSeq { get; set; }
     /// <summary>
     /// <para>Underlying price for implied volatility calculations (Options only)</para>
     /// </summary>

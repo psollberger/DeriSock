@@ -27,13 +27,13 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("interval")]
-    public int Interval { get; set; }
+    public long Interval { get; set; }
     /// <summary>
     /// <para>MMP frozen time in seconds, if set to 0 manual reset is required</para>
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("frozen_time")]
-    public int FrozenTime { get; set; }
+    public long FrozenTime { get; set; }
     /// <summary>
     /// <para>Quantity limit</para>
     /// </summary>

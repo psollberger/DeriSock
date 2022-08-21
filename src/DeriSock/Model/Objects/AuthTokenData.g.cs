@@ -26,7 +26,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("expires_in")]
-    public int ExpiresIn { get; set; }
+    public long ExpiresIn { get; set; }
     /// <summary>
     /// <para>Can be used to request a new token (with a new lifetime)</para>
     /// </summary>

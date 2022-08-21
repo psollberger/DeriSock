@@ -27,7 +27,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("id")]
-    public int Id { get; set; }
+    public long Id { get; set; }
     /// <summary>
     /// <para><c>true</c> when password for the subaccount has been configured</para>
     /// </summary>

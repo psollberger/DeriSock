@@ -26,6 +26,7 @@ namespace DeriSock
     private IBlockTradeApi? _blockTrade;
     private IWalletApi? _wallet;
     private IAccountManagementApi? _accountManagement;
+    private ISubscriptionsApi? _subscriptions;
     /// <inheritdoc cref="IPublicApi" />
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
     public IPublicApi Public
@@ -134,6 +135,16 @@ namespace DeriSock
       {
         _accountManagement ??= new AccountManagementApiImpl(this);
         return _accountManagement;
+      }
+    }
+    /// <inheritdoc cref="ISubscriptionsApi" />
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    public ISubscriptionsApi Subscriptions
+    {
+      get
+      {
+        _subscriptions ??= new SubscriptionsApiImpl(this);
+        return _subscriptions;
       }
     }
   }

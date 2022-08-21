@@ -55,8 +55,7 @@ internal class ValueObjectCodeGenerator : ApiDocCodeGenerator
     objClass.Comments.Add(new CodeCommentStatement("<summary>", true));
 
     if (!string.IsNullOrEmpty(mapEntry.Description))
-      foreach (var xmlDocParagraph in mapEntry.Description.ToXmlDocParagraphs())
-        objClass.Comments.Add(new CodeCommentStatement($"<para>{xmlDocParagraph}</para>", true));
+      objClass.Comments.Add(mapEntry.Description.CreateXmlDocumentationPara());
 
     objClass.Comments.Add(new CodeCommentStatement("</summary>", true));
 

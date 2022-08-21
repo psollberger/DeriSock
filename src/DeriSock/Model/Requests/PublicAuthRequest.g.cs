@@ -74,8 +74,8 @@ namespace DeriSock.Model
     [Newtonsoft.Json.JsonPropertyAttribute("state")]
     public string? State { get; set; }
     /// <summary>
-    /// <para>Describes type of the access for assigned token, possible values: <c>connection</c>, <c>session:name</c>, <c>trade:[read, read_write, none]</c>, <c>wallet:[read, read_write, none]</c>, <c>account:[read, read_write, none]</c>, <c>expires:NUMBER</c>, <c>ip:ADDR</c>.</para>
-    /// <para>Details are elucidated in <a href="https://docs.deribit.com/#access-scope">Access scope</a></para>
+    /// <para>Describes type of the access for assigned token, possible values: <c>connection</c>, <c>session:name</c>, <c>trade:[read, read_write, none]</c>, <c>wallet:[read, read_write, none]</c>, <c>account:[read, read_write, none]</c>, <c>expires:NUMBER</c>, <c>ip:ADDR</c>.<br/>
+    ///Details are elucidated in <a href="https://docs.deribit.com/#access-scope">Access scope</a></para>
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("scope")]

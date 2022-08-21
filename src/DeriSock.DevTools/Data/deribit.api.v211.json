@@ -15310,6 +15310,7 @@
   },
   "subscriptions": {
     "announcements": {
+      "friendlyChannelName": "Announcements",
       "description": "General announcements concerning the Deribit platform.",
       "response": {
         "required": true,
@@ -15370,6 +15371,7 @@
       }
     },
     "book.{instrument_name}.{group}.{depth}.{interval}": {
+      "friendlyChannelName": "BookChangesGrouped",
       "description": "Notifies about changes to the order book for a certain instrument.\nNotifications are sent once per specified interval, with prices grouped by (rounded to) the specified group, showing the complete order book to the specified depth (number of price levels).\nThe 'asks' and the 'bids' elements in the response are both a 'list of lists'. Each element in the outer list is a list of exactly two elements: price and amount.\n<em>price</em> is a price level (USD per BTC, rounded as specified by the 'group' parameter for the susbcription).\n<em>amount</em> indicates the amount of all orders at price level. For perpetual and futures the amount is in USD units, for options it is amount of corresponding cryptocurrency contracts, e.g., BTC or ETH.",
       "request": {
         "properties": {
@@ -15461,6 +15463,7 @@
       }
     },
     "book.{instrument_name}.{interval}": {
+      "friendlyChannelName": "BookChanges",
       "description": "Notifies about changes to the order book for a certain instrument.\nThe first notification will contain the whole book (bid and ask amounts for all prices). After that there will only be information about changes to individual price levels.\nThe first notification will contain the amounts for all price levels (list of `['new', price, amount]` tuples). All following notifications will contain a list of tuples with action, price level and new amount (`[action, price, amount]`). Action can be either `new`, `change` or `delete`. \nEach notification will contain a `change_id` field, and each message except for the first one will contain a field `prev_change_id`. If `prev_change_id` is equal to the `change_id` of the previous message, this means that no messages have been missed.\nThe amount for perpetual and futures is in USD units, for options it is in corresponding cryptocurrency contracts, e.g., BTC or ETH.",
       "request": {
         "properties": {
@@ -15538,6 +15541,7 @@
       }
     },
     "chart.trades.{instrument_name}.{resolution}": {
+      "friendlyChannelName": "ChartTrades",
       "description": "Publicly available market data used to generate a TradingView candle chart. During single resolution period, many events can be sent, each with updated values for the recent period.\n\n __NOTICE__ When there is no trade during the requested resolution period (e.g. 1 minute), then filling sample is generated which uses data from the last available trade candle (open and close values).",
       "request": {
         "properties": {
@@ -15620,6 +15624,7 @@
       }
     },
     "deribit_price_index.{index_name}": {
+      "friendlyChannelName": "DeribitPriceIndex",
       "description": "Provides information about current value (price) for Deribit Index",
       "request": {
         "properties": {
@@ -15684,6 +15689,7 @@
       }
     },
     "deribit_price_ranking.{index_name}": {
+      "friendlyChannelName": "DeribitPriceRanking",
       "description": "Provides information about current value (price) for stock exchanges used to calculate Deribit Index",
       "request": {
         "properties": {
@@ -15767,6 +15773,7 @@
       }
     },
     "deribit_price_statistics.{index_name}": {
+      "friendlyChannelName": "DeribitPriceStatistics",
       "description": "This subscription provides basic statistics about Deribit Index",
       "request": {
         "properties": {
@@ -15840,6 +15847,7 @@
       }
     },
     "deribit_volatility_index.{index_name}": {
+      "friendlyChannelName": "DeribitVolatilityIndex",
       "description": "Provides volatility index subscription",
       "request": {
         "properties": {
@@ -15892,6 +15900,7 @@
       }
     },
     "estimated_expiration_price.{index_name}": {
+      "friendlyChannelName": "EstimatedExpirationPrice",
       "description": "Returns calculated (estimated) ending price for given index.",
       "request": {
         "properties": {
@@ -15965,6 +15974,7 @@
       }
     },
     "incremental_ticker.{instrument_name}": {
+      "friendlyChannelName": "IncrementalTicker",
       "description": "Notifies about changes in instrument ticker (key information about the instrument).\nThe first notification will contain the whole ticker. After that there will only information about changes in the ticker.\nThis event is send at most once per second.",
       "request": {
         "properties": {
@@ -16191,6 +16201,7 @@
       }
     },
     "instrument.state.{kind}.{currency}": {
+      "friendlyChannelName": "InstrumentState",
       "description": "Get notifications about new or terminated instruments of given kind in given currency.",
       "request": {
         "properties": {
@@ -16252,6 +16263,7 @@
       }
     },
     "markprice.options.{index_name}": {
+      "friendlyChannelName": "MarkpriceOptions",
       "description": "Provides information about options markprices.",
       "request": {
         "properties": {
@@ -16323,6 +16335,7 @@
       }
     },
     "perpetual.{instrument_name}.{interval}": {
+      "friendlyChannelName": "Perpetual",
       "description": "Provide current interest rate - but only for __perpetual__ instruments. Other types won't generate any notification.",
       "request": {
         "properties": {
@@ -16374,6 +16387,7 @@
       }
     },
     "platform_state": {
+      "friendlyChannelName": "PlatformState",
       "description": "Information about platform state.",
       "response": {
         "required": true,
@@ -16402,6 +16416,7 @@
       }
     },
     "platform_state.public_methods_state": {
+      "friendlyChannelName": "PlatformPublicMethodsState",
       "description": "Information whether unauthorized public requests are allowed",
       "response": {
         "required": true,
@@ -16418,6 +16433,7 @@
       }
     },
     "quote.{instrument_name}": {
+      "friendlyChannelName": "Quote",
       "description": "Best bid/ask price and size.",
       "request": {
         "properties": {
@@ -16477,6 +16493,7 @@
       }
     },
     "rfq.{currency}": {
+      "friendlyChannelName": "RequestForQuote",
       "description": "Get notifications about RFQs for instruments in given currency.",
       "request": {
         "properties": {
@@ -16537,6 +16554,7 @@
       }
     },
     "ticker.{instrument_name}.{interval}": {
+      "friendlyChannelName": "Ticker",
       "description": "Key information about the instrument",
       "request": {
         "properties": {
@@ -16778,6 +16796,7 @@
       }
     },
     "trades.{instrument_name}.{interval}": {
+      "friendlyChannelName": "InstrumentTrades",
       "description": "Get notifications about trades for an instrument.",
       "request": {
         "properties": {
@@ -16887,6 +16906,7 @@
       }
     },
     "trades.{kind}.{currency}.{interval}": {
+      "friendlyChannelName": "KindCurrencyTrades",
       "description": "Get notifications about trades in any instrument of a given kind and given currency.",
       "request": {
         "properties": {
@@ -17016,6 +17036,7 @@
       }
     },
     "user.access_log": {
+      "friendlyChannelName": "UserAccessLog",
       "description": "Get notifications about security events related to the account",
       "response": {
         "required": true,
@@ -17070,6 +17091,7 @@
       }
     },
     "user.changes.{instrument_name}.{interval}": {
+      "friendlyChannelName": "UserInstrumentChanges",
       "description": "Get notifications about user's updates related to order, trades, etc. in an instrument.",
       "request": {
         "properties": {
@@ -17684,6 +17706,7 @@
       }
     },
     "user.changes.{kind}.{currency}.{interval}": {
+      "friendlyChannelName": "UserKindCurrencyChanges",
       "description": "Get notifications about changes in user's updates related to order, trades, etc. in instruments of a given kind and currency.",
       "request": {
         "properties": {
@@ -18319,6 +18342,7 @@
       }
     },
     "user.lock": {
+      "friendlyChannelName": "UserLock",
       "description": "Get notificiation when account is locked/unlocked",
       "response": {
         "required": true,
@@ -18341,6 +18365,7 @@
       }
     },
     "user.mmp_trigger.{currency}": {
+      "friendlyChannelName": "UserMmpTrigger",
       "description": "Triggered when one of mmp limits is crossed",
       "request": {
         "properties": {
@@ -18376,6 +18401,7 @@
       }
     },
     "user.orders.{instrument_name}.raw": {
+      "friendlyChannelName": "UserOrdersInstrumentChangeRaw",
       "description": "Get notifications about changes in user's orders for given instrument.",
       "request": {
         "properties": {
@@ -18626,6 +18652,7 @@
       }
     },
     "user.orders.{instrument_name}.{interval}": {
+      "friendlyChannelName": "UserOrdersInstrumentChange",
       "description": "Get notifications about changes in user's orders for given instrument.",
       "request": {
         "properties": {
@@ -18886,6 +18913,7 @@
       }
     },
     "user.orders.{kind}.{currency}.raw": {
+      "friendlyChannelName": "UserOrdersKindCurrencyChangeRaw",
       "description": "Get notifications about changes in user's orders in instruments of a given kind and currency.",
       "request": {
         "properties": {
@@ -19157,6 +19185,7 @@
       }
     },
     "user.orders.{kind}.{currency}.{interval}": {
+      "friendlyChannelName": "UserOrdersKindCurrencyChange",
       "description": "Get notifications about changes in user's orders in instruments of a given kind and currency.",
       "request": {
         "properties": {
@@ -19438,6 +19467,7 @@
       }
     },
     "user.portfolio.{currency}": {
+      "friendlyChannelName": "UserPortfolio",
       "description": "Provides information about current user portfolio",
       "request": {
         "properties": {
@@ -19651,6 +19681,7 @@
       }
     },
     "user.trades.{instrument_name}.{interval}": {
+      "friendlyChannelName": "UserTradesInstrumentChange",
       "description": "Get notifications about user's trades in an instrument.",
       "request": {
         "properties": {
@@ -19861,6 +19892,7 @@
       }
     },
     "user.trades.{kind}.{currency}.{interval}": {
+      "friendlyChannelName": "UserTradesKindCurrencyChange",
       "description": "Get notifications about user's trades in any instrument of a given kind and given currency.",
       "request": {
         "properties": {

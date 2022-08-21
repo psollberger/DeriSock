@@ -21,7 +21,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("id")]
-    public int Id { get; set; }
+    public long Id { get; set; }
     /// <summary>
     /// <para>Name of key (only letters, numbers and underscores allowed; maximum length - 16 characters)</para>
     /// </summary>

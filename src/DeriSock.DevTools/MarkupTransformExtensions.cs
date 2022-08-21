@@ -1,4 +1,4 @@
-﻿namespace DeriSock.DevTools;
+namespace DeriSock.DevTools;
 
 using System;
 using System.Collections.Generic;
@@ -26,10 +26,19 @@ internal static class MarkupTransformExtensions
 
     foreach (var textLine in textLines) {
       builder.Clear();
-      builder.Append(SecurityElement.Escape(textLine));
+      builder.Append(textLine);
+
+      builder.Replace("<em>", "`");
+      builder.Replace("</em>", "`");
+
+      var secureTextLine = SecurityElement.Escape(builder.ToString());
+      builder.Clear();
+      builder.Append(secureTextLine);
+
       ConvertMarkdown(builder, "`", "<c>", "</c>");
       ConvertMarkdown(builder, "__", "<b>", "</b>");
       ConvertMarkdownHyperlinksToXmlDocLinks(builder);
+
       yield return builder.ToString();
     }
   }
@@ -65,9 +74,8 @@ internal static class MarkupTransformExtensions
   {
     var matches = HyperLinkPattern.Matches(haystack.ToString());
 
-    foreach (Match match in matches) {
+    foreach (Match match in matches)
       haystack.Replace(match.Value, $"<a href=\"{match.Groups["link"]}\">{match.Groups["text"]}</a>");
-    }
   }
 
   public static string ToMarkdown(this HtmlNode node)
@@ -124,6 +132,7 @@ internal static class MarkupTransformExtensions
 
         if (!firstListElement)
           listBuilder.Append("\n");
+
         firstListElement = false;
         listBuilder.Append(string.Concat("- ", listNode.InnerText));
       }

@@ -39,13 +39,13 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("fee_precision")]
-    public int FeePrecision { get; set; }
+    public long FeePrecision { get; set; }
     /// <summary>
     /// <para>Minimum number of block chain confirmations before deposit is accepted.</para>
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("min_confirmations")]
-    public int MinConfirmations { get; set; }
+    public long MinConfirmations { get; set; }
     /// <summary>
     /// <para>The minimum transaction fee paid for withdrawals</para>
     /// </summary>

@@ -51,7 +51,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("tick")]
-    public int Tick { get; set; }
+    public long Tick { get; set; }
     /// <summary>
     /// <para>Volume data for the candle</para>
     /// </summary>

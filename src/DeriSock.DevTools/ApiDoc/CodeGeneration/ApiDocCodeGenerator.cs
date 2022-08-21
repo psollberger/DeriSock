@@ -76,6 +76,7 @@ internal abstract class ApiDocCodeGenerator : IDisposable, IAsyncDisposable
 
   public async Task GenerateToCustomAsync(CancellationToken cancellationToken = default)
   {
+    _writer.GetStringBuilder().Clear();
     _namespace = new CodeNamespace(Namespace);
     GenerateHeader();
     await Generate(cancellationToken).ConfigureAwait(false);
@@ -164,8 +165,7 @@ internal abstract class ApiDocCodeGenerator : IDisposable, IAsyncDisposable
     memberProperty.Comments.Add(new CodeCommentStatement("<summary>", true));
 
     if (!string.IsNullOrEmpty(property.Description))
-      foreach (var xmlDocParagraph in property.Description.ToXmlDocParagraphs())
-        memberProperty.Comments.Add(new CodeCommentStatement($"<para>{xmlDocParagraph}</para>", true));
+      memberProperty.Comments.Add(property.Description.CreateXmlDocumentationPara());
 
     memberProperty.Comments.Add(new CodeCommentStatement("</summary>", true));
 

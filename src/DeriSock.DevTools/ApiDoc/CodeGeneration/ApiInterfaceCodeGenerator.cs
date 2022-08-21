@@ -43,11 +43,13 @@ internal class ApiInterfaceCodeGenerator : ApiDocCodeGenerator
   {
     var functionsPerCategory = Document!.Methods.Where(x => !x.Value.ExcludeInInterface).GroupBy(x => x.Value.Category);
 
+    string? path;
+
     foreach (var category in functionsPerCategory) {
       if (cancellationToken.IsCancellationRequested)
         break;
 
-      var path = DefinePathCallback?.Invoke(category.Key);
+      path = DefinePathCallback?.Invoke(category.Key);
 
       if (string.IsNullOrEmpty(path))
         continue;
@@ -56,6 +58,15 @@ internal class ApiInterfaceCodeGenerator : ApiDocCodeGenerator
 
       await WriteToAsync(path, cancellationToken).ConfigureAwait(false);
     }
+
+    // Adding Subscription Category
+    path = DefinePathCallback?.Invoke("Subscriptions");
+
+    if (string.IsNullOrEmpty(path))
+      return;
+
+    AddSubscriptionChannels("ISubscriptionsApi", Document!.Subscriptions.Values);
+    await WriteToAsync(path, cancellationToken).ConfigureAwait(false);
   }
 
   private async Task GenerateScopes(CancellationToken cancellationToken)
@@ -105,8 +116,7 @@ internal class ApiInterfaceCodeGenerator : ApiDocCodeGenerator
       objMethod.Comments.Add(new CodeCommentStatement("<summary>", true));
 
       if (!string.IsNullOrEmpty(function.Description))
-        foreach (var xmlDocParagraph in function.Description.ToXmlDocParagraphs())
-          objMethod.Comments.Add(new CodeCommentStatement($"<para>{xmlDocParagraph}</para>", true));
+        objMethod.Comments.Add(function.Description.CreateXmlDocumentationPara());
 
       objMethod.Comments.Add(new CodeCommentStatement("</summary>", true));
       objMethod.ReturnType = CreateApiMethodTypeReference(function);
@@ -128,6 +138,59 @@ internal class ApiInterfaceCodeGenerator : ApiDocCodeGenerator
         cancellationTokenParamExpr.UserData.Add("InitExpression", new CodeDefaultValueExpression(new CodeTypeReference(nameof(CancellationToken))));
         objMethod.Parameters.Add(cancellationTokenParamExpr);
         objMethod.Comments.Add(new CodeCommentStatement("<param name=\"cancellationToken\"></param>", true));
+      }
+
+      domType.Members.Add(objMethod);
+    }
+
+    AddType(domType);
+  }
+
+  private void AddSubscriptionChannels(string typeName, IEnumerable<ApiDocFunction> functions)
+  {
+    AddImport(CodeDomConst.ImportSystem);
+    AddImport(CodeDomConst.ImportSystemThreading);
+    AddImport(CodeDomConst.ImportSystemThreadingTasks);
+    AddImport(CodeDomConst.ImportDeriSockNetJsonRpc);
+    AddImport(CodeDomConst.ImportDeriSockModel);
+
+    var domType = new CodeTypeDeclaration
+    {
+      Name = typeName,
+      Attributes = MemberAttributes.Public,
+      IsInterface = true,
+      IsPartial = true
+    };
+
+    domType.CustomAttributes.Add(CodeDomConst.GeneratedCodeAttribute);
+
+    foreach (var function in functions) {
+      var objMethod = new CodeMemberMethod
+      {
+        Attributes = MemberAttributes.Public | MemberAttributes.Final,
+        Name = function.ToInterfaceMethodName(false)
+      };
+
+      objMethod.CustomAttributes.Add(CodeDomConst.GeneratedCodeAttribute);
+
+      objMethod.Comments.Add(new CodeCommentStatement("<summary>", true));
+
+      if (!string.IsNullOrEmpty(function.Description))
+        objMethod.Comments.Add(function.Description.CreateXmlDocumentationPara());
+
+      objMethod.Comments.Add(new CodeCommentStatement("</summary>", true));
+
+      objMethod.Comments.Add(new CodeCommentStatement("<remarks>Don't forget to use this stream with <see cref=\"System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}\"/>.</remarks>", true));
+
+      objMethod.ReturnType = new CodeTypeReference(typeof(Task<>).Name, new CodeTypeReference(typeof(NotificationStream<>).Name, new CodeTypeReference(function.GetResponseTypeInfo()!.TypeName)));
+
+      var requestTypeInfo = function.GetRequestTypeInfo();
+
+      if (requestTypeInfo is not null) {
+        var argsParamExpr = new CodeParameterDeclarationExpression($"{requestTypeInfo.ToFullTypeName()}[]", "channels");
+        argsParamExpr.CustomAttributes.Add(new CodeAttributeDeclaration("System.ParamArrayAttribute"));
+        objMethod.Parameters.Add(argsParamExpr);
+        objMethod.Comments.Add(new CodeCommentStatement("<param name=\"channels\"></param>", true));
       }
 
       domType.Members.Add(objMethod);

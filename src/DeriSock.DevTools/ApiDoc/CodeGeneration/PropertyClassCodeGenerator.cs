@@ -3,11 +3,13 @@ namespace DeriSock.DevTools.ApiDoc.CodeGeneration;
 using System;
 using System.CodeDom;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 using DeriSock.DevTools.ApiDoc.Model;
 using DeriSock.DevTools.CodeDom;
+using DeriSock.Request;
 
 internal class PropertyClassCodeGenerator : ApiDocCodeGenerator
 {
@@ -20,12 +22,20 @@ internal class PropertyClassCodeGenerator : ApiDocCodeGenerator
       throw new ArgumentNullException(nameof(Document));
 
     switch (Type) {
-      case GenType.Request:
-        await GenerateRequests(cancellationToken).ConfigureAwait(false);
+      case GenType.MethodRequest:
+        await GenerateMethodRequests(cancellationToken).ConfigureAwait(false);
         break;
 
-      case GenType.Response:
-        await GenerateResponses(cancellationToken).ConfigureAwait(false);
+      case GenType.MethodResponse:
+        await GenerateMethodResponses(cancellationToken).ConfigureAwait(false);
+        break;
+
+      case GenType.SubscriptionChannel:
+        await GenerateSubscriptionChannels(cancellationToken).ConfigureAwait(false);
+        break;
+
+      case GenType.SubscriptionNotification:
+        await GenerateSubscriptionNotifications(cancellationToken).ConfigureAwait(false);
         break;
 
       default:
@@ -33,9 +43,9 @@ internal class PropertyClassCodeGenerator : ApiDocCodeGenerator
     }
   }
 
-  private async Task GenerateRequests(CancellationToken cancellationToken)
+  private async Task GenerateMethodRequests(CancellationToken cancellationToken)
   {
-    var allFunctions = Document!.Methods.Concat(Document.Subscriptions).Select(x => x.Value);
+    var allFunctions = Document!.Methods.Select(x => x.Value);
 
     foreach (var function in allFunctions) {
       if (function.Request == null)
@@ -43,7 +53,7 @@ internal class PropertyClassCodeGenerator : ApiDocCodeGenerator
 
       var requestTypeInfo = function.GetRequestTypeInfo();
 
-      if (requestTypeInfo is null or {IsImported: true})
+      if (requestTypeInfo is null or { IsImported: true })
         continue;
 
       var className = requestTypeInfo.TypeName;
@@ -59,9 +69,9 @@ internal class PropertyClassCodeGenerator : ApiDocCodeGenerator
     }
   }
 
-  private async Task GenerateResponses(CancellationToken cancellationToken)
+  private async Task GenerateMethodResponses(CancellationToken cancellationToken)
   {
-    var allFunctions = Document!.Methods.Concat(Document.Subscriptions).Select(x => x.Value);
+    var allFunctions = Document!.Methods.Select(x => x.Value);
 
     foreach (var function in allFunctions) {
       if (function.Response == null)
@@ -69,7 +79,100 @@ internal class PropertyClassCodeGenerator : ApiDocCodeGenerator
 
       var responseTypeInfo = function.GetResponseTypeInfo();
 
-      if (responseTypeInfo is null or {IsImported: true})
+      if (responseTypeInfo is null or { IsImported: true })
+        continue;
+
+      var className = responseTypeInfo.TypeName;
+
+      var path = DefinePathCallback?.Invoke(className);
+
+      if (string.IsNullOrEmpty(path))
+        continue;
+
+      AddProperty(className, function.Response);
+
+      await WriteToAsync(path, cancellationToken).ConfigureAwait(false);
+    }
+  }
+
+  private async Task GenerateSubscriptionChannels(CancellationToken cancellationToken)
+  {
+    var allFunctions = Document!.Subscriptions.Select(x => x.Value);
+
+    foreach (var function in allFunctions) {
+      var requestTypeInfo = function.GetRequestTypeInfo();
+
+      if (requestTypeInfo is null or { IsImported: true })
+        continue;
+
+      var className = requestTypeInfo.TypeName;
+
+      var path = DefinePathCallback?.Invoke(className);
+
+      if (string.IsNullOrEmpty(path))
+        continue;
+
+      var objClass = new CodeTypeDeclaration
+      {
+        Name = className,
+        Attributes = MemberAttributes.Public,
+        IsPartial = true
+      };
+
+      objClass.BaseTypes.Add(typeof(ISubscriptionChannel));
+
+      objClass.CustomAttributes.Add(CodeDomConst.GeneratedCodeAttribute);
+
+      if (function.Request is not null) {
+        objClass.Comments.Add(new CodeCommentStatement("<summary>", true));
+
+        if (!string.IsNullOrEmpty(function.Request.Description))
+          objClass.Comments.Add(function.Request.Description.CreateXmlDocumentationPara());
+
+        objClass.Comments.Add(new CodeCommentStatement("</summary>", true));
+
+        if (function.Request is {Properties.Count: > 0}) {
+          foreach (var (_, value) in function.Request.Properties)
+            objClass.Members.Add(CreateProperty(value));
+        }
+      }
+
+      // Creating the ToChannelName Method (ISubscriptionChannel implementation)
+      var toChannelNameMethod = new CodeMemberMethod
+      {
+        Name = nameof(ISubscriptionChannel.ToChannelName),
+        Attributes = MemberAttributes.Public | MemberAttributes.Final,
+        ReturnType = new CodeTypeReference(typeof(string))
+      };
+
+      var returnValueBuilder = new StringBuilder(function.Name);
+      if (function.Request is { Properties.Count: > 0 }) {
+        foreach (var (_, value) in function.Request.Properties) {
+          returnValueBuilder.Replace($"{{{value.Name}}}", $"{{{value.Name.ToPublicCodeName()}}}");
+        }
+      }
+
+      toChannelNameMethod.Statements.Add(new CodeMethodReturnStatement(new CodeSnippetExpression($"$\"{returnValueBuilder}\"")));
+      objClass.Members.Add(toChannelNameMethod);
+
+      // Adding the new type to the namespace
+      AddType(objClass);
+
+      await WriteToAsync(path, cancellationToken).ConfigureAwait(false);
+    }
+  }
+
+  private async Task GenerateSubscriptionNotifications(CancellationToken cancellationToken)
+  {
+    var allFunctions = Document!.Subscriptions.Select(x => x.Value);
+
+    foreach (var function in allFunctions) {
+      if (function.Response == null)
+        continue;
+
+      var responseTypeInfo = function.GetResponseTypeInfo();
+
+      if (responseTypeInfo is null or { IsImported: true })
         continue;
 
       var className = responseTypeInfo.TypeName;
@@ -102,8 +205,7 @@ internal class PropertyClassCodeGenerator : ApiDocCodeGenerator
     objClass.Comments.Add(new CodeCommentStatement("<summary>", true));
 
     if (!string.IsNullOrEmpty(property.Description))
-      foreach (var xmlDocParagraph in property.Description.ToXmlDocParagraphs())
-        objClass.Comments.Add(new CodeCommentStatement($"<para>{xmlDocParagraph}</para>", true));
+      objClass.Comments.Add(property.Description.CreateXmlDocumentationPara());
 
     objClass.Comments.Add(new CodeCommentStatement("</summary>", true));
 
@@ -115,7 +217,9 @@ internal class PropertyClassCodeGenerator : ApiDocCodeGenerator
 
   internal enum GenType
   {
-    Request,
-    Response
+    MethodRequest,
+    MethodResponse,
+    SubscriptionChannel,
+    SubscriptionNotification
   }
 }

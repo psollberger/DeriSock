@@ -44,11 +44,12 @@ internal class ApiInterfaceImplementationCodeGenerator : ApiDocCodeGenerator
   {
     var functionsPerCategory = Document!.Methods.Where(x => !x.Value.ExcludeInInterface).GroupBy(x => x.Value.Category);
 
+    string? path;
     foreach (var category in functionsPerCategory) {
       if (cancellationToken.IsCancellationRequested)
         break;
 
-      var path = DefinePathCallback?.Invoke(category.Key);
+      path = DefinePathCallback?.Invoke(category.Key);
 
       if (string.IsNullOrEmpty(path))
         continue;
@@ -57,6 +58,15 @@ internal class ApiInterfaceImplementationCodeGenerator : ApiDocCodeGenerator
 
       await WriteToAsync(path, cancellationToken).ConfigureAwait(false);
     }
+
+    // Create the subscriptions
+    path = DefinePathCallback?.Invoke("Subscriptions");
+
+    if (string.IsNullOrEmpty(path))
+      return;
+
+    CreateSubscriptionChannels("SubscriptionsApiImpl", "ISubscriptionsApi", Document!.Subscriptions.Values);
+    await WriteToAsync(path, cancellationToken).ConfigureAwait(false);
   }
 
   private async Task GenerateScopes(CancellationToken cancellationToken)
@@ -164,10 +174,101 @@ internal class ApiInterfaceImplementationCodeGenerator : ApiDocCodeGenerator
       CodeStatement bodyStatement = objMethod.ReturnType!.BaseType switch
       {
         "System.Void" => new CodeExpressionStatement(methodInvoke),
-        _             => new CodeMethodReturnStatement(methodInvoke)
+        _ => new CodeMethodReturnStatement(methodInvoke)
       };
 
       objMethod.Statements.Add(bodyStatement);
+
+      domType.Members.Add(objMethod);
+    }
+
+    // Adding the class into DeribitClient
+
+    var clientClass = new CodeTypeDeclaration("DeribitClient")
+    {
+      Attributes = MemberAttributes.Public,
+      IsPartial = true
+    };
+
+    clientClass.Members.Add(domType);
+
+    AddType(clientClass);
+  }
+
+  private void CreateSubscriptionChannels(string typeName, string interfaceName, IEnumerable<ApiDocFunction> functions)
+  {
+    AddImport(CodeDomConst.ImportSystem);
+    AddImport(CodeDomConst.ImportSystemThreading);
+    AddImport(CodeDomConst.ImportSystemThreadingTasks);
+    AddImport(CodeDomConst.ImportDeriSockApi);
+    AddImport(CodeDomConst.ImportDeriSockNetJsonRpc);
+    AddImport(CodeDomConst.ImportDeriSockModel);
+    AddImport(CodeDomConst.ImportNewtonsoftJsonLinq);
+
+    // Adding the implementation class
+    var domType = new CodeTypeDeclaration(typeName)
+    {
+      TypeAttributes = TypeAttributes.NestedPrivate | TypeAttributes.Sealed,
+      IsPartial = true
+    };
+
+    domType.CustomAttributes.Add(CodeDomConst.GeneratedCodeAttribute);
+
+    // Implementing from the interface
+    domType.BaseTypes.Add(interfaceName);
+
+    // Adding Field _client
+    var clientField = new CodeMemberField("DeribitClient", "_client");
+    clientField.Attributes = MemberAttributes.Private | MemberAttributes.Final;
+    domType.Members.Add(clientField);
+
+    // Adding Constructor
+    var ctor = new CodeConstructor
+    {
+      Attributes = MemberAttributes.Public | MemberAttributes.Final
+    };
+
+    ctor.Parameters.Add(new CodeParameterDeclarationExpression("DeribitClient", "client"));
+    ctor.Statements.Add(new CodeAssignStatement(new CodeFieldReferenceExpression(null, "_client"), new CodeArgumentReferenceExpression("client")));
+    domType.Members.Add(ctor);
+
+    // Adding implementation of methods
+
+    foreach (var function in functions) {
+      var objMethod = new CodeMemberMethod
+      {
+        Attributes = MemberAttributes.Public | MemberAttributes.Final,
+        Name = function.ToInterfaceMethodName(false)
+      };
+
+      objMethod.PrivateImplementationType = new CodeTypeReference(interfaceName);
+      objMethod.CustomAttributes.Add(CodeDomConst.GeneratedCodeAttribute);
+
+      // Adding method comment
+      objMethod.Comments.Add(new CodeCommentStatement($"<inheritdoc cref=\"{interfaceName}.{objMethod.Name}\" />", true));
+
+      // Defining return type
+      objMethod.ReturnType = new CodeTypeReference(typeof(Task<>).Name,
+                                                   new CodeTypeReference(
+                                                     typeof(NotificationStream<>).Name,
+                                                     new CodeTypeReference(function.GetResponseTypeInfo()!.TypeName)));
+
+      // Adding Parameters
+      var requestTypeInfo = function.GetRequestTypeInfo();
+
+      if (requestTypeInfo is not null) {
+        var argsParamExpr = new CodeParameterDeclarationExpression($"{requestTypeInfo.ToFullTypeName()}[]", "channels");
+        argsParamExpr.CustomAttributes.Add(new CodeAttributeDeclaration("System.ParamArrayAttribute"));
+        objMethod.Parameters.Add(argsParamExpr);
+        objMethod.Comments.Add(new CodeCommentStatement("<param name=\"channels\"></param>", true));
+      }
+
+      // Adding method body
+      var methodInvoke = new CodeMethodInvokeExpression(new CodeFieldReferenceExpression(null, "_client"),
+                                                        $"Internal{function.ToInterfaceMethodName(false)}",
+                                                        new CodeArgumentReferenceExpression("channels"));
+
+      objMethod.Statements.Add(new CodeMethodReturnStatement(methodInvoke));
 
       domType.Members.Add(objMethod);
     }
@@ -201,6 +302,8 @@ internal class ApiInterfaceImplementationCodeGenerator : ApiDocCodeGenerator
       AddSummaryField(categoryName);
     }
 
+    AddSummaryField("Subscriptions");
+
     AddSummaryProperty("Public");
     AddSummaryProperty("Private");
 
@@ -210,6 +313,8 @@ internal class ApiInterfaceImplementationCodeGenerator : ApiDocCodeGenerator
 
       AddSummaryProperty(categoryName);
     }
+
+    AddSummaryProperty("Subscriptions");
 
     EndSummary();
 

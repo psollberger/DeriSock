@@ -75,6 +75,12 @@ public class ApiDocOverrideAdopter
       return;
 
     foreach (var (_, function) in functionsToOverride) {
+      if (overrideFunction.Category is not null)
+        function.Category = overrideFunction.Category;
+
+      if (overrideFunction.FriendlyChannelName is not null)
+        function.FriendlyChannelName = overrideFunction.FriendlyChannelName;
+
       if (overrideFunction.Description is not null)
         function.Description = overrideFunction.Description;
 

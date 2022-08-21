@@ -21,6 +21,6 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("contract_size")]
-    public int ContractSize { get; set; }
+    public long ContractSize { get; set; }
   }
 }

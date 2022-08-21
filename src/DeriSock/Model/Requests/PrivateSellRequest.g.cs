@@ -41,19 +41,19 @@ namespace DeriSock.Model
     [Newtonsoft.Json.JsonPropertyAttribute("label")]
     public string? Label { get; set; }
     /// <summary>
-    /// <para>The order price in base currency (Only for limit and stop_limit orders)</para>
-    /// <para>When adding order with advanced=usd, the field price should be the option price value in USD.</para>
-    /// <para>When adding order with advanced=implv, the field price should be a value of implied volatility in percentages. For example,  price=100, means implied volatility of 100%</para>
+    /// <para>The order price in base currency (Only for limit and stop_limit orders)<br/>
+    ///When adding order with advanced=usd, the field price should be the option price value in USD.<br/>
+    ///When adding order with advanced=implv, the field price should be a value of implied volatility in percentages. For example,  price=100, means implied volatility of 100%</para>
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("price")]
     public decimal? Price { get; set; }
     /// <summary>
-    /// <para>Specifies how long the order remains in effect. Default <c>&quot;good_til_cancelled&quot;</c></para>
-    /// <para>- <c>&quot;good_til_cancelled&quot;</c> - unfilled order remains in order book until cancelled</para>
-    /// <para>- <c>&quot;good_til_day&quot;</c> - unfilled order remains in order book till the end of the trading session</para>
-    /// <para>- <c>&quot;fill_or_kill&quot;</c> - execute a transaction immediately and completely or not at all</para>
-    /// <para>- <c>&quot;immediate_or_cancel&quot;</c> - execute a transaction immediately, and any portion of the order that cannot be immediately filled is cancelled</para>
+    /// <para>Specifies how long the order remains in effect. Default <c>&quot;good_til_cancelled&quot;</c><br/>
+    ///- <c>&quot;good_til_cancelled&quot;</c> - unfilled order remains in order book until cancelled<br/>
+    ///- <c>&quot;good_til_day&quot;</c> - unfilled order remains in order book till the end of the trading session<br/>
+    ///- <c>&quot;fill_or_kill&quot;</c> - execute a transaction immediately and completely or not at all<br/>
+    ///- <c>&quot;immediate_or_cancel&quot;</c> - execute a transaction immediately, and any portion of the order that cannot be immediately filled is cancelled</para>
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("time_in_force")]
@@ -65,15 +65,15 @@ namespace DeriSock.Model
     [Newtonsoft.Json.JsonPropertyAttribute("max_show")]
     public decimal? MaxShow { get; set; }
     /// <summary>
-    /// <para>If true, the order is considered post-only. If the new price would cause the order to be filled immediately (as taker), the price will be changed to be just above the spread.</para>
-    /// <para>Only valid in combination with time_in_force=<c>&quot;good_til_cancelled&quot;</c></para>
+    /// <para>If true, the order is considered post-only. If the new price would cause the order to be filled immediately (as taker), the price will be changed to be just above the spread.<br/>
+    ///Only valid in combination with time_in_force=<c>&quot;good_til_cancelled&quot;</c></para>
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("post_only")]
     public bool? PostOnly { get; set; }
     /// <summary>
-    /// <para>If an order is considered post-only and this field is set to true then the order is put to order book unmodified or request is rejected.</para>
-    /// <para>Only valid in combination with <c>&quot;post_only&quot;</c> set to true</para>
+    /// <para>If an order is considered post-only and this field is set to true then the order is put to order book unmodified or request is rejected.<br/>
+    ///Only valid in combination with <c>&quot;post_only&quot;</c> set to true</para>
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("reject_post_only")]
@@ -119,6 +119,6 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("valid_until")]
-    public int? ValidUntil { get; set; }
+    public long? ValidUntil { get; set; }
   }
 }

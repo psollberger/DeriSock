@@ -16,8 +16,6 @@ namespace DeriSock
   using DeriSock.Api;
   using DeriSock.Net.JsonRpc;
   using DeriSock.Model;
-  using DeriSock.Net.JsonRpc;
-
   using Newtonsoft.Json.Linq;
   
   public partial class DeribitClient
@@ -32,37 +30,37 @@ namespace DeriSock
       }
       /// <inheritdoc cref="IBlockTradeApi.PrivateExecuteBlockTrade" />
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      System.Threading.Tasks.Task<JsonRpcResponse<BlockTrade>> IBlockTradeApi.PrivateExecuteBlockTrade(PrivateExecuteBlockTradeRequest args, CancellationToken cancellationToken)
+      System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<BlockTrade>> IBlockTradeApi.PrivateExecuteBlockTrade(PrivateExecuteBlockTradeRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPrivateExecuteBlockTrade(args, cancellationToken);
       }
       /// <inheritdoc cref="IBlockTradeApi.PrivateGetBlockTrade" />
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      System.Threading.Tasks.Task<JsonRpcResponse<BlockTrade>> IBlockTradeApi.PrivateGetBlockTrade(PrivateGetBlockTradeRequest args, CancellationToken cancellationToken)
+      System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<BlockTrade>> IBlockTradeApi.PrivateGetBlockTrade(PrivateGetBlockTradeRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPrivateGetBlockTrade(args, cancellationToken);
       }
       /// <inheritdoc cref="IBlockTradeApi.PrivateGetLastBlockTradesByCurrency" />
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      System.Threading.Tasks.Task<JsonRpcResponse<BlockTrade[]>> IBlockTradeApi.PrivateGetLastBlockTradesByCurrency(PrivateGetLastBlockTradesByCurrencyRequest args, CancellationToken cancellationToken)
+      System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<BlockTrade[]>> IBlockTradeApi.PrivateGetLastBlockTradesByCurrency(PrivateGetLastBlockTradesByCurrencyRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPrivateGetLastBlockTradesByCurrency(args, cancellationToken);
       }
       /// <inheritdoc cref="IBlockTradeApi.PrivateInvalidateBlockTradeSignature" />
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      System.Threading.Tasks.Task<JsonRpcResponse<string>> IBlockTradeApi.PrivateInvalidateBlockTradeSignature(PrivateInvalidateBlockTradeSignatureRequest args, CancellationToken cancellationToken)
+      System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<string>> IBlockTradeApi.PrivateInvalidateBlockTradeSignature(PrivateInvalidateBlockTradeSignatureRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPrivateInvalidateBlockTradeSignature(args, cancellationToken);
       }
       /// <inheritdoc cref="IBlockTradeApi.PrivateMovePositions" />
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      System.Threading.Tasks.Task<JsonRpcResponse<MovePositionResponse>> IBlockTradeApi.PrivateMovePositions(PrivateMovePositionsRequest args, CancellationToken cancellationToken)
+      System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<MovePositionResponse>> IBlockTradeApi.PrivateMovePositions(PrivateMovePositionsRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPrivateMovePositions(args, cancellationToken);
       }
       /// <inheritdoc cref="IBlockTradeApi.PrivateVerifyBlockTrade" />
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      System.Threading.Tasks.Task<JsonRpcResponse<VerifyBlockTradeResponse>> IBlockTradeApi.PrivateVerifyBlockTrade(PrivateVerifyBlockTradeRequest args, CancellationToken cancellationToken)
+      System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<VerifyBlockTradeResponse>> IBlockTradeApi.PrivateVerifyBlockTrade(PrivateVerifyBlockTradeRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPrivateVerifyBlockTrade(args, cancellationToken);
       }

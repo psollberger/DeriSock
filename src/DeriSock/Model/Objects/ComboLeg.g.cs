@@ -21,7 +21,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("amount")]
-    public int Amount { get; set; }
+    public long Amount { get; set; }
     /// <summary>
     /// <para>Unique instrument identifier</para>
     /// </summary>

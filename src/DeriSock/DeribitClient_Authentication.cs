@@ -37,7 +37,7 @@ public partial class DeribitClient : IAuthenticationMethods
 
     var response = await Send("public/auth", reqParams, new ObjectJsonConverter<AuthTokenData>(), cancellationToken).ConfigureAwait(false);
 
-    var loginRes = response.ResultData;
+    var loginRes = response.Data;
 
     AccessToken = loginRes.AccessToken;
     RefreshToken = loginRes.RefreshToken;
@@ -77,7 +77,7 @@ public partial class DeribitClient : IAuthenticationMethods
 
     var response = await Send("public/auth", reqParams, new ObjectJsonConverter<AuthTokenData>(), cancellationToken).ConfigureAwait(false);
 
-    var loginRes = response.ResultData;
+    var loginRes = response.Data;
 
     AccessToken = loginRes.AccessToken;
     RefreshToken = loginRes.RefreshToken;
@@ -105,7 +105,7 @@ public partial class DeribitClient : IAuthenticationMethods
 
     var response = await Send("public/auth", reqParams, new ObjectJsonConverter<AuthTokenData>(), cancellationToken).ConfigureAwait(false);
 
-    var loginRes = response.ResultData;
+    var loginRes = response.Data;
 
     AccessToken = loginRes.AccessToken;
     RefreshToken = loginRes.RefreshToken;

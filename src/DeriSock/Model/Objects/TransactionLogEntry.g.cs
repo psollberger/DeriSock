@@ -66,7 +66,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("id")]
-    public int Id { get; set; }
+    public long Id { get; set; }
     /// <summary>
     /// <para>Additional information regarding transaction. Strongly dependent on the log entry type</para>
     /// </summary>
@@ -169,7 +169,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("user_id")]
-    public int UserId { get; set; }
+    public long UserId { get; set; }
     /// <summary>
     /// <para>Trade role of the user: maker or taker</para>
     /// </summary>
@@ -181,7 +181,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("user_seq")]
-    public int UserSeq { get; set; }
+    public long UserSeq { get; set; }
     /// <summary>
     /// <para>System name or user defined subaccount alias</para>
     /// </summary>
