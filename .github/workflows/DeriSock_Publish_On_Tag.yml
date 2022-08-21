@@ -10,7 +10,7 @@ on:
 
 env:
   PROJECT_PATH: src/DeriSock/DeriSock.csproj
-  PACKAGE_OUTPUT_DIRECTORY: ${{ github.workspace }}\dist
+  PACKAGE_OUTPUT_DIRECTORY: ${{ github.workspace }}/dist
   NUGET_SOURCE_URL: https://api.nuget.org/v3/index.json
 
 jobs:
@@ -25,8 +25,6 @@ jobs:
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: |
-          3.1.x
-          5.0.x
           6.0.x
 
     - name: Restore packages
@@ -43,4 +41,4 @@ jobs:
       run: dotnet pack ${{ env.PROJECT_PATH }} --no-restore --no-build --configuration Release --include-symbols -p:PackageVersion=${{ steps.version.outputs.version-without-v }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
 
     - name: Push package
-      run: dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}\*.nupkg -k ${{ secrets.NUGET_KEY }} -s ${{ env.NUGET_SOURCE_URL }}
+      run: dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg -k ${{ secrets.NUGET_KEY }} -s ${{ env.NUGET_SOURCE_URL }}
