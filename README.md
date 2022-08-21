@@ -88,6 +88,9 @@ client.Authentication.PrivateLogout();
 
 ## Subscriptions
 
+The subscription system will choose `public/subscribe` or `private/subscribe` automatically.  
+If the client is authenticated it will use `private/subscribe`, if the client is not authenticated it will use `public/subscribe`.
+
 <!-- snippet: readme-subscribtion-usage -->
 <a id='snippet-readme-subscribtion-usage'></a>
 ```cs
