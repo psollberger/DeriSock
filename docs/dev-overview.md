@@ -76,10 +76,6 @@ Contains some _constant_ values. For example `ErrorCode` informations.
 
 Contains JSON Converters needed for deserializing responses.
 
-#### JsonRpc
-
-Contains JsonRpc message handling used by `DeribitClient`.
-
 #### Model
 
 Contains all types that are used for requests and responses. Those classes are all partial, so they can be customized.
@@ -99,13 +95,13 @@ public partial class AccountSummaryData
 <sup><a href='/src/DeriSock/Model/Objects/AccountSummaryData.cs#L5-L15' title='Snippet source file'>snippet source</a> | <a href='#snippet-example-customized-model-class' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
+#### Net/JsonRpc
+
+Contains JsonRpc message handling used by `DeribitClient`.
+
 #### Utils
 
 Contains internal utilities.
-
-#### WebSocket
-
-Contains WebSocket handling infrastructure.
 
 #### DeribitClient.cs / DeribitClient_*.cs
 

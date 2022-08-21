@@ -44,23 +44,19 @@ Contains some _constant_ values. For example `ErrorCode` informations.
 
 Contains JSON Converters needed for deserializing responses.
 
-#### JsonRpc
-
-Contains JsonRpc message handling used by `DeribitClient`.
-
 #### Model
 
 Contains all types that are used for requests and responses. Those classes are all partial, so they can be customized.
 
 snippet: example-customized-model-class
 
+#### Net/JsonRpc
+
+Contains JsonRpc message handling used by `DeribitClient`.
+
 #### Utils
 
 Contains internal utilities.
-
-#### WebSocket
-
-Contains WebSocket handling infrastructure.
 
 #### DeribitClient.cs / DeribitClient_*.cs
 
