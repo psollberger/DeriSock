@@ -12,8 +12,8 @@ namespace DeriSock.Model
 {
   
   /// <summary>
-  /// <para>Specifies if Cancel On Disconnect change should be applied/checked for the current connection or the account (default - <c>connection</c>)<br/>
-  ///<b>NOTICE:</b> Scope <c>connection</c> can be used only when working via Websocket.</para>
+  /// <para>Specifies if Cancel On Disconnect change should be applied/checked for the current connection or the account (default - <c>connection</c>)</para>
+  /// <para><b>NOTICE:</b> Scope <c>connection</c> can be used only when working via Websocket.</para>
   /// </summary>
   [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
   public partial class ConnectionScope : DeriSock.Model.EnumValue

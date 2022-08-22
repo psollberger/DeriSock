@@ -6,9 +6,7 @@ using DeriSock.DevTools.CodeDom;
 
 public enum ApiDocFunctionType
 {
-  Undefined,
-  Method,
-  Subscription
+  Undefined, Method, Subscription
 }
 
 /// <summary>
@@ -29,18 +27,10 @@ public class ApiDocFunction : IApiDocPropertyNode
   public string? Category { get; set; } = null;
 
   /// <summary>
-  /// Gets a friendly channel name that can be used for <see cref="DeriSock.Request.ISubscriptionChannel"/>.
-  /// </summary>
-  [JsonPropertyName("friendlyChannelName")]
-  public string? FriendlyChannelName { get; set; } = null;
-
-  /// <summary>
-  ///   Gets, if the method/channel is private and authentication is needed to use it. This is always false on a subscription
+  ///   Gets, if the method is private and authentication is needed to use it. This is always false on a subscription
   /// </summary>
   [JsonIgnore]
-  public bool IsPrivate =>
-    (FunctionType == ApiDocFunctionType.Method && Name.StartsWith("private/")) ||
-    (FunctionType == ApiDocFunctionType.Subscription && Name.StartsWith("user."));
+  public bool IsPrivate => Name.StartsWith("private/");
 
   /// <summary>
   ///   <para>This is the methods or subscriptions name in the form of:</para>
@@ -59,13 +49,13 @@ public class ApiDocFunction : IApiDocPropertyNode
   public string Description { get; set; } = string.Empty;
 
   /// <summary>
-  ///   Gets, if this entry should not be included in interface generation
+  /// Gets, if this entry should not be included in interface generation
   /// </summary>
   [JsonPropertyName("excludeInInterface")]
   public bool ExcludeInInterface { get; set; }
 
   /// <summary>
-  ///   Gets, if this function is executed synchronously
+  /// Gets, if this function is executed synchronously
   /// </summary>
   [JsonPropertyName("isSynchronous")]
   public bool IsSynchronous { get; set; }
@@ -97,15 +87,11 @@ public class ApiDocFunction : IApiDocPropertyNode
 
   public DataTypeInfo? GetRequestTypeInfo()
   {
-    if (FunctionType == ApiDocFunctionType.Subscription)
-      return new DataTypeInfo($"{FriendlyChannelName ?? Name.ToPublicCodeName()}Channel", false, false);
-
     if (Request is null)
       return null;
 
     var dataTypeInfo = Request.GetDataTypeInfo();
-
-    if (dataTypeInfo is null or { TypeName: null } or { TypeName: "" } or { TypeName: "object" })
+    if (dataTypeInfo is null or { TypeName: null } or { TypeName: "" } or {TypeName: "object"})
       return new DataTypeInfo($"{Name.ToPublicCodeName()}Request", false, !Request.IsAnyPropertyRequired);
 
     dataTypeInfo.IsImported = true;
@@ -130,9 +116,6 @@ public class ApiDocFunction : IApiDocPropertyNode
 
   public string ToInterfaceMethodName(bool removeScope)
   {
-    if (FunctionType == ApiDocFunctionType.Subscription)
-      return $"Subscribe{FriendlyChannelName ?? Name.ToPublicCodeName()}";
-
     if (removeScope)
       return Name[(Name.IndexOf('/') + 1)..].ToPublicCodeName();
 

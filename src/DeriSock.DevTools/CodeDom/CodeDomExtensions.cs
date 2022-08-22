@@ -18,7 +18,7 @@ public static class CodeDomExtensions
       "number"           => typeof(decimal).FullName,
       "float"            => typeof(double).FullName,
       "long"             => typeof(long).FullName,
-      "integer"          => typeof(long).FullName,
+      "integer"          => typeof(int).FullName,
       "boolean"          => typeof(bool).FullName,
       "string"           => typeof(string).FullName,
       "text"             => typeof(string).FullName,
@@ -27,7 +27,7 @@ public static class CodeDomExtensions
       {
         "number"                  => typeof(decimal).FullName,
         "float"                   => typeof(double).FullName,
-        "integer"                 => typeof(long).FullName,
+        "integer"                 => typeof(int).FullName,
         "boolean"                 => typeof(bool).FullName,
         "string"                  => typeof(string).FullName,
         "text"                    => typeof(string).FullName,
@@ -54,19 +54,6 @@ public static class CodeDomExtensions
       return value;
 
     var sb = new StringBuilder(EnglishTextInfo.ToTitleCase(value));
-
-    // Scan the name for numbers and make the first letter after the
-    // last number lower-case, if it was lower-case in the original value
-    for (var i = 0; i < sb.Length; i++) {
-      var prevWasNumber = i != 0 && char.IsNumber(sb[i - 1]);
-
-      if (!char.IsNumber(sb[i])) {
-        if (prevWasNumber && char.IsLower(value, i))
-          sb.Replace(sb[i], char.ToLower(sb[i]), i, 1);
-
-        break;
-      }
-    }
 
     if (isPrivate)
       sb[0] = EnglishTextInfo.ToLower(sb[0]);
@@ -103,20 +90,4 @@ public static class CodeDomExtensions
 
   public static bool HasCharAt(this string value, int index, char character)
     => index < value.Length && value[index] == character;
-
-  public static CodeCommentStatement CreateXmlDocumentationPara(this string description)
-  {
-    var commentBuilder = new StringBuilder();
-    var isFirst = true;
-
-    foreach (var xmlDocParagraph in description.ToXmlDocParagraphs()) {
-      if (!isFirst)
-        commentBuilder.AppendLine("<br/>");
-
-      isFirst = false;
-      commentBuilder.Append(xmlDocParagraph);
-    }
-
-    return new CodeCommentStatement($"<para>{commentBuilder}</para>", true);
-  }
 }

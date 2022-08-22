@@ -57,7 +57,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("ticks")]
-    public long[] Ticks { get; set; } = System.Array.Empty<System.Int64>();
+    public int[] Ticks { get; set; } = System.Array.Empty<System.Int32>();
     /// <summary>
     /// <para>List of volume bars (in base currency, one per candle)</para>
     /// </summary>

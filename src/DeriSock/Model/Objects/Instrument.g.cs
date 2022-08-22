@@ -35,7 +35,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("contract_size")]
-    public long ContractSize { get; set; }
+    public int ContractSize { get; set; }
     /// <summary>
     /// <para>Counter currency for the instrument.</para>
     /// </summary>
@@ -67,7 +67,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("instrument_id")]
-    public long InstrumentId { get; set; }
+    public int InstrumentId { get; set; }
     /// <summary>
     /// <para>Unique instrument identifier</para>
     /// </summary>
@@ -91,7 +91,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("leverage")]
-    public long Leverage { get; set; }
+    public int Leverage { get; set; }
     /// <summary>
     /// <para>Maker commission for instrument</para>
     /// </summary>

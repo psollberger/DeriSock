@@ -2,11 +2,12 @@ namespace DeriSock;
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 using DeriSock.Constants;
 
 /// <summary>
-///   Provides some Extension Methods for various types
+/// Provides some Extension Methods for various types
 /// </summary>
 public static class HelperExtensions
 {
@@ -39,7 +40,9 @@ public static class HelperExtensions
   /// <param name="timestamp">timestamp in milliseconds since the Unix epoch</param>
   /// <returns>The <see cref="DateTime" /> that represents the timestamp in local time</returns>
   public static DateTime ToDateTimeFromUnixTimeMilliseconds(this long timestamp)
-    => new DateTime(DateTimeOffset.FromUnixTimeMilliseconds(timestamp).Ticks, DateTimeKind.Utc).ToLocalTime();
+  {
+    return new DateTime(DateTimeOffset.FromUnixTimeMilliseconds(timestamp).Ticks, DateTimeKind.Utc).ToLocalTime();
+  }
 
   /// <summary>
   ///   Converts a <see cref="DateTime" /> into milliseconds since Unix epoch
@@ -47,10 +50,12 @@ public static class HelperExtensions
   /// <param name="dateTime"><see cref="DateTime" /> as UTC</param>
   /// <returns></returns>
   public static long ToUnixTimeMilliseconds(this DateTime dateTime)
-    => new DateTimeOffset(dateTime).ToUnixTimeMilliseconds();
+  {
+    return new DateTimeOffset(dateTime).ToUnixTimeMilliseconds();
+  }
 
   /// <summary>
-  ///   Calculates the amount of days from now until this point in time is reached
+  /// Calculates the amount of days from now until this point in time is reached
   /// </summary>
   /// <param name="value">A <see cref="DateTime" /> object for which the remaining days should be calculated</param>
   /// <returns></returns>
@@ -66,7 +71,7 @@ public static class HelperExtensions
   }
 
   /// <summary>
-  ///   Tries to add a key/value pair
+  /// Tries to add a key/value pair
   /// </summary>
   /// <typeparam name="T">The type of the value</typeparam>
   /// <param name="dictionary">The dictionary in which the key/value pair should be added</param>
@@ -77,10 +82,14 @@ public static class HelperExtensions
   public static bool TryAdd<T>(this IDictionary<string, T> dictionary, string key, T value)
   {
     if (dictionary is null)
+    {
       throw new ArgumentNullException(nameof(dictionary));
+    }
 
     if (dictionary.ContainsKey(key))
+    {
       return false;
+    }
 
     dictionary.Add(key, value);
     return true;

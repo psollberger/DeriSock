@@ -21,6 +21,6 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("subaccount_id")]
-    public long SubaccountId { get; set; }
+    public int SubaccountId { get; set; }
   }
 }

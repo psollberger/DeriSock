@@ -33,6 +33,6 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("destination")]
-    public long Destination { get; set; }
+    public int Destination { get; set; }
   }
 }

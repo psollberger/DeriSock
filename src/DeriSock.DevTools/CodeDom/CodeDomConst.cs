@@ -26,7 +26,7 @@ internal static class CodeDomConst
   public const string ImportSystemThreadingTasks = "System.Threading.Tasks";
   public const string ImportDeriSockApi = "DeriSock.Api";
   public const string ImportDeriSockConverter = "DeriSock.Converter";
-  public const string ImportDeriSockNetJsonRpc = "DeriSock.Net.JsonRpc";
+  public const string ImportDeriSockJsonRpc = "DeriSock.JsonRpc";
   public const string ImportDeriSockModel = "DeriSock.Model";
   public const string ImportNewtonsoftJsonLinq = "Newtonsoft.Json.Linq";
 

@@ -45,7 +45,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("count")]
-    public long? Count { get; set; }
+    public int? Count { get; set; }
     /// <summary>
     /// <para>Include trades older than a few recent days, default - <c>false</c></para>
     /// </summary>
