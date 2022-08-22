@@ -3,10 +3,13 @@ using Newtonsoft.Json;
 
 namespace DeriSock.Model;
 
-using Newtonsoft.Json;
-
-public partial class Instrument
+public partial class TickerData
 {
+  /// <summary>
+  ///   The option type (only for options)
+  /// </summary>
+  public DateTime ExpiryDate => InstrumentName.ToInstrumentExpiration();
+
   /// <summary>
   ///   The instrument type (options,future,perpetual)
   /// </summary>
@@ -22,5 +25,10 @@ public partial class Instrument
   ///   Days to expiry of contract
   /// </summary>
   [JsonIgnore]
-  public double DaysToExpiry => ExpirationTimestamp.ToTotalDaysFromNow();
+  public double DaysToExpiry => ExpiryDate.ToTotalDaysFromNow();
+
+  /// <summary>
+  ///   Strike price (only for options)
+  /// </summary>
+  public decimal Strike => InstrumentName.GetStrikePrice();
 }
