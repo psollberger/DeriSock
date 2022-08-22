@@ -49,7 +49,7 @@ public partial interface IAuthenticationApi
   public IAuthenticationMethods PublicLogin();
 }
 ```
-<sup><a href='/src/DeriSock/Api/IAuthenticationApi.cs#L3-L11' title='Snippet source file'>snippet source</a> | <a href='#snippet-example-customized-api-interface' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/DeriSock/Api/IAuthenticationApi.cs#L3-L10' title='Snippet source file'>snippet source</a> | <a href='#snippet-example-customized-api-interface' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 <!-- snippet: example-customized-api-interface-impl -->
@@ -65,7 +65,7 @@ public partial class DeribitClient
   }
 }
 ```
-<sup><a href='/src/DeriSock/Api/AuthenticationApiImpl.cs#L5-L16' title='Snippet source file'>snippet source</a> | <a href='#snippet-example-customized-api-interface-impl' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/DeriSock/Api/AuthenticationApiImpl.cs#L5-L15' title='Snippet source file'>snippet source</a> | <a href='#snippet-example-customized-api-interface-impl' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 #### Constants
@@ -75,6 +75,10 @@ Contains some _constant_ values. For example `ErrorCode` informations.
 #### Converter
 
 Contains JSON Converters needed for deserializing responses.
+
+#### JsonRpc
+
+Contains JsonRpc message handling used by `DeribitClient`.
 
 #### Model
 
@@ -92,16 +96,16 @@ public partial class AccountSummaryData
   public decimal DeltaTotalWithCollateral => DeltaTotal + Equity;
 }
 ```
-<sup><a href='/src/DeriSock/Model/Objects/AccountSummaryData.cs#L5-L15' title='Snippet source file'>snippet source</a> | <a href='#snippet-example-customized-model-class' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/DeriSock/Model/Objects/AccountSummaryData.cs#L5-L14' title='Snippet source file'>snippet source</a> | <a href='#snippet-example-customized-model-class' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
-
-#### Net/JsonRpc
-
-Contains JsonRpc message handling used by `DeribitClient`.
 
 #### Utils
 
 Contains internal utilities.
+
+#### WebSocket
+
+Contains WebSocket handling infrastructure.
 
 #### DeribitClient.cs / DeribitClient_*.cs
 

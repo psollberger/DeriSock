@@ -99,7 +99,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("leverage")]
-    public long Leverage { get; set; }
+    public int Leverage { get; set; }
     /// <summary>
     /// <para>Maintenance margin</para>
     /// </summary>

@@ -49,12 +49,12 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("count")]
-    public long? Count { get; set; }
+    public int? Count { get; set; }
     /// <summary>
     /// <para>Continuation token for pagination</para>
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("continuation")]
-    public long? Continuation { get; set; }
+    public int? Continuation { get; set; }
   }
 }

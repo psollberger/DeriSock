@@ -48,7 +48,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("id")]
-    public long Id { get; set; }
+    public int Id { get; set; }
     /// <summary>
     /// <para>For transfer from/to subaccount returns this subaccount name, for transfer to other account returns address, for transfer from other account returns that accounts username.</para>
     /// </summary>

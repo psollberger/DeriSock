@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 using DeriSock.DevTools.ApiDoc.Model;
 using DeriSock.DevTools.CodeDom;
-using DeriSock.Net.JsonRpc;
+using DeriSock.JsonRpc;
 
 internal abstract class ApiDocCodeGenerator : IDisposable, IAsyncDisposable
 {
@@ -76,7 +76,6 @@ internal abstract class ApiDocCodeGenerator : IDisposable, IAsyncDisposable
 
   public async Task GenerateToCustomAsync(CancellationToken cancellationToken = default)
   {
-    _writer.GetStringBuilder().Clear();
     _namespace = new CodeNamespace(Namespace);
     GenerateHeader();
     await Generate(cancellationToken).ConfigureAwait(false);
@@ -165,7 +164,8 @@ internal abstract class ApiDocCodeGenerator : IDisposable, IAsyncDisposable
     memberProperty.Comments.Add(new CodeCommentStatement("<summary>", true));
 
     if (!string.IsNullOrEmpty(property.Description))
-      memberProperty.Comments.Add(property.Description.CreateXmlDocumentationPara());
+      foreach (var xmlDocParagraph in property.Description.ToXmlDocParagraphs())
+        memberProperty.Comments.Add(new CodeCommentStatement($"<para>{xmlDocParagraph}</para>", true));
 
     memberProperty.Comments.Add(new CodeCommentStatement("</summary>", true));
 

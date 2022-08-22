@@ -41,7 +41,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("id")]
-    public long Id { get; set; }
+    public int Id { get; set; }
     /// <summary>
     /// <para>Whether the announcement is marked as important</para>
     /// </summary>
@@ -66,6 +66,6 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("unread")]
-    public long? Unread { get; set; }
+    public int? Unread { get; set; }
   }
 }

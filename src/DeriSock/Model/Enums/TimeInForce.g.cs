@@ -12,11 +12,11 @@ namespace DeriSock.Model
 {
   
   /// <summary>
-  /// <para>Specifies how long the order remains in effect. Default <c>&quot;good_til_cancelled&quot;</c><br/>
-  ///- <c>&quot;good_til_cancelled&quot;</c> - unfilled order remains in order book until cancelled<br/>
-  ///- <c>&quot;good_til_day&quot;</c> - unfilled order remains in order book till the end of the trading session<br/>
-  ///- <c>&quot;fill_or_kill&quot;</c> - execute a transaction immediately and completely or not at all<br/>
-  ///- <c>&quot;immediate_or_cancel&quot;</c> - execute a transaction immediately, and any portion of the order that cannot be immediately filled is cancelled</para>
+  /// <para>Specifies how long the order remains in effect. Default <c>&quot;good_til_cancelled&quot;</c></para>
+  /// <para>- <c>&quot;good_til_cancelled&quot;</c> - unfilled order remains in order book until cancelled</para>
+  /// <para>- <c>&quot;good_til_day&quot;</c> - unfilled order remains in order book till the end of the trading session</para>
+  /// <para>- <c>&quot;fill_or_kill&quot;</c> - execute a transaction immediately and completely or not at all</para>
+  /// <para>- <c>&quot;immediate_or_cancel&quot;</c> - execute a transaction immediately, and any portion of the order that cannot be immediately filled is cancelled</para>
   /// </summary>
   [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
   public partial class TimeInForce : DeriSock.Model.EnumValue

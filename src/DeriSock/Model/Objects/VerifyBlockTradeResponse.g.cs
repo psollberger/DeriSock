@@ -17,8 +17,8 @@ namespace DeriSock.Model
   public partial class VerifyBlockTradeResponse
   {
     /// <summary>
-    /// <para>Signature of block trade<br/>
-    ///It is valid only for 5 minutes “around” given timestamp</para>
+    /// <para>Signature of block trade</para>
+    /// <para>It is valid only for 5 minutes “around” given timestamp</para>
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("signature")]

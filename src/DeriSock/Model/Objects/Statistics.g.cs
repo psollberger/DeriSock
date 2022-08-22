@@ -21,25 +21,25 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("high")]
-    public decimal High { get; set; }
+    public decimal? High { get; set; }
     /// <summary>
     /// <para>Lowest price during 24h</para>
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("low")]
-    public decimal Low { get; set; }
+    public decimal? Low { get; set; }
     /// <summary>
     /// <para>24-hour price change expressed as a percentage, <c>null</c> if there weren&apos;t any trades</para>
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("price_change")]
-    public decimal PriceChange { get; set; }
+    public decimal? PriceChange { get; set; }
     /// <summary>
     /// <para>Volume during last 24h in base currency</para>
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("volume")]
-    public decimal Volume { get; set; }
+    public decimal? Volume { get; set; }
     /// <summary>
     /// <para>Volume in usd (futures only)</para>
     /// </summary>

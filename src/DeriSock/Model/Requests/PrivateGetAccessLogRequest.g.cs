@@ -21,12 +21,12 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("offset")]
-    public long? Offset { get; set; }
+    public int? Offset { get; set; }
     /// <summary>
     /// <para>Number of requested items, default - <c>10</c></para>
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("count")]
-    public long? Count { get; set; }
+    public int? Count { get; set; }
   }
 }

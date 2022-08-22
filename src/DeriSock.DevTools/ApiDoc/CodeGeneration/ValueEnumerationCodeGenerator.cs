@@ -46,7 +46,8 @@ internal class ValueEnumerationCodeGenerator : ApiDocCodeGenerator
     enumClass.Comments.Add(new CodeCommentStatement("<summary>", true));
 
     if (!string.IsNullOrEmpty(mapEntry.Description))
-      enumClass.Comments.Add(mapEntry.Description.CreateXmlDocumentationPara());
+      foreach (var xmlDocParagraph in mapEntry.Description.ToXmlDocParagraphs())
+        enumClass.Comments.Add(new CodeCommentStatement($"<para>{xmlDocParagraph}</para>", true));
 
     enumClass.Comments.Add(new CodeCommentStatement("</summary>", true));
 

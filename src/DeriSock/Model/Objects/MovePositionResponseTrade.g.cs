@@ -45,12 +45,12 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("source_uid")]
-    public long SourceUid { get; set; }
+    public int SourceUid { get; set; }
     /// <summary>
     /// <para>Trade target uid</para>
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("target_uid")]
-    public long TargetUid { get; set; }
+    public int TargetUid { get; set; }
   }
 }

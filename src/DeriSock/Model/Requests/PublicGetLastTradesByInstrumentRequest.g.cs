@@ -27,19 +27,19 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("start_seq")]
-    public long? StartSeq { get; set; }
+    public int? StartSeq { get; set; }
     /// <summary>
     /// <para>The sequence number of the last trade to be returned</para>
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("end_seq")]
-    public long? EndSeq { get; set; }
+    public int? EndSeq { get; set; }
     /// <summary>
     /// <para>Number of requested items, default - <c>10</c></para>
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("count")]
-    public long? Count { get; set; }
+    public int? Count { get; set; }
     /// <summary>
     /// <para>Include trades older than a few recent days, default - <c>false</c></para>
     /// </summary>

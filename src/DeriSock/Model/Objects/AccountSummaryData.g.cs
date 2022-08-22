@@ -94,7 +94,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("id")]
-    public long? Id { get; set; }
+    public int? Id { get; set; }
     /// <summary>
     /// <para>Options summary vega</para>
     /// </summary>

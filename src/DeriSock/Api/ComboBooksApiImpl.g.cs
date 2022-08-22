@@ -14,7 +14,7 @@ namespace DeriSock
   using System.Threading;
   using System.Threading.Tasks;
   using DeriSock.Api;
-  using DeriSock.Net.JsonRpc;
+  using DeriSock.JsonRpc;
   using DeriSock.Model;
   using Newtonsoft.Json.Linq;
   
@@ -30,25 +30,25 @@ namespace DeriSock
       }
       /// <inheritdoc cref="IComboBooksApi.PublicGetComboDetails" />
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<Combo>> IComboBooksApi.PublicGetComboDetails(PublicGetComboDetailsRequest args, CancellationToken cancellationToken)
+      System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<Combo>> IComboBooksApi.PublicGetComboDetails(PublicGetComboDetailsRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPublicGetComboDetails(args, cancellationToken);
       }
       /// <inheritdoc cref="IComboBooksApi.PublicGetComboIds" />
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<string[]>> IComboBooksApi.PublicGetComboIds(PublicGetComboIdsRequest args, CancellationToken cancellationToken)
+      System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<string[]>> IComboBooksApi.PublicGetComboIds(PublicGetComboIdsRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPublicGetComboIds(args, cancellationToken);
       }
       /// <inheritdoc cref="IComboBooksApi.PublicGetCombos" />
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<Combo[]>> IComboBooksApi.PublicGetCombos(PublicGetCombosRequest args, CancellationToken cancellationToken)
+      System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<Combo[]>> IComboBooksApi.PublicGetCombos(PublicGetCombosRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPublicGetCombos(args, cancellationToken);
       }
       /// <inheritdoc cref="IComboBooksApi.PrivateCreateCombo" />
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<Combo>> IComboBooksApi.PrivateCreateCombo(PrivateCreateComboRequest args, CancellationToken cancellationToken)
+      System.Threading.Tasks.Task<DeriSock.JsonRpc.JsonRpcResponse<Combo>> IComboBooksApi.PrivateCreateCombo(PrivateCreateComboRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPrivateCreateCombo(args, cancellationToken);
       }

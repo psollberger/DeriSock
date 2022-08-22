@@ -21,7 +21,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("continuation")]
-    public long Continuation { get; set; }
+    public int Continuation { get; set; }
     /// <summary>
     /// <para>Candles as an array of arrays with 5 values each. The inner values correspond to the timestamp in ms, open, high, low, and close values of the volatility index correspondingly.</para>
     /// </summary>

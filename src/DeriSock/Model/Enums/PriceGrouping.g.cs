@@ -12,10 +12,10 @@ namespace DeriSock.Model
 {
   
   /// <summary>
-  /// <para>Group prices (by rounding). Use <c>none</c> for no grouping.<br/>
-  ///For ETH cryptocurrency, real <c>group</c> is divided by 100.0, e.g. given value <c>5</c> means using <c>0.05</c><br/>
-  ///Allowed values for BTC - <c>none</c>, <c>1</c>, <c>2</c>, <c>5</c>, <c>10</c><br/>
-  ///Allowed values for ETH - <c>none</c>, <c>5</c>, <c>10</c>, <c>25</c>, <c>100</c>, <c>250</c></para>
+  /// <para>Group prices (by rounding). Use <c>none</c> for no grouping.</para>
+  /// <para>For ETH cryptocurrency, real <c>group</c> is divided by 100.0, e.g. given value <c>5</c> means using <c>0.05</c></para>
+  /// <para>Allowed values for BTC - <c>none</c>, <c>1</c>, <c>2</c>, <c>5</c>, <c>10</c></para>
+  /// <para>Allowed values for ETH - <c>none</c>, <c>5</c>, <c>10</c>, <c>25</c>, <c>100</c>, <c>250</c></para>
   /// </summary>
   [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
   public partial class PriceGrouping : DeriSock.Model.EnumValue

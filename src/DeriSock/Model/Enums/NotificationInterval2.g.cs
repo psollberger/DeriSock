@@ -17,7 +17,7 @@ namespace DeriSock.Model
   [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
   public partial class NotificationInterval2 : DeriSock.Model.EnumValue
   {
-    public static NotificationInterval2 _100ms = new NotificationInterval2("100ms");
+    public static NotificationInterval2 _100Ms = new NotificationInterval2("100ms");
     public static NotificationInterval2 Raw = new NotificationInterval2("raw");
     private NotificationInterval2(string value) : 
         base(value)

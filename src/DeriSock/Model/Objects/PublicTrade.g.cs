@@ -77,7 +77,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("tick_direction")]
-    public long TickDirection { get; set; }
+    public int TickDirection { get; set; }
     /// <summary>
     /// <para>The timestamp of the trade (milliseconds since the UNIX epoch)</para>
     /// </summary>
@@ -96,6 +96,6 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("trade_seq")]
-    public long TradeSeq { get; set; }
+    public int TradeSeq { get; set; }
   }
 }

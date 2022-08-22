@@ -30,6 +30,6 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("count")]
-    public long? Count { get; set; }
+    public int? Count { get; set; }
   }
 }

@@ -21,7 +21,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("sid")]
-    public long Sid { get; set; }
+    public int Sid { get; set; }
     /// <summary>
     /// <para>enable (<c>true</c>) or disable (<c>false</c>) notifications</para>
     /// </summary>

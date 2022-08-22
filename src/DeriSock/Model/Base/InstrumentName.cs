@@ -26,5 +26,7 @@ public class InstrumentName
   public decimal Strike => GetStrikePrice();
 
   private decimal GetStrikePrice()
-    => Type == InstrumentType.Option ? Name.GetStrikePrice() : 0;
+  {
+    return Type == InstrumentType.Option ? Name.GetStrikePrice() : 0;
+  }
 }

@@ -1,5 +1,7 @@
 namespace DeriSock.Tests.Integration;
 
+using System.Net.WebSockets;
+
 public class ConnectionHandling : IAsyncLifetime
 {
   private readonly DeribitConfiguration _config;
@@ -13,28 +15,28 @@ public class ConnectionHandling : IAsyncLifetime
   }
 
   [Fact]
-  public async Task Connect_WithInitialState_ResultsIn_IsConnected_True()
+  public async Task Connect_WithInitialState_ResultsIn_WebSocketStateOpen()
   {
     // Act
     await _client.Connect();
 
     // Assert
-    _client.IsConnected.Should().Be(true, "the Connect method was called");
+    _client.State.Should().Be(WebSocketState.Open);
   }
 
   [Fact]
-  public async Task Disconnect_WithOpenConnection_ResultsIn_IsConnected_False()
+  public async Task Disconnect_WithOpenConnection_ResultsIn_WebSocketStateClosed()
   {
     // Act
     await _client.Connect();
     await _client.Disconnect();
 
     // Assert
-    _client.IsConnected.Should().Be(false, "the Disconnect method was called");
+    _client.State.Should().Be(WebSocketState.Closed);
   }
 
   [Fact]
-  public async Task ReConnect_AfterDisconnect_ResultsIn_IsConnected_True()
+  public async Task ReConnect_AfterDisconnect_ResultsIn_WebSocketStateOpen()
   {
     // Act
     await _client.Connect();
@@ -42,7 +44,7 @@ public class ConnectionHandling : IAsyncLifetime
     await _client.Connect();
 
     // Assert
-    _client.IsConnected.Should().Be(true, "the Connect method was called after a disconnect");
+    _client.State.Should().Be(WebSocketState.Open);
   }
 
   /// <inheritdoc />
@@ -52,7 +54,7 @@ public class ConnectionHandling : IAsyncLifetime
   /// <inheritdoc />
   public async Task DisposeAsync()
   {
-    if (_client.IsConnected)
+    if (_client.State is WebSocketState.Open)
       await _client.Disconnect();
   }
 }

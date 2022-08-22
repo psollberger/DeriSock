@@ -48,10 +48,10 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("id")]
-    public long Id { get; set; }
+    public int Id { get; set; }
     /// <summary>
-    /// <para>Describes maximal access for tokens generated with given key, possible values: <c>trade:[read, read_write, none]</c>, <c>wallet:[read, read_write, none]</c>, <c>account:[read, read_write, none]</c>, <c>block_trade:[read, read_write, none]</c>. If scope is not provided, it value is set as none.<br/>
-    ///Please check details described in <a href="https://docs.deribit.com/#access-scope">Access scope</a></para>
+    /// <para>Describes maximal access for tokens generated with given key, possible values: <c>trade:[read, read_write, none]</c>, <c>wallet:[read, read_write, none]</c>, <c>account:[read, read_write, none]</c>, <c>block_trade:[read, read_write, none]</c>. If scope is not provided, it value is set as none.</para>
+    /// <para>Please check details described in <a href="https://docs.deribit.com/#access-scope">Access scope</a></para>
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("max_scope")]

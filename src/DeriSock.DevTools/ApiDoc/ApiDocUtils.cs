@@ -530,11 +530,10 @@ public static class ApiDocUtils
   /// <param name="cancellationToken"></param>
   public static async Task GenerateRequestAndResponseClassesAsync(ApiDocDocument apiDoc, string directoryName, CancellationToken cancellationToken = default)
   {
-    // Generating the request classes for methods
     var generator = new PropertyClassCodeGenerator
     {
       Namespace = "DeriSock.Model",
-      Type = PropertyClassCodeGenerator.GenType.MethodRequest,
+      Type = PropertyClassCodeGenerator.GenType.Request,
       Document = apiDoc
     };
 
@@ -549,42 +548,13 @@ public static class ApiDocUtils
 
     await generator.GenerateToCustomAsync(cancellationToken).ConfigureAwait(false);
 
-    // Generating the response classes for methods
-    generator.Type = PropertyClassCodeGenerator.GenType.MethodResponse;
+    generator.Type = PropertyClassCodeGenerator.GenType.Response;
 
     generator.DefinePathCallback = item =>
     {
       return item switch
       {
         string s => Path.Combine(directoryName, "Responses", $"{s}{generator.FileExtension}"),
-        _        => string.Empty
-      };
-    };
-
-    await generator.GenerateToCustomAsync(cancellationToken).ConfigureAwait(false);
-
-    // Generating the channel classes for subscriptions
-    generator.Type = PropertyClassCodeGenerator.GenType.SubscriptionChannel;
-
-    generator.DefinePathCallback = item =>
-    {
-      return item switch
-      {
-        string s => Path.Combine(directoryName, "Channels", $"{s}{generator.FileExtension}"),
-        _        => string.Empty
-      };
-    };
-
-    await generator.GenerateToCustomAsync(cancellationToken).ConfigureAwait(false);
-
-    // Generating the notification classes for subscriptions
-    generator.Type = PropertyClassCodeGenerator.GenType.SubscriptionNotification;
-
-    generator.DefinePathCallback = item =>
-    {
-      return item switch
-      {
-        string s => Path.Combine(directoryName, "Notifications", $"{s}{generator.FileExtension}"),
         _        => string.Empty
       };
     };

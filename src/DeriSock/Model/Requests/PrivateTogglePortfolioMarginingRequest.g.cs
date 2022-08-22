@@ -21,7 +21,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("user_id")]
-    public long UserId { get; set; }
+    public int UserId { get; set; }
     /// <summary>
     /// <para>Whether PM or SM should be enabled - PM while <c>true</c>, SM otherwise</para>
     /// </summary>
