@@ -29,25 +29,25 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("best_ask_amount")]
-    public decimal BestAskAmount { get; set; }
+    public decimal? BestAskAmount { get; set; }
     /// <summary>
     /// <para>The current best ask price, <c>null</c> if there aren&apos;t any asks</para>
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("best_ask_price")]
-    public decimal BestAskPrice { get; set; }
+    public decimal? BestAskPrice { get; set; }
     /// <summary>
     /// <para>It represents the requested order size of all best bids</para>
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("best_bid_amount")]
-    public decimal BestBidAmount { get; set; }
+    public decimal? BestBidAmount { get; set; }
     /// <summary>
     /// <para>The current best bid price, <c>null</c> if there aren&apos;t any bids</para>
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("best_bid_price")]
-    public decimal BestBidPrice { get; set; }
+    public decimal? BestBidPrice { get; set; }
     /// <summary>
     /// <para>(Only for option) implied volatility for best bid</para>
     /// </summary>
@@ -71,7 +71,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("estimated_delivery_price")]
-    public decimal EstimatedDeliveryPrice { get; set; }
+    public decimal? EstimatedDeliveryPrice { get; set; }
     /// <summary>
     /// <para>Funding 8h (perpetual only)</para>
     /// </summary>
@@ -89,7 +89,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("index_price")]
-    public decimal IndexPrice { get; set; }
+    public decimal? IndexPrice { get; set; }
     /// <summary>
     /// <para>Unique instrument identifier</para>
     /// </summary>
@@ -113,7 +113,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("last_price")]
-    public decimal LastPrice { get; set; }
+    public decimal? LastPrice { get; set; }
     /// <summary>
     /// <para>(Only for option) implied volatility for mark price</para>
     /// </summary>
@@ -125,25 +125,25 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("mark_price")]
-    public decimal MarkPrice { get; set; }
+    public decimal? MarkPrice { get; set; }
     /// <summary>
     /// <para>The maximum price for the future. Any buy orders you submit higher than this price, will be clamped to this maximum.</para>
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("max_price")]
-    public decimal MaxPrice { get; set; }
+    public decimal? MaxPrice { get; set; }
     /// <summary>
     /// <para>The minimum price for the future. Any sell orders you submit lower than this price will be clamped to this minimum.</para>
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("min_price")]
-    public decimal MinPrice { get; set; }
+    public decimal? MinPrice { get; set; }
     /// <summary>
     /// <para>The total amount of outstanding contracts in the corresponding amount units. For perpetual and futures the amount is in USD units, for options it is amount of corresponding cryptocurrency contracts, e.g., BTC or ETH.</para>
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("open_interest")]
-    public decimal OpenInterest { get; set; }
+    public decimal? OpenInterest { get; set; }
     /// <summary>
     /// <para>The settlement price for the instrument. Only when <c>state = open</c></para>
     /// </summary>
@@ -173,7 +173,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("underlying_index")]
-    public decimal? UnderlyingIndex { get; set; }
+    public string UnderlyingIndex { get; set; }
     /// <summary>
     /// <para>Underlying price for implied volatility calculations (options only)</para>
     /// </summary>

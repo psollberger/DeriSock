@@ -29,13 +29,13 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("block_trade_commission")]
-    public decimal BlockTradeCommission { get; set; }
+    public decimal? BlockTradeCommission { get; set; }
     /// <summary>
     /// <para>Contract size for instrument</para>
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("contract_size")]
-    public long ContractSize { get; set; }
+    public decimal? ContractSize { get; set; }
     /// <summary>
     /// <para>Counter currency for the instrument.</para>
     /// </summary>
@@ -67,7 +67,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("instrument_id")]
-    public long InstrumentId { get; set; }
+    public long? InstrumentId { get; set; }
     /// <summary>
     /// <para>Unique instrument identifier</para>
     /// </summary>
@@ -91,19 +91,19 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("leverage")]
-    public long Leverage { get; set; }
+    public decimal? Leverage { get; set; }
     /// <summary>
     /// <para>Maker commission for instrument</para>
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("maker_commission")]
-    public decimal MakerCommission { get; set; }
+    public decimal? MakerCommission { get; set; }
     /// <summary>
     /// <para>Minimum amount for trading. For perpetual and futures - in USD units, for options it is amount of corresponding cryptocurrency contracts, e.g., BTC or ETH.</para>
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("min_trade_amount")]
-    public decimal MinTradeAmount { get; set; }
+    public decimal? MinTradeAmount { get; set; }
     /// <summary>
     /// <para>The option type (only for options)</para>
     /// </summary>
@@ -145,12 +145,12 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("taker_commission")]
-    public decimal TakerCommission { get; set; }
+    public decimal? TakerCommission { get; set; }
     /// <summary>
     /// <para>specifies minimal price change and, as follows, the number of decimal places for instrument prices</para>
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("tick_size")]
-    public decimal TickSize { get; set; }
+    public decimal? TickSize { get; set; }
   }
 }
