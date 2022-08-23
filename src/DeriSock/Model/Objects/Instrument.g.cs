@@ -35,7 +35,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("contract_size")]
-    public decimal? ContractSize { get; set; }
+    public long? ContractSize { get; set; }
     /// <summary>
     /// <para>Counter currency for the instrument.</para>
     /// </summary>
@@ -91,7 +91,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("leverage")]
-    public decimal? Leverage { get; set; }
+    public int? Leverage { get; set; }
     /// <summary>
     /// <para>Maker commission for instrument</para>
     /// </summary>
