@@ -33,6 +33,6 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("direction")]
-    public string Direction { get; set; } = string.Empty;
+    public TradeDirection Direction { get; set; } = null!;
   }
 }

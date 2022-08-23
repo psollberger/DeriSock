@@ -12,15 +12,17 @@ namespace DeriSock.Model
 {
   
   /// <summary>
+  /// <para>Index identifier supported for DVOL</para>
   /// </summary>
   [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-  public partial class PublicGetCombosRequest
+  public partial class DeribitVolatilityIndexName : DeriSock.Model.EnumValue
   {
-    /// <summary>
-    /// <para>The currency symbol</para>
-    /// </summary>
-    [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-    [Newtonsoft.Json.JsonPropertyAttribute("currency")]
-    public CurrencySymbol Currency { get; set; } = null!;
+    public static DeribitVolatilityIndexName BtcUsd = new DeribitVolatilityIndexName("btc_usd");
+    public static DeribitVolatilityIndexName EthUsd = new DeribitVolatilityIndexName("eth_usd");
+    public static DeribitVolatilityIndexName SolUsd = new DeribitVolatilityIndexName("sol_usd");
+    private DeribitVolatilityIndexName(string value) : 
+        base(value)
+    {
+    }
   }
 }

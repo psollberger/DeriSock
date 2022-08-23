@@ -21,7 +21,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("kind")]
-    public InstrumentKindOrAny Kind { get; set; } = null!;
+    public InstrumentKind Kind { get; set; } = null!;
     /// <summary>
     /// <para>The currency symbol or <c>&quot;any&quot;</c> for all</para>
     /// </summary>

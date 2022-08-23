@@ -90,8 +90,8 @@ namespace DeriSock.Model
     /// <para>Maximal leverage for instrument, for futures only</para>
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-    [Newtonsoft.Json.JsonPropertyAttribute("leverage")]
-    public long Leverage { get; set; }
+    [Newtonsoft.Json.JsonPropertyAttribute("max_leverage")]
+    public long? MaxLeverage { get; set; }
     /// <summary>
     /// <para>Maker commission for instrument</para>
     /// </summary>

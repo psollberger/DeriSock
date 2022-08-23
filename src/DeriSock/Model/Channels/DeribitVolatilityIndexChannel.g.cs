@@ -21,7 +21,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("index_name")]
-    public IndexName IndexName { get; set; } = null!;
+    public DeribitVolatilityIndexName IndexName { get; set; } = null!;
     public string ToChannelName()
     {
       return $"deribit_volatility_index.{IndexName}";

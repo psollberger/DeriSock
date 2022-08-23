@@ -12,15 +12,15 @@ namespace DeriSock.Model
 {
   
   /// <summary>
-  /// <para>Instrument kind or <c>&quot;any&quot;</c> for all</para>
+  /// <para>Combo state, if not provided combos of all states are considered</para>
   /// </summary>
   [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-  public partial class InstrumentKindOrAny : DeriSock.Model.EnumValue
+  public partial class ComboState : DeriSock.Model.EnumValue
   {
-    public static InstrumentKindOrAny Future = new InstrumentKindOrAny("future");
-    public static InstrumentKindOrAny Option = new InstrumentKindOrAny("option");
-    public static InstrumentKindOrAny Any = new InstrumentKindOrAny("any");
-    private InstrumentKindOrAny(string value) : 
+    public static ComboState Rfq = new ComboState("rfq");
+    public static ComboState Active = new ComboState("active");
+    public static ComboState Inactive = new ComboState("inactive");
+    private ComboState(string value) : 
         base(value)
     {
     }

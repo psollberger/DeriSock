@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "DeriSock.DevTools": {
+      "commandName": "Project",
+      "commandLineArgs": "--generate-code"
+    }
+  }
+}

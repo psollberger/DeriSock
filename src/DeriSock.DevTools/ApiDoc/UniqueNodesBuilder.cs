@@ -1,5 +1,6 @@
 namespace DeriSock.DevTools.ApiDoc;
 
+using System;
 using System.Collections.Generic;
 
 using DeriSock.DevTools.ApiDoc.Model;
@@ -27,7 +28,7 @@ public class UniqueNodesBuilder : IApiDocDocumentVisitor
 
   public void VisitProperty(ApiDocProperty property)
   {
-    if (property.DataType != "object" && property.ArrayDataType != "object")
+    if (!(property.ApiDataType?.Contains("object", StringComparison.OrdinalIgnoreCase) ?? false))
       return;
 
     var propertyHash = property.ComputePropertyIdHash();

@@ -35,7 +35,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("best_ask_price")]
-    public decimal BestAskPrice { get; set; }
+    public decimal? BestAskPrice { get; set; }
     /// <summary>
     /// <para>It represents the requested order size of all best bids</para>
     /// </summary>
@@ -47,7 +47,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("best_bid_price")]
-    public decimal BestBidPrice { get; set; }
+    public decimal? BestBidPrice { get; set; }
     /// <summary>
     /// <para>(Only for option) implied volatility for best bid</para>
     /// </summary>
@@ -173,7 +173,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("underlying_index")]
-    public decimal? UnderlyingIndex { get; set; }
+    public string? UnderlyingIndex { get; set; }
     /// <summary>
     /// <para>Underlying price for implied volatility calculations (options only)</para>
     /// </summary>

@@ -193,7 +193,21 @@
             "dataType": "Greeks"
           },
           "stats": {
-            "dataType": "Statistics"
+            "dataType": "Statistics",
+            "properties": {
+              "high": {
+                "required": false
+              },
+              "low": {
+                "required": false
+              },
+              "volume": {
+                "required": false
+              },
+              "volume_usd": {
+                "required": false
+              }
+            }
           }
         }
       }
@@ -206,7 +220,21 @@
             "dataType": "Greeks"
           },
           "stats": {
-            "dataType": "Statistics"
+            "dataType": "Statistics",
+            "properties": {
+              "high": {
+                "required": false
+              },
+              "low": {
+                "required": false
+              },
+              "volume": {
+                "required": false
+              },
+              "volume_usd": {
+                "required": false
+              }
+            }
           }
         }
       }
@@ -219,7 +247,21 @@
             "dataType": "Greeks"
           },
           "stats": {
-            "dataType": "Statistics"
+            "dataType": "Statistics",
+            "properties": {
+              "high": {
+                "required": false
+              },
+              "low": {
+                "required": false
+              },
+              "volume": {
+                "required": false
+              },
+              "volume_usd": {
+                "required": false
+              }
+            }
           }
         }
       }
@@ -774,7 +816,21 @@
             "dataType": "Greeks"
           },
           "stats": {
-            "dataType": "Statistics"
+            "dataType": "Statistics",
+            "properties": {
+              "high": {
+                "required": false
+              },
+              "low": {
+                "required": false
+              },
+              "volume": {
+                "required": false
+              },
+              "volume_usd": {
+                "required": false
+              }
+            }
           }
         }
       }
@@ -787,7 +843,21 @@
             "dataType": "Greeks"
           },
           "stats": {
-            "dataType": "Statistics"
+            "dataType": "Statistics",
+            "properties": {
+              "high": {
+                "required": false
+              },
+              "low": {
+                "required": false
+              },
+              "volume": {
+                "required": false
+              },
+              "volume_usd": {
+                "required": false
+              }
+            }
           }
         }
       }

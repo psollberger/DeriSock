@@ -21,12 +21,12 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("currency")]
-    public string Currency { get; set; } = string.Empty;
+    public CurrencySymbol Currency { get; set; } = null!;
     /// <summary>
     /// <para>Combo state, if not provided combos of all states are considered</para>
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("state")]
-    public string? State { get; set; }
+    public ComboState? State { get; set; }
   }
 }

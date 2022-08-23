@@ -627,7 +627,9 @@
               "future",
               "option",
               "future_combo",
-              "option_combo"
+              "option_combo",
+              "combo",
+              "any"
             ]
           }
         }
@@ -640,7 +642,6 @@
         "properties": {
           "ask_price": {
             "description": "The current best ask price, `null` if there aren't any asks",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -652,7 +653,6 @@
           },
           "bid_price": {
             "description": "The current best bid price, `null` if there aren't any bids",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -700,13 +700,11 @@
           },
           "last": {
             "description": "The price of the latest trade, `null` if there weren't any trades",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
           "low": {
             "description": "Price of the 24h lowest trade, `null` if there weren't any trades",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -718,7 +716,6 @@
           },
           "mid_price": {
             "description": "The average of the best bid and ask, `null` if there aren't any asks or bids",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -735,7 +732,6 @@
           },
           "price_change": {
             "description": "24-hour price change expressed as a percentage, `null` if there weren't any trades",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -791,7 +787,6 @@
         "properties": {
           "ask_price": {
             "description": "The current best ask price, `null` if there aren't any asks",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -803,7 +798,6 @@
           },
           "bid_price": {
             "description": "The current best bid price, `null` if there aren't any bids",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -851,13 +845,11 @@
           },
           "last": {
             "description": "The price of the latest trade, `null` if there weren't any trades",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
           "low": {
             "description": "Price of the 24h lowest trade, `null` if there weren't any trades",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -869,7 +861,6 @@
           },
           "mid_price": {
             "description": "The average of the best bid and ask, `null` if there aren't any asks or bids",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -886,7 +877,6 @@
           },
           "price_change": {
             "description": "24-hour price change expressed as a percentage, `null` if there weren't any trades",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -1516,9 +1506,8 @@
             "apiDataType": "string",
             "dataType": "string"
           },
-          "leverage": {
+          "max_leverage": {
             "description": "Maximal leverage for instrument, for futures only",
-            "required": true,
             "apiDataType": "integer",
             "dataType": "integer"
           },
@@ -1608,7 +1597,9 @@
               "future",
               "option",
               "future_combo",
-              "option_combo"
+              "option_combo",
+              "combo",
+              "any"
             ]
           },
           "expired": {
@@ -1695,9 +1686,8 @@
             "apiDataType": "string",
             "dataType": "string"
           },
-          "leverage": {
+          "max_leverage": {
             "description": "Maximal leverage for instrument, for futures only",
-            "required": true,
             "apiDataType": "integer",
             "dataType": "integer"
           },
@@ -2774,7 +2764,6 @@
           },
           "best_ask_price": {
             "description": "The current best ask price, `null` if there aren't any asks",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -2786,7 +2775,6 @@
           },
           "best_bid_price": {
             "description": "The current best bid price, `null` if there aren't any bids",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -2920,25 +2908,21 @@
             "properties": {
               "high": {
                 "description": "Highest price during 24h",
-                "required": true,
                 "apiDataType": "number",
                 "dataType": "number"
               },
               "low": {
                 "description": "Lowest price during 24h",
-                "required": true,
                 "apiDataType": "number",
                 "dataType": "number"
               },
               "price_change": {
                 "description": "24-hour price change expressed as a percentage, `null` if there weren't any trades",
-                "required": true,
                 "apiDataType": "number",
                 "dataType": "number"
               },
               "volume": {
                 "description": "Volume during last 24h in base currency",
-                "required": true,
                 "apiDataType": "number",
                 "dataType": "number"
               },
@@ -2961,7 +2945,7 @@
           "underlying_index": {
             "description": "Name of the underlying future, or `index_price` (options only)",
             "apiDataType": "string",
-            "dataType": "number"
+            "dataType": "string"
           },
           "underlying_price": {
             "description": "Underlying price for implied volatility calculations (options only)",
@@ -3014,7 +2998,6 @@
           },
           "best_ask_price": {
             "description": "The current best ask price, `null` if there aren't any asks",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -3026,7 +3009,6 @@
           },
           "best_bid_price": {
             "description": "The current best bid price, `null` if there aren't any bids",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -3160,25 +3142,21 @@
             "properties": {
               "high": {
                 "description": "Highest price during 24h",
-                "required": true,
                 "apiDataType": "number",
                 "dataType": "number"
               },
               "low": {
                 "description": "Lowest price during 24h",
-                "required": true,
                 "apiDataType": "number",
                 "dataType": "number"
               },
               "price_change": {
                 "description": "24-hour price change expressed as a percentage, `null` if there weren't any trades",
-                "required": true,
                 "apiDataType": "number",
                 "dataType": "number"
               },
               "volume": {
                 "description": "Volume during last 24h in base currency",
-                "required": true,
                 "apiDataType": "number",
                 "dataType": "number"
               },
@@ -3201,7 +3179,7 @@
           "underlying_index": {
             "description": "Name of the underlying future, or `index_price` (options only)",
             "apiDataType": "string",
-            "dataType": "number"
+            "dataType": "string"
           },
           "underlying_price": {
             "description": "Underlying price for implied volatility calculations (options only)",
@@ -3236,7 +3214,9 @@
               "future",
               "option",
               "future_combo",
-              "option_combo"
+              "option_combo",
+              "combo",
+              "any"
             ]
           }
         }
@@ -3582,7 +3562,6 @@
           },
           "best_ask_price": {
             "description": "The current best ask price, `null` if there aren't any asks",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -3594,7 +3573,6 @@
           },
           "best_bid_price": {
             "description": "The current best bid price, `null` if there aren't any bids",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -3732,25 +3710,21 @@
             "properties": {
               "high": {
                 "description": "Highest price during 24h",
-                "required": true,
                 "apiDataType": "number",
                 "dataType": "number"
               },
               "low": {
                 "description": "Lowest price during 24h",
-                "required": true,
                 "apiDataType": "number",
                 "dataType": "number"
               },
               "price_change": {
                 "description": "24-hour price change expressed as a percentage, `null` if there weren't any trades",
-                "required": true,
                 "apiDataType": "number",
                 "dataType": "number"
               },
               "volume": {
                 "description": "Volume during last 24h in base currency",
-                "required": true,
                 "apiDataType": "number",
                 "dataType": "number"
               },
@@ -3773,7 +3747,7 @@
           "underlying_index": {
             "description": "Name of the underlying future, or `index_price` (options only)",
             "apiDataType": "string",
-            "dataType": "number"
+            "dataType": "string"
           },
           "underlying_price": {
             "description": "Underlying price for implied volatility calculations (options only)",
@@ -6899,7 +6873,9 @@
               "future",
               "option",
               "future_combo",
-              "option_combo"
+              "option_combo",
+              "combo",
+              "any"
             ]
           },
           "type": {
@@ -10009,7 +9985,7 @@
             "description": "The currency symbol",
             "required": true,
             "apiDataType": "string",
-            "dataType": "string",
+            "dataType": "CurrencySymbol",
             "enumValues": [
               "BTC",
               "ETH",
@@ -10020,7 +9996,7 @@
           "state": {
             "description": "Combo state, if not provided combos of all states are considered",
             "apiDataType": "string",
-            "dataType": "string",
+            "dataType": "ComboState",
             "enumValues": [
               "rfq",
               "active",
@@ -10046,7 +10022,7 @@
             "description": "The currency symbol",
             "required": true,
             "apiDataType": "string",
-            "dataType": "string",
+            "dataType": "CurrencySymbol",
             "enumValues": [
               "BTC",
               "ETH",
@@ -10150,7 +10126,7 @@
                 "description": "Direction of trade from the maker perspective",
                 "required": true,
                 "apiDataType": "string",
-                "dataType": "string",
+                "dataType": "TradeDirection",
                 "enumValues": [
                   "buy",
                   "sell"
@@ -13748,7 +13724,9 @@
               "future",
               "option",
               "future_combo",
-              "option_combo"
+              "option_combo",
+              "combo",
+              "any"
             ]
           }
         }
@@ -15855,7 +15833,7 @@
             "description": "Index identifier supported for DVOL",
             "required": true,
             "apiDataType": "string",
-            "dataType": "IndexName",
+            "dataType": "DeribitVolatilityIndexName",
             "enumValues": [
               "btc_usd",
               "eth_usd",
@@ -16004,7 +15982,6 @@
           },
           "best_ask_price": {
             "description": "The current best ask price, `null` if there aren't any asks",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -16016,7 +15993,6 @@
           },
           "best_bid_price": {
             "description": "The current best bid price, `null` if there aren't any bids",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -16149,25 +16125,21 @@
             "properties": {
               "high": {
                 "description": "Highest price during 24h",
-                "required": true,
                 "apiDataType": "number",
                 "dataType": "number"
               },
               "low": {
                 "description": "Lowest price during 24h",
-                "required": true,
                 "apiDataType": "number",
                 "dataType": "number"
               },
               "price_change": {
                 "description": "24-hour price change expressed as a percentage, `null` if there weren't any trades",
-                "required": true,
                 "apiDataType": "number",
                 "dataType": "number"
               },
               "volume": {
                 "description": "Volume during last 24h in base currency",
-                "required": true,
                 "apiDataType": "number",
                 "dataType": "number"
               },
@@ -16190,7 +16162,7 @@
           "underlying_index": {
             "description": "Name of the underlying future, or `index_price` (options only)",
             "apiDataType": "string",
-            "dataType": "number"
+            "dataType": "string"
           },
           "underlying_price": {
             "description": "Underlying price for implied volatility calculations (options only)",
@@ -16209,12 +16181,13 @@
             "description": "Instrument kind or `\"any\"` for all",
             "required": true,
             "apiDataType": "string",
-            "dataType": "InstrumentKindOrAny",
+            "dataType": "InstrumentKind",
             "enumValues": [
               "future",
               "option",
               "future_combo",
               "option_combo",
+              "combo",
               "any"
             ]
           },
@@ -16458,7 +16431,6 @@
           },
           "best_ask_price": {
             "description": "The current best ask price, `null` if there aren't any asks",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -16470,7 +16442,6 @@
           },
           "best_bid_price": {
             "description": "The current best bid price, `null` if there aren't any bids",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -16594,7 +16565,6 @@
           },
           "best_ask_price": {
             "description": "The current best ask price, `null` if there aren't any asks",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -16606,7 +16576,6 @@
           },
           "best_bid_price": {
             "description": "The current best bid price, `null` if there aren't any bids",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -16744,25 +16713,21 @@
             "properties": {
               "high": {
                 "description": "Highest price during 24h",
-                "required": true,
                 "apiDataType": "number",
                 "dataType": "number"
               },
               "low": {
                 "description": "Lowest price during 24h",
-                "required": true,
                 "apiDataType": "number",
                 "dataType": "number"
               },
               "price_change": {
                 "description": "24-hour price change expressed as a percentage, `null` if there weren't any trades",
-                "required": true,
                 "apiDataType": "number",
                 "dataType": "number"
               },
               "volume": {
                 "description": "Volume during last 24h in base currency",
-                "required": true,
                 "apiDataType": "number",
                 "dataType": "number"
               },
@@ -16785,7 +16750,7 @@
           "underlying_index": {
             "description": "Name of the underlying future, or `index_price` (options only)",
             "apiDataType": "string",
-            "dataType": "number"
+            "dataType": "string"
           },
           "underlying_price": {
             "description": "Underlying price for implied volatility calculations (options only)",
@@ -16919,7 +16884,9 @@
               "future",
               "option",
               "future_combo",
-              "option_combo"
+              "option_combo",
+              "combo",
+              "any"
             ]
           },
           "currency": {
@@ -17714,7 +17681,7 @@
             "description": "Instrument kind, `\"combo\"` for any combo or `\"any\"` for all",
             "required": true,
             "apiDataType": "string",
-            "dataType": "InstrumentKindOrAny",
+            "dataType": "InstrumentKind",
             "enumValues": [
               "future",
               "option",
@@ -19193,7 +19160,7 @@
             "description": "Instrument kind, `\"combo\"` for any combo or `\"any\"` for all",
             "required": true,
             "apiDataType": "string",
-            "dataType": "InstrumentKindOrAny",
+            "dataType": "InstrumentKind",
             "enumValues": [
               "future",
               "option",
@@ -19900,7 +19867,7 @@
             "description": "Instrument kind, `\"combo\"` for any combo or `\"any\"` for all",
             "required": true,
             "apiDataType": "string",
-            "dataType": "InstrumentKindOrAny",
+            "dataType": "InstrumentKind",
             "enumValues": [
               "future",
               "option",

@@ -14,7 +14,7 @@ using HtmlAgilityPack;
 public class ApiDocHtmlParser
 {
   private const string TimestampDataType = "DateTime";
-  private static readonly string[] TimestampConverters = new[] { "MillisecondsTimestampConverter" };
+  private static readonly string[] TimestampConverters = { "MillisecondsTimestampConverter" };
   private readonly HtmlDocument _htmlDoc;
 
   private string _version = "0.0.0";
@@ -504,7 +504,12 @@ public class ApiDocHtmlParser
       new(@"\(options only\)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.Compiled),
       new(@"Field not included if", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.Compiled),
       new(@" only\)$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.Compiled),
-      new(@", null otherwise$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.Compiled)
+      new(@", null otherwise$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.Compiled),
+      new(@", for futures only$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.Compiled),
+      new(@"\(futures only\)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.Compiled),
+      new(@" if there weren't any trades$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.Compiled),
+      new(@" if there aren't any ", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.Compiled)
+
     };
 
     public static ApiDocProperty Parse(HtmlNode tableNode, string dataObjectPropertyName)
@@ -524,9 +529,8 @@ public class ApiDocHtmlParser
       if (isComplex)
         result.Properties = ParseComplexType(resultNode, 1);
 
-      if (isComplex && result.Properties is { Count: < 1 }) {
+      if (isComplex && result.Properties is { Count: < 1 })
         result.Properties = null;
-      }
 
       if (TimestampDataType.Equals(result.DataType))
         ApplyTimestampFieldValues(result);
