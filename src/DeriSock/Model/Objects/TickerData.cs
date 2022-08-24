@@ -21,7 +21,13 @@ public partial class TickerData
   ///   The option type (only for options)
   /// </summary>
   [JsonIgnore]
-  public OptionType OptionTypeEnum => InstrumentName.GetOptionType();
+  public OptionType OptionType => InstrumentName.GetOptionType();
+  
+  /// <summary>
+  ///   The option type (only for options)
+  /// </summary>
+  [JsonIgnore]
+  public ComboType ComboType => InstrumentName.GetComboType();
 
   /// <summary>
   ///   Days to expiry of contract
@@ -34,4 +40,10 @@ public partial class TickerData
   /// </summary>
   [JsonIgnore]
   public decimal Strike => InstrumentName.GetStrikePrice();
+  
+  /// <summary>
+  ///   Strike price (only for options)
+  /// </summary>
+  [JsonIgnore]
+  public string UnderlyingCurrency => InstrumentName.GetUnderlyingCurrency();
 }
