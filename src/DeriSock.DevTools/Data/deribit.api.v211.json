@@ -1443,13 +1443,11 @@
           },
           "block_trade_commission": {
             "description": "Block Trade commission for instrument",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
           "contract_size": {
             "description": "Contract size for instrument",
-            "required": true,
             "apiDataType": "integer",
             "dataType": "integer"
           },
@@ -1484,7 +1482,6 @@
           },
           "instrument_id": {
             "description": "Instrument ID",
-            "required": true,
             "apiDataType": "integer",
             "dataType": "integer"
           },
@@ -1513,13 +1510,11 @@
           },
           "maker_commission": {
             "description": "Maker commission for instrument",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
           "min_trade_amount": {
             "description": "Minimum amount for trading. For perpetual and futures - in USD units, for options it is amount of corresponding cryptocurrency contracts, e.g., BTC or ETH.",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -1559,13 +1554,11 @@
           },
           "taker_commission": {
             "description": "Taker commission for instrument",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
           "tick_size": {
             "description": "specifies minimal price change and, as follows, the number of decimal places for instrument prices",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           }
@@ -1623,13 +1616,11 @@
           },
           "block_trade_commission": {
             "description": "Block Trade commission for instrument",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
           "contract_size": {
             "description": "Contract size for instrument",
-            "required": true,
             "apiDataType": "integer",
             "dataType": "integer"
           },
@@ -1664,7 +1655,6 @@
           },
           "instrument_id": {
             "description": "Instrument ID",
-            "required": true,
             "apiDataType": "integer",
             "dataType": "integer"
           },
@@ -1693,13 +1683,11 @@
           },
           "maker_commission": {
             "description": "Maker commission for instrument",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
           "min_trade_amount": {
             "description": "Minimum amount for trading. For perpetual and futures - in USD units, for options it is amount of corresponding cryptocurrency contracts, e.g., BTC or ETH.",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -1739,13 +1727,11 @@
           },
           "taker_commission": {
             "description": "Taker commission for instrument",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
           "tick_size": {
             "description": "specifies minimal price change and, as follows, the number of decimal places for instrument prices",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           }
@@ -3658,7 +3644,6 @@
           },
           "last_price": {
             "description": "The price for the last trade",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -16661,7 +16646,6 @@
           },
           "last_price": {
             "description": "The price for the last trade",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },

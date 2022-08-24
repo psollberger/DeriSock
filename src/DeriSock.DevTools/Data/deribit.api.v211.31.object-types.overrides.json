@@ -97,12 +97,58 @@
     },
     "public/get_instrument": {
       "response": {
-        "dataType": "Instrument"
+        "dataType": "Instrument",
+        "properties": {
+          "block_trade_commission": {
+            "required": false
+          },
+          "contract_size": {
+            "required": false
+          },
+          "instrument_id": {
+            "required": false
+          },
+          "maker_commission": {
+            "required": false
+          },
+          "min_trade_amount": {
+            "required": false
+          },
+          "taker_commission": {
+            "required": false
+          },
+          "tick_size": {
+            "required": false
+          }
+        }
       }
     },
     "public/get_instruments": {
       "response": {
-        "arrayDataType": "Instrument"
+        "arrayDataType": "Instrument",
+        "properties": {
+          "block_trade_commission": {
+            "required": false
+          },
+          "contract_size": {
+            "required": false
+          },
+          "instrument_id": {
+            "required": false
+          },
+          "maker_commission": {
+            "required": false
+          },
+          "min_trade_amount": {
+            "required": false
+          },
+          "taker_commission": {
+            "required": false
+          },
+          "tick_size": {
+            "required": false
+          }
+        }
       }
     },
     "public/get_last_settlements_by_currency": {
@@ -262,6 +308,9 @@
                 "required": false
               }
             }
+          },
+          "last_price": {
+            "required": false
           }
         }
       }
@@ -858,6 +907,9 @@
                 "required": false
               }
             }
+          },
+          "last_price": {
+            "required": false
           }
         }
       }
