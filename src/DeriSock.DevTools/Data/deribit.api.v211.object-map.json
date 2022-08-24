@@ -192,27 +192,41 @@
     "hash": "15B5E72401EBE11B9B9E35040C781E7D1BE80FE2",
     "properties": {
       "base_currency": {},
-      "block_trade_commission": {},
-      "contract_size": {},
+      "block_trade_commission": {
+        "required": false
+      },
+      "contract_size": {
+        "required": false
+      },
       "counter_currency": {},
       "creation_timestamp": {},
       "expiration_timestamp": {},
       "future_type": {},
-      "instrument_id": {},
+      "instrument_id": {
+        "required": false
+      },
       "instrument_name": {},
       "is_active": {},
       "kind": {},
       "max_leverage": {},
-      "maker_commission": {},
-      "min_trade_amount": {},
+      "maker_commission": {
+        "required": false
+      },
+      "min_trade_amount": {
+        "required": false
+      },
       "option_type": {},
       "price_index": {},
       "quote_currency": {},
       "settlement_currency": {},
       "settlement_period": {},
       "strike": {},
-      "taker_commission": {},
-      "tick_size": {}
+      "taker_commission": {
+        "required": false
+      },
+      "tick_size": {
+        "required": false
+      }
     },
     "methods": [
       "public/get_instrument.response",
@@ -455,7 +469,9 @@
       "instrument_name": {},
       "interest_rate": {},
       "interest_value": {},
-      "last_price": {},
+      "last_price": {
+        "required": false
+      },
       "mark_iv": {},
       "mark_price": {},
       "max_price": {},
