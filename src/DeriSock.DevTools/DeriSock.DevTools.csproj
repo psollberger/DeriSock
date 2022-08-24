@@ -22,6 +22,7 @@
   </ItemGroup>
   
   <ItemGroup>
+    <PackageReference Include="CommandLineParser" Version="2.9.1" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.43" />
     <PackageReference Include="JetBrains.Annotations" Version="2022.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
@@ -29,6 +30,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Data\deribit.api.v211.22.enum-grouping.overrides.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Data\deribit.api.v211.21.friendly-channel-names.overrides.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

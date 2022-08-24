@@ -23,7 +23,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("ask_price")]
-    public decimal AskPrice { get; set; }
+    public decimal? AskPrice { get; set; }
     /// <summary>
     /// <para>Base currency</para>
     /// </summary>
@@ -35,7 +35,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("bid_price")]
-    public decimal BidPrice { get; set; }
+    public decimal? BidPrice { get; set; }
     /// <summary>
     /// <para>The timestamp (milliseconds since the Unix epoch)</para>
     /// </summary>
@@ -84,13 +84,13 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("last")]
-    public decimal Last { get; set; }
+    public decimal? Last { get; set; }
     /// <summary>
     /// <para>Price of the 24h lowest trade, <c>null</c> if there weren&apos;t any trades</para>
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("low")]
-    public decimal Low { get; set; }
+    public decimal? Low { get; set; }
     /// <summary>
     /// <para>The current instrument market price</para>
     /// </summary>
@@ -102,7 +102,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("mid_price")]
-    public decimal MidPrice { get; set; }
+    public decimal? MidPrice { get; set; }
     /// <summary>
     /// <para>Volume in quote currency (futures only)</para>
     /// </summary>
@@ -120,7 +120,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("price_change")]
-    public decimal PriceChange { get; set; }
+    public decimal? PriceChange { get; set; }
     /// <summary>
     /// <para>Quote currency</para>
     /// </summary>

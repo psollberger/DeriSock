@@ -1,4 +1,4 @@
-﻿{
+{
   "AuthTokenData": {
     "hash": "72430544C212B3BE21B1050B67949EE2E74ECA47",
     "properties": {
@@ -47,7 +47,7 @@
     ]
   },
   "BookSummaryEntry": {
-    "hash": "008DD66AAA671D1B7EBAB9B06F1EEA743806638A",
+    "hash": "AE372149FE9DDC4F2E79638A625BF25A3FCCA6EE",
     "properties": {
       "ask_price": {},
       "base_currency": {},
@@ -87,7 +87,7 @@
     ]
   },
   "CurrencyData": {
-    "hash": "4F0CA1077E1B1B1AFBFF7C15949131773CDBAB3B",
+    "hash": "97F64C604EED84D54C26695E0D400773D8CFC655",
     "properties": {
       "coin_type": {},
       "currency": {},
@@ -113,7 +113,7 @@
     ]
   },
   "IndexDeliveryPrices": {
-    "hash": "D44EC36499275DCE2E28502DC383F0F6562CE0E4",
+    "hash": "FEE1ED0CAB0FB062B11223B96B0003EEB19ACB50",
     "properties": {
       "data": {},
       "records_total": {}
@@ -133,7 +133,7 @@
     ]
   },
   "FundingChartData": {
-    "hash": "34F5A8A78453C30868BEBDF33FBA6060EFC405AE",
+    "hash": "AEF5BB98B99676E49614ACCDAB816306213BFDE2",
     "properties": {
       "current_interest": {},
       "data": {},
@@ -189,7 +189,7 @@
     ]
   },
   "Instrument": {
-    "hash": "3C03D74EF59848BDCD80EF79930AFD9B258F53E0",
+    "hash": "15B5E72401EBE11B9B9E35040C781E7D1BE80FE2",
     "properties": {
       "base_currency": {},
       "block_trade_commission": {},
@@ -202,7 +202,7 @@
       "instrument_name": {},
       "is_active": {},
       "kind": {},
-      "leverage": {},
+      "max_leverage": {},
       "maker_commission": {},
       "min_trade_amount": {},
       "option_type": {},
@@ -220,7 +220,7 @@
     ]
   },
   "SettlementPage": {
-    "hash": "A966E1189950FFFE6A8FE998A71EA0CBB97BB716",
+    "hash": "44D3EABDD30ADCF88F3FE9A9CBD09D167ED9921A",
     "properties": {
       "continuation": {},
       "settlements": {}
@@ -258,7 +258,7 @@
     ]
   },
   "PublicTradesPage": {
-    "hash": "3EE8C48892D2246F2FCB46E066AA0CC5A6ABF3AB",
+    "hash": "B6ECF3BD3EB2ABE6C3432EE8BBBA6A58ECF371F4",
     "properties": {
       "has_more": {},
       "trades": {}
@@ -299,7 +299,7 @@
     ]
   },
   "OrderBook": {
-    "hash": "7744B30E3D52CB03DA0DD4203A877D67E4033690",
+    "hash": "695C55FA6DD05BDA00AA234AE406D669F16FD982",
     "properties": {
       "ask_iv": {},
       "asks": {},
@@ -354,13 +354,21 @@
     ]
   },
   "Statistics": {
-    "hash": "A421D2FE129DE79981194DB1B04FDD929B7C0076",
+    "hash": "187D6F20140843EE2361E2E686FBBD71695BC240",
     "properties": {
-      "high": {},
-      "low": {},
+      "high": {
+        "required": false
+      },
+      "low": {
+        "required": false
+      },
       "price_change": {},
-      "volume": {},
-      "volume_usd": {}
+      "volume": {
+        "required": false
+      },
+      "volume_usd": {
+        "required": false
+      }
     },
     "methods": [
       "public/get_order_book.response.stats",
@@ -430,7 +438,7 @@
     ]
   },
   "TickerData": {
-    "hash": "3961F07F4812E515350348BDFA4834FFA7995795",
+    "hash": "F2D36E959E4BABAC514DFC0456B93CDEFC66D7B8",
     "properties": {
       "ask_iv": {},
       "best_ask_amount": {},
@@ -468,7 +476,7 @@
     ]
   },
   "UserOrderTrades": {
-    "hash": "80240E5D1BC33832B1F3EE9521499762074E379C",
+    "hash": "F0CDAEBB8089F9CA9EB65E9902CAA3BF84078496",
     "properties": {
       "order": {},
       "trades": {}
@@ -638,7 +646,7 @@
     ]
   },
   "TriggerOrderHistoryPage": {
-    "hash": "98FA78561A269DE2B7F5E2A0195F4248621D1240",
+    "hash": "74C5D770E1EF399CC2052EA90ECF7559C974C2EE",
     "properties": {
       "continuation": {},
       "entries": {}
@@ -673,7 +681,7 @@
     ]
   },
   "UserTrades": {
-    "hash": "9C56CA2B8E0FC96DF5E2C7E327F9172DD758E74B",
+    "hash": "DF08A719744E6F9FD1A524232EE2B69FFE8607E1",
     "properties": {
       "has_more": {},
       "trades": {}
@@ -686,7 +694,7 @@
     ]
   },
   "Combo": {
-    "hash": "CC833C08207EAFAF4F37F9FBC2F680913F411132",
+    "hash": "3A8DF9086C5D6FD9E1DC8402D5E9EB47C0B5D898",
     "properties": {
       "creation_timestamp": {},
       "id": {},
@@ -714,7 +722,7 @@
     ]
   },
   "CreateComboTrade": {
-    "hash": "DA88B27EF3190261DE110695128A97EFBD9FC167",
+    "hash": "0B66E267DD8EF9A4DC098A483BDC6A9D455C2D31",
     "properties": {
       "instrument_name": {},
       "amount": {},
@@ -738,7 +746,7 @@
     ]
   },
   "BlockTrade": {
-    "hash": "9768F3520A081577E2589EB2D92C7C0B1A3AF981",
+    "hash": "B42598AE45A45156AD49CA872B7CD5368BBF583F",
     "properties": {
       "app_name": {},
       "currency": {},
@@ -764,7 +772,7 @@
     ]
   },
   "MovePositionResponse": {
-    "hash": "D26C1E6A28DF74343F0EA2A1D011E3E9982017C9",
+    "hash": "CC591E04C52BA0BF1A1D716033130F8151C9B794",
     "properties": {
       "trades": {}
     },
@@ -850,7 +858,7 @@
     ]
   },
   "Deposits": {
-    "hash": "7B5A139A3054A92F1607591038F358FC21413E30",
+    "hash": "06D28C440E4ACD4AC20041862D482DC6CD868A8C",
     "properties": {
       "count": {},
       "data": {}
@@ -875,7 +883,7 @@
     ]
   },
   "UserTransfers": {
-    "hash": "2F1A86C9AEC045FEC243AE043612A45695406D94",
+    "hash": "53DFCAC3D55EF16213361FA1B0F4039F6F27D2FB",
     "properties": {
       "count": {},
       "data": {}
@@ -885,7 +893,7 @@
     ]
   },
   "Withdrawals": {
-    "hash": "624994573D0B09BE687FDBCD2A8815AD1D04E2FC",
+    "hash": "BB08AEC6027F12484728A070F27208D46DAD7EA8",
     "properties": {
       "count": {},
       "data": {}
@@ -933,7 +941,7 @@
     ]
   },
   "CreateSubAccountResponse": {
-    "hash": "BBE8C264C210294FDFDA7C3774B14B1D7D95BFC0",
+    "hash": "AA98EF4E220F4FF426E45C1CB5B70751E82E577B",
     "properties": {
       "email": {},
       "id": {},
@@ -951,7 +959,7 @@
     ]
   },
   "SubAccountPortfolio": {
-    "hash": "BD9EA26732B05C6C08508AD796CC33CABB48E926",
+    "hash": "8CA2190242B5B16A1821316847346559AFDC16EC",
     "properties": {
       "btc": {},
       "eth": {}
@@ -999,7 +1007,7 @@
     ]
   },
   "AccountSummaryData": {
-    "hash": "18FAF2A9AC0ECBE100F3F1247EC4375953F98008",
+    "hash": "5F08B2B2485CF71E19868B7AC42BA02941E46592",
     "properties": {
       "options_gamma": {},
       "projected_maintenance_margin": {},
@@ -1048,7 +1056,7 @@
     ]
   },
   "MatchingEngineLimits": {
-    "hash": "AEB9DA4FDC765B87A29B87025584B9EE1887C8A4",
+    "hash": "E151E2C4CAB19EE9B83ABFA13028D67CC0ECDB24",
     "properties": {
       "futures": {},
       "matching_engine": {},
@@ -1088,7 +1096,7 @@
     ]
   },
   "AffiliateProgramInfo": {
-    "hash": "90EA1E1D0349F0721F47DDFB1EA69FC5F267A8D1",
+    "hash": "E8AF978D681632A664DDF4E2F0864F70037D2DA9",
     "properties": {
       "is_enabled": {},
       "link": {},
@@ -1149,7 +1157,7 @@
     ]
   },
   "SubAccount": {
-    "hash": "8A98CCAB42547E406B431C054F256D3C1861DD74",
+    "hash": "A10EE781599D621AC0606F04404631667533ABCA",
     "properties": {
       "email": {},
       "id": {},
@@ -1169,7 +1177,7 @@
     ]
   },
   "SubAccountDetail": {
-    "hash": "5789C9FDFB31691BCD1165C670476E04B3CD1AB5",
+    "hash": "335588E0D766909F02AF6699538F6E8BBA1AF18B",
     "properties": {
       "open_orders": {},
       "positions": {},
@@ -1180,7 +1188,7 @@
     ]
   },
   "TransactionLogPage": {
-    "hash": "CBBE2095F5563B4A727A9C288FDB2173446AF8F0",
+    "hash": "81E3944D21F89982DEF878E939FDF79081978242",
     "properties": {
       "continuation": {},
       "logs": {}
@@ -1237,7 +1245,7 @@
     ]
   },
   "PortfolioMarginingToggleEntry": {
-    "hash": "28C93C41DD6394527DF69F10EBF206D872840287",
+    "hash": "1CE97E203207509C145F93381113B8E92D0316DC",
     "properties": {
       "currency": {},
       "new_state": {},
@@ -1382,7 +1390,7 @@
     ]
   },
   "IncrementalTickerNotification": {
-    "hash": "43CA3FACBC795F6FD159DD9BE6D4E21B7824B2FA",
+    "hash": "016EFE490B43E92AAF3EFC5F10D95ABC8CCA6CC3",
     "properties": {
       "ask_iv": {},
       "best_ask_amount": {},
@@ -1470,7 +1478,7 @@
     ]
   },
   "QuoteNotification": {
-    "hash": "08C26900327198FF893A52AC7FDFA3D3D5C4F4F6",
+    "hash": "C2E6425E9E6661BE248794104AFB16D22C1E897A",
     "properties": {
       "best_ask_amount": {},
       "best_ask_price": {},
@@ -1497,7 +1505,7 @@
     ]
   },
   "UserChange": {
-    "hash": "CD78F2FE443154E8C2A8243D36A5F72B4D0C0128",
+    "hash": "4C91C1A4EE3A99D898BBD607832E8C128BBA9343",
     "properties": {
       "instrument_name": {},
       "orders": {},

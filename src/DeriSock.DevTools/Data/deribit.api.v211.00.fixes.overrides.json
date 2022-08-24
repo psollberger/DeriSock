@@ -20,7 +20,8 @@
       "response": {
         "properties": {
           "underlying_index": {
-            "apiDataType": "string"
+            "apiDataType": "string",
+            "dataType": "string"
           }
         }
       }
@@ -50,7 +51,8 @@
       "response": {
         "properties": {
           "underlying_index": {
-            "apiDataType": "string"
+            "apiDataType": "string",
+            "dataType": "string" 
           }
         }
       }
@@ -59,7 +61,8 @@
       "response": {
         "properties": {
           "underlying_index": {
-            "apiDataType": "string"
+            "apiDataType": "string",
+            "dataType": "string"
           }
         }
       }

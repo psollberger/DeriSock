@@ -623,7 +623,6 @@
         "properties": {
           "ask_price": {
             "description": "The current best ask price, `null` if there aren't any asks",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -635,7 +634,6 @@
           },
           "bid_price": {
             "description": "The current best bid price, `null` if there aren't any bids",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -683,13 +681,11 @@
           },
           "last": {
             "description": "The price of the latest trade, `null` if there weren't any trades",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
           "low": {
             "description": "Price of the 24h lowest trade, `null` if there weren't any trades",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -701,7 +697,6 @@
           },
           "mid_price": {
             "description": "The average of the best bid and ask, `null` if there aren't any asks or bids",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -718,7 +713,6 @@
           },
           "price_change": {
             "description": "24-hour price change expressed as a percentage, `null` if there weren't any trades",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -774,7 +768,6 @@
         "properties": {
           "ask_price": {
             "description": "The current best ask price, `null` if there aren't any asks",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -786,7 +779,6 @@
           },
           "bid_price": {
             "description": "The current best bid price, `null` if there aren't any bids",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -834,13 +826,11 @@
           },
           "last": {
             "description": "The price of the latest trade, `null` if there weren't any trades",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
           "low": {
             "description": "Price of the 24h lowest trade, `null` if there weren't any trades",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -852,7 +842,6 @@
           },
           "mid_price": {
             "description": "The average of the best bid and ask, `null` if there aren't any asks or bids",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -869,7 +858,6 @@
           },
           "price_change": {
             "description": "24-hour price change expressed as a percentage, `null` if there weren't any trades",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -1499,7 +1487,6 @@
           },
           "leverage": {
             "description": "Maximal leverage for instrument, for futures only",
-            "required": true,
             "apiDataType": "integer",
             "dataType": "integer"
           },
@@ -1678,7 +1665,6 @@
           },
           "leverage": {
             "description": "Maximal leverage for instrument, for futures only",
-            "required": true,
             "apiDataType": "integer",
             "dataType": "integer"
           },
@@ -2754,7 +2740,6 @@
           },
           "best_ask_price": {
             "description": "The current best ask price, `null` if there aren't any asks",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -2766,7 +2751,6 @@
           },
           "best_bid_price": {
             "description": "The current best bid price, `null` if there aren't any bids",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -2912,7 +2896,6 @@
               },
               "price_change": {
                 "description": "24-hour price change expressed as a percentage, `null` if there weren't any trades",
-                "required": true,
                 "apiDataType": "number",
                 "dataType": "number"
               },
@@ -2994,7 +2977,6 @@
           },
           "best_ask_price": {
             "description": "The current best ask price, `null` if there aren't any asks",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -3006,7 +2988,6 @@
           },
           "best_bid_price": {
             "description": "The current best bid price, `null` if there aren't any bids",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -3152,7 +3133,6 @@
               },
               "price_change": {
                 "description": "24-hour price change expressed as a percentage, `null` if there weren't any trades",
-                "required": true,
                 "apiDataType": "number",
                 "dataType": "number"
               },
@@ -3561,7 +3541,6 @@
           },
           "best_ask_price": {
             "description": "The current best ask price, `null` if there aren't any asks",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -3573,7 +3552,6 @@
           },
           "best_bid_price": {
             "description": "The current best bid price, `null` if there aren't any bids",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -3723,7 +3701,6 @@
               },
               "price_change": {
                 "description": "24-hour price change expressed as a percentage, `null` if there weren't any trades",
-                "required": true,
                 "apiDataType": "number",
                 "dataType": "number"
               },
@@ -15957,7 +15934,6 @@
           },
           "best_ask_price": {
             "description": "The current best ask price, `null` if there aren't any asks",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -15969,7 +15945,6 @@
           },
           "best_bid_price": {
             "description": "The current best bid price, `null` if there aren't any bids",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -16114,7 +16089,6 @@
               },
               "price_change": {
                 "description": "24-hour price change expressed as a percentage, `null` if there weren't any trades",
-                "required": true,
                 "apiDataType": "number",
                 "dataType": "number"
               },
@@ -16405,7 +16379,6 @@
           },
           "best_ask_price": {
             "description": "The current best ask price, `null` if there aren't any asks",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -16417,7 +16390,6 @@
           },
           "best_bid_price": {
             "description": "The current best bid price, `null` if there aren't any bids",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -16539,7 +16511,6 @@
           },
           "best_ask_price": {
             "description": "The current best ask price, `null` if there aren't any asks",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -16551,7 +16522,6 @@
           },
           "best_bid_price": {
             "description": "The current best bid price, `null` if there aren't any bids",
-            "required": true,
             "apiDataType": "number",
             "dataType": "number"
           },
@@ -16701,7 +16671,6 @@
               },
               "price_change": {
                 "description": "24-hour price change expressed as a percentage, `null` if there weren't any trades",
-                "required": true,
                 "apiDataType": "number",
                 "dataType": "number"
               },

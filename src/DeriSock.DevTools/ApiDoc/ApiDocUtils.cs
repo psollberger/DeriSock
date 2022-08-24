@@ -1,10 +1,8 @@
 namespace DeriSock.DevTools.ApiDoc;
 
 using System;
-using System.CodeDom.Compiler;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -117,19 +115,16 @@ public static class ApiDocUtils
   }
 
 
-  public static Task PrintEnumMapTemplateAsync(ApiDocDocument apiDoc, ApiDocEnumMap? existingMap, CancellationToken cancellationToken = default)
+  public static async Task CreateAndWriteEnumMapAsync(ApiDocDocument apiDoc, ApiDocEnumMap? existingMap, string path, CancellationToken cancellationToken = default)
   {
     var filteredProperties = new FilterPropertiesVisitor(x => x.EnumValues != null);
     apiDoc.Accept(filteredProperties);
 
     var groupedEntries = filteredProperties.Properties.GroupBy(x => string.Join(", ", x.EnumValues!)).ToArray();
 
-    var sb = new StringBuilder();
-    var itw = new IndentedTextWriter(new StringWriter(sb), "  ");
-    itw.WriteLine("{");
-    itw.Indent++;
+    var newMap = new ApiDocEnumMap();
 
-    var lastGroup = groupedEntries[^1];
+    var unknownCount = 0;
 
     foreach (var group in groupedEntries) {
       var firstGroupEntry = group.First();
@@ -138,81 +133,28 @@ public static class ApiDocUtils
 
       var existingMapEntry = existingMap?.FirstOrDefault(x => x.Value.EnumValues.SequenceEqual(enumValues));
 
-      itw.WriteLine($"\"{existingMapEntry?.Key}\": {{");
-      itw.Indent++;
+      var newEntry = new ApiDocEnumMapEntry();
 
-      itw.WriteLine($"\"description\": \"{JsonEncodedText.Encode(enumDescription)}\",");
+      var entryKey = existingMapEntry?.Key;
+      var existingEntry = existingMapEntry?.Value;
 
-      itw.WriteLine("\"enumValues\": [");
-      itw.Indent++;
+      newMap.Add(entryKey ?? $"UNKNOWN_{++unknownCount}", newEntry);
 
-      var lastEnumValue = enumValues[^1];
-
-      foreach (var enumValue in enumValues) {
-        var isLast = ReferenceEquals(enumValue, lastEnumValue);
-        itw.WriteLine($"\"{enumValue}\"{(isLast ? string.Empty : ",")}");
-      }
-
-      itw.Indent--;
-      itw.WriteLine("],");
-
-      itw.WriteLine("\"methods\": [");
-      itw.Indent++;
-      var methods = group.Where(x => x.FunctionType == ApiDocFunctionType.Method).ToArray();
-
-      if (methods.Length > 0) {
-        var lastEntry = methods[^1];
-
-        foreach (var property in methods) {
-          var isLast = ReferenceEquals(property, lastEntry);
-          itw.WriteLine($"\"{property.GetPath()}\"{(isLast ? string.Empty : ",")}");
-        }
-      }
-
-      itw.Indent--;
-      itw.WriteLine("],");
-
-      itw.WriteLine("\"subscriptions\": [");
-      itw.Indent++;
-      var subscriptions = group.Where(x => x.FunctionType == ApiDocFunctionType.Subscription).ToArray();
-
-      if (subscriptions.Length > 0) {
-        var lastEntry = subscriptions[^1];
-
-        foreach (var property in subscriptions) {
-          var isLast = ReferenceEquals(property, lastEntry);
-          itw.WriteLine($"\"{property.GetPath()}\"{(isLast ? string.Empty : ",")}");
-        }
-      }
-
-      itw.Indent--;
-      itw.WriteLine("]");
-
-      itw.Indent--;
-
-      var isLastGroup = ReferenceEquals(group, lastGroup);
-      itw.WriteLine($"}}{(isLastGroup ? string.Empty : ",")}");
+      newEntry.Description = existingEntry?.Description ?? enumDescription;
+      newEntry.EnumValues = enumValues;
+      newEntry.Methods = group.Where(x => x.FunctionType == ApiDocFunctionType.Method).Select(x => x.GetPath()).ToArray();
+      newEntry.Subscriptions = group.Where(x => x.FunctionType == ApiDocFunctionType.Subscription).Select(x => x.GetPath()).ToArray();
     }
 
-    itw.Indent--;
-    itw.WriteLine("}");
-
-    Console.WriteLine(sb.ToString());
-
-    return Task.CompletedTask;
+    await WriteJsonObjectToFile(path, newMap, cancellationToken).ConfigureAwait(false);
   }
 
-  public static async Task<ApiDocEnumMap> ReadEnumMapAsync(string path, CancellationToken cancellationToken = default)
+  public static async Task<ApiDocEnumMap?> ReadEnumMapAsync(string path, CancellationToken cancellationToken = default)
   {
     if (!File.Exists(path))
-      throw new FileNotFoundException(path);
+      return null;
 
-    var map = await ReadJsonObjectFromFile<ApiDocEnumMap>(path, cancellationToken).ConfigureAwait(false);
-
-    if (map is null)
-      throw new Exception("Enum Map deserialization failed");
-
-    return map;
+    return await ReadJsonObjectFromFile<ApiDocEnumMap>(path, cancellationToken).ConfigureAwait(false);
   }
 
   public static async Task WriteEnumOverridesFromMapAsync(ApiDocEnumMap enumMap, string path, CancellationToken cancellationToken = default)
@@ -317,7 +259,8 @@ public static class ApiDocUtils
     await WriteJsonObjectToFile(path, overrideDoc, cancellationToken).ConfigureAwait(false);
   }
 
-  public static Task PrintObjectMapTemplateAsync(ApiDocDocument apiDoc, ApiDocObjectMap? existingMap, CancellationToken cancellationToken = default)
+
+  public static async Task CreateAndWriteObjectMapAsync(ApiDocDocument apiDoc, ApiDocObjectMap? existingMap, string path, CancellationToken cancellationToken = default)
   {
     var newMap = new ApiDocObjectMap();
 
@@ -327,29 +270,36 @@ public static class ApiDocUtils
     var unknownCount = 0;
 
     foreach (var (propertyHash, property) in builder.UniqueProperties) {
+      if (property.Properties is not { Count: > 0 })
+        continue;
+
       var newEntry = new ApiDocObjectMapEntry();
       newEntry.Hash = propertyHash;
 
       var existingMapEntry = existingMap?.FirstOrDefault(x => x.Value.Hash == propertyHash);
       var existingEntryValue = existingMapEntry?.Value;
 
-      var typeName = existingMapEntry?.Key ?? $"<UNKNOWN{++unknownCount}>";
+      var dataTypeName = (property.DataType == "array" ? property.ArrayDataType : property.DataType)!;
+
+      var typeName = existingMapEntry?.Key ?? dataTypeName;
+
+      if (newMap.ContainsKey(typeName))
+        typeName = $"<UNKNOWN_{dataTypeName}_{++unknownCount}>";
 
       newMap.Add(typeName, newEntry);
 
       newEntry.Description = existingEntryValue?.Description;
 
-      if (property.Properties is { Count: > 0 }) {
-        newEntry.Properties = new ApiDocObjectMapPropertyCollection(property.Properties.Count);
+      newEntry.Properties = new ApiDocObjectMapPropertyCollection(property.Properties.Count);
 
-        foreach (var (objectPropertyKey, objectProperty) in property.Properties) {
-          var existingValue = existingEntryValue?.Properties?.FirstOrDefault(x => x.Key == objectPropertyKey);
+      foreach (var (objectPropertyKey, objectProperty) in property.Properties) {
+        var existingValue = existingEntryValue?.Properties?.FirstOrDefault(x => x.Key == objectPropertyKey);
 
-          var newProperty = new ApiDocObjectMapProperty();
-          newEntry.Properties.Add(objectPropertyKey, newProperty);
+        var newProperty = new ApiDocObjectMapProperty();
+        newEntry.Properties.Add(objectPropertyKey, newProperty);
 
-          newProperty.Description = existingValue?.Value.Description;
-        }
+        newProperty.Description = existingValue?.Value.Description;
+        newProperty.Required = existingValue?.Value.Required;
       }
 
       var methods = builder.PropertiesPerHash[propertyHash].Where(x => x.FunctionType == ApiDocFunctionType.Method).Select(x => x.GetPath()).ToArray();
@@ -363,22 +313,15 @@ public static class ApiDocUtils
         newEntry.SubscriptionPaths = subscriptions;
     }
 
-    Console.WriteLine(JsonSerializer.Serialize(newMap, SerializerOptions));
-
-    return Task.CompletedTask;
+    await WriteJsonObjectToFile(path, newMap, cancellationToken).ConfigureAwait(false);
   }
 
-  public static async Task<ApiDocObjectMap> ReadObjectMapAsync(string path, CancellationToken cancellationToken = default)
+  public static async Task<ApiDocObjectMap?> ReadObjectMapAsync(string path, CancellationToken cancellationToken = default)
   {
     if (!File.Exists(path))
-      throw new FileNotFoundException(path);
+      return null;
 
-    var map = await ReadJsonObjectFromFile<ApiDocObjectMap>(path, cancellationToken).ConfigureAwait(false);
-
-    if (map is null)
-      throw new Exception("Enum Map deserialization failed");
-
-    return map;
+    return await ReadJsonObjectFromFile<ApiDocObjectMap>(path, cancellationToken).ConfigureAwait(false);
   }
 
   public static async Task WriteObjectOverridesFromMapAsync(ApiDocDocument apiDoc, ApiDocObjectMap map, string path, CancellationToken cancellationToken = default)
@@ -453,20 +396,25 @@ public static class ApiDocUtils
 
         if (mapEntry.Properties is { Count: > 0 })
           foreach (var (key, value) in mapEntry.Properties) {
-            if (string.IsNullOrEmpty(value.Description))
+            if (!value.HasValue)
               continue;
 
             curProp.Properties ??= new ApiDocOverridePropertyCollection();
 
-            var newProp = new ApiDocOverrideProperty();
-            newProp.Description = value.Description;
-            curProp.Properties.Add(key, newProp);
+            if (!curProp.Properties.TryGetValue(key, out var targetProp)) {
+              targetProp = new ApiDocOverrideProperty();
+              curProp.Properties.Add(key, targetProp);
+            }
+
+            targetProp.Description = value.Description;
+            targetProp.Required = value.Required;
           }
       }
     }
 
     await WriteJsonObjectToFile(path, overrideDoc, cancellationToken).ConfigureAwait(false);
   }
+
 
   /// <summary>
   ///   Generates code for the enumeration classes contained in the enum map, placing them in subfolder Enums

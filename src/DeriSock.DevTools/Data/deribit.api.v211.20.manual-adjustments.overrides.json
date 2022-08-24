@@ -237,9 +237,13 @@
         }
       }
     },
-    "public/get_instrument": {
-      "resonse": {
-        "dataType": "Instrument"
+    "^public/get_instrument(s)?$": {
+      "response": {
+        "properties": {
+          "leverage": {
+            "name": "max_leverage" 
+          } 
+        } 
       }
     },
     "public/get_positions": {

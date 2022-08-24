@@ -1,0 +1,118 @@
+﻿{
+  "methods": {
+    "public/get_book_summary_by_currency": {
+      "request": {
+        "properties": {
+          "kind": {
+            "enumValues": [
+              "future",
+              "option",
+              "future_combo",
+              "option_combo",
+              "combo",
+              "any"
+            ]
+          }
+        }
+      }
+    },
+    "public/get_instruments": {
+      "request": {
+        "properties": {
+          "kind": {
+            "enumValues": [
+              "future",
+              "option",
+              "future_combo",
+              "option_combo",
+              "combo",
+              "any"
+            ]
+          }
+        }
+      }
+    },
+    "public/get_rfqs": {
+      "request": {
+        "properties": {
+          "kind": {
+            "enumValues": [
+              "future",
+              "option",
+              "future_combo",
+              "option_combo",
+              "combo",
+              "any"
+            ]
+          }
+        }
+      }
+    },
+    "private/get_open_orders_by_currency": {
+      "request": {
+        "properties": {
+          "kind": {
+            "enumValues": [
+              "future",
+              "option",
+              "future_combo",
+              "option_combo",
+              "combo",
+              "any"
+            ]
+          }
+        }
+      }
+    },
+    "private/get_positions": {
+      "request": {
+        "properties": {
+          "kind": {
+            "enumValues": [
+              "future",
+              "option",
+              "future_combo",
+              "option_combo",
+              "combo",
+              "any"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "subscriptions": {
+    "instrument.state.{kind}.{currency}": {
+      "request": {
+        "properties": {
+          "kind": {
+            "enumValues": [
+              "future",
+              "option",
+              "future_combo",
+              "option_combo",
+              "combo",
+              "any"
+            ]
+          }
+        }
+      }
+    },
+    "trades.{kind}.{currency}.{interval}": {
+      "request": {
+        "properties": {
+          "kind": {
+            "enumValues": [
+              "future",
+              "option",
+              "future_combo",
+              "option_combo",
+              "combo",
+              "any"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

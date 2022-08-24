@@ -8,11 +8,13 @@ public partial class TickerData
   /// <summary>
   ///   The option type (only for options)
   /// </summary>
+  [JsonIgnore]
   public DateTime ExpiryDate => InstrumentName.ToInstrumentExpiration();
 
   /// <summary>
   ///   The instrument type (options,future,perpetual)
   /// </summary>
+  [JsonIgnore]
   public InstrumentType InstrumentType => InstrumentName.GetInstrumentType();
 
   /// <summary>
@@ -30,5 +32,6 @@ public partial class TickerData
   /// <summary>
   ///   Strike price (only for options)
   /// </summary>
+  [JsonIgnore]
   public decimal Strike => InstrumentName.GetStrikePrice();
 }

@@ -1,6 +1,5 @@
 namespace DeriSock.DevTools.ApiDoc.Model;
 
-using System;
 using System.Text.Json.Serialization;
 
 public class ApiDocObjectMapEntry
@@ -22,7 +21,7 @@ public class ApiDocObjectMapEntry
 
   public string? GetFirstSourcePath()
   {
-    if (MethodPaths is {Length: > 0})
+    if (MethodPaths is { Length: > 0 })
       return MethodPaths[0];
 
     if (SubscriptionPaths is { Length: > 0 })
