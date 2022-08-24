@@ -5,5 +5,7 @@ public enum InstrumentType
   Undefined,
   Perpetual,
   Future,
-  Option
+  Option,
+  FutureCombo,
+  OptionCombo
 }

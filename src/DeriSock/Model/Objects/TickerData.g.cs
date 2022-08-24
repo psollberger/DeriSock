@@ -113,7 +113,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("last_price")]
-    public decimal LastPrice { get; set; }
+    public decimal? LastPrice { get; set; }
     /// <summary>
     /// <para>(Only for option) implied volatility for mark price</para>
     /// </summary>
