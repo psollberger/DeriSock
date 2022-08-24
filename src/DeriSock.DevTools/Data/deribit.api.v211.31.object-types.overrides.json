@@ -105,9 +105,6 @@
           "contract_size": {
             "required": false
           },
-          "instrument_id": {
-            "required": false
-          },
           "maker_commission": {
             "required": false
           },
@@ -131,9 +128,6 @@
             "required": false
           },
           "contract_size": {
-            "required": false
-          },
-          "instrument_id": {
             "required": false
           },
           "maker_commission": {

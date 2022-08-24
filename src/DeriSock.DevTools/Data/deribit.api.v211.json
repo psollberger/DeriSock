@@ -1482,6 +1482,7 @@
           },
           "instrument_id": {
             "description": "Instrument ID",
+            "required": true,
             "apiDataType": "integer",
             "dataType": "integer"
           },
@@ -1655,6 +1656,7 @@
           },
           "instrument_id": {
             "description": "Instrument ID",
+            "required": true,
             "apiDataType": "integer",
             "dataType": "integer"
           },
