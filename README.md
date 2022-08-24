@@ -29,7 +29,7 @@ await client.Disconnect();
 
 The various methods are organized in categories (Authentication, Supporting, Market Data, ...) and scopes (Private, Public).
 
-++Example:++ Calling `GetOrderBook` from the `Public` scope.
+**Example:** Calling `GetOrderBook` from the `Public` scope.
 
 <!-- snippet: readme-req-bbp-1 -->
 <a id='snippet-readme-req-bbp-1'></a>
@@ -45,7 +45,7 @@ var bestBidPrice = response.Data.BestBidPrice;
 <sup><a href='/src/DeriSock.DevTools/Snippets.cs#L23-L32' title='Snippet source file'>snippet source</a> | <a href='#snippet-readme-req-bbp-1' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
-++Example:++ Calling `GetOrderBook` from the `MarketData` category.
+**Example:** Calling `GetOrderBook` from the `MarketData` category.
 
 <!-- snippet: readme-req-bbp-2 -->
 <a id='snippet-readme-req-bbp-2'></a>
