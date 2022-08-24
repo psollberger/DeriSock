@@ -5,26 +5,35 @@ Source File: /README.source.md
 To change this file edit the source file and then run MarkdownSnippets.
 -->
 
-# DeriSock
+# DeriSock ![Build Status](https://github.com/psollberger/DeriSock/actions/workflows/DeriSock_BuildTest.yml/badge.svg)  [![NuGet Version](http://img.shields.io/nuget/v/DeriSock.svg?style=flat)](https://www.nuget.org/packages/DeriSock/) [![NuGet Downloads](https://img.shields.io/nuget/dt/DeriSock.svg)](https://www.nuget.org/packages/DeriSock/)
 
-This is a Deribit API C# .Net Core Client Library
-
-## What is this for?
-
-This client library let's you connect with the Deribit API using a WebSocket connection.  
-It is entirely made with asynchronous methods in mind.  
+DeriSock is a client library that connects to the Deribit API via WebSocket.  
 All methods and subscriptions found on https://docs.deribit.com are supported.
 
-## How do I use it?
+## Getting Started
 
-Usage is quite simple. To obtain the current best bid price you simply do the following:
+To connect to the Deribit Network just instantiate a new instance of the `DeribitClient` class and call the `Connect` method to connect and the `Disconnect` method to disconnect.
 
-<!-- snippet: readme-how-to-use -->
-<a id='snippet-readme-how-to-use'></a>
+<!-- snippet: readme-connect-disconnect -->
+<a id='snippet-readme-connect-disconnect'></a>
 ```cs
 var client = new DeribitClient(EndpointType.Testnet);
 await client.Connect();
 
+// do something
+
+await client.Disconnect();
+```
+<sup><a href='/src/DeriSock.DevTools/Snippets.cs#L12-L20' title='Snippet source file'>snippet source</a> | <a href='#snippet-readme-connect-disconnect' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+
+The various methods are organized in categories (Authentication, Supporting, Market Data, ...) and scopes (Private, Public).
+
+++Example:++ Calling `GetOrderBook` from the `Public` scope.
+
+<!-- snippet: readme-req-bbp-1 -->
+<a id='snippet-readme-req-bbp-1'></a>
+```cs
 var response = await client.Public.GetOrderBook(
                  new PublicGetOrderBookRequest
                  {
@@ -32,10 +41,24 @@ var response = await client.Public.GetOrderBook(
                  });
 
 var bestBidPrice = response.Data.BestBidPrice;
-
-await client.Disconnect();
 ```
-<sup><a href='/src/DeriSock.DevTools/Snippets.cs#L12-L26' title='Snippet source file'>snippet source</a> | <a href='#snippet-readme-how-to-use' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/DeriSock.DevTools/Snippets.cs#L23-L32' title='Snippet source file'>snippet source</a> | <a href='#snippet-readme-req-bbp-1' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+
+++Example:++ Calling `GetOrderBook` from the `MarketData` category.
+
+<!-- snippet: readme-req-bbp-2 -->
+<a id='snippet-readme-req-bbp-2'></a>
+```cs
+var response = await client.MarketData.PublicGetOrderBook(
+                 new PublicGetOrderBookRequest
+                 {
+                   InstrumentName = "BTC-PERPETUAL"
+                 });
+
+var bestBidPrice = response.Data.BestBidPrice;
+```
+<sup><a href='/src/DeriSock.DevTools/Snippets.cs#L36-L45' title='Snippet source file'>snippet source</a> | <a href='#snippet-readme-req-bbp-2' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 ## Authentication
@@ -54,7 +77,7 @@ await client.Authentication.PublicLogin()
     "<optional state>",
     "<optional scope>");
 ```
-<sup><a href='/src/DeriSock.DevTools/Snippets.cs#L28-L36' title='Snippet source file'>snippet source</a> | <a href='#snippet-readme-auth-credentials' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/DeriSock.DevTools/Snippets.cs#L49-L57' title='Snippet source file'>snippet source</a> | <a href='#snippet-readme-auth-credentials' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 ### Authentication using Signature
@@ -69,7 +92,7 @@ await client.Authentication.PublicLogin()
     "<optional state>",
     "<optional scope>");
 ```
-<sup><a href='/src/DeriSock.DevTools/Snippets.cs#L38-L46' title='Snippet source file'>snippet source</a> | <a href='#snippet-readme-auth-signature' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/DeriSock.DevTools/Snippets.cs#L61-L69' title='Snippet source file'>snippet source</a> | <a href='#snippet-readme-auth-signature' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 ### Logout
@@ -81,31 +104,32 @@ When authenticated, you can logout like this (this is the only synchroneous meth
 ```cs
 client.Authentication.PrivateLogout();
 ```
-<sup><a href='/src/DeriSock.DevTools/Snippets.cs#L48-L51' title='Snippet source file'>snippet source</a> | <a href='#snippet-readme-auth-logout' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/DeriSock.DevTools/Snippets.cs#L73-L76' title='Snippet source file'>snippet source</a> | <a href='#snippet-readme-auth-logout' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 **Note:** The server will automatically close the connection when you logout
 
 ## Subscriptions
 
-The subscription system will choose `public/subscribe` or `private/subscribe` automatically.  
+The subscription system will choose `public/subscribe` or `private/subscribe` automatically.
 If the client is authenticated it will use `private/subscribe`, if the client is not authenticated it will use `public/subscribe`.
+This is also the reason why the subscription methods are not present in the `Public` or `Private` scopes.
 
 <!-- snippet: readme-subscribtion-usage -->
 <a id='snippet-readme-subscribtion-usage'></a>
 ```cs
 // Subscribe to one or more channels. 
 var subscriptionStream = await client.Subscriptions.SubscribeBookChanges(
-  new BookChangesChannel
-  {
-    InstrumentName = "BTC-PERPETUAL",
-    Interval = NotificationInterval2._100ms
-  },
-  new BookChangesChannel
-  {
-    InstrumentName = "ETH-PERPETUAL",
-    Interval = NotificationInterval2._100ms
-  });
+                           new BookChangesChannel
+                           {
+                             InstrumentName = "BTC-PERPETUAL",
+                             Interval = NotificationInterval2._100ms
+                           },
+                           new BookChangesChannel
+                           {
+                             InstrumentName = "ETH-PERPETUAL",
+                             Interval = NotificationInterval2._100ms
+                           });
 
 // Create a CancellationTokenSource to be able to stop the stream
 // (i.e. unsubscribe from the channel(s))
@@ -118,5 +142,5 @@ await foreach (var notification in subscriptionStream.WithCancellation(cts.Token
   var bookChangeId = notification.Data.ChangeId;
 }
 ```
-<sup><a href='/src/DeriSock.DevTools/Snippets.cs#L53-L77' title='Snippet source file'>snippet source</a> | <a href='#snippet-readme-subscribtion-usage' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/DeriSock.DevTools/Snippets.cs#L80-L105' title='Snippet source file'>snippet source</a> | <a href='#snippet-readme-subscribtion-usage' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
