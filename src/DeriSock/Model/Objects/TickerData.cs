@@ -22,7 +22,7 @@ public partial class TickerData
   /// </summary>
   [JsonIgnore]
   public OptionType OptionType => InstrumentName.GetOptionType();
-  
+
   /// <summary>
   ///   Get combo type
   /// </summary>
@@ -40,7 +40,7 @@ public partial class TickerData
   /// </summary>
   [JsonIgnore]
   public decimal Strike => InstrumentName.GetStrikePrice();
-  
+
   /// <summary>
   ///   Underlying currency
   /// </summary>

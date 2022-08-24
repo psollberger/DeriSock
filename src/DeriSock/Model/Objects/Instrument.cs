@@ -12,7 +12,7 @@ public partial class Instrument
   /// </summary>
   [JsonIgnore]
   public InstrumentType InstrumentType => InstrumentName.GetInstrumentType();
-  
+
   ///   Get combo type
   /// </summary>
   [JsonIgnore]
