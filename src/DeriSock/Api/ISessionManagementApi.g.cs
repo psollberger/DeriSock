@@ -39,7 +39,7 @@ namespace DeriSock.Api
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<string>> PrivateEnableCancelOnDisconnect(PrivateEnableCancelOnDisconnectRequest? args = null, CancellationToken cancellationToken = default(CancellationToken));
+    System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<string>> PrivateEnableCancelOnDisconnect(CancelOnDisconnectRequest? args = null, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Disable Cancel On Disconnect for the connection.<br/>
     ///When change is applied for the account, then every newly opened connection will start with <b>inactive</b> Cancel on Disconnect.</para>
@@ -47,13 +47,13 @@ namespace DeriSock.Api
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<string>> PrivateDisableCancelOnDisconnect(PrivateDisableCancelOnDisconnectRequest? args = null, CancellationToken cancellationToken = default(CancellationToken));
+    System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<string>> PrivateDisableCancelOnDisconnect(CancelOnDisconnectRequest? args = null, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Read current Cancel On Disconnect configuration for the account.</para>
     /// </summary>
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<CancelOnDisconnectData>> PrivateGetCancelOnDisconnect(PrivateGetCancelOnDisconnectRequest? args = null, CancellationToken cancellationToken = default(CancellationToken));
+    System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<CancelOnDisconnectData>> PrivateGetCancelOnDisconnect(CancelOnDisconnectRequest? args = null, CancellationToken cancellationToken = default(CancellationToken));
   }
 }

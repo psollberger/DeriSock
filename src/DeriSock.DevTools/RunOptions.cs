@@ -5,6 +5,13 @@ using CommandLine;
 public class RunOptions
 {
   [Option(
+    "scratchpad",
+    Default = false,
+    HelpText = "Runs some temporary code to play around with.",
+    Hidden = true)]
+  public bool ScratchPad { get; set; }
+
+  [Option(
     "create-base",
     Default = false,
     HelpText = "Creates the 'deribit.api.vXXX.base.json' file.")]
@@ -39,6 +46,18 @@ public class RunOptions
     Default = false,
     HelpText = "Creates the 'deribit.api.vXXX.31.object-types.overrides.json' file.")]
   public bool CreateObjectOverrides { get; set; }
+
+  [Option(
+    "create-request-map",
+    Default = false,
+    HelpText = "Creates the 'deribit.api.vXXX.request-map.json' file.")]
+  public bool CreateRequestMap { get; set; }
+
+  [Option(
+    "create-request-overrides",
+    Default = false,
+    HelpText = "Creates the 'deribit.api.vXXX.32.request-types.overrides.json' file.")]
+  public bool CreateRequestOverrides { get; set; }
 
   [Option(
     "generate-code",

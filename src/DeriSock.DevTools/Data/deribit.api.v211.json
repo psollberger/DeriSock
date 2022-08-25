@@ -302,6 +302,7 @@
       "category": "Session management",
       "description": "Enable Cancel On Disconnect for the connection. After enabling Cancel On Disconnect all orders created by the connection will be removed when connection is closed. \n\n __NOTICE__ It does not affect orders created by other connections - they will remain active !\n\n When change is applied for the account, then every newly opened connection will start with __active__ Cancel on Disconnect.",
       "request": {
+        "dataType": "CancelOnDisconnectRequest",
         "properties": {
           "scope": {
             "description": "Specifies if Cancel On Disconnect change should be applied/checked for the current connection or the account (default - `connection`)\n\n __NOTICE:__ Scope `connection` can be used only when working via Websocket.",
@@ -326,6 +327,7 @@
       "category": "Session management",
       "description": "Disable Cancel On Disconnect for the connection.\n\n When change is applied for the account, then every newly opened connection will start with __inactive__ Cancel on Disconnect.",
       "request": {
+        "dataType": "CancelOnDisconnectRequest",
         "properties": {
           "scope": {
             "description": "Specifies if Cancel On Disconnect change should be applied/checked for the current connection or the account (default - `connection`)\n\n __NOTICE:__ Scope `connection` can be used only when working via Websocket.",
@@ -350,6 +352,7 @@
       "category": "Session management",
       "description": "Read current Cancel On Disconnect configuration for the account.",
       "request": {
+        "dataType": "CancelOnDisconnectRequest",
         "properties": {
           "scope": {
             "description": "Specifies if Cancel On Disconnect change should be applied/checked for the current connection or the account (default - `connection`)\n\n __NOTICE:__ Scope `connection` can be used only when working via Websocket.",
@@ -3748,6 +3751,7 @@
       "category": "Trading",
       "description": "Places a buy order for an instrument.",
       "request": {
+        "dataType": "UserOrderRequest",
         "properties": {
           "instrument_name": {
             "description": "Instrument name",
@@ -4299,6 +4303,7 @@
       "category": "Trading",
       "description": "Places a sell order for an instrument.",
       "request": {
+        "dataType": "UserOrderRequest",
         "properties": {
           "instrument_name": {
             "description": "Instrument name",
@@ -5855,6 +5860,7 @@
       "category": "Trading",
       "description": "Cancel an order, specified by order id",
       "request": {
+        "dataType": "UserOrderIdRequest",
         "properties": {
           "order_id": {
             "description": "The order id",
@@ -8006,6 +8012,7 @@
       "category": "Trading",
       "description": "Retrieve the current state of an order.",
       "request": {
+        "dataType": "UserOrderIdRequest",
         "properties": {
           "order_id": {
             "description": "The order id",
@@ -15431,6 +15438,7 @@
       "friendlyChannelName": "BookChanges",
       "description": "Notifies about changes to the order book for a certain instrument.\nThe first notification will contain the whole book (bid and ask amounts for all prices). After that there will only be information about changes to individual price levels.\nThe first notification will contain the amounts for all price levels (list of `['new', price, amount]` tuples). All following notifications will contain a list of tuples with action, price level and new amount (`[action, price, amount]`). Action can be either `new`, `change` or `delete`. \nEach notification will contain a `change_id` field, and each message except for the first one will contain a field `prev_change_id`. If `prev_change_id` is equal to the `change_id` of the previous message, this means that no messages have been missed.\nThe amount for perpetual and futures is in USD units, for options it is in corresponding cryptocurrency contracts, e.g., BTC or ETH.",
       "request": {
+        "dataType": "InstrumentIntervalRequest",
         "properties": {
           "instrument_name": {
             "description": "Instrument name",
@@ -15592,6 +15600,7 @@
       "friendlyChannelName": "DeribitPriceIndex",
       "description": "Provides information about current value (price) for Deribit Index",
       "request": {
+        "dataType": "IndexNameRequest",
         "properties": {
           "index_name": {
             "description": "Index identifier, matches (base) cryptocurrency with quote currency",
@@ -15657,6 +15666,7 @@
       "friendlyChannelName": "DeribitPriceRanking",
       "description": "Provides information about current value (price) for stock exchanges used to calculate Deribit Index",
       "request": {
+        "dataType": "IndexNameRequest",
         "properties": {
           "index_name": {
             "description": "Index identifier, matches (base) cryptocurrency with quote currency",
@@ -15741,6 +15751,7 @@
       "friendlyChannelName": "DeribitPriceStatistics",
       "description": "This subscription provides basic statistics about Deribit Index",
       "request": {
+        "dataType": "IndexNameRequest",
         "properties": {
           "index_name": {
             "description": "Index identifier, matches (base) cryptocurrency with quote currency",
@@ -15868,6 +15879,7 @@
       "friendlyChannelName": "EstimatedExpirationPrice",
       "description": "Returns calculated (estimated) ending price for given index.",
       "request": {
+        "dataType": "IndexNameRequest",
         "properties": {
           "index_name": {
             "description": "Index identifier, matches (base) cryptocurrency with quote currency",
@@ -16226,6 +16238,7 @@
       "friendlyChannelName": "MarkpriceOptions",
       "description": "Provides information about options markprices.",
       "request": {
+        "dataType": "IndexNameRequest",
         "properties": {
           "index_name": {
             "description": "Index identifier, matches (base) cryptocurrency with quote currency",
@@ -16298,6 +16311,7 @@
       "friendlyChannelName": "Perpetual",
       "description": "Provide current interest rate - but only for __perpetual__ instruments. Other types won't generate any notification.",
       "request": {
+        "dataType": "InstrumentIntervalRequest",
         "properties": {
           "instrument_name": {
             "description": "Instrument name",
@@ -16515,6 +16529,7 @@
       "friendlyChannelName": "Ticker",
       "description": "Key information about the instrument",
       "request": {
+        "dataType": "InstrumentIntervalRequest",
         "properties": {
           "instrument_name": {
             "description": "Instrument name",
@@ -16750,6 +16765,7 @@
       "friendlyChannelName": "InstrumentTrades",
       "description": "Get notifications about trades for an instrument.",
       "request": {
+        "dataType": "InstrumentIntervalRequest",
         "properties": {
           "instrument_name": {
             "description": "Instrument name",
@@ -16860,6 +16876,7 @@
       "friendlyChannelName": "KindCurrencyTrades",
       "description": "Get notifications about trades in any instrument of a given kind and given currency.",
       "request": {
+        "dataType": "KindCurrencyIntervalRequest",
         "properties": {
           "kind": {
             "description": "Instrument kind, `\"future\"` or `\"option\"`",
@@ -17047,6 +17064,7 @@
       "friendlyChannelName": "UserInstrumentChanges",
       "description": "Get notifications about user's updates related to order, trades, etc. in an instrument.",
       "request": {
+        "dataType": "InstrumentIntervalRequest",
         "properties": {
           "instrument_name": {
             "description": "Instrument name",
@@ -17662,6 +17680,7 @@
       "friendlyChannelName": "UserKindCurrencyChanges",
       "description": "Get notifications about changes in user's updates related to order, trades, etc. in instruments of a given kind and currency.",
       "request": {
+        "dataType": "KindCurrencyIntervalRequest",
         "properties": {
           "kind": {
             "description": "Instrument kind, `\"combo\"` for any combo or `\"any\"` for all",
@@ -19637,6 +19656,7 @@
       "friendlyChannelName": "UserTradesInstrumentChange",
       "description": "Get notifications about user's trades in an instrument.",
       "request": {
+        "dataType": "InstrumentIntervalRequest",
         "properties": {
           "instrument_name": {
             "description": "Instrument name",
@@ -19848,6 +19868,7 @@
       "friendlyChannelName": "UserTradesKindCurrencyChange",
       "description": "Get notifications about user's trades in any instrument of a given kind and given currency.",
       "request": {
+        "dataType": "KindCurrencyIntervalRequest",
         "properties": {
           "kind": {
             "description": "Instrument kind, `\"combo\"` for any combo or `\"any\"` for all",

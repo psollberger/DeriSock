@@ -5,14 +5,14 @@ using System.Collections.Generic;
 
 using DeriSock.DevTools.ApiDoc.Model;
 
-public class UniqueNodesBuilder : IApiDocDocumentVisitor
+public class UniqueObjectNodesBuilder : IApiDocDocumentVisitor
 {
   private readonly ApiDocDocument _apiDoc;
 
   public Dictionary<string, ApiDocProperty> UniqueProperties { get; } = new();
   public Dictionary<string, List<ApiDocProperty>> PropertiesPerHash { get; } = new();
 
-  public UniqueNodesBuilder(ApiDocDocument apiDoc)
+  public UniqueObjectNodesBuilder(ApiDocDocument apiDoc)
   {
     _apiDoc = apiDoc;
   }
