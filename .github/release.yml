@@ -1,11 +1,9 @@
-# .github/release.yml
-
 changelog:
   exclude:
     labels:
+      - semver-none
       - ignore-for-release
-    authors:
-      - octocat
+      - chore
   categories:
     - title: Breaking Changes
       labels:

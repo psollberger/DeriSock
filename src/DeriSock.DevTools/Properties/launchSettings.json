@@ -2,7 +2,7 @@
   "profiles": {
     "DeriSock.DevTools": {
       "commandName": "Project",
-      "commandLineArgs": "--generate-code"
+      "commandLineArgs": "--create-object-map --create-object-overrides --create-final --generate-code"
     }
   }
 }

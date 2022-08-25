@@ -1,18 +1,23 @@
-# DeriSock
+# DeriSock ![Build Status](https://github.com/psollberger/DeriSock/actions/workflows/DeriSock_BuildTest.yml/badge.svg)  [![NuGet Version](http://img.shields.io/nuget/v/DeriSock.svg?style=flat)](https://www.nuget.org/packages/DeriSock/) [![NuGet Downloads](https://img.shields.io/nuget/dt/DeriSock.svg)](https://www.nuget.org/packages/DeriSock/)
 
-This is a Deribit API C# .Net Core Client Library
-
-## What is this for?
-
-This client library let's you connect with the Deribit API using a WebSocket connection.  
-It is entirely made with asynchronous methods in mind.  
+DeriSock is a client library that connects to the Deribit API via WebSocket.  
 All methods and subscriptions found on https://docs.deribit.com are supported.
 
-## How do I use it?
+## Getting Started
 
-Usage is quite simple. To obtain the current best bid price you simply do the following:
+To connect to the Deribit Network just instantiate a new instance of the `DeribitClient` class and call the `Connect` method to connect and the `Disconnect` method to disconnect.
 
-snippet: readme-how-to-use
+snippet: readme-connect-disconnect
+
+The various methods are organized in categories (Authentication, Supporting, Market Data, ...) and scopes (Private, Public).
+
+**Example:** Calling `GetOrderBook` from the `Public` scope.
+
+snippet: readme-req-bbp-1
+
+**Example:** Calling `GetOrderBook` from the `MarketData` category.
+
+snippet: readme-req-bbp-2
 
 ## Authentication
 
@@ -36,7 +41,8 @@ snippet: readme-auth-logout
 
 ## Subscriptions
 
-The subscription system will choose `public/subscribe` or `private/subscribe` automatically.  
+The subscription system will choose `public/subscribe` or `private/subscribe` automatically.
 If the client is authenticated it will use `private/subscribe`, if the client is not authenticated it will use `public/subscribe`.
+This is also the reason why the subscription methods are not present in the `Public` or `Private` scopes.
 
 snippet: readme-subscribtion-usage

@@ -170,10 +170,9 @@ public class ApiDocProperty : IApiDocPropertyNode
 
     foreach (var (_, property) in Properties) {
       sb.Append(property.Name);
+      sb.Append(property.ApiDataType);
       sb.Append(property.DataType);
       sb.Append(property.ArrayDataType);
-      sb.Append(property.Required);
-      sb.Append(property.Deprecated);
       sb.Append(string.Join(',', property.EnumValues ?? Array.Empty<string>()));
       sb.Append(property.EnumIsSuggestion ?? false);
 
