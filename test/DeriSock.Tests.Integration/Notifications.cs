@@ -35,7 +35,7 @@ public class Notifications : IAsyncLifetime
     // Assert
     receivedNotifications.Should().NotBeEmpty("there has to be at least one notification received");
   }
-
+  
   /// <inheritdoc />
   public async Task InitializeAsync()
   {
