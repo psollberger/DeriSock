@@ -24,14 +24,14 @@ namespace DeriSock.Api
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<UserOrderTrades>> PrivateBuy(PrivateBuyRequest args, CancellationToken cancellationToken = default(CancellationToken));
+    System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<UserOrderTrades>> PrivateBuy(UserOrderRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Places a sell order for an instrument.</para>
     /// </summary>
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<UserOrderTrades>> PrivateSell(PrivateSellRequest args, CancellationToken cancellationToken = default(CancellationToken));
+    System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<UserOrderTrades>> PrivateSell(UserOrderRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Change price, amount and/or other properties of an order.</para>
     /// </summary>
@@ -52,7 +52,7 @@ namespace DeriSock.Api
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<UserOrder>> PrivateCancel(PrivateCancelRequest args, CancellationToken cancellationToken = default(CancellationToken));
+    System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<UserOrder>> PrivateCancel(UserOrderIdRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>This method cancels all users orders and trigger orders within all currencies and instrument kinds.</para>
     /// </summary>
@@ -143,7 +143,7 @@ namespace DeriSock.Api
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<UserOrder>> PrivateGetOrderState(PrivateGetOrderStateRequest args, CancellationToken cancellationToken = default(CancellationToken));
+    System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<UserOrder>> PrivateGetOrderState(UserOrderIdRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Retrieves detailed log of the user&apos;s trigger orders.</para>
     /// </summary>

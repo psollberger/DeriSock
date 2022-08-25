@@ -1,0 +1,278 @@
+{
+  "CancelOnDisconnectRequest": {
+    "hash": "AFA5C8D083D7A2F0CF77E9359622F61674EBC851",
+    "properties": {
+      "scope": {}
+    },
+    "methods": [
+      "private/enable_cancel_on_disconnect.request",
+      "private/disable_cancel_on_disconnect.request",
+      "private/get_cancel_on_disconnect.request"
+    ]
+  },
+  "<IGNORE_1>": {
+    "hash": "88B0143A6B4E9FA9507D77A2F6D1346C675145C8",
+    "properties": {
+      "channels": {}
+    },
+    "methods": [
+      "public/subscribe.request",
+      "public/unsubscribe.request",
+      "private/unsubscribe.request"
+    ]
+  },
+  "<IGNORE_2>": {
+    "hash": "59C6472616F64ABF445E8E815843D3CA3BCA9AE2",
+    "properties": {
+      "currency": {},
+      "kind": {}
+    },
+    "methods": [
+      "public/get_book_summary_by_currency.request",
+      "public/get_rfqs.request",
+      "private/get_positions.request"
+    ]
+  },
+  "<IGNORE_3>": {
+    "hash": "87329850C73110961D66905A6C846C0A9C069622",
+    "properties": {
+      "instrument_name": {}
+    },
+    "methods": [
+      "public/get_book_summary_by_instrument.request",
+      "public/get_contract_size.request",
+      "public/get_instrument.request",
+      "public/ticker.request",
+      "private/get_position.request"
+    ],
+    "subscriptions": [
+      "incremental_ticker.{instrument_name}.request",
+      "quote.{instrument_name}.request",
+      "user.orders.{instrument_name}.raw.request"
+    ]
+  },
+  "<IGNORE_4>": {
+    "hash": "0A5048C700E0DE0521409A970F4564705C3CBE79",
+    "properties": {
+      "instrument_name": {},
+      "start_timestamp": {},
+      "end_timestamp": {}
+    },
+    "methods": [
+      "public/get_funding_rate_history.request",
+      "public/get_funding_rate_value.request",
+      "public/get_mark_price_history.request"
+    ]
+  },
+  "<IGNORE_5>": {
+    "hash": "DE45EF1518E5DCE4AF3AB4DF9F6A1E72A20FDC0D",
+    "properties": {
+      "currency": {}
+    },
+    "methods": [
+      "public/get_historical_volatility.request",
+      "public/get_index.request",
+      "private/get_mmp_config.request",
+      "private/reset_mmp.request",
+      "public/get_combos.request",
+      "private/create_deposit_address.request",
+      "private/get_current_deposit_address.request"
+    ],
+    "subscriptions": [
+      "user.mmp_trigger.{currency}.request",
+      "user.portfolio.{currency}.request"
+    ]
+  },
+  "<IGNORE_6>": {
+    "hash": "1FCD554B38177371248FBBE39A031A42C8F5DBED",
+    "properties": {
+      "currency": {},
+      "type": {},
+      "count": {},
+      "continuation": {},
+      "search_start_timestamp": {}
+    },
+    "methods": [
+      "public/get_last_settlements_by_currency.request",
+      "private/get_settlement_history_by_currency.request"
+    ]
+  },
+  "<IGNORE_7>": {
+    "hash": "BE006B5462E8650FC2450352EC4E975F5AF83507",
+    "properties": {
+      "instrument_name": {},
+      "type": {},
+      "count": {},
+      "continuation": {},
+      "search_start_timestamp": {}
+    },
+    "methods": [
+      "public/get_last_settlements_by_instrument.request",
+      "private/get_settlement_history_by_instrument.request"
+    ]
+  },
+  "<IGNORE_8>": {
+    "hash": "08FE9CB84CED948ACA3D33F1628AB5DD71DDE3E9",
+    "properties": {
+      "currency": {},
+      "kind": {},
+      "start_id": {},
+      "end_id": {},
+      "count": {},
+      "include_old": {},
+      "sorting": {}
+    },
+    "methods": [
+      "public/get_last_trades_by_currency.request",
+      "private/get_user_trades_by_currency.request"
+    ]
+  },
+  "<IGNORE_9>": {
+    "hash": "E39006F061514899B5CD51B864CE4570F265B6B1",
+    "properties": {
+      "currency": {},
+      "kind": {},
+      "start_timestamp": {},
+      "end_timestamp": {},
+      "count": {},
+      "include_old": {},
+      "sorting": {}
+    },
+    "methods": [
+      "public/get_last_trades_by_currency_and_time.request",
+      "private/get_user_trades_by_currency_and_time.request"
+    ]
+  },
+  "<IGNORE_10>": {
+    "hash": "73E6E918E8D67E28069B57FAFE639BB19B0A971D",
+    "properties": {
+      "instrument_name": {},
+      "start_seq": {},
+      "end_seq": {},
+      "count": {},
+      "include_old": {},
+      "sorting": {}
+    },
+    "methods": [
+      "public/get_last_trades_by_instrument.request",
+      "private/get_user_trades_by_instrument.request"
+    ]
+  },
+  "<IGNORE_11>": {
+    "hash": "92ECD276875B6DE25D31F1EE9CDBD5443AE0770A",
+    "properties": {
+      "instrument_name": {},
+      "start_timestamp": {},
+      "end_timestamp": {},
+      "count": {},
+      "include_old": {},
+      "sorting": {}
+    },
+    "methods": [
+      "public/get_last_trades_by_instrument_and_time.request",
+      "private/get_user_trades_by_instrument_and_time.request"
+    ]
+  },
+  "UserOrderRequest": {
+    "hash": "A42E298B9F9626AA0AFE50F8591BE86390FB339B",
+    "properties": {
+      "instrument_name": {},
+      "amount": {},
+      "type": {},
+      "label": {},
+      "price": {},
+      "time_in_force": {},
+      "max_show": {},
+      "post_only": {},
+      "reject_post_only": {},
+      "reduce_only": {},
+      "trigger_price": {},
+      "trigger_offset": {},
+      "trigger": {},
+      "advanced": {},
+      "mmp": {},
+      "valid_until": {}
+    },
+    "methods": [
+      "private/buy.request",
+      "private/sell.request"
+    ]
+  },
+  "UserOrderIdRequest": {
+    "hash": "62348808FE09C064819C22CFF9D9EAF62556E7A9",
+    "properties": {
+      "order_id": {}
+    },
+    "methods": [
+      "private/cancel.request",
+      "private/get_order_state.request"
+    ]
+  },
+  "<IGNORE_12>": {
+    "hash": "82386538A024A7599A3242D523485949C96A0B5F",
+    "properties": {
+      "currency": {},
+      "count": {},
+      "offset": {}
+    },
+    "methods": [
+      "private/get_deposits.request",
+      "private/get_transfers.request",
+      "private/get_withdrawals.request"
+    ]
+  },
+  "<IGNORE_13>": {
+    "hash": "E9F5EEA75CCF08CDBFD93A0AF32904396A2E30CA",
+    "properties": {
+      "id": {}
+    },
+    "methods": [
+      "private/disable_api_key.request",
+      "private/enable_api_key.request",
+      "private/remove_api_key.request",
+      "private/reset_api_key.request",
+      "private/set_api_key_as_default.request"
+    ]
+  },
+  "InstrumentIntervalRequest": {
+    "hash": "C085BD9DD09357D3529145DA83478826BD0D569D",
+    "properties": {
+      "instrument_name": {},
+      "interval": {}
+    },
+    "subscriptions": [
+      "book.{instrument_name}.{interval}.request",
+      "perpetual.{instrument_name}.{interval}.request",
+      "ticker.{instrument_name}.{interval}.request",
+      "trades.{instrument_name}.{interval}.request",
+      "user.changes.{instrument_name}.{interval}.request",
+      "user.trades.{instrument_name}.{interval}.request"
+    ]
+  },
+  "IndexNameRequest": {
+    "hash": "C7C486372B6E030923B5228DBDABF23FAA32702E",
+    "properties": {
+      "index_name": {}
+    },
+    "subscriptions": [
+      "deribit_price_index.{index_name}.request",
+      "deribit_price_ranking.{index_name}.request",
+      "deribit_price_statistics.{index_name}.request",
+      "estimated_expiration_price.{index_name}.request",
+      "markprice.options.{index_name}.request"
+    ]
+  },
+  "KindCurrencyIntervalRequest": {
+    "hash": "25ED42DAAECD65B5CC39D79EE1971E11EDC4908E",
+    "properties": {
+      "kind": {},
+      "currency": {},
+      "interval": {}
+    },
+    "subscriptions": [
+      "trades.{kind}.{currency}.{interval}.request",
+      "user.changes.{kind}.{currency}.{interval}.request",
+      "user.trades.{kind}.{currency}.{interval}.request"
+    ]
+  }
+}

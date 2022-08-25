@@ -36,31 +36,31 @@ namespace DeriSock
       }
       /// <inheritdoc cref="IPrivateApi.EnableCancelOnDisconnect" />
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<string>> IPrivateApi.EnableCancelOnDisconnect(PrivateEnableCancelOnDisconnectRequest? args, CancellationToken cancellationToken)
+      System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<string>> IPrivateApi.EnableCancelOnDisconnect(CancelOnDisconnectRequest? args, CancellationToken cancellationToken)
       {
         return _client.InternalPrivateEnableCancelOnDisconnect(args, cancellationToken);
       }
       /// <inheritdoc cref="IPrivateApi.DisableCancelOnDisconnect" />
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<string>> IPrivateApi.DisableCancelOnDisconnect(PrivateDisableCancelOnDisconnectRequest? args, CancellationToken cancellationToken)
+      System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<string>> IPrivateApi.DisableCancelOnDisconnect(CancelOnDisconnectRequest? args, CancellationToken cancellationToken)
       {
         return _client.InternalPrivateDisableCancelOnDisconnect(args, cancellationToken);
       }
       /// <inheritdoc cref="IPrivateApi.GetCancelOnDisconnect" />
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<CancelOnDisconnectData>> IPrivateApi.GetCancelOnDisconnect(PrivateGetCancelOnDisconnectRequest? args, CancellationToken cancellationToken)
+      System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<CancelOnDisconnectData>> IPrivateApi.GetCancelOnDisconnect(CancelOnDisconnectRequest? args, CancellationToken cancellationToken)
       {
         return _client.InternalPrivateGetCancelOnDisconnect(args, cancellationToken);
       }
       /// <inheritdoc cref="IPrivateApi.Buy" />
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<UserOrderTrades>> IPrivateApi.Buy(PrivateBuyRequest args, CancellationToken cancellationToken)
+      System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<UserOrderTrades>> IPrivateApi.Buy(UserOrderRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPrivateBuy(args, cancellationToken);
       }
       /// <inheritdoc cref="IPrivateApi.Sell" />
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<UserOrderTrades>> IPrivateApi.Sell(PrivateSellRequest args, CancellationToken cancellationToken)
+      System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<UserOrderTrades>> IPrivateApi.Sell(UserOrderRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPrivateSell(args, cancellationToken);
       }
@@ -78,7 +78,7 @@ namespace DeriSock
       }
       /// <inheritdoc cref="IPrivateApi.Cancel" />
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<UserOrder>> IPrivateApi.Cancel(PrivateCancelRequest args, CancellationToken cancellationToken)
+      System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<UserOrder>> IPrivateApi.Cancel(UserOrderIdRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPrivateCancel(args, cancellationToken);
       }
@@ -156,7 +156,7 @@ namespace DeriSock
       }
       /// <inheritdoc cref="IPrivateApi.GetOrderState" />
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<UserOrder>> IPrivateApi.GetOrderState(PrivateGetOrderStateRequest args, CancellationToken cancellationToken)
+      System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<UserOrder>> IPrivateApi.GetOrderState(UserOrderIdRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPrivateGetOrderState(args, cancellationToken);
       }

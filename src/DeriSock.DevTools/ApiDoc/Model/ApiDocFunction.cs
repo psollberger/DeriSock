@@ -97,6 +97,9 @@ public class ApiDocFunction : IApiDocPropertyNode
 
   public DataTypeInfo? GetRequestTypeInfo()
   {
+    //if (Request is not { DataType: null })
+    //  return new DataTypeInfo(Request!.DataType, false, false);
+
     if (FunctionType == ApiDocFunctionType.Subscription)
       return new DataTypeInfo($"{FriendlyChannelName ?? Name.ToPublicCodeName()}Channel", false, false);
 

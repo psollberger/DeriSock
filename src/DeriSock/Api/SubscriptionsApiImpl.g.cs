@@ -66,7 +66,7 @@ namespace DeriSock
       /// <inheritdoc cref="ISubscriptionsApi.SubscribeDeribitPriceRanking" />
       /// <param name="channels"></param>
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      Task<NotificationStream<DeribitPriceRankingEntry>> ISubscriptionsApi.SubscribeDeribitPriceRanking(params DeribitPriceRankingChannel[] channels)
+      Task<NotificationStream<DeribitPriceRankingEntry[]>> ISubscriptionsApi.SubscribeDeribitPriceRanking(params DeribitPriceRankingChannel[] channels)
       {
         return _client.InternalSubscribeDeribitPriceRanking(channels);
       }
@@ -108,7 +108,7 @@ namespace DeriSock
       /// <inheritdoc cref="ISubscriptionsApi.SubscribeMarkpriceOptions" />
       /// <param name="channels"></param>
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      Task<NotificationStream<OptionMarkprice>> ISubscriptionsApi.SubscribeMarkpriceOptions(params MarkpriceOptionsChannel[] channels)
+      Task<NotificationStream<OptionMarkprice[]>> ISubscriptionsApi.SubscribeMarkpriceOptions(params MarkpriceOptionsChannel[] channels)
       {
         return _client.InternalSubscribeMarkpriceOptions(channels);
       }
@@ -164,7 +164,7 @@ namespace DeriSock
       /// <inheritdoc cref="ISubscriptionsApi.SubscribeKindCurrencyTrades" />
       /// <param name="channels"></param>
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      Task<NotificationStream<PublicTrade>> ISubscriptionsApi.SubscribeKindCurrencyTrades(params KindCurrencyTradesChannel[] channels)
+      Task<NotificationStream<PublicTrade[]>> ISubscriptionsApi.SubscribeKindCurrencyTrades(params KindCurrencyTradesChannel[] channels)
       {
         return _client.InternalSubscribeKindCurrencyTrades(channels);
       }
@@ -178,14 +178,14 @@ namespace DeriSock
       /// <inheritdoc cref="ISubscriptionsApi.SubscribeUserInstrumentChanges" />
       /// <param name="channels"></param>
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      Task<NotificationStream<UserChange>> ISubscriptionsApi.SubscribeUserInstrumentChanges(params UserInstrumentChangesChannel[] channels)
+      Task<NotificationStream<UserChange[]>> ISubscriptionsApi.SubscribeUserInstrumentChanges(params UserInstrumentChangesChannel[] channels)
       {
         return _client.InternalSubscribeUserInstrumentChanges(channels);
       }
       /// <inheritdoc cref="ISubscriptionsApi.SubscribeUserKindCurrencyChanges" />
       /// <param name="channels"></param>
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      Task<NotificationStream<UserChange>> ISubscriptionsApi.SubscribeUserKindCurrencyChanges(params UserKindCurrencyChangesChannel[] channels)
+      Task<NotificationStream<UserChange[]>> ISubscriptionsApi.SubscribeUserKindCurrencyChanges(params UserKindCurrencyChangesChannel[] channels)
       {
         return _client.InternalSubscribeUserKindCurrencyChanges(channels);
       }
@@ -213,7 +213,7 @@ namespace DeriSock
       /// <inheritdoc cref="ISubscriptionsApi.SubscribeUserOrdersInstrumentChange" />
       /// <param name="channels"></param>
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      Task<NotificationStream<UserOrder>> ISubscriptionsApi.SubscribeUserOrdersInstrumentChange(params UserOrdersInstrumentChangeChannel[] channels)
+      Task<NotificationStream<UserOrder[]>> ISubscriptionsApi.SubscribeUserOrdersInstrumentChange(params UserOrdersInstrumentChangeChannel[] channels)
       {
         return _client.InternalSubscribeUserOrdersInstrumentChange(channels);
       }
@@ -227,7 +227,7 @@ namespace DeriSock
       /// <inheritdoc cref="ISubscriptionsApi.SubscribeUserOrdersKindCurrencyChange" />
       /// <param name="channels"></param>
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      Task<NotificationStream<UserOrder>> ISubscriptionsApi.SubscribeUserOrdersKindCurrencyChange(params UserOrdersKindCurrencyChangeChannel[] channels)
+      Task<NotificationStream<UserOrder[]>> ISubscriptionsApi.SubscribeUserOrdersKindCurrencyChange(params UserOrdersKindCurrencyChangeChannel[] channels)
       {
         return _client.InternalSubscribeUserOrdersKindCurrencyChange(channels);
       }
@@ -241,14 +241,14 @@ namespace DeriSock
       /// <inheritdoc cref="ISubscriptionsApi.SubscribeUserTradesInstrumentChange" />
       /// <param name="channels"></param>
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      Task<NotificationStream<UserTrade>> ISubscriptionsApi.SubscribeUserTradesInstrumentChange(params UserTradesInstrumentChangeChannel[] channels)
+      Task<NotificationStream<UserTrade[]>> ISubscriptionsApi.SubscribeUserTradesInstrumentChange(params UserTradesInstrumentChangeChannel[] channels)
       {
         return _client.InternalSubscribeUserTradesInstrumentChange(channels);
       }
       /// <inheritdoc cref="ISubscriptionsApi.SubscribeUserTradesKindCurrencyChange" />
       /// <param name="channels"></param>
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      Task<NotificationStream<UserTrade>> ISubscriptionsApi.SubscribeUserTradesKindCurrencyChange(params UserTradesKindCurrencyChangeChannel[] channels)
+      Task<NotificationStream<UserTrade[]>> ISubscriptionsApi.SubscribeUserTradesKindCurrencyChange(params UserTradesKindCurrencyChangeChannel[] channels)
       {
         return _client.InternalSubscribeUserTradesKindCurrencyChange(channels);
       }

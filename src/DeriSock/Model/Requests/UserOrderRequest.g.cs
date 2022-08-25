@@ -14,7 +14,7 @@ namespace DeriSock.Model
   /// <summary>
   /// </summary>
   [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-  public partial class PrivateBuyRequest
+  public partial class UserOrderRequest
   {
     /// <summary>
     /// <para>Instrument name</para>
@@ -65,7 +65,7 @@ namespace DeriSock.Model
     [Newtonsoft.Json.JsonPropertyAttribute("max_show")]
     public decimal? MaxShow { get; set; }
     /// <summary>
-    /// <para>If true, the order is considered post-only. If the new price would cause the order to be filled immediately (as taker), the price will be changed to be just below the spread.<br/>
+    /// <para>If true, the order is considered post-only. If the new price would cause the order to be filled immediately (as taker), the price will be changed to be just above the spread.<br/>
     ///Only valid in combination with time_in_force=<c>&quot;good_til_cancelled&quot;</c></para>
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]

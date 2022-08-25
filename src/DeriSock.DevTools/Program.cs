@@ -25,9 +25,11 @@ internal class Program
   private const string ApiDocBaseDocumentPath = @"..\..\..\src\DeriSock.DevTools\Data\deribit.api.v211.base.json";
   private const string ApiDocFinalDocumentPath = @"..\..\..\src\DeriSock.DevTools\Data\deribit.api.v211.json";
   private const string ApiDocEnumMapPath = @"..\..\..\src\DeriSock.DevTools\Data\deribit.api.v211.enum-map.json";
-  private const string ApiDocObjectMapPath = @"..\..\..\src\DeriSock.DevTools\Data\deribit.api.v211.object-map.json";
   private const string ApiDocEnumOverridesPath = @"..\..\..\src\DeriSock.DevTools\Data\deribit.api.v211.30.enum-types.overrides.json";
+  private const string ApiDocObjectMapPath = @"..\..\..\src\DeriSock.DevTools\Data\deribit.api.v211.object-map.json";
   private const string ApiDocObjectOverridesPath = @"..\..\..\src\DeriSock.DevTools\Data\deribit.api.v211.31.object-types.overrides.json";
+  private const string ApiDocRequestMapPath = @"..\..\..\src\DeriSock.DevTools\Data\deribit.api.v211.request-map.json";
+  private const string ApiDocRequestOverridesPath = @"..\..\..\src\DeriSock.DevTools\Data\deribit.api.v211.32.request-types.overrides.json";
 
   public static async Task Main(string[] args)
   {
@@ -50,8 +52,14 @@ internal class Program
 
   private static async Task RunWithOptions(RunOptions options)
   {
-    //await SubscriptionDemo();
-    //await ApiDocManagement();
+    if (options.ScratchPad) {
+      var apiDoc = await ApiDocUtils.ReadApiDocumentAsync(ApiDocFinalDocumentPath).ConfigureAwait(false);
+      var map = await ApiDocUtils.ReadRequestMapAsync(ApiDocRequestMapPath).ConfigureAwait(false);
+      //await ApiDocUtils.CreateAndWriteRequestMapAsync(apiDoc, map, ApiDocRequestMapPath).ConfigureAwait(false);
+      if (map is not null)
+        await ApiDocUtils.WriteRequestOverridesFromMapAsync(apiDoc, map, ApiDocRequestOverridesPath).ConfigureAwait(false);
+      return;
+    }
 
     if (options.CreateBaseDocument) {
       var apiDoc = await ApiDocUtils.BuildApiDocumentAsync(ApiDocumentationUrl).ConfigureAwait(false);
@@ -105,6 +113,27 @@ internal class Program
       }
     }
 
+    if (options.CreateRequestMap) {
+      var apiDoc = await ApiDocUtils.ReadApiDocumentAsync(ApiDocFinalDocumentPath).ConfigureAwait(false);
+      var map = await ApiDocUtils.ReadRequestMapAsync(ApiDocRequestMapPath).ConfigureAwait(false);
+      await ApiDocUtils.CreateAndWriteRequestMapAsync(apiDoc, map, ApiDocRequestMapPath).ConfigureAwait(false);
+    }
+
+    if (options.CreateRequestOverrides) {
+      var apiDoc = await ApiDocUtils.ReadApiDocumentAsync(ApiDocFinalDocumentPath).ConfigureAwait(false);
+      var map = await ApiDocUtils.ReadRequestMapAsync(ApiDocRequestMapPath).ConfigureAwait(false);
+
+      if (map is not null) {
+        await ApiDocUtils.WriteRequestOverridesFromMapAsync(apiDoc, map, ApiDocRequestOverridesPath).ConfigureAwait(false);
+
+        if (options.CreateFinalDocument) {
+          apiDoc = await ApiDocUtils.ReadApiDocumentAsync(ApiDocBaseDocumentPath).ConfigureAwait(false);
+          await ApiDocUtils.ApplyOverridesAsync(apiDoc, ApiDocFinalDocumentPath).ConfigureAwait(false);
+          await ApiDocUtils.WriteApiDocumentAsync(apiDoc, ApiDocFinalDocumentPath).ConfigureAwait(false);
+        }
+      }
+    }
+
     if (options.GenerateCode) {
       var apiDoc = await ApiDocUtils.ReadApiDocumentAsync(ApiDocFinalDocumentPath).ConfigureAwait(false);
       var enumMap = await ApiDocUtils.ReadEnumMapAsync(ApiDocEnumMapPath).ConfigureAwait(false);
@@ -126,26 +155,6 @@ internal class Program
         await ApiDocUtils.GenerateApiImplementations(apiDoc, DeriSockGeneratedApisDirectory).ConfigureAwait(false);
       }
     }
-  }
-
-  private static async Task SubscriptionDemo()
-  {
-    // Create a CancellationTokenSource to be able to cancel (unsubscribe from) the stream
-    var cts = new CancellationTokenSource();
-
-    // Run the demo in parallel
-    Console.WriteLine("Subscribing to multiple channels at once and listen to all Notifications coming from them");
-    var streamTask = NotificationStreamDemo.Run(cts.Token);
-
-    Console.WriteLine("Waiting for you to press any key");
-    Console.ReadKey();
-
-    Console.WriteLine("Cancelling the stream");
-
-    cts.Cancel();
-    await Task.WhenAll(streamTask);
-
-    Console.WriteLine("Unsubsribed. Bye Bye");
   }
 
   private static void DeleteFiles(string path, string searchPattern)

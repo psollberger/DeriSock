@@ -69,7 +69,7 @@ namespace DeriSock.Api
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    Task<NotificationStream<DeribitPriceRankingEntry>> SubscribeDeribitPriceRanking(params DeribitPriceRankingChannel[] channels);
+    Task<NotificationStream<DeribitPriceRankingEntry[]>> SubscribeDeribitPriceRanking(params DeribitPriceRankingChannel[] channels);
     /// <summary>
     /// <para>This subscription provides basic statistics about Deribit Index</para>
     /// </summary>
@@ -113,7 +113,7 @@ namespace DeriSock.Api
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    Task<NotificationStream<OptionMarkprice>> SubscribeMarkpriceOptions(params MarkpriceOptionsChannel[] channels);
+    Task<NotificationStream<OptionMarkprice[]>> SubscribeMarkpriceOptions(params MarkpriceOptionsChannel[] channels);
     /// <summary>
     /// <para>Provide current interest rate - but only for <b>perpetual</b> instruments. Other types won&apos;t generate any notification.</para>
     /// </summary>
@@ -169,7 +169,7 @@ namespace DeriSock.Api
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    Task<NotificationStream<PublicTrade>> SubscribeKindCurrencyTrades(params KindCurrencyTradesChannel[] channels);
+    Task<NotificationStream<PublicTrade[]>> SubscribeKindCurrencyTrades(params KindCurrencyTradesChannel[] channels);
     /// <summary>
     /// <para>Get notifications about security events related to the account</para>
     /// </summary>
@@ -183,14 +183,14 @@ namespace DeriSock.Api
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    Task<NotificationStream<UserChange>> SubscribeUserInstrumentChanges(params UserInstrumentChangesChannel[] channels);
+    Task<NotificationStream<UserChange[]>> SubscribeUserInstrumentChanges(params UserInstrumentChangesChannel[] channels);
     /// <summary>
     /// <para>Get notifications about changes in user&apos;s updates related to order, trades, etc. in instruments of a given kind and currency.</para>
     /// </summary>
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    Task<NotificationStream<UserChange>> SubscribeUserKindCurrencyChanges(params UserKindCurrencyChangesChannel[] channels);
+    Task<NotificationStream<UserChange[]>> SubscribeUserKindCurrencyChanges(params UserKindCurrencyChangesChannel[] channels);
     /// <summary>
     /// <para>Get notificiation when account is locked/unlocked</para>
     /// </summary>
@@ -218,7 +218,7 @@ namespace DeriSock.Api
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    Task<NotificationStream<UserOrder>> SubscribeUserOrdersInstrumentChange(params UserOrdersInstrumentChangeChannel[] channels);
+    Task<NotificationStream<UserOrder[]>> SubscribeUserOrdersInstrumentChange(params UserOrdersInstrumentChangeChannel[] channels);
     /// <summary>
     /// <para>Get notifications about changes in user&apos;s orders in instruments of a given kind and currency.</para>
     /// </summary>
@@ -232,7 +232,7 @@ namespace DeriSock.Api
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    Task<NotificationStream<UserOrder>> SubscribeUserOrdersKindCurrencyChange(params UserOrdersKindCurrencyChangeChannel[] channels);
+    Task<NotificationStream<UserOrder[]>> SubscribeUserOrdersKindCurrencyChange(params UserOrdersKindCurrencyChangeChannel[] channels);
     /// <summary>
     /// <para>Provides information about current user portfolio</para>
     /// </summary>
@@ -246,13 +246,13 @@ namespace DeriSock.Api
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    Task<NotificationStream<UserTrade>> SubscribeUserTradesInstrumentChange(params UserTradesInstrumentChangeChannel[] channels);
+    Task<NotificationStream<UserTrade[]>> SubscribeUserTradesInstrumentChange(params UserTradesInstrumentChangeChannel[] channels);
     /// <summary>
     /// <para>Get notifications about user&apos;s trades in any instrument of a given kind and given currency.</para>
     /// </summary>
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    Task<NotificationStream<UserTrade>> SubscribeUserTradesKindCurrencyChange(params UserTradesKindCurrencyChangeChannel[] channels);
+    Task<NotificationStream<UserTrade[]>> SubscribeUserTradesKindCurrencyChange(params UserTradesKindCurrencyChangeChannel[] channels);
   }
 }

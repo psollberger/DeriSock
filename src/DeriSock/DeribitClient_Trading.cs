@@ -9,10 +9,10 @@ using DeriSock.Net.JsonRpc;
 
 public partial class DeribitClient
 {
-  private async Task<JsonRpcResponse<UserOrderTrades>> InternalPrivateBuy(PrivateBuyRequest args, CancellationToken cancellationToken = default)
+  private async Task<JsonRpcResponse<UserOrderTrades>> InternalPrivateBuy(UserOrderRequest args, CancellationToken cancellationToken = default)
     => await Send("private/buy", args, new ObjectJsonConverter<UserOrderTrades>(), cancellationToken).ConfigureAwait(false);
 
-  private async Task<JsonRpcResponse<UserOrderTrades>> InternalPrivateSell(PrivateSellRequest args, CancellationToken cancellationToken = default)
+  private async Task<JsonRpcResponse<UserOrderTrades>> InternalPrivateSell(UserOrderRequest args, CancellationToken cancellationToken = default)
     => await Send("private/sell", args, new ObjectJsonConverter<UserOrderTrades>(), cancellationToken).ConfigureAwait(false);
 
   private async Task<JsonRpcResponse<UserOrderTrades>> InternalPrivateEdit(PrivateEditRequest args, CancellationToken cancellationToken = default)
@@ -21,7 +21,7 @@ public partial class DeribitClient
   private async Task<JsonRpcResponse<UserOrderTrades>> InternalPrivateEditByLabel(PrivateEditByLabelRequest args, CancellationToken cancellationToken = default)
     => await Send("private/edit_by_label", args, new ObjectJsonConverter<UserOrderTrades>(), cancellationToken).ConfigureAwait(false);
 
-  private async Task<JsonRpcResponse<UserOrder>> InternalPrivateCancel(PrivateCancelRequest args, CancellationToken cancellationToken = default)
+  private async Task<JsonRpcResponse<UserOrder>> InternalPrivateCancel(UserOrderIdRequest args, CancellationToken cancellationToken = default)
     => await Send("private/cancel", args, new ObjectJsonConverter<UserOrder>(), cancellationToken).ConfigureAwait(false);
 
   private async Task<JsonRpcResponse<decimal>> InternalPrivateCancelAll(PrivateCancelAllRequest? args = null, CancellationToken cancellationToken = default)
@@ -60,7 +60,7 @@ public partial class DeribitClient
   private async Task<JsonRpcResponse<OrderInitialMargin[]>> InternalPrivateGetOrderMarginByIds(PrivateGetOrderMarginByIdsRequest args, CancellationToken cancellationToken = default)
     => await Send("private/get_order_margin_by_ids", args, new ObjectJsonConverter<OrderInitialMargin[]>(), cancellationToken).ConfigureAwait(false);
 
-  private async Task<JsonRpcResponse<UserOrder>> InternalPrivateGetOrderState(PrivateGetOrderStateRequest args, CancellationToken cancellationToken = default)
+  private async Task<JsonRpcResponse<UserOrder>> InternalPrivateGetOrderState(UserOrderIdRequest args, CancellationToken cancellationToken = default)
     => await Send("private/get_order_state", args, new ObjectJsonConverter<UserOrder>(), cancellationToken).ConfigureAwait(false);
 
   private async Task<JsonRpcResponse<TriggerOrderHistoryPage>> InternalPrivateGetTriggerOrderHistory(PrivateGetTriggerOrderHistoryRequest args, CancellationToken cancellationToken = default)
