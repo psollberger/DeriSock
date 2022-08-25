@@ -5,6 +5,7 @@ namespace DeriSock.DevTools.ApiDoc.CodeGeneration;
 using System;
 using System.CodeDom;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -248,10 +249,15 @@ internal class ApiInterfaceImplementationCodeGenerator : ApiDocCodeGenerator
       objMethod.Comments.Add(new CodeCommentStatement($"<inheritdoc cref=\"{interfaceName}.{objMethod.Name}\" />", true));
 
       // Defining return type
-      objMethod.ReturnType = new CodeTypeReference(typeof(Task<>).Name,
-                                                   new CodeTypeReference(
-                                                     typeof(NotificationStream<>).Name,
-                                                     new CodeTypeReference(function.GetResponseTypeInfo()!.TypeName)));
+      var responseTypeInfo = function.GetResponseTypeInfo();
+      Debug.Assert(responseTypeInfo != null);
+
+      var notificationType = new CodeTypeReference(responseTypeInfo.TypeName);
+
+      if (responseTypeInfo.IsArray)
+        notificationType = new CodeTypeReference(responseTypeInfo.TypeName, 1);
+
+      objMethod.ReturnType = new CodeTypeReference(typeof(Task<>).Name, new CodeTypeReference(typeof(NotificationStream<>).Name, notificationType));
 
       // Adding Parameters
       var requestTypeInfo = function.GetRequestTypeInfo();
