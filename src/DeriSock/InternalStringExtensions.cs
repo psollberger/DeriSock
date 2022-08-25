@@ -105,7 +105,7 @@ internal static class InternalStringExtensions
       { } i when i.Split('-')[1].Equals("CSR13", StringComparison.CurrentCultureIgnoreCase) => ComboType
         .CallRatioSpread1x3,
       { } i when i.Split('-')[1].Equals("CSR23", StringComparison.CurrentCultureIgnoreCase) => ComboType
-        .CallRatioSpread2s3,
+        .CallRatioSpread2x3,
       { } i when i.Split('-')[1].Equals("PS", StringComparison.CurrentCultureIgnoreCase) => ComboType.PutSpread,
       { } i when i.Split('-')[1].Equals("PSR12", StringComparison.CurrentCultureIgnoreCase) => ComboType
         .PutRatioSpread1x2,
