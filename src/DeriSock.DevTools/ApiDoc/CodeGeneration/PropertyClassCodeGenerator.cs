@@ -53,7 +53,7 @@ internal class PropertyClassCodeGenerator : ApiDocCodeGenerator
 
       var requestTypeInfo = function.GetRequestTypeInfo();
 
-      if (requestTypeInfo is null or { IsImported: true })
+      if (requestTypeInfo is null)
         continue;
 
       var className = requestTypeInfo.TypeName;

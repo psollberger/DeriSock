@@ -45,6 +45,7 @@ public static class ApiDocUtils
       return await JsonSerializer.DeserializeAsync<T>(fileStream, cancellationToken: cancellationToken).ConfigureAwait(false);
   }
 
+
   public static async Task<ApiDocDocument> BuildApiDocumentAsync(string url, CancellationToken cancellationToken = default)
   {
     var htmlWeb = new HtmlWeb();
@@ -264,7 +265,7 @@ public static class ApiDocUtils
   {
     var newMap = new ApiDocObjectMap();
 
-    var builder = new UniqueNodesBuilder(apiDoc);
+    var builder = new UniqueObjectNodesBuilder(apiDoc);
     builder.Build();
 
     var unknownCount = 0;
@@ -333,6 +334,168 @@ public static class ApiDocUtils
     };
 
     foreach (var (typeName, mapEntry) in map) {
+      var methodPaths = mapEntry.MethodPaths ?? Array.Empty<string>();
+      var subscriptionPaths = mapEntry.SubscriptionPaths ?? Array.Empty<string>();
+      var allPaths = methodPaths.Concat(subscriptionPaths).ToArray();
+
+      foreach (var propertyPath in allPaths) {
+        var apiDocProperty = apiDoc.GetPropertyFromPath(propertyPath);
+
+        if (apiDocProperty is null)
+          continue;
+
+        var (isMethod, pathParts) = propertyPath.ToApiDocParts();
+        var functionName = pathParts[0];
+
+        var apiFunctionCollection = isMethod ? apiDoc.Methods : apiDoc.Subscriptions;
+        var overrideFunctionCollection = isMethod ? overrideDoc.Methods : overrideDoc.Subscriptions;
+
+        if (!apiFunctionCollection.TryGetValue(functionName, out var _))
+          continue;
+
+        if (!overrideFunctionCollection.TryGetValue(functionName, out var overrideFunction)) {
+          overrideFunction = new ApiDocOverrideFunction();
+          overrideFunctionCollection.Add(functionName, overrideFunction);
+        }
+
+        var reqOrResValue = pathParts[1];
+
+        if (reqOrResValue == "request")
+          overrideFunction.Request ??= new ApiDocOverrideProperty();
+        else
+          overrideFunction.Response ??= new ApiDocOverrideProperty();
+
+        var curProp = reqOrResValue switch
+        {
+          "request" => overrideFunction.Request!,
+          _         => overrideFunction.Response!
+        };
+
+        for (var i = 2; i < pathParts.Length; i++) {
+          var nodeName = pathParts[i];
+
+          curProp.Properties ??= new ApiDocOverridePropertyCollection();
+
+          if (curProp.Properties.TryGetValue(nodeName, out var childProp)) {
+            curProp = childProp;
+            continue;
+          }
+
+          var childProps = curProp.Properties;
+
+          curProp = new ApiDocOverrideProperty();
+          childProps.Add(nodeName, curProp);
+        }
+
+        if (!string.IsNullOrEmpty(mapEntry.Description))
+          curProp.Description = mapEntry.Description;
+
+        if (apiDocProperty.DataType == "array")
+          curProp.ArrayDataType = typeName;
+        else
+          curProp.DataType = typeName;
+
+        if (mapEntry.Properties is { Count: > 0 })
+          foreach (var (key, value) in mapEntry.Properties) {
+            if (!value.HasValue)
+              continue;
+
+            curProp.Properties ??= new ApiDocOverridePropertyCollection();
+
+            if (!curProp.Properties.TryGetValue(key, out var targetProp)) {
+              targetProp = new ApiDocOverrideProperty();
+              curProp.Properties.Add(key, targetProp);
+            }
+
+            targetProp.Description = value.Description;
+            targetProp.Required = value.Required;
+          }
+      }
+    }
+
+    await WriteJsonObjectToFile(path, overrideDoc, cancellationToken).ConfigureAwait(false);
+  }
+
+
+  public static async Task CreateAndWriteRequestMapAsync(ApiDocDocument apiDoc, ApiDocObjectMap? existingMap, string path, CancellationToken cancellationToken = default)
+  {
+    var newMap = new ApiDocObjectMap();
+
+    var builder = new UniqueRequestsBuilder(apiDoc);
+    builder.Build();
+
+    var unknownCount = 0;
+
+    foreach (var (propertyHash, property) in builder.UniqueProperties) {
+      if (property.Properties is not { Count: > 0 })
+        continue;
+
+      if (builder.PropertiesPerHash[propertyHash].Count < 2)
+        continue;
+
+      var newEntry = new ApiDocObjectMapEntry();
+      newEntry.Hash = propertyHash;
+
+      var existingMapEntry = existingMap?.FirstOrDefault(x => x.Value.Hash == propertyHash);
+      var existingEntryValue = existingMapEntry?.Value;
+
+      var dataTypeName = (property.DataType == "array" ? property.ArrayDataType : property.DataType)!;
+
+      var typeName = existingMapEntry?.Key ?? dataTypeName;
+
+      if (string.IsNullOrEmpty(typeName) || newMap.ContainsKey(typeName))
+        typeName = $"<UNKNOWN_{dataTypeName}_{++unknownCount}>";
+
+      newMap.Add(typeName, newEntry);
+
+      newEntry.Description = existingEntryValue?.Description;
+
+      newEntry.Properties = new ApiDocObjectMapPropertyCollection(property.Properties.Count);
+
+      foreach (var (objectPropertyKey, objectProperty) in property.Properties) {
+        var existingValue = existingEntryValue?.Properties?.FirstOrDefault(x => x.Key == objectPropertyKey);
+
+        var newProperty = new ApiDocObjectMapProperty();
+        newEntry.Properties.Add(objectPropertyKey, newProperty);
+
+        newProperty.Description = existingValue?.Value.Description;
+        newProperty.Required = existingValue?.Value.Required;
+      }
+
+      var methods = builder.PropertiesPerHash[propertyHash].Where(x => x.FunctionType == ApiDocFunctionType.Method).Select(x => x.GetPath()).ToArray();
+
+      if (methods.Length > 0)
+        newEntry.MethodPaths = methods;
+
+      var subscriptions = builder.PropertiesPerHash[propertyHash].Where(x => x.FunctionType == ApiDocFunctionType.Subscription).Select(x => x.GetPath()).ToArray();
+
+      if (subscriptions.Length > 0)
+        newEntry.SubscriptionPaths = subscriptions;
+    }
+
+    await WriteJsonObjectToFile(path, newMap, cancellationToken).ConfigureAwait(false);
+  }
+
+  public static async Task<ApiDocObjectMap?> ReadRequestMapAsync(string path, CancellationToken cancellationToken = default)
+  {
+    if (!File.Exists(path))
+      return null;
+
+    return await ReadJsonObjectFromFile<ApiDocObjectMap>(path, cancellationToken).ConfigureAwait(false);
+  }
+
+  public static async Task WriteRequestOverridesFromMapAsync(ApiDocDocument apiDoc, ApiDocObjectMap map, string path, CancellationToken cancellationToken = default)
+  {
+    var overrideDoc = new ApiDocOverrideDocument
+    {
+      Methods = new ApiDocOverrideFunctionCollection(),
+      Subscriptions = new ApiDocOverrideFunctionCollection()
+    };
+
+    foreach (var (typeName, mapEntry) in map) {
+      if (typeName.StartsWith("<IGNORE_"))
+        continue;
+
       var methodPaths = mapEntry.MethodPaths ?? Array.Empty<string>();
       var subscriptionPaths = mapEntry.SubscriptionPaths ?? Array.Empty<string>();
       var allPaths = methodPaths.Concat(subscriptionPaths).ToArray();

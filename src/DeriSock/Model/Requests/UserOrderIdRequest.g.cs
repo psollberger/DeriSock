@@ -14,7 +14,7 @@ namespace DeriSock.Model
   /// <summary>
   /// </summary>
   [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-  public partial class PrivateCancelRequest
+  public partial class UserOrderIdRequest
   {
     /// <summary>
     /// <para>The order id</para>

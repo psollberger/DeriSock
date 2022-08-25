@@ -1,0 +1,111 @@
+{
+  "methods": {
+    "private/enable_cancel_on_disconnect": {
+      "request": {
+        "dataType": "CancelOnDisconnectRequest"
+      }
+    },
+    "private/disable_cancel_on_disconnect": {
+      "request": {
+        "dataType": "CancelOnDisconnectRequest"
+      }
+    },
+    "private/get_cancel_on_disconnect": {
+      "request": {
+        "dataType": "CancelOnDisconnectRequest"
+      }
+    },
+    "private/buy": {
+      "request": {
+        "dataType": "UserOrderRequest"
+      }
+    },
+    "private/sell": {
+      "request": {
+        "dataType": "UserOrderRequest"
+      }
+    },
+    "private/cancel": {
+      "request": {
+        "dataType": "UserOrderIdRequest"
+      }
+    },
+    "private/get_order_state": {
+      "request": {
+        "dataType": "UserOrderIdRequest"
+      }
+    }
+  },
+  "subscriptions": {
+    "book.{instrument_name}.{interval}": {
+      "request": {
+        "dataType": "InstrumentIntervalRequest"
+      }
+    },
+    "perpetual.{instrument_name}.{interval}": {
+      "request": {
+        "dataType": "InstrumentIntervalRequest"
+      }
+    },
+    "ticker.{instrument_name}.{interval}": {
+      "request": {
+        "dataType": "InstrumentIntervalRequest"
+      }
+    },
+    "trades.{instrument_name}.{interval}": {
+      "request": {
+        "dataType": "InstrumentIntervalRequest"
+      }
+    },
+    "user.changes.{instrument_name}.{interval}": {
+      "request": {
+        "dataType": "InstrumentIntervalRequest"
+      }
+    },
+    "user.trades.{instrument_name}.{interval}": {
+      "request": {
+        "dataType": "InstrumentIntervalRequest"
+      }
+    },
+    "deribit_price_index.{index_name}": {
+      "request": {
+        "dataType": "IndexNameRequest"
+      }
+    },
+    "deribit_price_ranking.{index_name}": {
+      "request": {
+        "dataType": "IndexNameRequest"
+      }
+    },
+    "deribit_price_statistics.{index_name}": {
+      "request": {
+        "dataType": "IndexNameRequest"
+      }
+    },
+    "estimated_expiration_price.{index_name}": {
+      "request": {
+        "dataType": "IndexNameRequest"
+      }
+    },
+    "markprice.options.{index_name}": {
+      "request": {
+        "dataType": "IndexNameRequest"
+      }
+    },
+    "trades.{kind}.{currency}.{interval}": {
+      "request": {
+        "dataType": "KindCurrencyIntervalRequest"
+      }
+    },
+    "user.changes.{kind}.{currency}.{interval}": {
+      "request": {
+        "dataType": "KindCurrencyIntervalRequest"
+      }
+    },
+    "user.trades.{kind}.{currency}.{interval}": {
+      "request": {
+        "dataType": "KindCurrencyIntervalRequest"
+      }
+    }
+  }
+}

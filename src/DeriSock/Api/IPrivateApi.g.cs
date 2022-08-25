@@ -33,7 +33,7 @@ namespace DeriSock.Api
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<string>> EnableCancelOnDisconnect(PrivateEnableCancelOnDisconnectRequest? args = null, CancellationToken cancellationToken = default(CancellationToken));
+    System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<string>> EnableCancelOnDisconnect(CancelOnDisconnectRequest? args = null, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Disable Cancel On Disconnect for the connection.<br/>
     ///When change is applied for the account, then every newly opened connection will start with <b>inactive</b> Cancel on Disconnect.</para>
@@ -41,28 +41,28 @@ namespace DeriSock.Api
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<string>> DisableCancelOnDisconnect(PrivateDisableCancelOnDisconnectRequest? args = null, CancellationToken cancellationToken = default(CancellationToken));
+    System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<string>> DisableCancelOnDisconnect(CancelOnDisconnectRequest? args = null, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Read current Cancel On Disconnect configuration for the account.</para>
     /// </summary>
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<CancelOnDisconnectData>> GetCancelOnDisconnect(PrivateGetCancelOnDisconnectRequest? args = null, CancellationToken cancellationToken = default(CancellationToken));
+    System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<CancelOnDisconnectData>> GetCancelOnDisconnect(CancelOnDisconnectRequest? args = null, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Places a buy order for an instrument.</para>
     /// </summary>
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<UserOrderTrades>> Buy(PrivateBuyRequest args, CancellationToken cancellationToken = default(CancellationToken));
+    System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<UserOrderTrades>> Buy(UserOrderRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Places a sell order for an instrument.</para>
     /// </summary>
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<UserOrderTrades>> Sell(PrivateSellRequest args, CancellationToken cancellationToken = default(CancellationToken));
+    System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<UserOrderTrades>> Sell(UserOrderRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Change price, amount and/or other properties of an order.</para>
     /// </summary>
@@ -83,7 +83,7 @@ namespace DeriSock.Api
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<UserOrder>> Cancel(PrivateCancelRequest args, CancellationToken cancellationToken = default(CancellationToken));
+    System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<UserOrder>> Cancel(UserOrderIdRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>This method cancels all users orders and trigger orders within all currencies and instrument kinds.</para>
     /// </summary>
@@ -174,7 +174,7 @@ namespace DeriSock.Api
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<UserOrder>> GetOrderState(PrivateGetOrderStateRequest args, CancellationToken cancellationToken = default(CancellationToken));
+    System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<UserOrder>> GetOrderState(UserOrderIdRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Retrieves detailed log of the user&apos;s trigger orders.</para>
     /// </summary>

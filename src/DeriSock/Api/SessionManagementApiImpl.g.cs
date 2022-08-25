@@ -42,19 +42,19 @@ namespace DeriSock
       }
       /// <inheritdoc cref="ISessionManagementApi.PrivateEnableCancelOnDisconnect" />
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<string>> ISessionManagementApi.PrivateEnableCancelOnDisconnect(PrivateEnableCancelOnDisconnectRequest? args, CancellationToken cancellationToken)
+      System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<string>> ISessionManagementApi.PrivateEnableCancelOnDisconnect(CancelOnDisconnectRequest? args, CancellationToken cancellationToken)
       {
         return _client.InternalPrivateEnableCancelOnDisconnect(args, cancellationToken);
       }
       /// <inheritdoc cref="ISessionManagementApi.PrivateDisableCancelOnDisconnect" />
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<string>> ISessionManagementApi.PrivateDisableCancelOnDisconnect(PrivateDisableCancelOnDisconnectRequest? args, CancellationToken cancellationToken)
+      System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<string>> ISessionManagementApi.PrivateDisableCancelOnDisconnect(CancelOnDisconnectRequest? args, CancellationToken cancellationToken)
       {
         return _client.InternalPrivateDisableCancelOnDisconnect(args, cancellationToken);
       }
       /// <inheritdoc cref="ISessionManagementApi.PrivateGetCancelOnDisconnect" />
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-      System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<CancelOnDisconnectData>> ISessionManagementApi.PrivateGetCancelOnDisconnect(PrivateGetCancelOnDisconnectRequest? args, CancellationToken cancellationToken)
+      System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<CancelOnDisconnectData>> ISessionManagementApi.PrivateGetCancelOnDisconnect(CancelOnDisconnectRequest? args, CancellationToken cancellationToken)
       {
         return _client.InternalPrivateGetCancelOnDisconnect(args, cancellationToken);
       }
