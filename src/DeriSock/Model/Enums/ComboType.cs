@@ -33,7 +33,7 @@ public enum ComboType
   PutRatioSpread1x3,
   CallRatioSpread1x2,
   CallRatioSpread1x3,
-  CallRatioSpread2s3,
+  CallRatioSpread2x3,
   PutRatioSpread1x2,
   PutRatioSpread2x3
 }
