@@ -17,8 +17,9 @@ public class VolatilityIndexCandleConverter : JsonConverter<VolatilityIndexCandl
   public override void WriteJson(JsonWriter writer, VolatilityIndexCandle? value, JsonSerializer serializer)
   {
     Debug.Assert(value != null, nameof(value) + " != null");
+
     writer.WriteStartArray();
-    writer.WriteValue(value.Timestamp.ToUnixTimeMilliseconds());
+    writer.WriteValue(value!.Timestamp.ToUnixTimeMilliseconds());
     writer.WriteValue(value.Open);
     writer.WriteValue(value.High);
     writer.WriteValue(value.Low);

@@ -14,7 +14,7 @@ namespace DeriSock.Model
   /// <summary>
   /// <para>Order type, default - <c>all</c></para>
   /// </summary>
-  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
   public partial class OpenOrderType : DeriSock.Model.EnumValue
   {
     public static OpenOrderType All = new OpenOrderType("all");

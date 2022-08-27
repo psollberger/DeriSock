@@ -15,7 +15,7 @@ namespace DeriSock.Api
   using DeriSock.Net.JsonRpc;
   using DeriSock.Model;
   
-  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
   public partial interface IComboBooksApi
   {
     /// <summary>
@@ -23,28 +23,28 @@ namespace DeriSock.Api
     /// </summary>
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<Combo>> PublicGetComboDetails(PublicGetComboDetailsRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Retrieves available combos. This method can be used to get the list of all combos, or only the list of combos in the given state.</para>
     /// </summary>
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<string[]>> PublicGetComboIds(PublicGetComboIdsRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Retrieves information about active combos</para>
     /// </summary>
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<Combo[]>> PublicGetCombos(PublicGetCombosRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Verifies and creates a combo book or returns an existing combo matching given trades</para>
     /// </summary>
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<Combo>> PrivateCreateCombo(PrivateCreateComboRequest args, CancellationToken cancellationToken = default(CancellationToken));
   }
 }

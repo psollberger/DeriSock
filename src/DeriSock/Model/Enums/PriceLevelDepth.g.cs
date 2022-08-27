@@ -14,7 +14,7 @@ namespace DeriSock.Model
   /// <summary>
   /// <para>Number of price levels to be included.</para>
   /// </summary>
-  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
   public partial class PriceLevelDepth : DeriSock.Model.EnumValue
   {
     public static PriceLevelDepth _1 = new PriceLevelDepth("1");

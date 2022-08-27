@@ -14,7 +14,7 @@ namespace DeriSock.Model
   /// <summary>
   /// <para>Method of authentication</para>
   /// </summary>
-  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
   public partial class GrantType : DeriSock.Model.EnumValue
   {
     public static GrantType ClientCredentials = new GrantType("client_credentials");

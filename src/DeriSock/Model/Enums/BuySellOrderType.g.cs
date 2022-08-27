@@ -14,7 +14,7 @@ namespace DeriSock.Model
   /// <summary>
   /// <para>The order type, default: <c>&quot;limit&quot;</c></para>
   /// </summary>
-  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
   public partial class BuySellOrderType : DeriSock.Model.EnumValue
   {
     public static BuySellOrderType Limit = new BuySellOrderType("limit");

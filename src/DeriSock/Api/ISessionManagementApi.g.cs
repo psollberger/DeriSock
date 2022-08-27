@@ -15,7 +15,7 @@ namespace DeriSock.Api
   using DeriSock.Net.JsonRpc;
   using DeriSock.Model;
   
-  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
   public partial interface ISessionManagementApi
   {
     /// <summary>
@@ -23,13 +23,13 @@ namespace DeriSock.Api
     /// </summary>
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<string>> PublicSetHeartbeat(PublicSetHeartbeatRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Stop sending heartbeat messages.</para>
     /// </summary>
     /// <param name="cancellationToken"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<string>> PublicDisableHeartbeat(CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Enable Cancel On Disconnect for the connection. After enabling Cancel On Disconnect all orders created by the connection will be removed when connection is closed.<br/>
@@ -38,7 +38,7 @@ namespace DeriSock.Api
     /// </summary>
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<string>> PrivateEnableCancelOnDisconnect(CancelOnDisconnectRequest? args = null, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Disable Cancel On Disconnect for the connection.<br/>
@@ -46,14 +46,14 @@ namespace DeriSock.Api
     /// </summary>
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<string>> PrivateDisableCancelOnDisconnect(CancelOnDisconnectRequest? args = null, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Read current Cancel On Disconnect configuration for the account.</para>
     /// </summary>
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<CancelOnDisconnectData>> PrivateGetCancelOnDisconnect(CancelOnDisconnectRequest? args = null, CancellationToken cancellationToken = default(CancellationToken));
   }
 }

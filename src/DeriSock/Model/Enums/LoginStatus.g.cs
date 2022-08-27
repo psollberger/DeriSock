@@ -14,7 +14,7 @@ namespace DeriSock.Model
   /// <summary>
   /// <para>enable or disable login.</para>
   /// </summary>
-  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
   public partial class LoginStatus : DeriSock.Model.EnumValue
   {
     public static LoginStatus Enable = new LoginStatus("enable");

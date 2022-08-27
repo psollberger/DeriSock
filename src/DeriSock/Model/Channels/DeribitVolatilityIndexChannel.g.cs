@@ -13,8 +13,8 @@ namespace DeriSock.Model
   
   /// <summary>
   /// </summary>
-  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-  public partial class DeribitVolatilityIndexChannel : DeriSock.Request.ISubscriptionChannel
+  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
+  public partial class DeribitVolatilityIndexChannel : DeriSock.Model.ISubscriptionChannel
   {
     /// <summary>
     /// <para>Index identifier supported for DVOL</para>

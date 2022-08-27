@@ -19,7 +19,7 @@ public class ActionPriceAmountArrayConverter : JsonConverter<ActionPriceAmountIt
     Debug.Assert(value != null, nameof(value) + " != null");
 
     writer.WriteStartArray();
-    writer.WriteValue(value.Action);
+    writer.WriteValue(value!.Action);
     writer.WriteValue(value.Price);
     writer.WriteValue(value.Amount);
     writer.WriteEndArray();

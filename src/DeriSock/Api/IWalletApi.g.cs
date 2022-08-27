@@ -15,7 +15,7 @@ namespace DeriSock.Api
   using DeriSock.Net.JsonRpc;
   using DeriSock.Model;
   
-  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
   public partial interface IWalletApi
   {
     /// <summary>
@@ -23,70 +23,70 @@ namespace DeriSock.Api
     /// </summary>
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<UserTransfer>> PrivateCancelTransferById(PrivateCancelTransferByIdRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Cancels withdrawal request</para>
     /// </summary>
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<Withdrawal>> PrivateCancelWithdrawal(PrivateCancelWithdrawalRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Creates deposit address in currency</para>
     /// </summary>
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<DepositAddress>> PrivateCreateDepositAddress(PrivateCreateDepositAddressRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Retrieve deposit address for currency</para>
     /// </summary>
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<DepositAddress>> PrivateGetCurrentDepositAddress(PrivateGetCurrentDepositAddressRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Retrieve the latest users deposits</para>
     /// </summary>
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<Deposits>> PrivateGetDeposits(PrivateGetDepositsRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Retrieve the user&apos;s transfers list</para>
     /// </summary>
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<UserTransfers>> PrivateGetTransfers(PrivateGetTransfersRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Retrieve the latest users withdrawals</para>
     /// </summary>
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<Withdrawals>> PrivateGetWithdrawals(PrivateGetWithdrawalsRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Transfer funds to subaccount.</para>
     /// </summary>
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<UserTransfer>> PrivateSubmitTransferToSubaccount(PrivateSubmitTransferToSubaccountRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Transfer funds to another user.</para>
     /// </summary>
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<UserTransfer>> PrivateSubmitTransferToUser(PrivateSubmitTransferToUserRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Creates a new withdrawal request</para>
     /// </summary>
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<Withdrawal>> PrivateWithdraw(PrivateWithdrawRequest args, CancellationToken cancellationToken = default(CancellationToken));
   }
 }
