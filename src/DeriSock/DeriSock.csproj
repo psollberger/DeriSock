@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
@@ -20,6 +20,7 @@
     <PackageId>DeriSock</PackageId>
     <PackageProjectUrl>https://github.com/psollberger/DeriSock</PackageProjectUrl>
     <PackageTags>deribit deribit-api deribit-api-v2 websocket api-client dotnetcore</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
 
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/psollberger/DeriSock</RepositoryUrl>
@@ -35,6 +36,7 @@
 
   <ItemGroup>
     <None Remove="DeriSock.csproj.DotSettings" />
+    <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>
