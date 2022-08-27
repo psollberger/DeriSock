@@ -20,7 +20,7 @@ namespace DeriSock
   
   public partial class DeribitClient
   {
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     private sealed partial class BlockTradeApiImpl : IBlockTradeApi
     {
       private readonly DeribitClient _client;
@@ -29,37 +29,37 @@ namespace DeriSock
         _client = client;
       }
       /// <inheritdoc cref="IBlockTradeApi.PrivateExecuteBlockTrade" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<BlockTrade>> IBlockTradeApi.PrivateExecuteBlockTrade(PrivateExecuteBlockTradeRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPrivateExecuteBlockTrade(args, cancellationToken);
       }
       /// <inheritdoc cref="IBlockTradeApi.PrivateGetBlockTrade" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<BlockTrade>> IBlockTradeApi.PrivateGetBlockTrade(PrivateGetBlockTradeRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPrivateGetBlockTrade(args, cancellationToken);
       }
       /// <inheritdoc cref="IBlockTradeApi.PrivateGetLastBlockTradesByCurrency" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<BlockTrade[]>> IBlockTradeApi.PrivateGetLastBlockTradesByCurrency(PrivateGetLastBlockTradesByCurrencyRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPrivateGetLastBlockTradesByCurrency(args, cancellationToken);
       }
       /// <inheritdoc cref="IBlockTradeApi.PrivateInvalidateBlockTradeSignature" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<string>> IBlockTradeApi.PrivateInvalidateBlockTradeSignature(PrivateInvalidateBlockTradeSignatureRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPrivateInvalidateBlockTradeSignature(args, cancellationToken);
       }
       /// <inheritdoc cref="IBlockTradeApi.PrivateMovePositions" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<MovePositionResponse>> IBlockTradeApi.PrivateMovePositions(PrivateMovePositionsRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPrivateMovePositions(args, cancellationToken);
       }
       /// <inheritdoc cref="IBlockTradeApi.PrivateVerifyBlockTrade" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<VerifyBlockTradeResponse>> IBlockTradeApi.PrivateVerifyBlockTrade(PrivateVerifyBlockTradeRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPrivateVerifyBlockTrade(args, cancellationToken);

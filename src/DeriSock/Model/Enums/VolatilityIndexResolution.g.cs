@@ -14,7 +14,7 @@ namespace DeriSock.Model
   /// <summary>
   /// <para>Time resolution given in full seconds or keyword <c>1D</c> (only some specific resolutions are supported)</para>
   /// </summary>
-  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
   public partial class VolatilityIndexResolution : DeriSock.Model.EnumValue
   {
     public static VolatilityIndexResolution _1 = new VolatilityIndexResolution("1");

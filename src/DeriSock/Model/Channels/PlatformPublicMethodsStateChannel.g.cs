@@ -11,8 +11,8 @@
 namespace DeriSock.Model
 {
   
-  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-  public partial class PlatformPublicMethodsStateChannel : DeriSock.Request.ISubscriptionChannel
+  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
+  public partial class PlatformPublicMethodsStateChannel : DeriSock.Model.ISubscriptionChannel
   {
     public string ToChannelName()
     {

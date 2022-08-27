@@ -1,4 +1,4 @@
-﻿// ReSharper disable StringLiteralTypo
+// ReSharper disable StringLiteralTypo
 
 #pragma warning disable CS1591
 namespace DeriSock.Constants;
@@ -169,7 +169,7 @@ public sealed class ErrorCode
     Description = description;
   }
 
-  public override bool Equals(object obj)
+  public override bool Equals(object? obj)
   {
     if (ReferenceEquals(null, obj))
       return false;
@@ -195,10 +195,10 @@ public sealed class ErrorCode
   public static bool operator ==(ErrorCode a, int b)
 
     // ReSharper disable once SuspiciousTypeConversion.Global
-    => !ReferenceEquals(null, a) && a.Equals(b);
+    => !ReferenceEquals(null, a) && a.Code == b;
 
   public static bool operator !=(ErrorCode a, int b)
 
     // ReSharper disable once SuspiciousTypeConversion.Global
-    => ReferenceEquals(null, a) || !a.Equals(b);
+    => ReferenceEquals(null, a) || a.Code != b;
 }

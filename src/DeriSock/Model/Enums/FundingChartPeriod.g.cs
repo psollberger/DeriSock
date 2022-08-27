@@ -14,7 +14,7 @@ namespace DeriSock.Model
   /// <summary>
   /// <para>Specifies time period. <c>8h</c> - 8 hours, <c>24h</c> - 24 hours, <c>1m</c> - 1 month</para>
   /// </summary>
-  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
   public partial class FundingChartPeriod : DeriSock.Model.EnumValue
   {
     public static FundingChartPeriod _8h = new FundingChartPeriod("8h");

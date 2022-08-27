@@ -14,7 +14,7 @@ namespace DeriSock.Model
   /// <summary>
   /// <para>Chart bars resolution given in full minutes or keyword <c>1D</c> (only some specific resolutions are supported)</para>
   /// </summary>
-  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
   public partial class ChartBarResolution : DeriSock.Model.EnumValue
   {
     public static ChartBarResolution _1 = new ChartBarResolution("1");

@@ -16,7 +16,7 @@ namespace DeriSock.Api
   using DeriSock.Net.JsonRpc;
   using DeriSock.Model;
   
-  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
   public partial interface ISubscriptionsApi
   {
     /// <summary>
@@ -24,7 +24,7 @@ namespace DeriSock.Api
     /// </summary>
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     Task<NotificationStream<AnnouncementChange>> SubscribeAnnouncements(params AnnouncementsChannel[] channels);
     /// <summary>
     /// <para>Notifies about changes to the order book for a certain instrument.<br/>
@@ -35,7 +35,7 @@ namespace DeriSock.Api
     /// </summary>
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     Task<NotificationStream<GroupedOrderBookChange>> SubscribeBookChangesGrouped(params BookChangesGroupedChannel[] channels);
     /// <summary>
     /// <para>Notifies about changes to the order book for a certain instrument.<br/>
@@ -46,7 +46,7 @@ namespace DeriSock.Api
     /// </summary>
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     Task<NotificationStream<OrderBookChange>> SubscribeBookChanges(params BookChangesChannel[] channels);
     /// <summary>
     /// <para>Publicly available market data used to generate a TradingView candle chart. During single resolution period, many events can be sent, each with updated values for the recent period.<br/>
@@ -54,42 +54,42 @@ namespace DeriSock.Api
     /// </summary>
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     Task<NotificationStream<TradingViewCandleChange>> SubscribeChartTrades(params ChartTradesChannel[] channels);
     /// <summary>
     /// <para>Provides information about current value (price) for Deribit Index</para>
     /// </summary>
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     Task<NotificationStream<DeribitPriceIndex>> SubscribeDeribitPriceIndex(params DeribitPriceIndexChannel[] channels);
     /// <summary>
     /// <para>Provides information about current value (price) for stock exchanges used to calculate Deribit Index</para>
     /// </summary>
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     Task<NotificationStream<DeribitPriceRankingEntry[]>> SubscribeDeribitPriceRanking(params DeribitPriceRankingChannel[] channels);
     /// <summary>
     /// <para>This subscription provides basic statistics about Deribit Index</para>
     /// </summary>
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     Task<NotificationStream<DeribitPriceStatistics>> SubscribeDeribitPriceStatistics(params DeribitPriceStatisticsChannel[] channels);
     /// <summary>
     /// <para>Provides volatility index subscription</para>
     /// </summary>
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     Task<NotificationStream<DeribitVolatilityIndex>> SubscribeDeribitVolatilityIndex(params DeribitVolatilityIndexChannel[] channels);
     /// <summary>
     /// <para>Returns calculated (estimated) ending price for given index.</para>
     /// </summary>
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     Task<NotificationStream<ExpirationPrice>> SubscribeEstimatedExpirationPrice(params EstimatedExpirationPriceChannel[] channels);
     /// <summary>
     /// <para>Notifies about changes in instrument ticker (key information about the instrument).<br/>
@@ -98,161 +98,161 @@ namespace DeriSock.Api
     /// </summary>
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     Task<NotificationStream<IncrementalTickerNotification>> SubscribeIncrementalTicker(params IncrementalTickerChannel[] channels);
     /// <summary>
     /// <para>Get notifications about new or terminated instruments of given kind in given currency.</para>
     /// </summary>
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     Task<NotificationStream<InstrumentState>> SubscribeInstrumentState(params InstrumentStateChannel[] channels);
     /// <summary>
     /// <para>Provides information about options markprices.</para>
     /// </summary>
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     Task<NotificationStream<OptionMarkprice[]>> SubscribeMarkpriceOptions(params MarkpriceOptionsChannel[] channels);
     /// <summary>
     /// <para>Provide current interest rate - but only for <b>perpetual</b> instruments. Other types won&apos;t generate any notification.</para>
     /// </summary>
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     Task<NotificationStream<PerpetualInterestRate>> SubscribePerpetual(params PerpetualChannel[] channels);
     /// <summary>
     /// <para>Information about platform state.</para>
     /// </summary>
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     Task<NotificationStream<PlatformStateChange>> SubscribePlatformState(params PlatformStateChannel[] channels);
     /// <summary>
     /// <para>Information whether unauthorized public requests are allowed</para>
     /// </summary>
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     Task<NotificationStream<PlatformPublicMethodsStateChange>> SubscribePlatformPublicMethodsState(params PlatformPublicMethodsStateChannel[] channels);
     /// <summary>
     /// <para>Best bid/ask price and size.</para>
     /// </summary>
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     Task<NotificationStream<QuoteNotification>> SubscribeQuote(params QuoteChannel[] channels);
     /// <summary>
     /// <para>Get notifications about RFQs for instruments in given currency.</para>
     /// </summary>
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     Task<NotificationStream<RfqNotification>> SubscribeRequestForQuote(params RequestForQuoteChannel[] channels);
     /// <summary>
     /// <para>Key information about the instrument</para>
     /// </summary>
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     Task<NotificationStream<TickerData>> SubscribeTicker(params TickerChannel[] channels);
     /// <summary>
     /// <para>Get notifications about trades for an instrument.</para>
     /// </summary>
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     Task<NotificationStream<PublicTrade>> SubscribeInstrumentTrades(params InstrumentTradesChannel[] channels);
     /// <summary>
     /// <para>Get notifications about trades in any instrument of a given kind and given currency.</para>
     /// </summary>
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     Task<NotificationStream<PublicTrade[]>> SubscribeKindCurrencyTrades(params KindCurrencyTradesChannel[] channels);
     /// <summary>
     /// <para>Get notifications about security events related to the account</para>
     /// </summary>
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     Task<NotificationStream<AccessLogEntry>> SubscribeUserAccessLog(params UserAccessLogChannel[] channels);
     /// <summary>
     /// <para>Get notifications about user&apos;s updates related to order, trades, etc. in an instrument.</para>
     /// </summary>
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     Task<NotificationStream<UserChange[]>> SubscribeUserInstrumentChanges(params UserInstrumentChangesChannel[] channels);
     /// <summary>
     /// <para>Get notifications about changes in user&apos;s updates related to order, trades, etc. in instruments of a given kind and currency.</para>
     /// </summary>
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     Task<NotificationStream<UserChange[]>> SubscribeUserKindCurrencyChanges(params UserKindCurrencyChangesChannel[] channels);
     /// <summary>
     /// <para>Get notificiation when account is locked/unlocked</para>
     /// </summary>
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     Task<NotificationStream<UserLockNotification>> SubscribeUserLock(params UserLockChannel[] channels);
     /// <summary>
     /// <para>Triggered when one of mmp limits is crossed</para>
     /// </summary>
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     Task<NotificationStream<UserMmpFreeze>> SubscribeUserMmpTrigger(params UserMmpTriggerChannel[] channels);
     /// <summary>
     /// <para>Get notifications about changes in user&apos;s orders for given instrument.</para>
     /// </summary>
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     Task<NotificationStream<UserOrder>> SubscribeUserOrdersInstrumentChangeRaw(params UserOrdersInstrumentChangeRawChannel[] channels);
     /// <summary>
     /// <para>Get notifications about changes in user&apos;s orders for given instrument.</para>
     /// </summary>
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     Task<NotificationStream<UserOrder[]>> SubscribeUserOrdersInstrumentChange(params UserOrdersInstrumentChangeChannel[] channels);
     /// <summary>
     /// <para>Get notifications about changes in user&apos;s orders in instruments of a given kind and currency.</para>
     /// </summary>
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     Task<NotificationStream<UserOrder>> SubscribeUserOrdersKindCurrencyChangeRaw(params UserOrdersKindCurrencyChangeRawChannel[] channels);
     /// <summary>
     /// <para>Get notifications about changes in user&apos;s orders in instruments of a given kind and currency.</para>
     /// </summary>
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     Task<NotificationStream<UserOrder[]>> SubscribeUserOrdersKindCurrencyChange(params UserOrdersKindCurrencyChangeChannel[] channels);
     /// <summary>
     /// <para>Provides information about current user portfolio</para>
     /// </summary>
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     Task<NotificationStream<UserPortfolioNotification>> SubscribeUserPortfolio(params UserPortfolioChannel[] channels);
     /// <summary>
     /// <para>Get notifications about user&apos;s trades in an instrument.</para>
     /// </summary>
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     Task<NotificationStream<UserTrade[]>> SubscribeUserTradesInstrumentChange(params UserTradesInstrumentChangeChannel[] channels);
     /// <summary>
     /// <para>Get notifications about user&apos;s trades in any instrument of a given kind and given currency.</para>
     /// </summary>
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     Task<NotificationStream<UserTrade[]>> SubscribeUserTradesKindCurrencyChange(params UserTradesKindCurrencyChangeChannel[] channels);
   }
 }

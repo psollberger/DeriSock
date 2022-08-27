@@ -17,7 +17,7 @@ namespace DeriSock.Model
   ///Allowed values for BTC - <c>none</c>, <c>1</c>, <c>2</c>, <c>5</c>, <c>10</c><br/>
   ///Allowed values for ETH - <c>none</c>, <c>5</c>, <c>10</c>, <c>25</c>, <c>100</c>, <c>250</c></para>
   /// </summary>
-  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
   public partial class PriceGrouping : DeriSock.Model.EnumValue
   {
     public static PriceGrouping None = new PriceGrouping("none");

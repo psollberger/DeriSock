@@ -1,10 +1,50 @@
 namespace DeriSock;
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+
 using DeriSock.Model;
 
 internal static class InternalStringExtensions
 {
+  private static readonly Dictionary<string, ComboType> ComboTypeMap = new()
+  {
+    { "-FS-", ComboType.FutureSpread },
+    { "-CS-", ComboType.CallSpread },
+    { "-CSR12-", ComboType.CallRatioSpread1x2 },
+    { "-CSR13-", ComboType.CallRatioSpread1x3 },
+    { "-CSR23-", ComboType.CallRatioSpread2x3 },
+    { "-PS-", ComboType.PutSpread },
+    { "-PSR12-", ComboType.PutRatioSpread1x2 },
+    { "-PSR13-", ComboType.PutRatioSpread1x3 },
+    { "-PSR23-", ComboType.PutRatioSpread2x3 },
+    { "-STRD-", ComboType.Straddle },
+    { "-STRG-", ComboType.Strangle },
+    { "-GUTS-", ComboType.StrangleItm },
+    { "-RR-", ComboType.RiskReversal },
+    { "-RRITM-", ComboType.RiskReversalItm },
+    { "-CCAL-", ComboType.CallCalendarSpread },
+    { "-PCAL-", ComboType.PutCalendarSpread },
+    { "-CDIAG-", ComboType.CallDiagonalCalendar },
+    { "-PDIAG-", ComboType.PutDiagonalCalendar },
+    { "-STDC-", ComboType.StraddleCalendar },
+    { "-DSTDC-", ComboType.StraddleCalendarDiagonal },
+    { "-REV-", ComboType.ReversalConversion },
+    { "-CBUT-", ComboType.CallButterfly },
+    { "-PBUT-", ComboType.PutButterfly },
+    { "-IBUT-", ComboType.IronButterfly },
+    { "-CBUT111-", ComboType.SkinnyCallButterfly },
+    { "-PBUT111-", ComboType.SkinnyPutButterfly },
+    { "-CLAD-", ComboType.CallLadder },
+    { "-PLAD-", ComboType.PutLadder },
+    { "-CCOND-", ComboType.CallCondor },
+    { "-PCOND-", ComboType.PutCondor },
+    { "-ICOND-", ComboType.IronCondor },
+    { "-BOX-", ComboType.Box },
+    { "-JR-", ComboType.JellyRoll }
+  };
+
   internal static bool IsLastCharDigit(this string? value)
   {
     if (value == null)
@@ -17,140 +57,59 @@ internal static class InternalStringExtensions
 #endif
   }
 
+  /// <summary>
+  ///   Gets the instrument type from instrument.
+  /// </summary>
+  /// <param name="instrumentName">The instrument name.</param>
+  /// <returns>The <see cref="InstrumentType" /> for the instrument.</returns>
   public static InstrumentType GetInstrumentType(this string? instrumentName)
   {
     if (instrumentName == null)
       return InstrumentType.Undefined;
 
+    var comboType = instrumentName.GetComboType();
+
+    if (comboType != ComboType.Undefined)
+      return comboType switch
+      {
+        ComboType.FutureSpread => InstrumentType.FutureCombo,
+        _                      => InstrumentType.OptionCombo
+      };
+
     return instrumentName switch
     {
       { } i when i.EndsWith("-C") || i.EndsWith("-P") => InstrumentType.Option,
-      { } i when i.EndsWith("-PERPETUAL") => InstrumentType.Perpetual,
-      { } i when i.Split('-')[1].Equals("FS", StringComparison.CurrentCultureIgnoreCase) => InstrumentType.FutureCombo,
-      { } i when i.Split('-')[1].Equals("CS", StringComparison.CurrentCultureIgnoreCase) => InstrumentType.OptionCombo,
-      { } i when i.Split('-')[1].Equals("CSR12", StringComparison.CurrentCultureIgnoreCase) => InstrumentType
-        .OptionCombo,
-      { } i when i.Split('-')[1].Equals("CSR13", StringComparison.CurrentCultureIgnoreCase) => InstrumentType
-        .OptionCombo,
-      { } i when i.Split('-')[1].Equals("CSR23", StringComparison.CurrentCultureIgnoreCase) => InstrumentType
-        .OptionCombo,
-      { } i when i.Split('-')[1].Equals("PS", StringComparison.CurrentCultureIgnoreCase) => InstrumentType.OptionCombo,
-      { } i when i.Split('-')[1].Equals("PSR12", StringComparison.CurrentCultureIgnoreCase) => InstrumentType
-        .OptionCombo,
-      { } i when i.Split('-')[1].Equals("PSR13", StringComparison.CurrentCultureIgnoreCase) => InstrumentType
-        .OptionCombo,
-      { } i when i.Split('-')[1].Equals("PSR23", StringComparison.CurrentCultureIgnoreCase) => InstrumentType
-        .OptionCombo,
-      { } i when i.Split('-')[1].Equals("STRD", StringComparison.CurrentCultureIgnoreCase) =>
-        InstrumentType.OptionCombo,
-      { } i when i.Split('-')[1].Equals("STRG", StringComparison.CurrentCultureIgnoreCase) =>
-        InstrumentType.OptionCombo,
-      { } i when i.Split('-')[1].Equals("GUTS", StringComparison.CurrentCultureIgnoreCase) =>
-        InstrumentType.OptionCombo,
-      { } i when i.Split('-')[1].Equals("RR", StringComparison.CurrentCultureIgnoreCase) => InstrumentType.OptionCombo,
-      { } i when i.Split('-')[1].Equals("RRITM", StringComparison.CurrentCultureIgnoreCase) => InstrumentType
-        .OptionCombo,
-      { } i when i.Split('-')[1].Equals("CCAL", StringComparison.CurrentCultureIgnoreCase) => InstrumentType
-        .OptionCombo,
-      { } i when i.Split('-')[1].Equals("PCAL", StringComparison.CurrentCultureIgnoreCase) => InstrumentType
-        .OptionCombo,
-      { } i when i.Split('-')[1].Equals("CDIAG", StringComparison.CurrentCultureIgnoreCase) => InstrumentType
-        .OptionCombo,
-      { } i when i.Split('-')[1].Equals("PDIAG", StringComparison.CurrentCultureIgnoreCase) => InstrumentType
-        .OptionCombo,
-      { } i when i.Split('-')[1].Equals("STDC", StringComparison.CurrentCultureIgnoreCase) => InstrumentType
-        .OptionCombo,
-      { } i when i.Split('-')[1].Equals("DSTDC", StringComparison.CurrentCultureIgnoreCase) => InstrumentType
-        .OptionCombo,
-      { } i when i.Split('-')[1].Equals("REV", StringComparison.CurrentCultureIgnoreCase) => InstrumentType
-        .OptionCombo,
-      { } i when i.Split('-')[1].Equals("CBUT", StringComparison.CurrentCultureIgnoreCase) => InstrumentType
-        .OptionCombo,
-      { } i when i.Split('-')[1].Equals("PBUT", StringComparison.CurrentCultureIgnoreCase) => InstrumentType
-        .OptionCombo,
-      { } i when i.Split('-')[1].Equals("IBUT", StringComparison.CurrentCultureIgnoreCase) => InstrumentType
-        .OptionCombo,
-      { } i when i.Split('-')[1].Equals("CBUT111", StringComparison.CurrentCultureIgnoreCase) => InstrumentType
-        .OptionCombo,
-      { } i when i.Split('-')[1].Equals("PBUT111", StringComparison.CurrentCultureIgnoreCase) => InstrumentType
-        .OptionCombo,
-      { } i when i.Split('-')[1].Equals("CLAD", StringComparison.CurrentCultureIgnoreCase) =>
-        InstrumentType.OptionCombo,
-      { } i when i.Split('-')[1].Equals("PLAD", StringComparison.CurrentCultureIgnoreCase) =>
-        InstrumentType.OptionCombo,
-      { } i when i.Split('-')[1].Equals("CCOND", StringComparison.CurrentCultureIgnoreCase) =>
-        InstrumentType.OptionCombo,
-      { } i when i.Split('-')[1].Equals("PCOND", StringComparison.CurrentCultureIgnoreCase) => InstrumentType
-        .OptionCombo,
-      { } i when i.Split('-')[1].Equals("ICOND", StringComparison.CurrentCultureIgnoreCase) =>
-        InstrumentType.OptionCombo,
-      { } i when i.Split('-')[1].Equals("BOX", StringComparison.CurrentCultureIgnoreCase) => InstrumentType.OptionCombo,
-      { } i when i.Split('-')[1].Equals("JR", StringComparison.CurrentCultureIgnoreCase) => InstrumentType.OptionCombo,
-      {Length: >= 1} i when i.IsLastCharDigit() => InstrumentType.Future,
-      _ => InstrumentType.Undefined
+      { } i when i.EndsWith("-PERPETUAL")             => InstrumentType.Perpetual,
+      { Length: >= 1 } i when i.IsLastCharDigit()     => InstrumentType.Future,
+      _                                               => InstrumentType.Undefined
     };
   }
 
+  /// <summary>
+  ///   Gets the combo type from instrument.
+  /// </summary>
+  /// <param name="instrumentName">The instrument name.</param>
+  /// <returns>The <see cref="ComboType" /> for the instrument.</returns>
   public static ComboType GetComboType(this string? instrumentName)
   {
     if (instrumentName == null)
       return ComboType.Undefined;
 
-    return instrumentName switch
-    {
-      { } i when i.Split('-')[1].Equals("FS", StringComparison.CurrentCultureIgnoreCase) => ComboType.FutureSpread,
-      { } i when i.Split('-')[1].Equals("CS", StringComparison.CurrentCultureIgnoreCase) => ComboType.CallSpread,
-      { } i when i.Split('-')[1].Equals("CSR12", StringComparison.CurrentCultureIgnoreCase) => ComboType
-        .CallRatioSpread1x2,
-      { } i when i.Split('-')[1].Equals("CSR13", StringComparison.CurrentCultureIgnoreCase) => ComboType
-        .CallRatioSpread1x3,
-      { } i when i.Split('-')[1].Equals("CSR23", StringComparison.CurrentCultureIgnoreCase) => ComboType
-        .CallRatioSpread2x3,
-      { } i when i.Split('-')[1].Equals("PS", StringComparison.CurrentCultureIgnoreCase) => ComboType.PutSpread,
-      { } i when i.Split('-')[1].Equals("PSR12", StringComparison.CurrentCultureIgnoreCase) => ComboType
-        .PutRatioSpread1x2,
-      { } i when i.Split('-')[1].Equals("PSR13", StringComparison.CurrentCultureIgnoreCase) => ComboType
-        .PutRatioSpread1x3,
-      { } i when i.Split('-')[1].Equals("PSR23", StringComparison.CurrentCultureIgnoreCase) => ComboType
-        .PutRatioSpread2x3,
-      { } i when i.Split('-')[1].Equals("STRD", StringComparison.CurrentCultureIgnoreCase) => ComboType.Straddle,
-      { } i when i.Split('-')[1].Equals("STRG", StringComparison.CurrentCultureIgnoreCase) => ComboType.Strangle,
-      { } i when i.Split('-')[1].Equals("GUTS", StringComparison.CurrentCultureIgnoreCase) => ComboType.StrangleItm,
-      { } i when i.Split('-')[1].Equals("RR", StringComparison.CurrentCultureIgnoreCase) => ComboType.RiskReversal,
-      { } i when i.Split('-')[1].Equals("RRITM", StringComparison.CurrentCultureIgnoreCase) =>
-        ComboType.RiskReversalItm,
-      { } i when i.Split('-')[1].Equals("CCAL", StringComparison.CurrentCultureIgnoreCase) => ComboType
-        .CallCalendarSpread,
-      { } i when i.Split('-')[1].Equals("PCAL", StringComparison.CurrentCultureIgnoreCase) => ComboType
-        .PutCalendarSpread,
-      { } i when i.Split('-')[1].Equals("CDIAG", StringComparison.CurrentCultureIgnoreCase) => ComboType
-        .CallDiagonalCalendar,
-      { } i when i.Split('-')[1].Equals("PDIAG", StringComparison.CurrentCultureIgnoreCase) => ComboType
-        .PutDiagonalCalendar,
-      { } i when i.Split('-')[1].Equals("STDC", StringComparison.CurrentCultureIgnoreCase) =>
-        ComboType.StraddleCalendar,
-      { } i when i.Split('-')[1].Equals("DSTDC", StringComparison.CurrentCultureIgnoreCase) => ComboType
-        .StraddleCalendarDiagonal,
-      { } i when i.Split('-')[1].Equals("REV", StringComparison.CurrentCultureIgnoreCase) => ComboType
-        .ReversalConversion,
-      { } i when i.Split('-')[1].Equals("CBUT", StringComparison.CurrentCultureIgnoreCase) => ComboType.CallButterfly,
-      { } i when i.Split('-')[1].Equals("PBUT", StringComparison.CurrentCultureIgnoreCase) => ComboType.PutButterfly,
-      { } i when i.Split('-')[1].Equals("IBUT", StringComparison.CurrentCultureIgnoreCase) => ComboType.IronButterfly,
-      { } i when i.Split('-')[1].Equals("CBUT111", StringComparison.CurrentCultureIgnoreCase) => ComboType
-        .SkinnyCallButterfly,
-      { } i when i.Split('-')[1].Equals("PBUT111", StringComparison.CurrentCultureIgnoreCase) => ComboType
-        .SkinnyPutButterfly,
-      { } i when i.Split('-')[1].Equals("CLAD", StringComparison.CurrentCultureIgnoreCase) => ComboType.CallLadder,
-      { } i when i.Split('-')[1].Equals("PLAD", StringComparison.CurrentCultureIgnoreCase) => ComboType.PutLadder,
-      { } i when i.Split('-')[1].Equals("CCOND", StringComparison.CurrentCultureIgnoreCase) => ComboType.CallCondor,
-      { } i when i.Split('-')[1].Equals("PCOND", StringComparison.CurrentCultureIgnoreCase) => ComboType.PutCondor,
-      { } i when i.Split('-')[1].Equals("ICOND", StringComparison.CurrentCultureIgnoreCase) => ComboType.IronCondor,
-      { } i when i.Split('-')[1].Equals("BOX", StringComparison.CurrentCultureIgnoreCase) => ComboType.Box,
-      { } i when i.Split('-')[1].Equals("JR", StringComparison.CurrentCultureIgnoreCase) => ComboType.JellyRoll,
-      _ => ComboType.Undefined
-    };
+    var firstSepIndex = instrumentName.IndexOf('-');
+
+    if (firstSepIndex < 0)
+      return ComboType.Undefined;
+
+    // The default value for KeyValuePair<string, ComboType> will contain a ComboType.Undefined value.
+    // So there is no need to check the return value of FirstOrDefault.
+    return ComboTypeMap.FirstOrDefault(x => instrumentName.IndexOf(x.Key, StringComparison.OrdinalIgnoreCase) == firstSepIndex).Value;
   }
 
+  /// <summary>
+  ///   Gets the option type for an instrument.
+  /// </summary>
+  /// <param name="instrumentName">The instrument name.</param>
+  /// <returns>The <see cref="OptionType" /> for the instrument.</returns>
   public static OptionType GetOptionType(this string? instrumentName)
   {
     if (instrumentName == null)
@@ -160,20 +119,33 @@ internal static class InternalStringExtensions
     {
       { } i when i.EndsWith("-C") => OptionType.Call,
       { } i when i.EndsWith("-P") => OptionType.Put,
-      _ => OptionType.Undefined
+      _                           => OptionType.Undefined
     };
   }
 
+  /// <summary>
+  ///   Gets the underlying currency from instrument.
+  /// </summary>
+  /// <param name="instrumentName">The instrument name.</param>
+  /// <returns>The underlying currency or an empty string.</returns>
   public static string GetUnderlyingCurrency(this string? instrumentName)
   {
-    return instrumentName == null ? "" : instrumentName.Split('-')[0];
+    if (instrumentName is null)
+      return string.Empty;
+
+    var separatorIndex = instrumentName.IndexOf('-');
+
+    if (separatorIndex < 0)
+      return string.Empty;
+
+    return instrumentName.Substring(0, separatorIndex);
   }
 
   /// <summary>
-  ///   Get expiry from name
+  ///   Gets the expiration date for an instrument.
   /// </summary>
-  /// <param name="instrumentName"></param>
-  /// <returns></returns>
+  /// <param name="instrumentName">The instrument name.</param>
+  /// <returns>The expiration date or <c>default(DateTime)</c></returns>
   public static DateTime ToInstrumentExpiration(this string? instrumentName)
   {
     var split = instrumentName?.Split('-');
@@ -187,6 +159,11 @@ internal static class InternalStringExtensions
     return new DateTime(dt.Year, dt.Month, dt.Day, 8, 0, 0, DateTimeKind.Utc).ToLocalTime();
   }
 
+  /// <summary>
+  ///   Gets the strike price for an option instrument.
+  /// </summary>
+  /// <param name="instrumentName">The instrument name.</param>
+  /// <returns>The strike price or 0.</returns>
   public static decimal GetStrikePrice(this string? instrumentName)
   {
     var splitString = instrumentName?.Split('-');

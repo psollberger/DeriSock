@@ -13,7 +13,7 @@ namespace DeriSock.Model
   
   /// <summary>
   /// </summary>
-  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
   public partial class PublicGetTradeVolumesRequest
   {
     /// <summary>

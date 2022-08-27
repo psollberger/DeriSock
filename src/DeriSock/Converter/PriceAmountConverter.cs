@@ -17,8 +17,9 @@ public class PriceAmountArrayConverter : JsonConverter<PriceAmountItem>
   public override void WriteJson(JsonWriter writer, PriceAmountItem? value, JsonSerializer serializer)
   {
     Debug.Assert(value != null, nameof(value) + " != null");
+
     writer.WriteStartArray();
-    writer.WriteValue(value.Price);
+    writer.WriteValue(value!.Price);
     writer.WriteValue(value.Amount);
     writer.WriteEndArray();
   }

@@ -18,7 +18,7 @@ public class ObjectOrStringConverter : JsonConverter<ObjectOrStringItem>
   {
     Debug.Assert(value != null, nameof(value) + " != null");
 
-    if (value.ObjectValue != null)
+    if (value!.ObjectValue != null)
       value.ObjectValue.WriteTo(writer);
     else if (!string.IsNullOrEmpty(value.StringValue))
       writer.WriteValue(value.StringValue);

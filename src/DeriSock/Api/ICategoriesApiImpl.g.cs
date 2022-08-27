@@ -12,7 +12,7 @@ namespace DeriSock
 {
   using DeriSock.Api;
   
-  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
   public partial class DeribitClient : ICategoriesApi
   {
     private IPublicApi? _public;
@@ -28,7 +28,7 @@ namespace DeriSock
     private IAccountManagementApi? _accountManagement;
     private ISubscriptionsApi? _subscriptions;
     /// <inheritdoc cref="IPublicApi" />
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     public IPublicApi Public
     {
       get
@@ -38,7 +38,7 @@ namespace DeriSock
       }
     }
     /// <inheritdoc cref="IPrivateApi" />
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     public IPrivateApi Private
     {
       get
@@ -48,7 +48,7 @@ namespace DeriSock
       }
     }
     /// <inheritdoc cref="IAuthenticationApi" />
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     public IAuthenticationApi Authentication
     {
       get
@@ -58,7 +58,7 @@ namespace DeriSock
       }
     }
     /// <inheritdoc cref="ISessionManagementApi" />
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     public ISessionManagementApi SessionManagement
     {
       get
@@ -68,7 +68,7 @@ namespace DeriSock
       }
     }
     /// <inheritdoc cref="ISupportingApi" />
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     public ISupportingApi Supporting
     {
       get
@@ -78,7 +78,7 @@ namespace DeriSock
       }
     }
     /// <inheritdoc cref="IMarketDataApi" />
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     public IMarketDataApi MarketData
     {
       get
@@ -88,7 +88,7 @@ namespace DeriSock
       }
     }
     /// <inheritdoc cref="ITradingApi" />
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     public ITradingApi Trading
     {
       get
@@ -98,7 +98,7 @@ namespace DeriSock
       }
     }
     /// <inheritdoc cref="IComboBooksApi" />
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     public IComboBooksApi ComboBooks
     {
       get
@@ -108,7 +108,7 @@ namespace DeriSock
       }
     }
     /// <inheritdoc cref="IBlockTradeApi" />
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     public IBlockTradeApi BlockTrade
     {
       get
@@ -118,7 +118,7 @@ namespace DeriSock
       }
     }
     /// <inheritdoc cref="IWalletApi" />
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     public IWalletApi Wallet
     {
       get
@@ -128,7 +128,7 @@ namespace DeriSock
       }
     }
     /// <inheritdoc cref="IAccountManagementApi" />
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     public IAccountManagementApi AccountManagement
     {
       get
@@ -138,7 +138,7 @@ namespace DeriSock
       }
     }
     /// <inheritdoc cref="ISubscriptionsApi" />
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     public ISubscriptionsApi Subscriptions
     {
       get

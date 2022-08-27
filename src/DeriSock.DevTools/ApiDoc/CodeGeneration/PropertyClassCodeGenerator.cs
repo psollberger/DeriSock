@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 using DeriSock.DevTools.ApiDoc.Model;
 using DeriSock.DevTools.CodeDom;
-using DeriSock.Request;
+using DeriSock.Model;
 
 internal class PropertyClassCodeGenerator : ApiDocCodeGenerator
 {
@@ -131,10 +131,9 @@ internal class PropertyClassCodeGenerator : ApiDocCodeGenerator
 
         objClass.Comments.Add(new CodeCommentStatement("</summary>", true));
 
-        if (function.Request is {Properties.Count: > 0}) {
+        if (function.Request is { Properties.Count: > 0 })
           foreach (var (_, value) in function.Request.Properties)
             objClass.Members.Add(CreateProperty(value));
-        }
       }
 
       // Creating the ToChannelName Method (ISubscriptionChannel implementation)
@@ -146,11 +145,10 @@ internal class PropertyClassCodeGenerator : ApiDocCodeGenerator
       };
 
       var returnValueBuilder = new StringBuilder(function.Name);
-      if (function.Request is { Properties.Count: > 0 }) {
-        foreach (var (_, value) in function.Request.Properties) {
+
+      if (function.Request is { Properties.Count: > 0 })
+        foreach (var (_, value) in function.Request.Properties)
           returnValueBuilder.Replace($"{{{value.Name}}}", $"{{{value.Name.ToPublicCodeName()}}}");
-        }
-      }
 
       toChannelNameMethod.Statements.Add(new CodeMethodReturnStatement(new CodeSnippetExpression($"$\"{returnValueBuilder}\"")));
       objClass.Members.Add(toChannelNameMethod);

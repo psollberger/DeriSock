@@ -14,7 +14,7 @@ namespace DeriSock.Model
   /// <summary>
   /// <para>Defines the trigger type. Required for <c>&quot;Stop-Loss&quot;</c>, <c>&quot;Take-Profit&quot;</c> and <c>&quot;Trailing&quot;</c> trigger orders</para>
   /// </summary>
-  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
   public partial class TriggerType : DeriSock.Model.EnumValue
   {
     public static TriggerType IndexPrice = new TriggerType("index_price");

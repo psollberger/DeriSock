@@ -18,7 +18,7 @@ namespace DeriSock.Model
   ///- <c>&quot;fill_or_kill&quot;</c> - execute a transaction immediately and completely or not at all<br/>
   ///- <c>&quot;immediate_or_cancel&quot;</c> - execute a transaction immediately, and any portion of the order that cannot be immediately filled is cancelled</para>
   /// </summary>
-  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
   public partial class TimeInForce : DeriSock.Model.EnumValue
   {
     public static TimeInForce GoodTilCancelled = new TimeInForce("good_til_cancelled");

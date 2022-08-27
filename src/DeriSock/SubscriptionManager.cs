@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 using DeriSock.Converter;
 using DeriSock.Model;
-using DeriSock.Request;
 
 using Serilog;
 

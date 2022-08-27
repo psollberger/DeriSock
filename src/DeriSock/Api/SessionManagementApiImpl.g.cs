@@ -20,7 +20,7 @@ namespace DeriSock
   
   public partial class DeribitClient
   {
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     private sealed partial class SessionManagementApiImpl : ISessionManagementApi
     {
       private readonly DeribitClient _client;
@@ -29,31 +29,31 @@ namespace DeriSock
         _client = client;
       }
       /// <inheritdoc cref="ISessionManagementApi.PublicSetHeartbeat" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<string>> ISessionManagementApi.PublicSetHeartbeat(PublicSetHeartbeatRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPublicSetHeartbeat(args, cancellationToken);
       }
       /// <inheritdoc cref="ISessionManagementApi.PublicDisableHeartbeat" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<string>> ISessionManagementApi.PublicDisableHeartbeat(CancellationToken cancellationToken)
       {
         return _client.InternalPublicDisableHeartbeat(cancellationToken);
       }
       /// <inheritdoc cref="ISessionManagementApi.PrivateEnableCancelOnDisconnect" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<string>> ISessionManagementApi.PrivateEnableCancelOnDisconnect(CancelOnDisconnectRequest? args, CancellationToken cancellationToken)
       {
         return _client.InternalPrivateEnableCancelOnDisconnect(args, cancellationToken);
       }
       /// <inheritdoc cref="ISessionManagementApi.PrivateDisableCancelOnDisconnect" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<string>> ISessionManagementApi.PrivateDisableCancelOnDisconnect(CancelOnDisconnectRequest? args, CancellationToken cancellationToken)
       {
         return _client.InternalPrivateDisableCancelOnDisconnect(args, cancellationToken);
       }
       /// <inheritdoc cref="ISessionManagementApi.PrivateGetCancelOnDisconnect" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<CancelOnDisconnectData>> ISessionManagementApi.PrivateGetCancelOnDisconnect(CancelOnDisconnectRequest? args, CancellationToken cancellationToken)
       {
         return _client.InternalPrivateGetCancelOnDisconnect(args, cancellationToken);

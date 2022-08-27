@@ -17,8 +17,9 @@ public class TimestampValueConverter : JsonConverter<TimestampValueItem>
   public override void WriteJson(JsonWriter writer, TimestampValueItem? value, JsonSerializer serializer)
   {
     Debug.Assert(value != null, nameof(value) + " != null");
+
     writer.WriteStartArray();
-    writer.WriteValue(value.Timestamp.ToUnixTimeMilliseconds());
+    writer.WriteValue(value!.Timestamp.ToUnixTimeMilliseconds());
     writer.WriteValue(value.Value);
     writer.WriteEndArray();
   }

@@ -20,7 +20,7 @@ namespace DeriSock
   
   public partial class DeribitClient
   {
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     private sealed partial class AuthenticationApiImpl : IAuthenticationApi
     {
       private readonly DeribitClient _client;
@@ -29,19 +29,19 @@ namespace DeriSock
         _client = client;
       }
       /// <inheritdoc cref="IAuthenticationApi.PublicExchangeToken" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<AuthTokenData>> IAuthenticationApi.PublicExchangeToken(PublicExchangeTokenRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPublicExchangeToken(args, cancellationToken);
       }
       /// <inheritdoc cref="IAuthenticationApi.PublicForkToken" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<AuthTokenData>> IAuthenticationApi.PublicForkToken(PublicForkTokenRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPublicForkToken(args, cancellationToken);
       }
       /// <inheritdoc cref="IAuthenticationApi.PrivateLogout" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       void IAuthenticationApi.PrivateLogout(PrivateLogoutRequest? args)
       {
         _client.InternalPrivateLogout(args);

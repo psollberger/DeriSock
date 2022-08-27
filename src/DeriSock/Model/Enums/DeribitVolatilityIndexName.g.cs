@@ -14,7 +14,7 @@ namespace DeriSock.Model
   /// <summary>
   /// <para>Index identifier supported for DVOL</para>
   /// </summary>
-  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
   public partial class DeribitVolatilityIndexName : DeriSock.Model.EnumValue
   {
     public static DeribitVolatilityIndexName BtcUsd = new DeribitVolatilityIndexName("btc_usd");

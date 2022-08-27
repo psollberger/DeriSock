@@ -1,5 +1,6 @@
 namespace DeriSock.Model;
 
+#pragma warning disable CS1591
 public enum InstrumentType
 {
   Undefined,
@@ -9,3 +10,4 @@ public enum InstrumentType
   FutureCombo,
   OptionCombo
 }
+#pragma warning restore CS1591

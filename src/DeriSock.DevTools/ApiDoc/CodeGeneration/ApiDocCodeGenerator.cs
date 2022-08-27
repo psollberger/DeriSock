@@ -12,7 +12,10 @@ using System.Threading.Tasks;
 
 using DeriSock.DevTools.ApiDoc.Model;
 using DeriSock.DevTools.CodeDom;
+using DeriSock.Model;
 using DeriSock.Net.JsonRpc;
+
+using Newtonsoft.Json.Linq;
 
 internal abstract class ApiDocCodeGenerator : IDisposable, IAsyncDisposable
 {
@@ -248,9 +251,9 @@ internal abstract class ApiDocCodeGenerator : IDisposable, IAsyncDisposable
   {
     var typemap = new Dictionary<string, string>
     {
-      { "DateTime", CodeDomConst.ImportSystem },
-      { "JToken", CodeDomConst.ImportNewtonsoftJsonLinq },
-      { "JObject", CodeDomConst.ImportNewtonsoftJsonLinq }
+      { nameof(DateTime), CodeDomConst.ImportSystem },
+      { nameof(JToken), CodeDomConst.ImportNewtonsoftJsonLinq },
+      { nameof(JObject), CodeDomConst.ImportNewtonsoftJsonLinq }
     };
 
     var fnCheck = new Action<string>(

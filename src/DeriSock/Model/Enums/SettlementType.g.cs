@@ -14,7 +14,7 @@ namespace DeriSock.Model
   /// <summary>
   /// <para>Settlement type</para>
   /// </summary>
-  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
   public partial class SettlementType : DeriSock.Model.EnumValue
   {
     public static SettlementType Settlement = new SettlementType("settlement");
