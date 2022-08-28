@@ -36,7 +36,6 @@
 
   <ItemGroup>
     <None Remove="DeriSock.csproj.DotSettings" />
-    <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>

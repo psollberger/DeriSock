@@ -2,7 +2,7 @@
   "profiles": {
     "DeriSock.DevTools": {
       "commandName": "Project",
-      "commandLineArgs": "--create-base --create-object-map --create-object-overrides --create-enum-map --create-enum-overrides --create-request-map --create-request-overrides --generate-code"
+      "commandLineArgs": "--create-base --create-object-map --create-object-overrides --create-enum-map --create-enum-overrides --create-request-map --create-request-overrides --create-final --generate-code"
     }
   }
 }
