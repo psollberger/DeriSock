@@ -16787,8 +16787,9 @@
       },
       "response": {
         "required": true,
-        "apiDataType": "object",
-        "dataType": "PublicTrade",
+        "apiDataType": "array of objects",
+        "dataType": "array",
+        "arrayDataType": "PublicTrade",
         "properties": {
           "amount": {
             "description": "Trade amount. For perpetual and futures - in USD units, for options it is amount of corresponding cryptocurrency contracts, e.g., BTC or ETH.",

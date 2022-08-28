@@ -60,8 +60,8 @@ public partial class DeribitClient
   private async Task<NotificationStream<TickerData>> InternalSubscribeTicker(params TickerChannel[] channels)
     => await _subscriptionManager.Subscribe<TickerData, TickerChannel>(channels).ConfigureAwait(false);
 
-  private async Task<NotificationStream<PublicTrade>> InternalSubscribeInstrumentTrades(params InstrumentTradesChannel[] channels)
-    => await _subscriptionManager.Subscribe<PublicTrade, InstrumentTradesChannel>(channels).ConfigureAwait(false);
+  private async Task<NotificationStream<PublicTrade[]>> InternalSubscribeInstrumentTrades(params InstrumentTradesChannel[] channels)
+    => await _subscriptionManager.Subscribe<PublicTrade[], InstrumentTradesChannel>(channels).ConfigureAwait(false);
 
   private async Task<NotificationStream<PublicTrade[]>> InternalSubscribeKindCurrencyTrades(params KindCurrencyTradesChannel[] channels)
     => await _subscriptionManager.Subscribe<PublicTrade[], KindCurrencyTradesChannel>(channels).ConfigureAwait(false);

@@ -157,7 +157,7 @@ namespace DeriSock
       /// <inheritdoc cref="ISubscriptionsApi.SubscribeInstrumentTrades" />
       /// <param name="channels"></param>
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
-      Task<NotificationStream<PublicTrade>> ISubscriptionsApi.SubscribeInstrumentTrades(params InstrumentTradesChannel[] channels)
+      Task<NotificationStream<PublicTrade[]>> ISubscriptionsApi.SubscribeInstrumentTrades(params InstrumentTradesChannel[] channels)
       {
         return _client.InternalSubscribeInstrumentTrades(channels);
       }
