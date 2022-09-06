@@ -162,7 +162,7 @@ namespace DeriSock.Api
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-    Task<NotificationStream<PublicTrade>> SubscribeInstrumentTrades(params InstrumentTradesChannel[] channels);
+    Task<NotificationStream<PublicTrade[]>> SubscribeInstrumentTrades(params InstrumentTradesChannel[] channels);
     /// <summary>
     /// <para>Get notifications about trades in any instrument of a given kind and given currency.</para>
     /// </summary>
