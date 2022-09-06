@@ -69,11 +69,11 @@ public partial class DeribitClient
   private async Task<NotificationStream<AccessLogEntry>> InternalSubscribeUserAccessLog(params UserAccessLogChannel[] channels)
     => await _subscriptionManager.Subscribe<AccessLogEntry, UserAccessLogChannel>(channels).ConfigureAwait(false);
 
-  private async Task<NotificationStream<UserChange[]>> InternalSubscribeUserInstrumentChanges(params UserInstrumentChangesChannel[] channels)
-    => await _subscriptionManager.Subscribe<UserChange[], UserInstrumentChangesChannel>(channels).ConfigureAwait(false);
+  private async Task<NotificationStream<UserChange>> InternalSubscribeUserInstrumentChanges(params UserInstrumentChangesChannel[] channels)
+    => await _subscriptionManager.Subscribe<UserChange, UserInstrumentChangesChannel>(channels).ConfigureAwait(false);
 
-  private async Task<NotificationStream<UserChange[]>> InternalSubscribeUserKindCurrencyChanges(params UserKindCurrencyChangesChannel[] channels)
-    => await _subscriptionManager.Subscribe<UserChange[], UserKindCurrencyChangesChannel>(channels).ConfigureAwait(false);
+  private async Task<NotificationStream<UserChange>> InternalSubscribeUserKindCurrencyChanges(params UserKindCurrencyChangesChannel[] channels)
+    => await _subscriptionManager.Subscribe<UserChange, UserKindCurrencyChangesChannel>(channels).ConfigureAwait(false);
 
   private async Task<NotificationStream<UserLockNotification>> InternalSubscribeUserLock(params UserLockChannel[] channels)
     => await _subscriptionManager.Subscribe<UserLockNotification, UserLockChannel>(channels).ConfigureAwait(false);
