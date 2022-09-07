@@ -17,16 +17,22 @@ namespace DeriSock.Model
   public partial class ComboLeg
   {
     /// <summary>
-    /// <para>Size multiplier of a leg. A negative value indicates that the trades on given leg are in opposite direction to the combo trades they originate from</para>
-    /// </summary>
-    [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-    [Newtonsoft.Json.JsonPropertyAttribute("amount")]
-    public long Amount { get; set; }
-    /// <summary>
-    /// <para>Unique instrument identifier</para>
+    /// <para>Instrument name</para>
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("instrument_name")]
     public string InstrumentName { get; set; } = string.Empty;
+    /// <summary>
+    /// <para>It represents the requested trade size. For perpetual and futures the amount is in USD units, for options it is amount of corresponding cryptocurrency contracts, e.g., BTC or ETH</para>
+    /// </summary>
+    [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+    [Newtonsoft.Json.JsonPropertyAttribute("amount")]
+    public decimal Amount { get; set; }
+    /// <summary>
+    /// <para>Direction of trade from the maker perspective</para>
+    /// </summary>
+    [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+    [Newtonsoft.Json.JsonPropertyAttribute("direction")]
+    public TradeDirection? Direction { get; set; } = null!;
   }
 }
