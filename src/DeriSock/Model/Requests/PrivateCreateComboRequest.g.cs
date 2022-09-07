@@ -22,23 +22,5 @@ namespace DeriSock.Model
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("trades")]
     public CreateComboTrade[] Trades { get; set; } = System.Array.Empty<CreateComboTrade>();
-    /// <summary>
-    /// <para>Instrument name</para>
-    /// </summary>
-    [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-    [Newtonsoft.Json.JsonPropertyAttribute("instrument_name")]
-    public string InstrumentName { get; set; } = string.Empty;
-    /// <summary>
-    /// <para>It represents the requested trade size. For perpetual and futures the amount is in USD units, for options it is amount of corresponding cryptocurrency contracts, e.g., BTC or ETH</para>
-    /// </summary>
-    [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-    [Newtonsoft.Json.JsonPropertyAttribute("amount")]
-    public decimal Amount { get; set; }
-    /// <summary>
-    /// <para>Direction of trade from the maker perspective</para>
-    /// </summary>
-    [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-    [Newtonsoft.Json.JsonPropertyAttribute("direction")]
-    public TradeDirection Direction { get; set; } = null!;
   }
 }

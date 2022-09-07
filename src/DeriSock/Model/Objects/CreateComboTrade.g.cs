@@ -28,6 +28,11 @@ namespace DeriSock.Model
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("amount")]
     public decimal Amount { get; set; }
-
+    /// <summary>
+    /// <para>Direction of trade from the maker perspective</para>
+    /// </summary>
+    [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+    [Newtonsoft.Json.JsonPropertyAttribute("direction")]
+    public TradeDirection Direction { get; set; } = null!;
   }
 }
