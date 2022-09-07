@@ -183,14 +183,14 @@ namespace DeriSock.Api
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
-    Task<NotificationStream<UserChange[]>> SubscribeUserInstrumentChanges(params UserInstrumentChangesChannel[] channels);
+    Task<NotificationStream<UserChange>> SubscribeUserInstrumentChanges(params UserInstrumentChangesChannel[] channels);
     /// <summary>
     /// <para>Get notifications about changes in user&apos;s updates related to order, trades, etc. in instruments of a given kind and currency.</para>
     /// </summary>
     /// <remarks>Don't forget to use this stream with <see cref="System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation{T}"/>.</remarks>
     /// <param name="channels"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
-    Task<NotificationStream<UserChange[]>> SubscribeUserKindCurrencyChanges(params UserKindCurrencyChangesChannel[] channels);
+    Task<NotificationStream<UserChange>> SubscribeUserKindCurrencyChanges(params UserKindCurrencyChangesChannel[] channels);
     /// <summary>
     /// <para>Get notificiation when account is locked/unlocked</para>
     /// </summary>

@@ -178,14 +178,14 @@ namespace DeriSock
       /// <inheritdoc cref="ISubscriptionsApi.SubscribeUserInstrumentChanges" />
       /// <param name="channels"></param>
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
-      Task<NotificationStream<UserChange[]>> ISubscriptionsApi.SubscribeUserInstrumentChanges(params UserInstrumentChangesChannel[] channels)
+      Task<NotificationStream<UserChange>> ISubscriptionsApi.SubscribeUserInstrumentChanges(params UserInstrumentChangesChannel[] channels)
       {
         return _client.InternalSubscribeUserInstrumentChanges(channels);
       }
       /// <inheritdoc cref="ISubscriptionsApi.SubscribeUserKindCurrencyChanges" />
       /// <param name="channels"></param>
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
-      Task<NotificationStream<UserChange[]>> ISubscriptionsApi.SubscribeUserKindCurrencyChanges(params UserKindCurrencyChangesChannel[] channels)
+      Task<NotificationStream<UserChange>> ISubscriptionsApi.SubscribeUserKindCurrencyChanges(params UserKindCurrencyChangesChannel[] channels)
       {
         return _client.InternalSubscribeUserKindCurrencyChanges(channels);
       }

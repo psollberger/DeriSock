@@ -26,6 +26,10 @@
     <RepositoryUrl>https://github.com/psollberger/DeriSock</RepositoryUrl>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Include="../../README.md" Pack="true" PackagePath="" />
+  </ItemGroup>
+
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
