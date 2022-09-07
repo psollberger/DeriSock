@@ -14,7 +14,7 @@ namespace DeriSock.Model
   /// <summary>
   /// <para>The order type</para>
   /// </summary>
-  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
   public partial class ClosePositionOrderType : DeriSock.Model.EnumValue
   {
     public static ClosePositionOrderType Limit = new ClosePositionOrderType("limit");

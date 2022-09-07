@@ -52,7 +52,7 @@
         "properties": {
           "underlying_index": {
             "apiDataType": "string",
-            "dataType": "string" 
+            "dataType": "string"
           }
         }
       }
@@ -65,6 +65,13 @@
             "dataType": "string"
           }
         }
+      }
+    },
+    "trades.{instrument_name}.{interval}": {
+      "response": {
+        "apiDataType": "array of objects",
+        "dataType": "array",
+        "arrayDataType": "PublicTrade"
       }
     }
   }

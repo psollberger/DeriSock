@@ -14,7 +14,7 @@ namespace DeriSock.Model
   /// <summary>
   /// <para>Describes if user wants to be maker or taker of trades</para>
   /// </summary>
-  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
   public partial class TradeRole : DeriSock.Model.EnumValue
   {
     public static TradeRole Maker = new TradeRole("maker");

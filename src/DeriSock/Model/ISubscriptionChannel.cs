@@ -1,9 +1,12 @@
-namespace DeriSock.Request;
+namespace DeriSock.Model;
 
+/// <summary>
+///   Abstracts a notification channel.
+/// </summary>
 public interface ISubscriptionChannel
 {
   /// <summary>
-  /// Constructs the channel name.
+  ///   Constructs the channel name.
   /// </summary>
   /// <returns>The constructed channel name.</returns>
   string ToChannelName();

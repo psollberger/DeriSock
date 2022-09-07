@@ -14,7 +14,7 @@ namespace DeriSock.Model
   /// <summary>
   /// <para>Direction of results sorting (<c>default</c> value means no sorting, results will be returned in order in which they left the database)</para>
   /// </summary>
-  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
   public partial class UserTradeSortDirection : DeriSock.Model.EnumValue
   {
     public static UserTradeSortDirection Asc = new UserTradeSortDirection("asc");

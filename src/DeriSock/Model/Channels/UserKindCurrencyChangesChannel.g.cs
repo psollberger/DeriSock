@@ -13,8 +13,8 @@ namespace DeriSock.Model
   
   /// <summary>
   /// </summary>
-  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
-  public partial class UserKindCurrencyChangesChannel : DeriSock.Request.ISubscriptionChannel
+  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
+  public partial class UserKindCurrencyChangesChannel : DeriSock.Model.ISubscriptionChannel
   {
     /// <summary>
     /// <para>Instrument kind, <c>&quot;combo&quot;</c> for any combo or <c>&quot;any&quot;</c> for all</para>

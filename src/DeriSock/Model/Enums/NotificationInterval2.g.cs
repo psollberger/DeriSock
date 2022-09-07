@@ -14,7 +14,7 @@ namespace DeriSock.Model
   /// <summary>
   /// <para>Frequency of notifications. Events will be aggregated over this interval.</para>
   /// </summary>
-  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
   public partial class NotificationInterval2 : DeriSock.Model.EnumValue
   {
     public static NotificationInterval2 _100ms = new NotificationInterval2("100ms");

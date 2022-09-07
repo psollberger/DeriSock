@@ -23,7 +23,7 @@ using Serilog;
 
 /// <summary>
 ///   <para>The implementation of the API methods from Deribit</para>
-///   <para>All methods are asynchronous. Synchronous methods are suffixed with <c>Sync</c></para>
+/// <para>The methods are organized by category and scope. For example: <see cref="Public"/> hold all public methods and <see cref="Private"/> holds all private methods.</para>
 /// </summary>
 public partial class DeribitClient
 {

@@ -1,5 +1,9 @@
-﻿namespace DeriSock.Model;
+namespace DeriSock.Model;
 
+using System.Diagnostics.CodeAnalysis;
+
+#pragma warning disable CS1591
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public enum ComboType
 {
   Undefined,
@@ -41,3 +45,4 @@ public enum ComboType
   LongPut,
   ShortPut
 }
+#pragma warning restore CS1591

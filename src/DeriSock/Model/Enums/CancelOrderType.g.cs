@@ -14,7 +14,7 @@ namespace DeriSock.Model
   /// <summary>
   /// <para>Order type - <c>limit</c>, <c>stop</c>, <c>take</c>, <c>trigger_all</c> or <c>all</c>, default - <c>all</c></para>
   /// </summary>
-  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
   public partial class CancelOrderType : DeriSock.Model.EnumValue
   {
     public static CancelOrderType All = new CancelOrderType("all");

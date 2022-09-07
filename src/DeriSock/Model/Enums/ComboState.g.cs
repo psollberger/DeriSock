@@ -14,7 +14,7 @@ namespace DeriSock.Model
   /// <summary>
   /// <para>Combo state, if not provided combos of all states are considered</para>
   /// </summary>
-  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
   public partial class ComboState : DeriSock.Model.EnumValue
   {
     public static ComboState Rfq = new ComboState("rfq");

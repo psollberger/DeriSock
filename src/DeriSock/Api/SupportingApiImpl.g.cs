@@ -20,7 +20,7 @@ namespace DeriSock
   
   public partial class DeribitClient
   {
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     private sealed partial class SupportingApiImpl : ISupportingApi
     {
       private readonly DeribitClient _client;
@@ -29,25 +29,25 @@ namespace DeriSock
         _client = client;
       }
       /// <inheritdoc cref="ISupportingApi.PublicGetTime" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<DateTime>> ISupportingApi.PublicGetTime(CancellationToken cancellationToken)
       {
         return _client.InternalPublicGetTime(cancellationToken);
       }
       /// <inheritdoc cref="ISupportingApi.PublicHello" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<ServerVersionData>> ISupportingApi.PublicHello(PublicHelloRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPublicHello(args, cancellationToken);
       }
       /// <inheritdoc cref="ISupportingApi.PublicStatus" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<PlatformLockStatus>> ISupportingApi.PublicStatus(CancellationToken cancellationToken)
       {
         return _client.InternalPublicStatus(cancellationToken);
       }
       /// <inheritdoc cref="ISupportingApi.PublicTest" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<ServerVersionData>> ISupportingApi.PublicTest(PublicTestRequest? args, CancellationToken cancellationToken)
       {
         return _client.InternalPublicTest(args, cancellationToken);

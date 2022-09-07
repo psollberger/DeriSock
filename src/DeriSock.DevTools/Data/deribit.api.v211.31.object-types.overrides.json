@@ -843,7 +843,7 @@
   "subscriptions": {
     "trades.{instrument_name}.{interval}": {
       "response": {
-        "dataType": "PublicTrade"
+        "arrayDataType": "PublicTrade"
       }
     },
     "trades.{kind}.{currency}.{interval}": {

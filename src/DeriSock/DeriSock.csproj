@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
@@ -14,12 +14,13 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <VersionPrefix>0.3.5</VersionPrefix>
+    <VersionPrefix>2.0.0</VersionPrefix>
 
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageId>DeriSock</PackageId>
     <PackageProjectUrl>https://github.com/psollberger/DeriSock</PackageProjectUrl>
     <PackageTags>deribit deribit-api deribit-api-v2 websocket api-client dotnetcore</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
 
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/psollberger/DeriSock</RepositoryUrl>

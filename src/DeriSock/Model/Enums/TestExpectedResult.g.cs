@@ -14,7 +14,7 @@ namespace DeriSock.Model
   /// <summary>
   /// <para>The value &quot;exception&quot; will trigger an error response. This may be useful for testing wrapper libraries.</para>
   /// </summary>
-  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
   public partial class TestExpectedResult : DeriSock.Model.EnumValue
   {
     public static TestExpectedResult None = new TestExpectedResult("");

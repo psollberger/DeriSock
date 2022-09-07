@@ -14,7 +14,7 @@ namespace DeriSock.Model
   /// <summary>
   /// <para>Withdrawal priority, optional for BTC, default: <c>high</c></para>
   /// </summary>
-  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
   public partial class WithdrawPriority : DeriSock.Model.EnumValue
   {
     public static WithdrawPriority Insane = new WithdrawPriority("insane");

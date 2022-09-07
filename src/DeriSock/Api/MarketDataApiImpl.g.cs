@@ -20,7 +20,7 @@ namespace DeriSock
   
   public partial class DeribitClient
   {
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
     private sealed partial class MarketDataApiImpl : IMarketDataApi
     {
       private readonly DeribitClient _client;
@@ -29,169 +29,169 @@ namespace DeriSock
         _client = client;
       }
       /// <inheritdoc cref="IMarketDataApi.PublicGetBookSummaryByCurrency" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<BookSummaryEntry[]>> IMarketDataApi.PublicGetBookSummaryByCurrency(PublicGetBookSummaryByCurrencyRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPublicGetBookSummaryByCurrency(args, cancellationToken);
       }
       /// <inheritdoc cref="IMarketDataApi.PublicGetBookSummaryByInstrument" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<BookSummaryEntry[]>> IMarketDataApi.PublicGetBookSummaryByInstrument(PublicGetBookSummaryByInstrumentRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPublicGetBookSummaryByInstrument(args, cancellationToken);
       }
       /// <inheritdoc cref="IMarketDataApi.PublicGetContractSize" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<ContractSizeData>> IMarketDataApi.PublicGetContractSize(PublicGetContractSizeRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPublicGetContractSize(args, cancellationToken);
       }
       /// <inheritdoc cref="IMarketDataApi.PublicGetCurrencies" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<CurrencyData[]>> IMarketDataApi.PublicGetCurrencies(CancellationToken cancellationToken)
       {
         return _client.InternalPublicGetCurrencies(cancellationToken);
       }
       /// <inheritdoc cref="IMarketDataApi.PublicGetDeliveryPrices" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<IndexDeliveryPrices>> IMarketDataApi.PublicGetDeliveryPrices(PublicGetDeliveryPricesRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPublicGetDeliveryPrices(args, cancellationToken);
       }
       /// <inheritdoc cref="IMarketDataApi.PublicGetFundingChartData" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<FundingChartData>> IMarketDataApi.PublicGetFundingChartData(PublicGetFundingChartDataRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPublicGetFundingChartData(args, cancellationToken);
       }
       /// <inheritdoc cref="IMarketDataApi.PublicGetFundingRateHistory" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<FundingRateHistoryEntry[]>> IMarketDataApi.PublicGetFundingRateHistory(PublicGetFundingRateHistoryRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPublicGetFundingRateHistory(args, cancellationToken);
       }
       /// <inheritdoc cref="IMarketDataApi.PublicGetFundingRateValue" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<double>> IMarketDataApi.PublicGetFundingRateValue(PublicGetFundingRateValueRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPublicGetFundingRateValue(args, cancellationToken);
       }
       /// <inheritdoc cref="IMarketDataApi.PublicGetHistoricalVolatility" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<DeriSock.Model.TimestampValueItem[]>> IMarketDataApi.PublicGetHistoricalVolatility(PublicGetHistoricalVolatilityRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPublicGetHistoricalVolatility(args, cancellationToken);
       }
       /// <inheritdoc cref="IMarketDataApi.PublicGetIndex" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<GetIndexResponse>> IMarketDataApi.PublicGetIndex(PublicGetIndexRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPublicGetIndex(args, cancellationToken);
       }
       /// <inheritdoc cref="IMarketDataApi.PublicGetIndexPrice" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<IndexPriceData>> IMarketDataApi.PublicGetIndexPrice(PublicGetIndexPriceRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPublicGetIndexPrice(args, cancellationToken);
       }
       /// <inheritdoc cref="IMarketDataApi.PublicGetIndexPriceNames" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<string[]>> IMarketDataApi.PublicGetIndexPriceNames(CancellationToken cancellationToken)
       {
         return _client.InternalPublicGetIndexPriceNames(cancellationToken);
       }
       /// <inheritdoc cref="IMarketDataApi.PublicGetInstrument" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<Instrument>> IMarketDataApi.PublicGetInstrument(PublicGetInstrumentRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPublicGetInstrument(args, cancellationToken);
       }
       /// <inheritdoc cref="IMarketDataApi.PublicGetInstruments" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<Instrument[]>> IMarketDataApi.PublicGetInstruments(PublicGetInstrumentsRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPublicGetInstruments(args, cancellationToken);
       }
       /// <inheritdoc cref="IMarketDataApi.PublicGetLastSettlementsByCurrency" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<SettlementPage>> IMarketDataApi.PublicGetLastSettlementsByCurrency(PublicGetLastSettlementsByCurrencyRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPublicGetLastSettlementsByCurrency(args, cancellationToken);
       }
       /// <inheritdoc cref="IMarketDataApi.PublicGetLastSettlementsByInstrument" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<SettlementPage>> IMarketDataApi.PublicGetLastSettlementsByInstrument(PublicGetLastSettlementsByInstrumentRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPublicGetLastSettlementsByInstrument(args, cancellationToken);
       }
       /// <inheritdoc cref="IMarketDataApi.PublicGetLastTradesByCurrency" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<PublicTradesPage>> IMarketDataApi.PublicGetLastTradesByCurrency(PublicGetLastTradesByCurrencyRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPublicGetLastTradesByCurrency(args, cancellationToken);
       }
       /// <inheritdoc cref="IMarketDataApi.PublicGetLastTradesByCurrencyAndTime" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<PublicTradesPage>> IMarketDataApi.PublicGetLastTradesByCurrencyAndTime(PublicGetLastTradesByCurrencyAndTimeRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPublicGetLastTradesByCurrencyAndTime(args, cancellationToken);
       }
       /// <inheritdoc cref="IMarketDataApi.PublicGetLastTradesByInstrument" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<PublicTradesPage>> IMarketDataApi.PublicGetLastTradesByInstrument(PublicGetLastTradesByInstrumentRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPublicGetLastTradesByInstrument(args, cancellationToken);
       }
       /// <inheritdoc cref="IMarketDataApi.PublicGetLastTradesByInstrumentAndTime" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<PublicTradesPage>> IMarketDataApi.PublicGetLastTradesByInstrumentAndTime(PublicGetLastTradesByInstrumentAndTimeRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPublicGetLastTradesByInstrumentAndTime(args, cancellationToken);
       }
       /// <inheritdoc cref="IMarketDataApi.PublicGetMarkPriceHistory" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<DeriSock.Model.TimestampValueItem[]>> IMarketDataApi.PublicGetMarkPriceHistory(PublicGetMarkPriceHistoryRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPublicGetMarkPriceHistory(args, cancellationToken);
       }
       /// <inheritdoc cref="IMarketDataApi.PublicGetOrderBook" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<OrderBook>> IMarketDataApi.PublicGetOrderBook(PublicGetOrderBookRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPublicGetOrderBook(args, cancellationToken);
       }
       /// <inheritdoc cref="IMarketDataApi.PublicGetOrderBookByInstrumentId" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<OrderBook>> IMarketDataApi.PublicGetOrderBookByInstrumentId(PublicGetOrderBookByInstrumentIdRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPublicGetOrderBookByInstrumentId(args, cancellationToken);
       }
       /// <inheritdoc cref="IMarketDataApi.PublicGetRfqs" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<RfqEntry[]>> IMarketDataApi.PublicGetRfqs(PublicGetRfqsRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPublicGetRfqs(args, cancellationToken);
       }
       /// <inheritdoc cref="IMarketDataApi.PublicGetTradeVolumes" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<AggregatedTradeVolume[]>> IMarketDataApi.PublicGetTradeVolumes(PublicGetTradeVolumesRequest? args, CancellationToken cancellationToken)
       {
         return _client.InternalPublicGetTradeVolumes(args, cancellationToken);
       }
       /// <inheritdoc cref="IMarketDataApi.PublicGetTradingviewChartData" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<TradingViewChartData>> IMarketDataApi.PublicGetTradingviewChartData(PublicGetTradingviewChartDataRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPublicGetTradingviewChartData(args, cancellationToken);
       }
       /// <inheritdoc cref="IMarketDataApi.PublicGetVolatilityIndexData" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<VolatilityIndexPage>> IMarketDataApi.PublicGetVolatilityIndexData(PublicGetVolatilityIndexDataRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPublicGetVolatilityIndexData(args, cancellationToken);
       }
       /// <inheritdoc cref="IMarketDataApi.PublicTicker" />
-      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+      [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
       System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<TickerData>> IMarketDataApi.PublicTicker(PublicTickerRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPublicTicker(args, cancellationToken);

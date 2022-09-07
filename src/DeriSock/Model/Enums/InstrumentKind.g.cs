@@ -14,7 +14,7 @@ namespace DeriSock.Model
   /// <summary>
   /// <para>Instrument kind, <c>&quot;combo&quot;</c> for any combo or <c>&quot;any&quot;</c> for all. If not provided instruments of all kinds are considered</para>
   /// </summary>
-  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "0.3.5")]
+  [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
   public partial class InstrumentKind : DeriSock.Model.EnumValue
   {
     public static InstrumentKind Future = new InstrumentKind("future");
