@@ -13,6 +13,11 @@ using System.Threading.Tasks;
 public interface IJsonRpcMessageSource : IAsyncDisposable
 {
   /// <summary>
+  /// Occurs whenever the <see cref="IJsonRpcMessageSource"/> has successfully connected to the remote host.
+  /// </summary>
+  public event EventHandler Connected;
+
+  /// <summary>
   ///   Gets the WebSocket state.
   /// </summary>
   public WebSocketState State { get; }

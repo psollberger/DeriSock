@@ -25,4 +25,13 @@ public class JsonRpcError
   /// </summary>
   [JsonProperty("data")]
   public JToken? Data { get; set; }
+
+  /// <inheritdoc />
+  public override string ToString()
+  {
+    if (Data is null)
+      return $"{Code}: {Message}";
+    
+    return $"{Code}: {Message} ({Data})";
+  }
 }

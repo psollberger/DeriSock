@@ -23,7 +23,7 @@ using Serilog;
 
 /// <summary>
 ///   <para>The implementation of the API methods from Deribit</para>
-/// <para>The methods are organized by category and scope. For example: <see cref="Public"/> hold all public methods and <see cref="Private"/> holds all private methods.</para>
+///   <para>The methods are organized by category and scope. For example: <see cref="Public" /> hold all public methods and <see cref="Private" /> holds all private methods.</para>
 /// </summary>
 public partial class DeribitClient
 {
@@ -51,6 +51,9 @@ public partial class DeribitClient
 
   private CancellationTokenSource? _processMessageStreamCts;
   private Task? _processMessageStreamTask;
+
+  private PublicAuthRequest? _authRequest;
+  private SignatureData? _authRequestSignatureData;
 
   /// <summary>
   ///   The AccessToken received from the server after authentication
@@ -94,6 +97,23 @@ public partial class DeribitClient
     };
 
     _messageSource = messageSource ?? new DefaultJsonRpcMessageSource(logger);
+    _messageSource.Connected += async (_, _) =>
+    {
+      if (_authRequest is null)
+        return;
+
+      if (_authRequest.GrantType == GrantType.ClientSignature) {
+        if (_authRequestSignatureData is null) {
+          _authRequest = null;
+          return;
+        }
+
+        _authRequestSignatureData.Refresh();
+        _authRequestSignatureData.Apply(_authRequest);
+      }
+
+      await InternalPublicAuth(_authRequest).ConfigureAwait(false);
+    };
     _logger = logger;
 
     _subscriptionManager = new SubscriptionManager(this, _logger);
@@ -107,6 +127,8 @@ public partial class DeribitClient
   {
     await _messageSource.Connect(_endpointUri, cancellationToken).ConfigureAwait(false);
 
+    _authRequest = null;
+    _authRequestSignatureData = null;
     AccessToken = null;
     RefreshToken = null;
 
@@ -126,11 +148,13 @@ public partial class DeribitClient
   {
     if (_processMessageStreamTask is not null) {
       _processMessageStreamCts?.Cancel();
-      await Task.WhenAll(_processMessageStreamTask);
+      await Task.WhenAll(_processMessageStreamTask).ConfigureAwait(false);
     }
 
     await _messageSource.Disconnect(null, null, cancellationToken).ConfigureAwait(false);
 
+    _authRequest = null;
+    _authRequestSignatureData = null;
     AccessToken = null;
     RefreshToken = null;
 
@@ -152,6 +176,7 @@ public partial class DeribitClient
     _requestTaskSourceMap.Add(request, taskSource);
 
     await _messageSource.Send(JsonConvert.SerializeObject(request, Formatting.None, SerializationSettings), cancellationToken).ConfigureAwait(false);
+
     var response = await taskSource.Task.ConfigureAwait(false);
     return response.CreateTyped(converter.Convert(response.Result)!);
   }
@@ -210,17 +235,15 @@ public partial class DeribitClient
     Debug.Assert(response != null, nameof(response) + " != null");
     response!.Original = message;
 
-    if (response.Id > 0) {
-      if (!_requestTaskSourceMap.TryRemove(response.Id, out var request, out var taskSource)) {
-        _logger?.Error("Could not find request id {RequestId}", response.Id);
-        return;
-      }
+    if (response.Id <= 0)
+      return;
 
-      if (response.Error != null)
-        taskSource!.SetException(new JsonRpcRequestException(request, response));
-      else
-        taskSource!.SetResult(response);
+    if (!_requestTaskSourceMap.TryRemove(response.Id, out var request, out var taskSource)) {
+      _logger?.Error("Could not find request id {RequestId}", response.Id);
+      return;
     }
+
+    taskSource!.SetResult(response);
   }
 
   private void OnHeartbeat(Heartbeat heartbeat)
