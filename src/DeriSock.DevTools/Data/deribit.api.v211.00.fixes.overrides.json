@@ -73,6 +73,18 @@
         "dataType": "array",
         "arrayDataType": "PublicTrade"
       }
+    },
+    "user.changes.{instrument_name}.{interval}": {
+      "response": {
+        "apiDataType": "object",
+        "dataType": "UserChange"
+      }
+    },
+    "user.changes.{kind}.{currency}.{interval}": {
+      "response": {
+        "apiDataType": "object",
+        "dataType": "UserChange"
+      }
     }
   }
 }

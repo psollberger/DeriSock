@@ -35,16 +35,9 @@ public partial class DeribitClient : IAuthenticationMethods
       Scope = string.IsNullOrEmpty(scope) ? null : scope
     };
 
-    var response = await Send("public/auth", reqParams, new ObjectJsonConverter<AuthTokenData>(), cancellationToken).ConfigureAwait(false);
-
-    var loginRes = response.Data;
-
-    AccessToken = loginRes.AccessToken;
-    RefreshToken = loginRes.RefreshToken;
-
-    EnqueueAuthRefresh(loginRes.ExpiresIn);
-
-    return response;
+    _authRequest = reqParams;
+    _authRequestSignatureData = null;
+    return await InternalPublicAuth(reqParams, cancellationToken).ConfigureAwait(false);
   }
 
   /// <inheritdoc />
@@ -61,30 +54,21 @@ public partial class DeribitClient : IAuthenticationMethods
     if (string.IsNullOrEmpty(clientSecret))
       throw new ArgumentNullException(nameof(clientSecret));
 
-    var sig = SignatureData.Create(clientId, clientSecret, data);
+    var sig = SignatureData.Create(clientSecret, data);
 
     var reqParams = new PublicAuthRequest
     {
       GrantType = GrantType.ClientSignature,
       ClientId = clientId,
-      Timestamp = sig.Timestamp,
-      Signature = sig.Signature,
-      Nonce = sig.Nonce,
-      Data = sig.Data,
       State = string.IsNullOrEmpty(state) ? null : state,
       Scope = string.IsNullOrEmpty(scope) ? null : scope
     };
 
-    var response = await Send("public/auth", reqParams, new ObjectJsonConverter<AuthTokenData>(), cancellationToken).ConfigureAwait(false);
+    sig.Apply(reqParams);
 
-    var loginRes = response.Data;
-
-    AccessToken = loginRes.AccessToken;
-    RefreshToken = loginRes.RefreshToken;
-
-    EnqueueAuthRefresh(loginRes.ExpiresIn);
-
-    return response;
+    _authRequest = reqParams;
+    _authRequestSignatureData = sig;
+    return await InternalPublicAuth(reqParams, cancellationToken).ConfigureAwait(false);
   }
 
   /// <inheritdoc />
@@ -103,12 +87,27 @@ public partial class DeribitClient : IAuthenticationMethods
       Scope = string.IsNullOrEmpty(scope) ? null : scope
     };
 
-    var response = await Send("public/auth", reqParams, new ObjectJsonConverter<AuthTokenData>(), cancellationToken).ConfigureAwait(false);
+    return await InternalPublicAuth(reqParams, cancellationToken).ConfigureAwait(false);
+  }
+
+  private async Task<JsonRpcResponse<AuthTokenData>> InternalPublicAuth(PublicAuthRequest args, CancellationToken cancellationToken = default)
+  {
+    var response = await Send("public/auth", args, new ObjectJsonConverter<AuthTokenData>(), cancellationToken).ConfigureAwait(false);
 
     var loginRes = response.Data;
 
-    AccessToken = loginRes.AccessToken;
-    RefreshToken = loginRes.RefreshToken;
+    AccessToken = loginRes?.AccessToken ?? string.Empty;
+    RefreshToken = loginRes?.RefreshToken ?? string.Empty;
+
+    if (response.Error is not null) {
+      _logger?.Debug("Authentication failed: {@Error}", response.Error);
+      _authRequest = null;
+      _authRequestSignatureData = null;
+      return response;
+    }
+
+    if (string.IsNullOrEmpty(args.RefreshToken))
+      EnqueueAuthRefresh(loginRes!.ExpiresIn);
 
     return response;
   }
@@ -137,6 +136,8 @@ public partial class DeribitClient : IAuthenticationMethods
 
     SendSync("private/logout", args);
 
+    _authRequest = null;
+    _authRequestSignatureData = null;
     AccessToken = null;
     RefreshToken = null;
   }

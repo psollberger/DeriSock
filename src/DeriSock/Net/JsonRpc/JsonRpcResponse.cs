@@ -17,7 +17,7 @@ public class JsonRpcResponse<T> : JsonRpcResponse
   ///   The typed data that represents the <c>Result</c> property.
   /// </summary>
   [JsonIgnore]
-  public T Data { get; set; }
+  public T? Data { get; set; }
 
   /// <summary>
   ///   Obsoltete. Use <see cref="Data" /> instead.

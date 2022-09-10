@@ -53,11 +53,7 @@ internal class Program
   private static async Task RunWithOptions(RunOptions options)
   {
     if (options.ScratchPad) {
-      var apiDoc = await ApiDocUtils.ReadApiDocumentAsync(ApiDocFinalDocumentPath).ConfigureAwait(false);
-      var map = await ApiDocUtils.ReadRequestMapAsync(ApiDocRequestMapPath).ConfigureAwait(false);
-      //await ApiDocUtils.CreateAndWriteRequestMapAsync(apiDoc, map, ApiDocRequestMapPath).ConfigureAwait(false);
-      if (map is not null)
-        await ApiDocUtils.WriteRequestOverridesFromMapAsync(apiDoc, map, ApiDocRequestOverridesPath).ConfigureAwait(false);
+      await ScratchPad.Run();
       return;
     }
 

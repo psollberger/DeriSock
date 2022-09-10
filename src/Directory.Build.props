@@ -16,7 +16,13 @@
   <PropertyGroup Label="BuildSettings">
     <MySolutionDir>$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)\..))</MySolutionDir>
     <SolutionDir Condition="'$(SolutionDir)'=='' Or $(SolutionDir) == '*Undefined*'">$(MySolutionDir)</SolutionDir>
-    <BaseOutputPath>$(MySolutionDir)\build</BaseOutputPath>
+
+    <BaseOutputPath>$(MySolutionDir)\build\</BaseOutputPath>   
+    <BaseIntermediateOutputPath>$(BaseOutputPath)obj\</BaseIntermediateOutputPath>
+    <IntermediateOutputPath>$(BaseIntermediateOutputPath)$(Configuration)\</IntermediateOutputPath>
+    <MSBuildProjectExtensionsPath>$(BaseIntermediateOutputPath)$(MSBuildProjectName)\</MSBuildProjectExtensionsPath>
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+    
     <AppendTargetFrameworkToOutputPath>true</AppendTargetFrameworkToOutputPath>
     <Configuration Condition="'$(Configuration)'==''">Debug</Configuration>
   </PropertyGroup>

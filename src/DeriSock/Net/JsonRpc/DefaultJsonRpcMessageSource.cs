@@ -2,6 +2,7 @@ namespace DeriSock.Net.JsonRpc;
 
 using System;
 using System.Collections.Generic;
+using System.Net.Sockets;
 using System.Net.WebSockets;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -17,8 +18,14 @@ using Serilog.Events;
 /// </summary>
 public class DefaultJsonRpcMessageSource : IJsonRpcMessageSource
 {
+  /// <inheritdoc />
+  public event EventHandler? Connected;
+
   private readonly ILogger? _logger;
+  private Uri? _webSocketEndpoint;
   private ClientWebSocket? _webSocket;
+
+  private readonly SemaphoreSlim _reconnectSemaphore = new(1, 1);
 
   /// <inheritdoc />
   public WebSocketState State => _webSocket?.State ?? WebSocketState.Closed;
@@ -44,6 +51,8 @@ public class DefaultJsonRpcMessageSource : IJsonRpcMessageSource
   /// <inheritdoc />
   public async Task Connect(Uri endpoint, CancellationToken cancellationToken = default)
   {
+    _webSocketEndpoint = endpoint;
+
     if (_webSocket?.State is not WebSocketState.None) {
       _webSocket?.Dispose();
       _webSocket = new ClientWebSocket();
@@ -54,14 +63,33 @@ public class DefaultJsonRpcMessageSource : IJsonRpcMessageSource
       return;
     }
 
-    _logger?.Information("Connecting to {Endpoint}", endpoint);
+    _logger?.Information("Connecting to {Endpoint}", _webSocketEndpoint);
 
     try {
-      await _webSocket.ConnectAsync(endpoint, cancellationToken).ConfigureAwait(false);
+      await _webSocket.ConnectAsync(_webSocketEndpoint, cancellationToken).ConfigureAwait(false);
+      Connected?.Invoke(this, EventArgs.Empty);
     }
     catch (Exception ex) {
       _logger?.Error(ex, "DefaultJsonRpcMessageSource::Connect :: Exception while attempting to connect the ClientWebSocket to the endpoint.");
       throw;
+    }
+  }
+
+  private async Task Reconnect(CancellationToken cancellationToken)
+  {
+    if (_reconnectSemaphore.CurrentCount < 1)
+      return;
+
+    var lockAquired = await _reconnectSemaphore.WaitAsync(1, cancellationToken).ConfigureAwait(false);
+
+    if (!lockAquired)
+      return;
+
+    try {
+      await Connect(_webSocketEndpoint!, cancellationToken).ConfigureAwait(false);
+    }
+    finally {
+      _reconnectSemaphore.Release();
     }
   }
 
@@ -86,9 +114,10 @@ public class DefaultJsonRpcMessageSource : IJsonRpcMessageSource
     if (_webSocket.State is WebSocketState.Open or WebSocketState.CloseReceived)
       await _webSocket.CloseOutputAsync(realCloseStatus, realCloseStatusDescription, cancellationToken).ConfigureAwait(false);
 
-    _webSocket.Dispose();
+    _webSocket?.Dispose();
     _webSocket = null;
   }
+
 
   /// <inheritdoc />
   public async ValueTask DisposeAsync()
@@ -102,11 +131,23 @@ public class DefaultJsonRpcMessageSource : IJsonRpcMessageSource
     if (_webSocket is null)
       throw new InvalidOperationException("Can not send a message when there is no open connection");
 
-    await _webSocket.SendAsync(
-      new ArraySegment<byte>(Encoding.UTF8.GetBytes(message)),
-      WebSocketMessageType.Text,
-      true,
-      cancellationToken).ConfigureAwait(false);
+    while (_webSocket.State != WebSocketState.Open)
+      await Task.Delay(1, cancellationToken).ConfigureAwait(false);
+
+  retry:
+
+    try {
+      await _webSocket.SendAsync(
+        new ArraySegment<byte>(Encoding.UTF8.GetBytes(message)),
+        WebSocketMessageType.Text,
+        true,
+        cancellationToken).ConfigureAwait(false);
+    }
+    catch (OperationCanceledException opEx) when (opEx.InnerException?.InnerException is SocketException { ErrorCode: 10054 }) {
+      _logger?.Debug("DefaultJsonRpcMessageSource::Send: Socket error during send, try reconnect and send again");
+      await Reconnect(cancellationToken).ConfigureAwait(false);
+      goto retry;
+    }
   }
 
   /// <inheritdoc />
@@ -124,8 +165,19 @@ public class DefaultJsonRpcMessageSource : IJsonRpcMessageSource
         if (cancellationToken.IsCancellationRequested)
           break;
 
+        if (_webSocket is null) {
+          _logger?.Debug("DefaultJsonRpcMessageSource::GetMessageStream: Socket null");
+          continue;
+        }
+
+        if (_webSocket.State == WebSocketState.Aborted) {
+          _logger?.Debug("DefaultJsonRpcMessageSource::GetMessageStream: Socket aborted, try reconnect");
+          await Reconnect(cancellationToken).ConfigureAwait(false);
+          continue;
+        }
+
         if (_webSocket is not { State: WebSocketState.Open }) {
-          _logger?.Debug("DefaultJsonRpcMessageSource::GetMessageStream: Socket null or not connected yet");
+          _logger?.Debug("DefaultJsonRpcMessageSource::GetMessageStream: Socket not connected yet");
           continue;
         }
 
@@ -134,11 +186,13 @@ public class DefaultJsonRpcMessageSource : IJsonRpcMessageSource
         try {
           receiveResult = await _webSocket.ReceiveAsync(msgBuffer, cancellationToken).ConfigureAwait(false);
         }
-        catch (TaskCanceledException) {
-          break;
+        catch (WebSocketException wsEx) when (wsEx.InnerException?.InnerException is SocketException { ErrorCode: 10053 }) {
+          _logger?.Debug("DefaultJsonRpcMessageSource::GetMessageStream: Socket error during receive, try reconnect");
+          await Reconnect(cancellationToken).ConfigureAwait(false);
+          continue;
         }
         catch (Exception ex) {
-          _logger?.Debug(ex, "DefaultJsonRpcMessageSource::GetMessageStream: Exception during Receive");
+          _logger?.Debug(ex, "DefaultJsonRpcMessageSource::GetMessageStream: Exception during receive");
           continue;
         }
 
@@ -175,6 +229,9 @@ public class DefaultJsonRpcMessageSource : IJsonRpcMessageSource
             msgRecvDiff.TotalMilliseconds,
             message);
         }
+      }
+      catch (TaskCanceledException) {
+        break;
       }
       catch (Exception ex) {
         _logger?.Error(ex, "DefaultJsonRpcMessageSource::GetMessageStream: Connection closed by unknown error.");

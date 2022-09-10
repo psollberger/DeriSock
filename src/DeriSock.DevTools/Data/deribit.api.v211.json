@@ -17087,8 +17087,8 @@
       },
       "response": {
         "required": true,
-        "apiDataType": "array of object",
-        "dataType": "array",
+        "apiDataType": "object",
+        "dataType": "UserChange",
         "arrayDataType": "UserChange",
         "properties": {
           "instrument_name": {
@@ -17724,8 +17724,8 @@
       },
       "response": {
         "required": true,
-        "apiDataType": "array of object",
-        "dataType": "array",
+        "apiDataType": "object",
+        "dataType": "UserChange",
         "arrayDataType": "UserChange",
         "properties": {
           "instrument_name": {
