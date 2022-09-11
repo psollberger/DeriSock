@@ -32,6 +32,20 @@
         "dataType": "array",
         "arrayDataType": "UserTrade"
       }
+    },
+    "private/create_combo": {
+      "request": {
+        "properties": {
+          "trades": {
+            "properties": {
+              "amount": {
+                "apiDataType": "integer",
+                "dataType": "integer"
+              }
+            }
+          }
+        }
+      }
     }
   },
   "subscriptions": {

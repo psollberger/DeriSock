@@ -910,7 +910,7 @@
     },
     "user.changes.{instrument_name}.{interval}": {
       "response": {
-        "arrayDataType": "UserChange",
+        "dataType": "UserChange",
         "properties": {
           "orders": {
             "arrayDataType": "UserOrder"
@@ -926,7 +926,7 @@
     },
     "user.changes.{kind}.{currency}.{interval}": {
       "response": {
-        "arrayDataType": "UserChange",
+        "dataType": "UserChange",
         "properties": {
           "orders": {
             "arrayDataType": "UserOrder"

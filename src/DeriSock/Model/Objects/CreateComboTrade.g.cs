@@ -27,7 +27,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("amount")]
-    public decimal Amount { get; set; }
+    public long Amount { get; set; }
     /// <summary>
     /// <para>Direction of trade from the maker perspective</para>
     /// </summary>

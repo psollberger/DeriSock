@@ -10113,8 +10113,8 @@
               "amount": {
                 "description": "It represents the requested trade size. For perpetual and futures the amount is in USD units, for options it is amount of corresponding cryptocurrency contracts, e.g., BTC or ETH",
                 "required": true,
-                "apiDataType": "number",
-                "dataType": "number"
+                "apiDataType": "integer",
+                "dataType": "integer"
               },
               "direction": {
                 "description": "Direction of trade from the maker perspective",
@@ -17089,7 +17089,7 @@
         "required": true,
         "apiDataType": "object",
         "dataType": "UserChange",
-        "arrayDataType": "UserChange",
+        "arrayDataType": "object",
         "properties": {
           "instrument_name": {
             "description": "Unique instrument identifier",
@@ -17726,7 +17726,7 @@
         "required": true,
         "apiDataType": "object",
         "dataType": "UserChange",
-        "arrayDataType": "UserChange",
+        "arrayDataType": "object",
         "properties": {
           "instrument_name": {
             "description": "Unique instrument identifier",
