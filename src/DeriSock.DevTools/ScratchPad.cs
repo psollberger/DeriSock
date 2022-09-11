@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 using DeriSock.Model;
 
+using Serilog;
+
 public class ScratchPad
 {
-  public static async Task Run()
+  public static async Task Run(CancellationToken cancellationToken)
   {
     //var apiDoc = await ApiDocUtils.ReadApiDocumentAsync(ApiDocFinalDocumentPath).ConfigureAwait(false);
     //var map = await ApiDocUtils.ReadRequestMapAsync(ApiDocRequestMapPath).ConfigureAwait(false);
@@ -17,39 +19,7 @@ public class ScratchPad
     //if (map is not null)
     //  await ApiDocUtils.WriteRequestOverridesFromMapAsync(apiDoc, map, ApiDocRequestOverridesPath).ConfigureAwait(false);
 
-    var client = new DeribitClient(EndpointType.Testnet);
-    await client.Connect();
-
-    var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
-
-    // Subscribe to one or more channels. 
-    var subscriptionStream = await client.Subscriptions.SubscribeBookChanges(
-                               new BookChangesChannel
-                               {
-                                 InstrumentName = "BTC-PERPETUAL",
-                                 Interval = NotificationInterval2._100ms
-                               },
-                               new BookChangesChannel
-                               {
-                                 InstrumentName = "ETH-PERPETUAL",
-                                 Interval = NotificationInterval2._100ms
-                               });
-
-    var tickersStream = await client.Subscriptions.SubscribeTicker(
-                          new TickerChannel
-                          {
-                            InstrumentName = "BTC-PERPETUAL",
-                            Interval = NotificationInterval2._100ms
-                          },
-                          new TickerChannel
-                          {
-                            InstrumentName = "ETH-PERPETUAL",
-                            Interval = NotificationInterval2._100ms
-                          });
-
-    Console.WriteLine("awaiting the subscriptions");
-    await Task.WhenAll(BookSub(subscriptionStream, cts.Token), TickerSub(tickersStream, cts.Token));
-    Console.WriteLine("subscriptions done");
+    await Task.CompletedTask;
   }
 
   private static async Task BookSub(NotificationStream<OrderBookChange> notificationStream, CancellationToken cancellationToken)

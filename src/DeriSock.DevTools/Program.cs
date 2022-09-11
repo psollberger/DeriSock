@@ -10,7 +10,10 @@ using System.Threading.Tasks;
 using CommandLine;
 
 using DeriSock.DevTools.ApiDoc;
-using DeriSock.DevTools.ApiDoc.Model;
+
+using Microsoft.Extensions.Configuration;
+
+using Serilog;
 
 internal class Program
 {
@@ -33,6 +36,15 @@ internal class Program
 
   public static async Task Main(string[] args)
   {
+    var configuration = new ConfigurationBuilder()
+      .SetBasePath(Directory.GetCurrentDirectory())
+      .AddJsonFile("appsettings.json")
+      .Build();
+
+    Log.Logger = new LoggerConfiguration()
+      .ReadFrom.Configuration(configuration)
+      .CreateLogger();
+
     try {
       var cmdLineParser = new Parser(
         config =>
@@ -53,7 +65,11 @@ internal class Program
   private static async Task RunWithOptions(RunOptions options)
   {
     if (options.ScratchPad) {
-      await ScratchPad.Run();
+      var cts = new CancellationTokenSource();
+      var scratchPadTask = ScratchPad.Run(cts.Token);
+      Console.ReadLine();
+      cts.Cancel();
+      await scratchPadTask;
       return;
     }
 
