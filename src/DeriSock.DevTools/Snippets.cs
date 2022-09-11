@@ -27,6 +27,16 @@ public class Snippets
                          InstrumentName = "BTC-PERPETUAL"
                        });
 
+      if (response.Error is not null) {
+        // Handle errors returned by the API
+        return;
+      }
+
+      if (response.Data is null) {
+        // Something unexpected happened. 'Data' should not be null if 'Error' is null
+        return;
+      }
+
       var bestBidPrice = response.Data.BestBidPrice;
 
       // end-snippet
@@ -39,6 +49,16 @@ public class Snippets
                        {
                          InstrumentName = "BTC-PERPETUAL"
                        });
+
+      if (response.Error is not null) {
+        // Handle errors returned by the API
+        return;
+      }
+
+      if (response.Data is null) {
+        // Something unexpected happened. 'Data' should not be null if 'Error' is null
+        return;
+      }
 
       var bestBidPrice = response.Data.BestBidPrice;
 

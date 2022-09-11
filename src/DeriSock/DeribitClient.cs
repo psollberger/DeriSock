@@ -271,7 +271,8 @@ public partial class DeribitClient
       _ =>
       {
         var result = ((IAuthenticationMethods)this).WithRefreshToken().GetAwaiter().GetResult();
-        EnqueueAuthRefresh(result.Data.ExpiresIn);
+        if (result.Data is not null)
+          EnqueueAuthRefresh(result.Data.ExpiresIn);
       });
   }
 }

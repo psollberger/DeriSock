@@ -47,7 +47,8 @@ internal class SubscriptionManager
                      new ListJsonConverter<string>()).ConfigureAwait(false);
 
     // Updating the list of subscribed channels in the map entry
-    streamInfo.Channels = response.Data.ToArray();
+    if (response.Data is not null)
+      streamInfo.Channels = response.Data.ToArray();
 
     return (NotificationStream<TNotification>)streamInfo.Stream;
   }

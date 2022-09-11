@@ -40,9 +40,19 @@ var response = await client.Public.GetOrderBook(
                    InstrumentName = "BTC-PERPETUAL"
                  });
 
+if (response.Error is not null) {
+  // Handle errors returned by the API
+  return;
+}
+
+if (response.Data is null) {
+  // Something unexpected happened. 'Data' should not be null if 'Error' is null
+  return;
+}
+
 var bestBidPrice = response.Data.BestBidPrice;
 ```
-<sup><a href='/src/DeriSock.DevTools/Snippets.cs#L23-L32' title='Snippet source file'>snippet source</a> | <a href='#snippet-readme-req-bbp-1' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/DeriSock.DevTools/Snippets.cs#L23-L42' title='Snippet source file'>snippet source</a> | <a href='#snippet-readme-req-bbp-1' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 **Example:** Calling `GetOrderBook` from the `MarketData` category.
@@ -56,9 +66,19 @@ var response = await client.MarketData.PublicGetOrderBook(
                    InstrumentName = "BTC-PERPETUAL"
                  });
 
+if (response.Error is not null) {
+  // Handle errors returned by the API
+  return;
+}
+
+if (response.Data is null) {
+  // Something unexpected happened. 'Data' should not be null if 'Error' is null
+  return;
+}
+
 var bestBidPrice = response.Data.BestBidPrice;
 ```
-<sup><a href='/src/DeriSock.DevTools/Snippets.cs#L36-L45' title='Snippet source file'>snippet source</a> | <a href='#snippet-readme-req-bbp-2' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/DeriSock.DevTools/Snippets.cs#L46-L65' title='Snippet source file'>snippet source</a> | <a href='#snippet-readme-req-bbp-2' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 ## Authentication
@@ -77,7 +97,7 @@ await client.Authentication.PublicLogin()
     "<optional state>",
     "<optional scope>");
 ```
-<sup><a href='/src/DeriSock.DevTools/Snippets.cs#L49-L57' title='Snippet source file'>snippet source</a> | <a href='#snippet-readme-auth-credentials' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/DeriSock.DevTools/Snippets.cs#L69-L77' title='Snippet source file'>snippet source</a> | <a href='#snippet-readme-auth-credentials' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 ### Authentication using Signature
@@ -92,7 +112,7 @@ await client.Authentication.PublicLogin()
     "<optional state>",
     "<optional scope>");
 ```
-<sup><a href='/src/DeriSock.DevTools/Snippets.cs#L61-L69' title='Snippet source file'>snippet source</a> | <a href='#snippet-readme-auth-signature' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/DeriSock.DevTools/Snippets.cs#L81-L89' title='Snippet source file'>snippet source</a> | <a href='#snippet-readme-auth-signature' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 ### Logout
@@ -104,7 +124,7 @@ When authenticated, you can logout like this (this is the only synchroneous meth
 ```cs
 client.Authentication.PrivateLogout();
 ```
-<sup><a href='/src/DeriSock.DevTools/Snippets.cs#L73-L76' title='Snippet source file'>snippet source</a> | <a href='#snippet-readme-auth-logout' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/DeriSock.DevTools/Snippets.cs#L93-L96' title='Snippet source file'>snippet source</a> | <a href='#snippet-readme-auth-logout' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 **Note:** The server will automatically close the connection when you logout
@@ -142,5 +162,5 @@ await foreach (var notification in subscriptionStream.WithCancellation(cts.Token
   var bookChangeId = notification.Data.ChangeId;
 }
 ```
-<sup><a href='/src/DeriSock.DevTools/Snippets.cs#L80-L105' title='Snippet source file'>snippet source</a> | <a href='#snippet-readme-subscribtion-usage' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/DeriSock.DevTools/Snippets.cs#L100-L125' title='Snippet source file'>snippet source</a> | <a href='#snippet-readme-subscribtion-usage' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
