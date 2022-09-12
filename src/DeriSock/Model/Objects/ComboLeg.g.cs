@@ -28,11 +28,5 @@ namespace DeriSock.Model
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("instrument_name")]
     public string InstrumentName { get; set; } = string.Empty;
-    /// <summary>
-    /// <para>Direction of trade from the maker perspective</para>
-    /// </summary>
-    [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-    [Newtonsoft.Json.JsonPropertyAttribute("direction")]
-    public TradeDirection? Direction { get; set; } = null!;
   }
 }
