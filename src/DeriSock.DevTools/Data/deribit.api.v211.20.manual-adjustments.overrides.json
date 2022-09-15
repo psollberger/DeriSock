@@ -203,7 +203,213 @@
         }
       },
       "response": {
-        "dataType": "JObject"
+        "properties": {
+          "vol_range": {
+            "insertLast": true,
+            "description": "",
+            "required": true,
+            "dataType": "array",
+            "arrayDataType": "number"
+          },
+          "vega_pow2": {
+            "insertLast": true,
+            "description": "",
+            "required": false,
+            "dataType": "number"
+          },
+          "vega_pow1": {
+            "insertLast": true,
+            "description": "",
+            "required": false,
+            "dataType": "number"
+          },
+          "skew": {
+            "insertLast": true,
+            "description": "",
+            "required": false,
+            "dataType": "integer"
+          },
+          "price_range": {
+            "insertLast": true,
+            "description": "",
+            "required": false,
+            "dataType": "number"
+          },
+          "opt_sum_continguency": {
+            "insertLast": true,
+            "description": "",
+            "required": false,
+            "dataType": "number"
+          },
+          "opt_continguency": {
+            "insertLast": true,
+            "description": "",
+            "required": false,
+            "dataType": "integer"
+          },
+          "kurtosis": {
+            "insertLast": true,
+            "description": "",
+            "required": false,
+            "dataType": "integer"
+          },
+          "int_rate": {
+            "insertLast": true,
+            "description": "",
+            "required": false,
+            "dataType": "integer"
+          },
+          "initial_margin_factor": {
+            "insertLast": true,
+            "description": "",
+            "required": false,
+            "dataType": "number"
+          },
+          "ftu_continguency": {
+            "insertLast": true,
+            "description": "",
+            "required": false,
+            "dataType": "number"
+          },
+          "atm_range": {
+            "insertLast": true,
+            "description": "",
+            "required": false,
+            "dataType": "number"
+          },
+          "projected_margin_pos": {
+            "insertLast": true,
+            "description": "",
+            "required": false,
+            "dataType": "integer"
+          },
+          "projected_margin": {
+            "insertLast": true,
+            "description": "",
+            "required": false,
+            "dataType": "number"
+          },
+          "position_sizes": {
+            "insertLast": true,
+            "description": "",
+            "required": false,
+            "dataType": "Dictionary<string, decimal>"
+          },
+          "pls": {
+            "insertLast": true,
+            "description": "",
+            "required": false,
+            "dataType": "array",
+            "arrayDataType": "number"
+          },
+          "pco_opt": {
+            "insertLast": true,
+            "description": "",
+            "required": false,
+            "dataType": "number"
+          },
+          "pco_ftu": {
+            "insertLast": true,
+            "description": "",
+            "required": false,
+            "dataType": "number"
+          },
+          "opt_summary": {
+            "insertLast": true,
+            "description": "",
+            "required": false,
+            "dataType": "array",
+            "arrayDataType": "object",
+            "properties": {
+              "iv_pl_vec3": {
+                "insertLast": true,
+                "description": "",
+                "required": true,
+                "dataType": "array",
+                "arrayDataType": "decimal[]"
+              },
+              "exp_tstamp": {
+                "insertLast": true,
+                "description": "",
+                "required": false,
+                "dataType": "DateTime",
+                "converters": [ "MillisecondsTimestampConverter" ]
+              },
+              "abs_qty": {
+                "insertLast": true,
+                "description": "",
+                "required": false,
+                "dataType": "number"
+              }
+            }
+          },
+          "opt_pls": {
+            "insertLast": true,
+            "description": "",
+            "required": false,
+            "dataType": "array",
+            "arrayDataType": "number"
+          },
+          "opt_entries": {
+            "insertLast": true,
+            "description": "",
+            "required": false,
+            "dataType": "array",
+            "arrayDataType": "object"
+          },
+          "margin_pos": {
+            "insertLast": true,
+            "description": "",
+            "required": false,
+            "dataType": "integer"
+          },
+          "margin": {
+            "insertLast": true,
+            "description": "",
+            "required": false,
+            "dataType": "number"
+          },
+          "ftu_summary": {
+            "insertLast": true,
+            "description": "",
+            "required": false,
+            "dataType": "array",
+            "arrayDataType": "object"
+          },
+          "ftu_pls": {
+            "insertLast": true,
+            "description": "",
+            "required": false,
+            "dataType": "array",
+            "arrayDataType": "number"
+          },
+          "ftu_entries": {
+            "insertLast": true,
+            "description": "",
+            "required": false,
+            "dataType": "array",
+            "arrayDataType": "object"
+          },
+          "co_opt": {
+            "insertLast": true,
+            "description": "",
+            "required": false,
+            "dataType": "number"
+          },
+          "co_ftu": {
+            "insertLast": true,
+            "description": "",
+            "required": false,
+            "dataType": "number"
+          },
+          "calculation_timestamp": {
+            "insertLast": true,
+            "description": "",
+            "required": false,
+            "dataType": "DateTime",
+            "converters": [ "MillisecondsTimestampConverter" ]
+          }
+        }
       }
     },
     "private/get_transaction_log": {
@@ -241,9 +447,9 @@
       "response": {
         "properties": {
           "leverage": {
-            "name": "max_leverage" 
-          } 
-        } 
+            "name": "max_leverage"
+          }
+        }
       }
     },
     "public/get_positions": {

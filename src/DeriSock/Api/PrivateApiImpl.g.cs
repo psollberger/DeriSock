@@ -408,7 +408,7 @@ namespace DeriSock
       }
       /// <inheritdoc cref="IPrivateApi.GetPortfolioMargins" />
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
-      System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<JObject>> IPrivateApi.GetPortfolioMargins(PrivateGetPortfolioMarginsRequest args, CancellationToken cancellationToken)
+      System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<PortfolioMargins>> IPrivateApi.GetPortfolioMargins(PrivateGetPortfolioMarginsRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPrivateGetPortfolioMargins(args, cancellationToken);
       }

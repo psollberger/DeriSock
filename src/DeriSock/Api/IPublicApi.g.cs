@@ -15,7 +15,6 @@ namespace DeriSock.Api
   using DeriSock.Net.JsonRpc;
   using DeriSock.Model;
   using System;
-  using Newtonsoft.Json.Linq;
   
   [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
   public partial interface IPublicApi
@@ -301,6 +300,6 @@ namespace DeriSock.Api
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
-    System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<JObject>> GetPortfolioMargins(PublicGetPortfolioMarginsRequest args, CancellationToken cancellationToken = default(CancellationToken));
+    System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<PortfolioMargins>> GetPortfolioMargins(PublicGetPortfolioMarginsRequest args, CancellationToken cancellationToken = default(CancellationToken));
   }
 }

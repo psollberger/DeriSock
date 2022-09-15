@@ -931,6 +931,44 @@
       "private/get_new_announcements.response"
     ]
   },
+  "PortfolioMargins": {
+    "hash": "6D7FA7E3CAE20145B358FB092998FC4D5E591983",
+    "properties": {
+      "vol_range": {},
+      "vega_pow2": {},
+      "vega_pow1": {},
+      "skew": {},
+      "price_range": {},
+      "opt_sum_continguency": {},
+      "opt_continguency": {},
+      "kurtosis": {},
+      "int_rate": {},
+      "initial_margin_factor": {},
+      "ftu_continguency": {},
+      "atm_range": {},
+      "projected_margin_pos": {},
+      "projected_margin": {},
+      "position_sizes": {},
+      "pls": {},
+      "pco_opt": {},
+      "pco_ftu": {},
+      "opt_summary": {},
+      "opt_pls": {},
+      "opt_entries": {},
+      "margin_pos": {},
+      "margin": {},
+      "ftu_summary": {},
+      "ftu_pls": {},
+      "ftu_entries": {},
+      "co_opt": {},
+      "co_ftu": {},
+      "calculation_timestamp": {}
+    },
+    "methods": [
+      "public/get_portfolio_margins.response",
+      "private/get_portfolio_margins.response"
+    ]
+  },
   "ApiKeyData": {
     "hash": "393A3D45AE505129DBAABE6E9BED513C95D5EEBD",
     "properties": {

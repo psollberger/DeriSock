@@ -6,6 +6,9 @@ public class ApiDocOverrideProperty
 {
   [JsonPropertyName("insertBefore")]
   public string? InsertBefore { get; set; } = null;
+  
+  [JsonPropertyName("insertLast")]
+  public bool? InsertLast { get; set; } = null;
 
   [JsonPropertyName("name")]
   public string? Name { get; set; } = null;
@@ -50,7 +53,8 @@ public class ApiDocOverrideProperty
   public ApiDocOverridePropertyCollection? Properties { get; set; } = default;
 
   public ApiDocProperty CreateApiProperty()
-    => new()
+  {
+    var prop = new ApiDocProperty()
     {
       Name = Name ?? string.Empty,
       Description = Description,
@@ -66,4 +70,15 @@ public class ApiDocOverrideProperty
       DefaultValue = DefaultValue,
       MaxLength = MaxLength
     };
+
+    if (Properties is { Count: > 0 }) {
+      prop.Properties = new ApiDocPropertyCollection(Properties.Count);
+
+      foreach (var (key, value) in Properties) {
+        prop.Properties.Add(key, value.CreateApiProperty());
+      }
+    }
+
+    return prop;
+  }
 }

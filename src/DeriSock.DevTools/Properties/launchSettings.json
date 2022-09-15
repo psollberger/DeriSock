@@ -2,7 +2,11 @@
   "profiles": {
     "DeriSock.DevTools": {
       "commandName": "Project",
-      "commandLineArgs": "--scratchpad"
+      "commandLineArgs": "--project-path \"$(MSBuildProjectDirectory)\\..\\DeriSock\" --create-base --create-final --create-enum-map --create-enum-overrides --create-object-map --create-object-overrides --create-request-map --create-request-overrides --generate-code"
+    },
+    "Scratchpad": {
+      "commandName": "Project",
+      "commandLineArgs": "--project-path \"$(MSBuildProjectDirectory)\\..\\DeriSock\" --scratchpad"
     }
   }
 }

@@ -7,15 +7,13 @@ using DeriSock.Converter;
 using DeriSock.Model;
 using DeriSock.Net.JsonRpc;
 
-using Newtonsoft.Json.Linq;
-
 public partial class DeribitClient
 {
   private async Task<JsonRpcResponse<Announcement[]>> InternalPublicGetAnnouncements(PublicGetAnnouncementsRequest? args = null, CancellationToken cancellationToken = default)
     => await Send("public/get_announcements", args, new ObjectJsonConverter<Announcement[]>(), cancellationToken).ConfigureAwait(false);
 
-  private async Task<JsonRpcResponse<JObject>> InternalPublicGetPortfolioMargins(PublicGetPortfolioMarginsRequest args, CancellationToken cancellationToken = default)
-    => await Send("public/get_portfolio_margins", args, new ObjectJsonConverter<JObject>(), cancellationToken).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<PortfolioMargins>> InternalPublicGetPortfolioMargins(PublicGetPortfolioMarginsRequest args, CancellationToken cancellationToken = default)
+    => await Send("public/get_portfolio_margins", args, new ObjectJsonConverter<PortfolioMargins>(), cancellationToken).ConfigureAwait(false);
 
   private async Task<JsonRpcResponse<ApiKeyData>> InternalPrivateChangeApiKeyName(PrivateChangeApiKeyNameRequest args, CancellationToken cancellationToken = default)
     => await Send("private/change_api_key_name", args, new ObjectJsonConverter<ApiKeyData>(), cancellationToken).ConfigureAwait(false);
@@ -56,8 +54,8 @@ public partial class DeribitClient
   private async Task<JsonRpcResponse<Announcement[]>> InternalPrivateGetNewAnnouncements(CancellationToken cancellationToken = default)
     => await Send("private/get_new_announcements", null, new ObjectJsonConverter<Announcement[]>(), cancellationToken).ConfigureAwait(false);
 
-  private async Task<JsonRpcResponse<JObject>> InternalPrivateGetPortfolioMargins(PrivateGetPortfolioMarginsRequest args, CancellationToken cancellationToken = default)
-    => await Send("private/get_portfolio_margins", args, new ObjectJsonConverter<JObject>(), cancellationToken).ConfigureAwait(false);
+  private async Task<JsonRpcResponse<PortfolioMargins>> InternalPrivateGetPortfolioMargins(PrivateGetPortfolioMarginsRequest args, CancellationToken cancellationToken = default)
+    => await Send("private/get_portfolio_margins", args, new ObjectJsonConverter<PortfolioMargins>(), cancellationToken).ConfigureAwait(false);
 
   private async Task<JsonRpcResponse<UserPosition>> InternalPrivateGetPosition(PrivateGetPositionRequest args, CancellationToken cancellationToken = default)
     => await Send("private/get_position", args, new ObjectJsonConverter<UserPosition>(), cancellationToken).ConfigureAwait(false);

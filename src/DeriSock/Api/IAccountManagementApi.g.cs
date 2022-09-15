@@ -14,7 +14,6 @@ namespace DeriSock.Api
   using System.Threading.Tasks;
   using DeriSock.Net.JsonRpc;
   using DeriSock.Model;
-  using Newtonsoft.Json.Linq;
   
   [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
   public partial interface IAccountManagementApi
@@ -32,7 +31,7 @@ namespace DeriSock.Api
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
-    System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<JObject>> PublicGetPortfolioMargins(PublicGetPortfolioMarginsRequest args, CancellationToken cancellationToken = default(CancellationToken));
+    System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<PortfolioMargins>> PublicGetPortfolioMargins(PublicGetPortfolioMarginsRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Changes name for key with given id</para>
     /// </summary>
@@ -125,7 +124,7 @@ namespace DeriSock.Api
     /// <param name="args"></param>
     /// <param name="cancellationToken"></param>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
-    System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<JObject>> PrivateGetPortfolioMargins(PrivateGetPortfolioMarginsRequest args, CancellationToken cancellationToken = default(CancellationToken));
+    System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<PortfolioMargins>> PrivateGetPortfolioMargins(PrivateGetPortfolioMarginsRequest args, CancellationToken cancellationToken = default(CancellationToken));
     /// <summary>
     /// <para>Retrieve user position.</para>
     /// </summary>

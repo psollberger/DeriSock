@@ -12296,7 +12296,156 @@
         "description": "PM details",
         "required": true,
         "apiDataType": "object",
-        "dataType": "JObject"
+        "dataType": "PortfolioMargins",
+        "properties": {
+          "vol_range": {
+            "description": "",
+            "required": true,
+            "dataType": "array",
+            "arrayDataType": "number"
+          },
+          "vega_pow2": {
+            "description": "",
+            "dataType": "number"
+          },
+          "vega_pow1": {
+            "description": "",
+            "dataType": "number"
+          },
+          "skew": {
+            "description": "",
+            "dataType": "integer"
+          },
+          "price_range": {
+            "description": "",
+            "dataType": "number"
+          },
+          "opt_sum_continguency": {
+            "description": "",
+            "dataType": "number"
+          },
+          "opt_continguency": {
+            "description": "",
+            "dataType": "integer"
+          },
+          "kurtosis": {
+            "description": "",
+            "dataType": "integer"
+          },
+          "int_rate": {
+            "description": "",
+            "dataType": "integer"
+          },
+          "initial_margin_factor": {
+            "description": "",
+            "dataType": "number"
+          },
+          "ftu_continguency": {
+            "description": "",
+            "dataType": "number"
+          },
+          "atm_range": {
+            "description": "",
+            "dataType": "number"
+          },
+          "projected_margin_pos": {
+            "description": "",
+            "dataType": "integer"
+          },
+          "projected_margin": {
+            "description": "",
+            "dataType": "number"
+          },
+          "position_sizes": {
+            "description": "",
+            "dataType": "Dictionary<string, decimal>"
+          },
+          "pls": {
+            "description": "",
+            "dataType": "array",
+            "arrayDataType": "number"
+          },
+          "pco_opt": {
+            "description": "",
+            "dataType": "number"
+          },
+          "pco_ftu": {
+            "description": "",
+            "dataType": "number"
+          },
+          "opt_summary": {
+            "description": "",
+            "dataType": "array",
+            "arrayDataType": "object",
+            "properties": {
+              "iv_pl_vec3": {
+                "description": "",
+                "required": true,
+                "dataType": "array",
+                "arrayDataType": "decimal[]"
+              },
+              "exp_tstamp": {
+                "description": "",
+                "dataType": "DateTime",
+                "converters": [
+                  "MillisecondsTimestampConverter"
+                ]
+              },
+              "abs_qty": {
+                "description": "",
+                "dataType": "number"
+              }
+            }
+          },
+          "opt_pls": {
+            "description": "",
+            "dataType": "array",
+            "arrayDataType": "number"
+          },
+          "opt_entries": {
+            "description": "",
+            "dataType": "array",
+            "arrayDataType": "object"
+          },
+          "margin_pos": {
+            "description": "",
+            "dataType": "integer"
+          },
+          "margin": {
+            "description": "",
+            "dataType": "number"
+          },
+          "ftu_summary": {
+            "description": "",
+            "dataType": "array",
+            "arrayDataType": "object"
+          },
+          "ftu_pls": {
+            "description": "",
+            "dataType": "array",
+            "arrayDataType": "number"
+          },
+          "ftu_entries": {
+            "description": "",
+            "dataType": "array",
+            "arrayDataType": "object"
+          },
+          "co_opt": {
+            "description": "",
+            "dataType": "number"
+          },
+          "co_ftu": {
+            "description": "",
+            "dataType": "number"
+          },
+          "calculation_timestamp": {
+            "description": "",
+            "dataType": "DateTime",
+            "converters": [
+              "MillisecondsTimestampConverter"
+            ]
+          }
+        }
       }
     },
     "private/change_api_key_name": {
@@ -13528,7 +13677,156 @@
         "description": "PM details",
         "required": true,
         "apiDataType": "object",
-        "dataType": "JObject"
+        "dataType": "PortfolioMargins",
+        "properties": {
+          "vol_range": {
+            "description": "",
+            "required": true,
+            "dataType": "array",
+            "arrayDataType": "number"
+          },
+          "vega_pow2": {
+            "description": "",
+            "dataType": "number"
+          },
+          "vega_pow1": {
+            "description": "",
+            "dataType": "number"
+          },
+          "skew": {
+            "description": "",
+            "dataType": "integer"
+          },
+          "price_range": {
+            "description": "",
+            "dataType": "number"
+          },
+          "opt_sum_continguency": {
+            "description": "",
+            "dataType": "number"
+          },
+          "opt_continguency": {
+            "description": "",
+            "dataType": "integer"
+          },
+          "kurtosis": {
+            "description": "",
+            "dataType": "integer"
+          },
+          "int_rate": {
+            "description": "",
+            "dataType": "integer"
+          },
+          "initial_margin_factor": {
+            "description": "",
+            "dataType": "number"
+          },
+          "ftu_continguency": {
+            "description": "",
+            "dataType": "number"
+          },
+          "atm_range": {
+            "description": "",
+            "dataType": "number"
+          },
+          "projected_margin_pos": {
+            "description": "",
+            "dataType": "integer"
+          },
+          "projected_margin": {
+            "description": "",
+            "dataType": "number"
+          },
+          "position_sizes": {
+            "description": "",
+            "dataType": "Dictionary<string, decimal>"
+          },
+          "pls": {
+            "description": "",
+            "dataType": "array",
+            "arrayDataType": "number"
+          },
+          "pco_opt": {
+            "description": "",
+            "dataType": "number"
+          },
+          "pco_ftu": {
+            "description": "",
+            "dataType": "number"
+          },
+          "opt_summary": {
+            "description": "",
+            "dataType": "array",
+            "arrayDataType": "object",
+            "properties": {
+              "iv_pl_vec3": {
+                "description": "",
+                "required": true,
+                "dataType": "array",
+                "arrayDataType": "decimal[]"
+              },
+              "exp_tstamp": {
+                "description": "",
+                "dataType": "DateTime",
+                "converters": [
+                  "MillisecondsTimestampConverter"
+                ]
+              },
+              "abs_qty": {
+                "description": "",
+                "dataType": "number"
+              }
+            }
+          },
+          "opt_pls": {
+            "description": "",
+            "dataType": "array",
+            "arrayDataType": "number"
+          },
+          "opt_entries": {
+            "description": "",
+            "dataType": "array",
+            "arrayDataType": "object"
+          },
+          "margin_pos": {
+            "description": "",
+            "dataType": "integer"
+          },
+          "margin": {
+            "description": "",
+            "dataType": "number"
+          },
+          "ftu_summary": {
+            "description": "",
+            "dataType": "array",
+            "arrayDataType": "object"
+          },
+          "ftu_pls": {
+            "description": "",
+            "dataType": "array",
+            "arrayDataType": "number"
+          },
+          "ftu_entries": {
+            "description": "",
+            "dataType": "array",
+            "arrayDataType": "object"
+          },
+          "co_opt": {
+            "description": "",
+            "dataType": "number"
+          },
+          "co_ftu": {
+            "description": "",
+            "dataType": "number"
+          },
+          "calculation_timestamp": {
+            "description": "",
+            "dataType": "DateTime",
+            "converters": [
+              "MillisecondsTimestampConverter"
+            ]
+          }
+        }
       }
     },
     "private/get_position": {

@@ -36,7 +36,7 @@ namespace DeriSock
       }
       /// <inheritdoc cref="IAccountManagementApi.PublicGetPortfolioMargins" />
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
-      System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<JObject>> IAccountManagementApi.PublicGetPortfolioMargins(PublicGetPortfolioMarginsRequest args, CancellationToken cancellationToken)
+      System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<PortfolioMargins>> IAccountManagementApi.PublicGetPortfolioMargins(PublicGetPortfolioMarginsRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPublicGetPortfolioMargins(args, cancellationToken);
       }
@@ -120,7 +120,7 @@ namespace DeriSock
       }
       /// <inheritdoc cref="IAccountManagementApi.PrivateGetPortfolioMargins" />
       [System.CodeDom.Compiler.GeneratedCodeAttribute("DeriSock.DevTools", "2.0.0")]
-      System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<JObject>> IAccountManagementApi.PrivateGetPortfolioMargins(PrivateGetPortfolioMarginsRequest args, CancellationToken cancellationToken)
+      System.Threading.Tasks.Task<DeriSock.Net.JsonRpc.JsonRpcResponse<PortfolioMargins>> IAccountManagementApi.PrivateGetPortfolioMargins(PrivateGetPortfolioMarginsRequest args, CancellationToken cancellationToken)
       {
         return _client.InternalPrivateGetPortfolioMargins(args, cancellationToken);
       }

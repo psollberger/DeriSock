@@ -22,6 +22,7 @@ internal static class CodeDomConst
   };
 
   public const string ImportSystem = "System";
+  public const string ImportSystemCollectionsGeneric = "System.Collections.Generic";
   public const string ImportSystemThreading = "System.Threading";
   public const string ImportSystemThreadingTasks = "System.Threading.Tasks";
   public const string ImportDeriSockApi = "DeriSock.Api";

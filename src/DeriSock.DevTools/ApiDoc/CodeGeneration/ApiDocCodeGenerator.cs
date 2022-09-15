@@ -253,7 +253,8 @@ internal abstract class ApiDocCodeGenerator : IDisposable, IAsyncDisposable
     {
       { nameof(DateTime), CodeDomConst.ImportSystem },
       { nameof(JToken), CodeDomConst.ImportNewtonsoftJsonLinq },
-      { nameof(JObject), CodeDomConst.ImportNewtonsoftJsonLinq }
+      { nameof(JObject), CodeDomConst.ImportNewtonsoftJsonLinq },
+      { "Dictionary", CodeDomConst.ImportSystemCollectionsGeneric }
     };
 
     var fnCheck = new Action<string>(

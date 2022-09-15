@@ -1,6 +1,7 @@
 namespace DeriSock.DevTools.ApiDoc;
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -103,24 +104,30 @@ public class ApiDocOverrideAdopter
 
   private static void AdoptPropertyCollectionOverrides(ApiDocProperty? property, ApiDocOverrideProperty? overrideProperty)
   {
-    if (property is not { Properties.Count: > 0 } || overrideProperty is not { Properties.Count: > 0 })
+    if (property is null || overrideProperty is not { Properties.Count: > 0 })
       return;
 
     foreach (var (ovrPropKey, ovrPropValue) in overrideProperty.Properties) {
       var searchKey = ovrPropKey;
 
-      if (ovrPropValue.Name is not null) {
+      if (ovrPropValue.Name is not null && property.Properties is not null) {
         property.Properties.RenameKey(ovrPropKey, ovrPropValue.Name);
         searchKey = ovrPropValue.Name;
       }
 
-      var propertiesToOverride = searchKey.IsRegexPattern() ?
-                                   property.Properties.Where(op => Regex.IsMatch(op.Key, searchKey)).ToArray() :
-                                   property.Properties.Where(op => op.Key.Equals(searchKey)).ToArray();
+      var propertiesToOverride = property.Properties is null ?
+                                   Array.Empty<KeyValuePair<string, ApiDocProperty>>() :
+                                   searchKey.IsRegexPattern() ?
+                                     property.Properties.Where(op => Regex.IsMatch(op.Key, searchKey)).ToArray() :
+                                     property.Properties.Where(op => op.Key.Equals(searchKey)).ToArray();
 
       if (propertiesToOverride.Length < 1) {
         if (!string.IsNullOrEmpty(ovrPropValue.InsertBefore)) {
-          property.Properties.InsertBefore(ovrPropValue.InsertBefore, searchKey, ovrPropValue.CreateApiProperty());
+          property.Properties!.InsertBefore(ovrPropValue.InsertBefore, searchKey, ovrPropValue.CreateApiProperty());
+        }
+        else if (ovrPropValue.InsertLast.HasValue && ovrPropValue.InsertLast.Value) {
+          property.Properties ??= new ApiDocPropertyCollection();
+          property.Properties.Add(searchKey, ovrPropValue.CreateApiProperty());
         }
 
         continue;
@@ -156,6 +163,7 @@ public class ApiDocOverrideAdopter
 
     if (overrideProperty is { Converters.Length: > 0 }) {
       var startIdx = 0;
+
       if (string.IsNullOrEmpty(overrideProperty.Converters[0])) {
         property.Converters = null;
         startIdx++;
