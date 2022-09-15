@@ -15,7 +15,7 @@ public class Notifications : IAsyncLifetime
   }
 
   [Fact]
-  public async Task Subscribtion_Receives_Notifications()
+  public async Task Subscription_Receives_Notifications()
   {
     // Act
     var notificationStream = await _client.Subscriptions.SubscribeBookChanges(
@@ -25,7 +25,7 @@ public class Notifications : IAsyncLifetime
                                  Interval = NotificationInterval2._100ms
                                });
 
-    var cts = new CancellationTokenSource(TimeSpan.FromSeconds(0.5));
+    var cts = new CancellationTokenSource(TimeSpan.FromSeconds(1));
 
     var receivedNotifications = new List<Notification<OrderBookChange>>();
 
@@ -35,7 +35,28 @@ public class Notifications : IAsyncLifetime
     // Assert
     receivedNotifications.Should().NotBeEmpty("there has to be at least one notification received");
   }
-  
+
+  [Fact]
+  public async Task Subscription_UserPortfolio_IsReceived_DespiteCaseChangeOfCurrency()
+  {
+    // Act
+    var notificationStream = await _client.Subscriptions.SubscribeUserPortfolio(
+                               new UserPortfolioChannel
+                               {
+                                 Currency = CurrencySymbol.BTC
+                               });
+
+    var cts = new CancellationTokenSource(TimeSpan.FromSeconds(1));
+
+    var receivedNotifications = new List<Notification<UserPortfolioNotification>>();
+
+    await foreach (var notification in notificationStream.WithCancellation(cts.Token))
+      receivedNotifications.Add(notification);
+
+    // Assert
+    receivedNotifications.Should().NotBeEmpty("there has to be at least one notification received");
+  }
+
   /// <inheritdoc />
   public async Task InitializeAsync()
   {

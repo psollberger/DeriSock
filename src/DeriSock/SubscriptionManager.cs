@@ -1,5 +1,6 @@
 namespace DeriSock;
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -84,7 +85,7 @@ internal class SubscriptionManager
   private IEnumerable<INotificationStream> GetChannelStreams(string channelName)
   {
     lock (_streamMap)
-      return _streamMap.Where(x => x.Channels.Contains(channelName)).Select(x => x.Stream);
+      return _streamMap.Where(x => x.Channels.Contains(channelName, StringComparer.OrdinalIgnoreCase)).Select(x => x.Stream);
   }
 
   private IEnumerable<string> GetAbandonedChannels(IEnumerable<string> channels)
