@@ -30,8 +30,8 @@ namespace DeriSock.Model
     /// <summary>
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-    [Newtonsoft.Json.JsonPropertyAttribute("position")]
-    public UserPosition[] Position { get; set; } = System.Array.Empty<UserPosition>();
+    [Newtonsoft.Json.JsonPropertyAttribute("positions")]
+    public UserPosition[] Positions { get; set; } = System.Array.Empty<UserPosition>();
     /// <summary>
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]

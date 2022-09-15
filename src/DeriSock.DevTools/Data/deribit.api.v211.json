@@ -17634,7 +17634,7 @@
               }
             }
           },
-          "position": {
+          "positions": {
             "description": "",
             "required": true,
             "apiDataType": "array of object",
@@ -18271,7 +18271,7 @@
               }
             }
           },
-          "position": {
+          "positions": {
             "description": "",
             "required": true,
             "apiDataType": "array of object",

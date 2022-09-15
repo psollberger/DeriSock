@@ -477,7 +477,7 @@
     "user.changes.{instrument_name}.{interval}": {
       "response": {
         "properties": {
-          "position": {
+          "positions": {
             "properties": {
               "estimated_liquidation_price": {
                 "insertBefore": "floating_profit_loss",
@@ -493,7 +493,7 @@
     "user.changes.{kind}.{currency}.{interval}": {
       "response": {
         "properties": {
-          "position": {
+          "positions": {
             "properties": {
               "estimated_liquidation_price": {
                 "insertBefore": "floating_profit_loss",

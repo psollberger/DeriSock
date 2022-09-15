@@ -88,6 +88,15 @@
         "arrayDataType": "PublicTrade"
       }
     },
+    "^user[.]changes([.]{[^}]+}){2,3}$": {
+      "response": {
+        "properties": {
+          "position": {
+            "name": "positions"
+          }
+        }
+      }
+    },
     "user.changes.{instrument_name}.{interval}": {
       "response": {
         "apiDataType": "object",

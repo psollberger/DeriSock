@@ -285,7 +285,7 @@ public static class ApiDocUtils
       var typeName = existingMapEntry?.Key ?? dataTypeName;
 
       if (newMap.ContainsKey(typeName))
-        typeName = $"<UNKNOWN_{dataTypeName}_{++unknownCount}>";
+        typeName = $"UNKNOWN_{dataTypeName}_{++unknownCount}";
 
       newMap.Add(typeName, newEntry);
 
@@ -444,7 +444,7 @@ public static class ApiDocUtils
       var typeName = existingMapEntry?.Key ?? dataTypeName;
 
       if (string.IsNullOrEmpty(typeName) || newMap.ContainsKey(typeName))
-        typeName = $"<UNKNOWN_{dataTypeName}_{++unknownCount}>";
+        typeName = $"UNKNOWN_{dataTypeName}_{++unknownCount}";
 
       newMap.Add(typeName, newEntry);
 

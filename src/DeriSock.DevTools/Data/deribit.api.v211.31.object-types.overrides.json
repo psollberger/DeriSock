@@ -928,7 +928,7 @@
           "trades": {
             "arrayDataType": "UserTrade"
           },
-          "position": {
+          "positions": {
             "arrayDataType": "UserPosition"
           }
         }
@@ -944,7 +944,7 @@
           "trades": {
             "arrayDataType": "UserTrade"
           },
-          "position": {
+          "positions": {
             "arrayDataType": "UserPosition"
           }
         }

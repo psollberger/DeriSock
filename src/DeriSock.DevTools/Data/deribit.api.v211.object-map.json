@@ -1204,8 +1204,8 @@
       "private/get_subaccounts_details.response.positions"
     ],
     "subscriptions": [
-      "user.changes.{instrument_name}.{interval}.response.position",
-      "user.changes.{kind}.{currency}.{interval}.response.position"
+      "user.changes.{instrument_name}.{interval}.response.positions",
+      "user.changes.{kind}.{currency}.{interval}.response.positions"
     ]
   },
   "SubAccount": {
@@ -1557,11 +1557,11 @@
     ]
   },
   "UserChange": {
-    "hash": "D021F5E773E625BF4ADC93B3D30F3E3ED6F5A862",
+    "hash": "72D565AA46ADB184EFEA74925B13088F5AAEA574",
     "properties": {
       "instrument_name": {},
       "orders": {},
-      "position": {},
+      "positions": {},
       "trades": {}
     },
     "subscriptions": [
