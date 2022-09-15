@@ -54,7 +54,7 @@ public class Notifications : IAsyncLifetime
       receivedNotifications.Add(notification);
 
     // Assert
-    receivedNotifications.Should().NotBeEmpty("there has to be at least one notification received");
+    receivedNotifications.Should().HaveCount(1, "only the initial portfolio should be delivered");
   }
 
   /// <inheritdoc />

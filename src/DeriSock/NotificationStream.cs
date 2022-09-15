@@ -41,26 +41,20 @@ public class NotificationStream<T> : INotificationStream, IAsyncEnumerable<Notif
   async ValueTask<bool> IAsyncEnumerator<Notification<T>>.MoveNextAsync()
   {
     try {
-      do {
-        if (_cancellationToken.IsCancellationRequested)
-          return false;
+      while (!_cancellationToken.IsCancellationRequested) {
+        if (((INotificationStream)this).Queue.TryDequeue(out var next)) {
+          _current = next.ConvertTo<T>();
 
-        if (!((INotificationStream)this).Queue.TryDequeue(out var next))
-          await Task.Delay(1, _cancellationToken).ConfigureAwait(false);
+          if (_cancellationToken.IsCancellationRequested)
+            return false;
 
-        if (next is null)
-          continue;
+          return true;
+        }
 
-        _current = next.ConvertTo<T>();
+        await Task.Delay(1, _cancellationToken).ConfigureAwait(false);
+      }
 
-        if (_cancellationToken.IsCancellationRequested)
-          return false;
-      } while (_current is null);
-
-      if (_cancellationToken.IsCancellationRequested)
-        return false;
-
-      return true;
+      return false;
     }
     catch (TaskCanceledException) {
       return false;
