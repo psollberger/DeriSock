@@ -12,6 +12,8 @@ using System.Threading.Tasks;
 using Serilog;
 using Serilog.Events;
 
+// TODO: Take a look at https://github.com/dimaaan/WebSocketTextClient/tree/master/WebSocketTextClient to maybe improve WebSocket handling
+
 /// <inheritdoc />
 /// <summary>
 ///   The default JSON-RPC message source.
