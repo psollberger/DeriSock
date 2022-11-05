@@ -5,6 +5,7 @@ using System.Net.WebSockets;
 
 using DeriSock.Constants;
 using DeriSock.Model;
+using DeriSock.Net;
 using DeriSock.Net.JsonRpc;
 using DeriSock.Utils;
 
@@ -19,10 +20,10 @@ public class DeribitClient_Supporting
     VerifySettings.UseDirectory("VerifyData");
   }
 
-  private static Mock<IJsonRpcMessageSource> CreateDefaultMessageSourceMock(string methodResponseJson)
+  private static Mock<ITextMessageClient> CreateDefaultMessageSourceMock(string methodResponseJson)
   {
-    var mock = new Mock<IJsonRpcMessageSource>();
-    mock.Setup(l => l.State).Returns(WebSocketState.Open);
+    var mock = new Mock<ITextMessageClient>();
+    mock.Setup(l => l.IsConnected).Returns(true);
     mock.Setup(l => l.GetMessageStream(It.IsAny<CancellationToken>())).Returns(() => GetResponseAsyncEnumerable(methodResponseJson));
     return mock;
   }
@@ -33,11 +34,10 @@ public class DeribitClient_Supporting
     yield return responseJson;
   }
 
-  private static void VerifyMessageSourceMockDefaults(Mock<IJsonRpcMessageSource> mock)
+  private static void VerifyMessageSourceMockDefaults(Mock<ITextMessageClient> mock)
   {
     mock.Verify(l => l.Connect(Endpoint.TestNet, It.IsAny<CancellationToken>()), Times.Once);
-    mock.Verify(l => l.Disconnect(null, null, It.IsAny<CancellationToken>()), Times.Once);
-    mock.Verify(l => l.Exception, Times.Once);
+    mock.Verify(l => l.Disconnect(It.IsAny<CancellationToken>()), Times.Once);
     mock.Verify(l => l.GetMessageStream(It.IsAny<CancellationToken>()), Times.Once);
     mock.VerifyNoOtherCalls();
   }

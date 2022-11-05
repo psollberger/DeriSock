@@ -7,6 +7,7 @@ using DeriSock.Converter;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
+/// <inheritdoc />
 /// <summary>
 ///   Contains typed data for a JSON-RPC response.
 /// </summary>
@@ -24,6 +25,8 @@ public class JsonRpcResponse<T> : JsonRpcResponse
   /// </summary>
   [JsonIgnore]
   [Obsolete("This property is obsolete and will be removed in a further version. Use the property Data instead.")]
+  // ReSharper disable once UnusedAutoPropertyAccessor.Global
+  // ReSharper disable once MemberCanBePrivate.Global
   public T ResultData { get; set; }
 
   /// <summary>

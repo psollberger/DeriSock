@@ -1,11 +1,12 @@
 // ReSharper disable UnusedMember.Local
 // ReSharper disable InheritdocConsiderUsage
 
+// ReSharper disable MemberCanBePrivate.Global
 namespace DeriSock;
 
 using System;
 using System.Diagnostics;
-using System.Net.WebSockets;
+using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,6 +14,7 @@ using DeriSock.Api;
 using DeriSock.Constants;
 using DeriSock.Converter;
 using DeriSock.Model;
+using DeriSock.Net;
 using DeriSock.Net.JsonRpc;
 using DeriSock.Utils;
 
@@ -38,16 +40,18 @@ public partial class DeribitClient
   public event EventHandler? Connected;
 
   /// <summary>
-  ///   Occurs after client lost the connection with the endpoint.
+  ///   Occurs after client disconnected from the endpoint.
   /// </summary>
-  public event EventHandler<DeribitClientDisconnectedEventArgs>? Disconnected;
+  public event EventHandler? Disconnected;
+
+  // TODO: Add events ConnectionLost and ConnectionRestored
 
   private readonly ILogger? _logger;
   private readonly JsonRpcRequestTaskSourceMap _requestTaskSourceMap = new();
   private readonly SubscriptionManager _subscriptionManager;
 
   private readonly Uri _endpointUri;
-  private readonly IJsonRpcMessageSource _messageSource;
+  private readonly ITextMessageClient _messageSource;
 
   private CancellationTokenSource? _processMessageStreamCts;
   private Task? _processMessageStreamTask;
@@ -68,12 +72,7 @@ public partial class DeribitClient
   /// <summary>
   ///   Gets if the underlying message source is fully connected and ready to receive messages.
   /// </summary>
-  public bool IsConnected
-    => _messageSource.State switch
-    {
-      WebSocketState.Open => true,
-      _                   => false
-    };
+  public bool IsConnected => _messageSource.IsConnected;
 
   /// <summary>
   ///   Gets if the connection is authenticated (i.e. private methods can be called)
@@ -84,10 +83,10 @@ public partial class DeribitClient
   ///   Creates a new <see cref="DeribitClient" /> instance.
   /// </summary>
   /// <param name="endpointType">The endpoint type.</param>
-  /// <param name="messageSource">The message source. <c>null</c> to use <see cref="DefaultJsonRpcMessageSource" /></param>
+  /// <param name="messageSource">The message source. <c>null</c> to use <see cref="TextMessageWebSocketClient" /></param>
   /// <param name="logger">Optional implementation of the <see cref="ILogger" /> interface to enable logging capabilities.</param>
   /// <exception cref="ArgumentOutOfRangeException">Throws an exception if the <paramref name="endpointType" /> is not supported.</exception>
-  public DeribitClient(EndpointType endpointType, IJsonRpcMessageSource? messageSource = null, ILogger? logger = null)
+  public DeribitClient(EndpointType endpointType, ITextMessageClient? messageSource = null, ILogger? logger = null)
   {
     _endpointUri = endpointType switch
     {
@@ -96,26 +95,8 @@ public partial class DeribitClient
       _                       => throw new ArgumentOutOfRangeException(nameof(endpointType), endpointType, "Unsupported endpoint type")
     };
 
-    _messageSource = messageSource ?? new DefaultJsonRpcMessageSource(logger);
-    _messageSource.Connected += async (_, _) =>
-    {
-      if (_authRequest is null)
-        return;
-
-      if (_authRequest.GrantType == GrantType.ClientSignature) {
-        if (_authRequestSignatureData is null) {
-          _authRequest = null;
-          return;
-        }
-
-        _authRequestSignatureData.Refresh();
-        _authRequestSignatureData.Apply(_authRequest);
-      }
-
-      await InternalPublicAuth(_authRequest).ConfigureAwait(false);
-    };
+    _messageSource = messageSource ?? new TextMessageWebSocketClient(logger);
     _logger = logger;
-
     _subscriptionManager = new SubscriptionManager(this, _logger);
   }
 
@@ -126,6 +107,7 @@ public partial class DeribitClient
   public async Task Connect(CancellationToken cancellationToken = default)
   {
     await _messageSource.Connect(_endpointUri, cancellationToken).ConfigureAwait(false);
+    await AfterConnect().ConfigureAwait(false);
 
     _authRequest = null;
     _authRequestSignatureData = null;
@@ -140,25 +122,46 @@ public partial class DeribitClient
     Connected?.Invoke(this, EventArgs.Empty);
   }
 
+  private async Task AfterConnect()
+  {
+    if (_authRequest is null)
+      return;
+
+    if (_authRequest.GrantType == GrantType.ClientSignature)
+    {
+      if (_authRequestSignatureData is null)
+      {
+        _authRequest = null;
+        return;
+      }
+
+      _authRequestSignatureData.Refresh();
+      _authRequestSignatureData.Apply(_authRequest);
+    }
+
+    await InternalPublicAuth(_authRequest).ConfigureAwait(false);
+  }
+
   /// <summary>
   ///   Disconnects from the server
   /// </summary>
   /// <returns>The task object representing the asynchronous operation.</returns>
   public async Task Disconnect(CancellationToken cancellationToken = default)
   {
-    if (_processMessageStreamTask is not null) {
+    if (_processMessageStreamTask is not null)
+    {
       _processMessageStreamCts?.Cancel();
       await Task.WhenAll(_processMessageStreamTask).ConfigureAwait(false);
     }
 
-    await _messageSource.Disconnect(null, null, cancellationToken).ConfigureAwait(false);
+    await _messageSource.Disconnect(cancellationToken).ConfigureAwait(false);
 
     _authRequest = null;
     _authRequestSignatureData = null;
     AccessToken = null;
     RefreshToken = null;
 
-    Disconnected?.Invoke(this, new DeribitClientDisconnectedEventArgs(_messageSource.CloseStatus, _messageSource.CloseStatusDescription, _messageSource.Exception));
+    Disconnected?.Invoke(this, EventArgs.Empty);
   }
 
   internal async Task<JsonRpcResponse<T>> Send<T>(string method, object? @params, IJsonConverter<T> converter, CancellationToken cancellationToken = default)
@@ -196,8 +199,10 @@ public partial class DeribitClient
 
   private async Task ProcessMessageStream(CancellationToken cancellationToken)
   {
-    try {
-      await foreach (var message in _messageSource.GetMessageStream(cancellationToken).ConfigureAwait(false)) {
+    try
+    {
+      await foreach (var message in _messageSource.GetMessageStream(cancellationToken).ConfigureAwait(false))
+      {
         if (JsonConvert.DeserializeObject(message) is not JObject jObject)
           continue;
 
@@ -207,12 +212,15 @@ public partial class DeribitClient
           InternalOnResponseReceived(message, jObject);
       }
     }
-    catch (TaskCanceledException) {
+    catch (TaskCanceledException)
+    {
       //ignore - just exit
     }
-
-    if (_messageSource.Exception is not null)
-      await Disconnect(CancellationToken.None).ConfigureAwait(false);
+    catch (Exception)
+    {
+      // TODO: Start reconnect procedure
+      //await ReConnect(CancellationToken.None).ConfigureAwait(false);
+    }
   }
 
   private void InternalOnRequestReceived(JObject requestObject)
@@ -238,7 +246,8 @@ public partial class DeribitClient
     if (response.Id <= 0)
       return;
 
-    if (!_requestTaskSourceMap.TryRemove(response.Id, out var request, out var taskSource)) {
+    if (!_requestTaskSourceMap.TryRemove(response.Id, out var request, out var taskSource))
+    {
       _logger?.Error("Could not find request id {RequestId}", response.Id);
       return;
     }
@@ -271,8 +280,10 @@ public partial class DeribitClient
       _ =>
       {
         var result = ((IAuthenticationMethods)this).WithRefreshToken().GetAwaiter().GetResult();
+
         if (result.Data is not null)
           EnqueueAuthRefresh(result.Data.ExpiresIn);
-      });
+      }
+    );
   }
 }

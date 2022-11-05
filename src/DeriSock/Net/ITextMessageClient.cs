@@ -1,46 +1,25 @@
-namespace DeriSock.Net.JsonRpc;
+namespace DeriSock.Net;
 
 using System;
 using System.Collections.Generic;
-using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
 
 /// <inheritdoc />
 /// <summary>
-///   <see cref="IJsonRpcMessageSource" /> defines the contract for a JSON-RPC message source.
+///   <see cref="ITextMessageClient" /> defines the contract for a JSON-RPC message source.
 /// </summary>
-public interface IJsonRpcMessageSource : IAsyncDisposable
+public interface ITextMessageClient : IAsyncDisposable
 {
   /// <summary>
-  /// Occurs whenever the <see cref="IJsonRpcMessageSource"/> has successfully connected to the remote host.
+  ///   Gets, if the <see cref="ITextMessageClient" /> is connected with the endpoint and ready to operate.
   /// </summary>
-  public event EventHandler Connected;
+  public bool IsConnected { get; }
 
   /// <summary>
-  ///   Gets the WebSocket state.
+  ///   Connects to the endpoint.
   /// </summary>
-  public WebSocketState State { get; }
-
-  /// <summary>
-  ///   The WebSocket close status.
-  /// </summary>
-  public WebSocketCloseStatus? CloseStatus { get; }
-
-  /// <summary>
-  ///   The close status description.
-  /// </summary>
-  public string? CloseStatusDescription { get; }
-
-  /// <summary>
-  ///   In case of an error, the exception that occured.
-  /// </summary>
-  public Exception? Exception { get; }
-
-  /// <summary>
-  ///   Connects to the provided endpoint.
-  /// </summary>
-  /// <param name="endpoint">The JSON-RPC endpoint Uri.</param>
+  /// <param name="endpoint">The endpoint to connect to.</param>
   /// <param name="cancellationToken">A cancellation token used to propagate notification that the operation should be canceled.</param>
   /// <returns>The task object representing the asynchronous operation.</returns>
   Task Connect(Uri endpoint, CancellationToken cancellationToken = default);
@@ -48,14 +27,12 @@ public interface IJsonRpcMessageSource : IAsyncDisposable
   /// <summary>
   ///   Disconnects from the endpoint.
   /// </summary>
-  /// <param name="closeStatus">The WebSocket close status.</param>
-  /// <param name="closeStatusDescription">A description of the close status.</param>
   /// <param name="cancellationToken">A cancellation token used to propagate notification that the operation should be canceled.</param>
   /// <returns>The task object representing the asynchronous operation.</returns>
-  Task Disconnect(WebSocketCloseStatus? closeStatus, string? closeStatusDescription, CancellationToken cancellationToken);
+  Task Disconnect(CancellationToken cancellationToken);
 
   /// <summary>
-  ///   Sends a JSON-RPC message to the underlying endpoint.
+  ///   Sends a message to the endpoint.
   /// </summary>
   /// <param name="message">The pre-built message that will be sent to the endpoint.</param>
   /// <param name="cancellationToken">A cancellation token used to propagate notification that the operation should be canceled.</param>
@@ -63,7 +40,7 @@ public interface IJsonRpcMessageSource : IAsyncDisposable
   Task Send(string message, CancellationToken cancellationToken = default);
 
   /// <summary>
-  ///   Gets an asynchroneous stream that returns messages as they arrive from the endpoint.
+  ///   Gets an asynchroneous stream of messages as they arrive from the endpoint.
   /// </summary>
   /// <param name="cancellationToken">A cancellation token used to propagate notification that the operation should be canceled.</param>
   /// <returns>The asynchroneous stream of messages.</returns>
