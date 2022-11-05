@@ -6,6 +6,7 @@ on:
       - main
     tags-ignore:
       - v*
+
   pull_request:
     branches:
       - main
@@ -20,23 +21,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-      
-    - name: Setup dotnet
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: |
-          3.1.x
-          5.0.x
-          6.0.x
+    - uses: actions/checkout@v3
 
-    - name: Restore packages
-      run: |
-        dotnet restore src/DeriSock
-#        dotnet restore src/DeriSock.Tests.Integration
+    - uses: actions/cache@v3
+      id: nuget-package-cache
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+        restore-keys: ${{ runner.os }}-nuget-
+
+    - if: steps.nuget-package-cache.outputs.cache-hit != 'true'
+      run: dotnet restore ${{ env.PROJECT_PATH }}
         
-    - name: Build project
+    - name: Build project(s)
       run: |
         dotnet build --no-restore --configuration Release src/DeriSock
 #        dotnet build --no-restore --configuration Release src/DeriSock.Tests.Integration

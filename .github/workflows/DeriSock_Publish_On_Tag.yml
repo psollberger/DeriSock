@@ -19,26 +19,24 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
+    - uses: actions/checkout@v3
 
-    - name: Setup dotnet
-      uses: actions/setup-dotnet@v3
+    - uses: actions/cache@v3
+      id: nuget-package-cache
       with:
-        dotnet-version: |
-          6.0.x
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+        restore-keys: ${{ runner.os }}-nuget-
 
-    - name: Restore packages
+    - if: steps.nuget-package-cache.outputs.cache-hit != 'true'
       run: dotnet restore ${{ env.PROJECT_PATH }}
 
-    - name: Build project
-      run: dotnet build ${{ env.PROJECT_PATH }} --no-restore --configuration Release
+    - run: dotnet build ${{ env.PROJECT_PATH }} --no-restore --configuration Release
 
-    - name: Get version
+    - uses: battila7/get-version-action@v2
       id: version
-      uses: battila7/get-version-action@v2
 
-    - name: Pack project
+    - name: Create NuGet package
       run: dotnet pack ${{ env.PROJECT_PATH }} --no-restore --no-build --configuration Release
              --include-symbols
              -p:PackageVersion=${{ steps.version.outputs.version-without-v }}
@@ -46,5 +44,5 @@ jobs:
              -p:RepositoryCommit=${{ github.sha }}
              --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
 
-    - name: Push package
+    - name: Push NuGet package
       run: dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg -k ${{ secrets.NUGET_KEY }} -s ${{ env.NUGET_SOURCE_URL }}
