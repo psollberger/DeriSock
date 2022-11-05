@@ -31,7 +31,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "10_Projects", "10_Projects"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeriSock.Tests.Unit", "test\DeriSock.Tests.Unit\DeriSock.Tests.Unit.csproj", "{87047B3C-2334-48BD-9579-61F6FD2F3DAE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeriSock.Tests.WebSocketConsole", "test\DeriSock.Tests.WebSocketConsole\DeriSock.Tests.WebSocketConsole.csproj", "{A3B2D42C-A4DA-4B74-A792-7F80AAA91840}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeriSock.Tests.DeribitApiMock", "test\DeriSock.Tests.DeribitApiMock\DeriSock.Tests.DeribitApiMock.csproj", "{A3B2D42C-A4DA-4B74-A792-7F80AAA91840}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
