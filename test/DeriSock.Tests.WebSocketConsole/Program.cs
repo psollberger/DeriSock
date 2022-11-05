@@ -50,7 +50,7 @@ public static class Program
         MethodNameTransform = clrMethodName => clrMethodName.ToLowerInvariant()
       };
 
-      rpc.AddLocalRpcTarget(new Supporting(), targetOptions);
+      rpc.AddLocalRpcTarget(new DeribitApiMock(webSocketContext.WebSocket, rpc), targetOptions);
 
       rpc.StartListening();
       await rpc.Completion;
