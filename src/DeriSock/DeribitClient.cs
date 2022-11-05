@@ -179,9 +179,7 @@ public partial class DeribitClient
       _processMessageStreamTask = Task.Factory.StartNew(async () => await ProcessMessageStream(_processMessageStreamCts.Token).ConfigureAwait(false), TaskCreationOptions.LongRunning);
 
       await ReAuthenticateOnReConnect().ConfigureAwait(false);
-
-      // TODO: Re-Subscribe to Notifications
-      //_subscriptionManager.Clear();
+      await _subscriptionManager.ReSubscribeAll().ConfigureAwait(false);
 
       ConnectionRestored?.Invoke(this, EventArgs.Empty);
     }

@@ -45,7 +45,8 @@ internal class SubscriptionManager
     var response = await _client.Send(
                      $"{subscriptionScope}/subscribe",
                      new { channels = channelNames },
-                     new ListJsonConverter<string>()).ConfigureAwait(false);
+                     new ListJsonConverter<string>()
+                   ).ConfigureAwait(false);
 
     // Updating the list of subscribed channels in the map entry
     if (response.Data is not null)
@@ -58,7 +59,8 @@ internal class SubscriptionManager
   {
     StreamInfo? streamInfo;
 
-    lock (_streamMap) {
+    lock (_streamMap)
+    {
       streamInfo = _streamMap.FirstOrDefault(x => ReferenceEquals(x.Stream, stream));
 
       if (streamInfo is null)
@@ -79,7 +81,8 @@ internal class SubscriptionManager
         {
           abandonedChannels
         },
-        new ListJsonConverter<string>()).ConfigureAwait(false);
+        new ListJsonConverter<string>()
+      ).ConfigureAwait(false);
   }
 
   private IEnumerable<INotificationStream> GetChannelStreams(string channelName)
@@ -92,6 +95,55 @@ internal class SubscriptionManager
   {
     lock (_streamMap)
       return channels.Where(channel => _streamMap.All(streamInfo => !streamInfo.Channels.Contains(channel)));
+  }
+
+  private IEnumerable<string> GetDistinctChannels()
+  {
+    var channelList = new List<string>();
+
+    lock (_streamMap)
+    {
+      foreach (var channels in _streamMap.Select(si => si.Channels))
+        channelList.AddRange(channels);
+    }
+
+    return channelList.Distinct();
+  }
+
+  public async Task ReSubscribeAll()
+  {
+    lock (_streamMap)
+    {
+      if (_streamMap.Count < 1)
+        return;
+    }
+
+    var channelNames = GetDistinctChannels().ToArray();
+    var subscriptionScope = _client.IsAuthenticated ? "private" : "public";
+
+    // Channels need to be partitioned, so that they don't exceed the 32 kB frame limit
+    var nextChannelNamesIndexToProcess = 0;
+    var channelNamesPartition = new List<string>(channelNames.Length);
+
+    while (nextChannelNamesIndexToProcess < channelNames.Length)
+    {
+      channelNamesPartition.Clear();
+
+      var totalChars = 0;
+
+      while (totalChars < 30_000)
+      {
+        var channelName = channelNames[nextChannelNamesIndexToProcess++];
+        channelNamesPartition.Add(channelName);
+        totalChars += channelName.Length;
+      }
+
+      await _client.Send(
+        $"{subscriptionScope}/subscribe",
+        new { channels = channelNamesPartition },
+        new ListJsonConverter<string>()
+      ).ConfigureAwait(false);
+    }
   }
 
   public void Clear()
