@@ -2,11 +2,11 @@
 // ReSharper disable InheritdocConsiderUsage
 
 // ReSharper disable MemberCanBePrivate.Global
+
 namespace DeriSock;
 
 using System;
 using System.Diagnostics;
-using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -44,7 +44,15 @@ public partial class DeribitClient
   /// </summary>
   public event EventHandler? Disconnected;
 
-  // TODO: Add events ConnectionLost and ConnectionRestored
+  /// <summary>
+  ///   Occurs when the connection is lost unexpectedly.
+  /// </summary>
+  public event EventHandler? ConnectionLost;
+
+  /// <summary>
+  ///   Occurs when an unexpectedly lost connection is restored.
+  /// </summary>
+  public event EventHandler? ConnectionRestored;
 
   private readonly ILogger? _logger;
   private readonly JsonRpcRequestTaskSourceMap _requestTaskSourceMap = new();
@@ -52,6 +60,7 @@ public partial class DeribitClient
 
   private readonly Uri _endpointUri;
   private readonly ITextMessageClient _messageSource;
+  private readonly SemaphoreSlim _reconnectLock = new(1, 1);
 
   private CancellationTokenSource? _processMessageStreamCts;
   private Task? _processMessageStreamTask;
@@ -106,9 +115,6 @@ public partial class DeribitClient
   /// <returns>The task object representing the asynchronous operation.</returns>
   public async Task Connect(CancellationToken cancellationToken = default)
   {
-    await _messageSource.Connect(_endpointUri, cancellationToken).ConfigureAwait(false);
-    await AfterConnect().ConfigureAwait(false);
-
     _authRequest = null;
     _authRequestSignatureData = null;
     AccessToken = null;
@@ -116,30 +122,12 @@ public partial class DeribitClient
 
     _subscriptionManager.Clear();
 
+    await _messageSource.Connect(_endpointUri, cancellationToken).ConfigureAwait(false);
+
     _processMessageStreamCts = new CancellationTokenSource();
     _processMessageStreamTask = Task.Factory.StartNew(async () => await ProcessMessageStream(_processMessageStreamCts.Token).ConfigureAwait(false), TaskCreationOptions.LongRunning);
 
     Connected?.Invoke(this, EventArgs.Empty);
-  }
-
-  private async Task AfterConnect()
-  {
-    if (_authRequest is null)
-      return;
-
-    if (_authRequest.GrantType == GrantType.ClientSignature)
-    {
-      if (_authRequestSignatureData is null)
-      {
-        _authRequest = null;
-        return;
-      }
-
-      _authRequestSignatureData.Refresh();
-      _authRequestSignatureData.Apply(_authRequest);
-    }
-
-    await InternalPublicAuth(_authRequest).ConfigureAwait(false);
   }
 
   /// <summary>
@@ -162,6 +150,65 @@ public partial class DeribitClient
     RefreshToken = null;
 
     Disconnected?.Invoke(this, EventArgs.Empty);
+  }
+
+  private async Task ReConnect()
+  {
+    if (_reconnectLock.CurrentCount < 1)
+      return;
+
+    if (!await _reconnectLock.WaitAsync(1).ConfigureAwait(false))
+      return;
+
+    try
+    {
+      ConnectionLost?.Invoke(this, EventArgs.Empty);
+
+      if (_processMessageStreamTask is not null)
+      {
+        _processMessageStreamCts?.Cancel();
+        await Task.WhenAll(_processMessageStreamTask).ConfigureAwait(false);
+      }
+
+      AccessToken = null;
+      RefreshToken = null;
+
+      await _messageSource.Connect(_endpointUri).ConfigureAwait(false);
+
+      _processMessageStreamCts = new CancellationTokenSource();
+      _processMessageStreamTask = Task.Factory.StartNew(async () => await ProcessMessageStream(_processMessageStreamCts.Token).ConfigureAwait(false), TaskCreationOptions.LongRunning);
+
+      await ReAuthenticateOnReConnect().ConfigureAwait(false);
+
+      // TODO: Re-Subscribe to Notifications
+      //_subscriptionManager.Clear();
+
+      ConnectionRestored?.Invoke(this, EventArgs.Empty);
+    }
+    finally
+    {
+      _reconnectLock.Release();
+    }
+  }
+
+  private async Task ReAuthenticateOnReConnect()
+  {
+    if (_authRequest is null)
+      return;
+
+    if (_authRequest.GrantType == GrantType.ClientSignature)
+    {
+      if (_authRequestSignatureData is null)
+      {
+        _authRequest = null;
+        return;
+      }
+
+      _authRequestSignatureData.Refresh();
+      _authRequestSignatureData.Apply(_authRequest);
+    }
+
+    await InternalPublicAuth(_authRequest).ConfigureAwait(false);
   }
 
   internal async Task<JsonRpcResponse<T>> Send<T>(string method, object? @params, IJsonConverter<T> converter, CancellationToken cancellationToken = default)
@@ -218,8 +265,7 @@ public partial class DeribitClient
     }
     catch (Exception)
     {
-      // TODO: Start reconnect procedure
-      //await ReConnect(CancellationToken.None).ConfigureAwait(false);
+      await ReConnect().ConfigureAwait(false);
     }
   }
 
@@ -248,7 +294,7 @@ public partial class DeribitClient
 
     if (!_requestTaskSourceMap.TryRemove(response.Id, out var request, out var taskSource))
     {
-      _logger?.Error("Could not find request id {RequestId}", response.Id);
+      _logger?.Error("Could not find request id {RequestId}", request.Id);
       return;
     }
 
