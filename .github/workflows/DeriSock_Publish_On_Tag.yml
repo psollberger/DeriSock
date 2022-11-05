@@ -9,6 +9,7 @@ on:
       - v*
 
 env:
+  ContinuousIntegrationBuild: true
   PROJECT_PATH: src/DeriSock/DeriSock.csproj
   PACKAGE_OUTPUT_DIRECTORY: ${{ github.workspace }}/dist
   NUGET_SOURCE_URL: https://api.nuget.org/v3/index.json

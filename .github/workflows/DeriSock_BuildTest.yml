@@ -12,6 +12,9 @@ on:
     tags-ignore:
       - v*
 
+env:
+  ContinuousIntegrationBuild: true
+
 jobs:
   build_test:
     runs-on: ubuntu-latest
