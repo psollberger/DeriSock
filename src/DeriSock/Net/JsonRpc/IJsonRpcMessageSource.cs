@@ -40,8 +40,8 @@ public interface IJsonRpcMessageSource : IAsyncDisposable
   /// <summary>
   ///   Connects to the provided endpoint.
   /// </summary>
-  /// <param name="endpoint">The endpoint with wich JSON-RPC messages are exchanged.</param>
-  /// <param name="cancellationToken">A cancellation token used to propagate notification that the  operation should be canceled.</param>
+  /// <param name="endpoint">The JSON-RPC endpoint Uri.</param>
+  /// <param name="cancellationToken">A cancellation token used to propagate notification that the operation should be canceled.</param>
   /// <returns>The task object representing the asynchronous operation.</returns>
   Task Connect(Uri endpoint, CancellationToken cancellationToken = default);
 
@@ -50,7 +50,7 @@ public interface IJsonRpcMessageSource : IAsyncDisposable
   /// </summary>
   /// <param name="closeStatus">The WebSocket close status.</param>
   /// <param name="closeStatusDescription">A description of the close status.</param>
-  /// <param name="cancellationToken">A cancellation token used to propagate notification that the  operation should be canceled.</param>
+  /// <param name="cancellationToken">A cancellation token used to propagate notification that the operation should be canceled.</param>
   /// <returns>The task object representing the asynchronous operation.</returns>
   Task Disconnect(WebSocketCloseStatus? closeStatus, string? closeStatusDescription, CancellationToken cancellationToken);
 
@@ -58,14 +58,14 @@ public interface IJsonRpcMessageSource : IAsyncDisposable
   ///   Sends a JSON-RPC message to the underlying endpoint.
   /// </summary>
   /// <param name="message">The pre-built message that will be sent to the endpoint.</param>
-  /// <param name="cancellationToken">A cancellation token used to propagate notification that the  operation should be canceled.</param>
+  /// <param name="cancellationToken">A cancellation token used to propagate notification that the operation should be canceled.</param>
   /// <returns>The task object representing the asynchronous operation.</returns>
   Task Send(string message, CancellationToken cancellationToken = default);
 
   /// <summary>
   ///   Gets an asynchroneous stream that returns messages as they arrive from the endpoint.
   /// </summary>
-  /// <param name="cancellationToken">A cancellation token used to propagate notification that the  operation should be canceled.</param>
+  /// <param name="cancellationToken">A cancellation token used to propagate notification that the operation should be canceled.</param>
   /// <returns>The asynchroneous stream of messages.</returns>
   IAsyncEnumerable<string> GetMessageStream(CancellationToken cancellationToken = default);
 }
