@@ -1,6 +1,3 @@
-# reference: https://github.com/SingletonSean/wpf-mvvm-password-box/blob/master/.github/workflows/nuget.yml
-# https://www.youtube.com/watch?v=cUrrdAVmo4I
-
 name: "Deploy to NuGet"
 
 on:
@@ -10,7 +7,6 @@ on:
 
 env:
   ContinuousIntegrationBuild: true
-  PROJECT_PATH: src/DeriSock/DeriSock.csproj
   PACKAGE_OUTPUT_DIRECTORY: ${{ github.workspace }}/dist
   NUGET_SOURCE_URL: https://api.nuget.org/v3/index.json
 
@@ -33,13 +29,13 @@ jobs:
       run: dotnet restore
 
     - name: dotnet build
-      run: dotnet build ${{ env.PROJECT_PATH }} --configuration Release
+      run: dotnet build src/DeriSock --configuration Release
 
     - uses: battila7/get-version-action@v2
       id: version
 
     - name: dotnet pack
-      run: dotnet pack ${{ env.PROJECT_PATH }} --no-restore --no-build --configuration Release
+      run: dotnet pack src/DeriSock --no-restore --no-build --configuration Release
              --include-symbols
              -p:PackageVersion=${{ steps.version.outputs.version-without-v }}
              -p:RepositoryBranch=${{ github.ref_name }}
