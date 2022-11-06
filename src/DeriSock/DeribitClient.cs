@@ -7,6 +7,7 @@ namespace DeriSock;
 
 using System;
 using System.Diagnostics;
+using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -164,6 +165,8 @@ public partial class DeribitClient
     {
       ConnectionLost?.Invoke(this, EventArgs.Empty);
 
+      _requestTaskSourceMap.CancelAndRemoveAll();
+
       if (_processMessageStreamTask is not null)
       {
         _processMessageStreamCts?.Cancel();
@@ -211,22 +214,57 @@ public partial class DeribitClient
 
   internal async Task<JsonRpcResponse<T>> Send<T>(string method, object? @params, IJsonConverter<T> converter, CancellationToken cancellationToken = default)
   {
-    var request = new JsonRpcRequest
+    var requestId = RequestIdGenerator.Next();
+    try
     {
-      Id = RequestIdGenerator.Next(),
-      Method = method,
-      Params = @params
-    };
+      try
+      {
+        var request = new JsonRpcRequest
+        {
+          Id = requestId,
+          Method = method,
+          Params = @params
+        };
 
-    _logger?.Verbose("Sending: {@Request}", request);
+        _logger?.Verbose("Sending: {@Request}", request);
 
-    var taskSource = new TaskCompletionSource<JsonRpcResponse>();
-    _requestTaskSourceMap.Add(request, taskSource);
+        var taskSource = new TaskCompletionSource<JsonRpcResponse>();
+        _requestTaskSourceMap.Add(request, taskSource);
+        await _messageSource.Send(JsonConvert.SerializeObject(request, Formatting.None, SerializationSettings), cancellationToken).ConfigureAwait(false);
+        var response = await taskSource.Task.ConfigureAwait(false);
+        return response.CreateTyped(converter.Convert(response.Result)!);
+      }
+      catch (SocketException sockEx) when (sockEx.SocketErrorCode == SocketError.ConnectionReset)
+      {
+        // In case of a connection reset during send, try re-connecting and send the request again
+        await ReConnect().ConfigureAwait(false);
 
-    await _messageSource.Send(JsonConvert.SerializeObject(request, Formatting.None, SerializationSettings), cancellationToken).ConfigureAwait(false);
+        if (!IsConnected)
+          throw;
 
-    var response = await taskSource.Task.ConfigureAwait(false);
-    return response.CreateTyped(converter.Convert(response.Result)!);
+        requestId = RequestIdGenerator.Next();
+
+        var request = new JsonRpcRequest
+        {
+          Id = requestId,
+          Method = method,
+          Params = @params
+        };
+
+        _logger?.Verbose("Re-Sending: {@Request}", request);
+
+        var taskSource = new TaskCompletionSource<JsonRpcResponse>();
+        _requestTaskSourceMap.Add(request, taskSource);
+        await _messageSource.Send(JsonConvert.SerializeObject(request, Formatting.None, SerializationSettings), cancellationToken).ConfigureAwait(false);
+        var response = await taskSource.Task.ConfigureAwait(false);
+        return response.CreateTyped(converter.Convert(response.Result)!);
+      }
+    }
+    catch (Exception)
+    {
+      _requestTaskSourceMap.TryRemove(requestId, out var _, out var _);
+      throw;
+    }
   }
 
   private void SendSync(string method, object? @params)

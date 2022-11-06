@@ -131,7 +131,7 @@ internal class SubscriptionManager
 
       var totalChars = 0;
 
-      while (totalChars < 30_000)
+      while (nextChannelNamesIndexToProcess < channelNames.Length && totalChars < 30_000)
       {
         var channelName = channelNames[nextChannelNamesIndexToProcess++];
         channelNamesPartition.Add(channelName);

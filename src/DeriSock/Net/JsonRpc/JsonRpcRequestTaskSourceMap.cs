@@ -52,4 +52,16 @@ public class JsonRpcRequestTaskSourceMap
     _taskSources.Clear();
     _requestObjects.Clear();
   }
+
+  /// <summary>
+  ///   Cancels all entries and removes them from the map.
+  /// </summary>
+  public void CancelAndRemoveAll()
+  {
+    foreach (var kvp in _taskSources)
+      kvp.Value.SetCanceled();
+
+    _taskSources.Clear();
+    _requestObjects.Clear();
+  }
 }

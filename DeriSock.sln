@@ -8,6 +8,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "00_Solution Items", "00_Sol
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		README.source.md = README.source.md
+		Directory.Build.props = Directory.Build.props
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeriSock.DevTools", "src\DeriSock.DevTools\DeriSock.DevTools.csproj", "{52039A26-3E09-4D04-8CCE-296ECF4645C2}"
