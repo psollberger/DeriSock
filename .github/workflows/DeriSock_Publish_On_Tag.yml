@@ -28,21 +28,23 @@ jobs:
         key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
         restore-keys: ${{ runner.os }}-nuget-
 
-    - if: steps.nuget-package-cache.outputs.cache-hit != 'true'
+    - name: dotnet restore
+      if: steps.nuget-package-cache.outputs.cache-hit != 'true'
       run: dotnet restore ${{ env.PROJECT_PATH }}
 
-    - run: dotnet build ${{ env.PROJECT_PATH }} --no-restore --configuration Release
+    - name: dotnet build
+      run: dotnet build src/DeriSock --configuration Release
 
     - uses: battila7/get-version-action@v2
       id: version
 
-    - name: Create NuGet package
-      run: dotnet pack ${{ env.PROJECT_PATH }} --no-restore --no-build --configuration Release
+    - name: dotnet pack
+      run: dotnet pack src/DeriSock --no-restore --no-build --configuration Release
              --include-symbols
              -p:PackageVersion=${{ steps.version.outputs.version-without-v }}
              -p:RepositoryBranch=${{ github.ref_name }}
              -p:RepositoryCommit=${{ github.sha }}
              --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
 
-    - name: Push NuGet package
+    - name: dotnet nuget push
       run: dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg -k ${{ secrets.NUGET_KEY }} -s ${{ env.NUGET_SOURCE_URL }}

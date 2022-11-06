@@ -30,13 +30,13 @@ jobs:
         key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
         restore-keys: ${{ runner.os }}-nuget-
 
-    - if: steps.nuget-package-cache.outputs.cache-hit != 'true'
+    - name: dotnet restore
+      if: steps.nuget-package-cache.outputs.cache-hit != 'true'
       run: dotnet restore ${{ env.PROJECT_PATH }}
-        
-    - name: Build project(s)
-      run: |
-        dotnet build --no-restore --configuration Release src/DeriSock
-#        dotnet build --no-restore --configuration Release src/DeriSock.Tests.Integration
 
-#    - name: Run Tests
-#      run: dotnet test --no-restore src/DeriSock.Tests.Integration
+    - name: dotnet build
+      run: dotnet build src/DeriSock --configuration Release
+
+    - name: dotnet test
+      run: |
+        dotnet test src/DeriSock.Tests.Unit --configuration Release
