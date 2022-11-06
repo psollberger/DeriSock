@@ -30,16 +30,16 @@ jobs:
 
     - name: dotnet restore
       if: steps.nuget-package-cache.outputs.cache-hit != 'true'
-      run: dotnet restore ${{ env.PROJECT_PATH }}
+      run: dotnet restore
 
     - name: dotnet build
-      run: dotnet build src/DeriSock --configuration Release
+      run: dotnet build ${{ env.PROJECT_PATH }} --configuration Release
 
     - uses: battila7/get-version-action@v2
       id: version
 
     - name: dotnet pack
-      run: dotnet pack src/DeriSock --no-restore --no-build --configuration Release
+      run: dotnet pack ${{ env.PROJECT_PATH }} --no-restore --no-build --configuration Release
              --include-symbols
              -p:PackageVersion=${{ steps.version.outputs.version-without-v }}
              -p:RepositoryBranch=${{ github.ref_name }}
