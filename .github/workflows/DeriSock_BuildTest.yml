@@ -6,37 +6,37 @@ on:
       - main
     tags-ignore:
       - v*
+
   pull_request:
     branches:
       - main
     tags-ignore:
       - v*
 
+env:
+  ContinuousIntegrationBuild: true
+
 jobs:
   build_test:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-      
-    - name: Setup dotnet
-      uses: actions/setup-dotnet@v3
+    - uses: actions/checkout@v3
+
+    - uses: actions/cache@v3
+      id: nuget-package-cache
       with:
-        dotnet-version: |
-          3.1.x
-          5.0.x
-          6.0.x
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+        restore-keys: ${{ runner.os }}-nuget-
 
-    - name: Restore packages
-      run: |
-        dotnet restore src/DeriSock
-#        dotnet restore src/DeriSock.Tests.Integration
-        
-    - name: Build project
-      run: |
-        dotnet build --no-restore --configuration Release src/DeriSock
-#        dotnet build --no-restore --configuration Release src/DeriSock.Tests.Integration
+    - name: dotnet restore
+      if: steps.nuget-package-cache.outputs.cache-hit != 'true'
+      run: dotnet restore
 
-#    - name: Run Tests
-#      run: dotnet test --no-restore src/DeriSock.Tests.Integration
+    - name: dotnet build
+      run: dotnet build src/DeriSock --configuration Release
+
+    - name: dotnet test
+      run: |
+        dotnet test tests/DeriSock.Tests.Unit --configuration Release

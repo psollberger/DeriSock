@@ -1,0 +1,34 @@
+<Project>
+  <PropertyGroup Label="Build Default">
+    <MySolutionDir>$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)))</MySolutionDir>
+    <MyBuildDir>$(MySolutionDir)\bld</MyBuildDir>
+
+    <AppendTargetFrameworkToOutputPath>true</AppendTargetFrameworkToOutputPath>
+
+    <Platform Condition="'$(Platform)'==''">AnyCPU</Platform>
+    <Configuration Condition="'$(Configuration)'==''">Debug</Configuration>
+    <Deterministic>true</Deterministic>
+
+    <SolutionDir Condition="'$(SolutionDir)'=='' Or $(SolutionDir) == '*Undefined*'">$(MySolutionDir)</SolutionDir>
+    <MSBuildProjectExtensionsPath>$(MyBuildDir)\msbuild\$(MSBuildProjectName)\</MSBuildProjectExtensionsPath>
+    <BaseOutputPath>$(MyBuildDir)\bin\</BaseOutputPath>
+    <BaseIntermediateOutputPath>$(MyBuildDir)\obj\</BaseIntermediateOutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Label="AssemblyInfo">
+    <!-- See: https://docs.microsoft.com/en-us/dotnet/core/project-sdk/msbuild-props#generateassemblyinfo -->
+    <Authors>Patrick Sollberger</Authors>
+    <Copyright>Copyright (c) Patrick Sollberger</Copyright>
+
+    <IncludeSourceRevisionInInformationalVersion>true</IncludeSourceRevisionInInformationalVersion>
+    <NeutralLanguage>en</NeutralLanguage>
+
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <RestoreLockedMode Condition="'$(ContinuousIntegrationBuild)' == 'true'">true</RestoreLockedMode>
+
+    <VersionSuffix Condition="'$(Configuration)' == 'Debug'">dev</VersionSuffix>
+    <VersionSuffix Condition="'$(VersionSuffix)' == '' And '$(VcsBranch)' != '' And '$(VcsBranch)' != 'main'">$(VcsBranch)</VersionSuffix>
+    <SourceRevisionId Condition="'$(VcsRevisionId)' != ''">$(VcsRevisionId)</SourceRevisionId>
+  </PropertyGroup>
+</Project>

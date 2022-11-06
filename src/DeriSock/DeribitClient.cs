@@ -1,11 +1,13 @@
 // ReSharper disable UnusedMember.Local
 // ReSharper disable InheritdocConsiderUsage
 
+// ReSharper disable MemberCanBePrivate.Global
+
 namespace DeriSock;
 
 using System;
 using System.Diagnostics;
-using System.Net.WebSockets;
+using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,6 +15,7 @@ using DeriSock.Api;
 using DeriSock.Constants;
 using DeriSock.Converter;
 using DeriSock.Model;
+using DeriSock.Net;
 using DeriSock.Net.JsonRpc;
 using DeriSock.Utils;
 
@@ -38,16 +41,42 @@ public partial class DeribitClient
   public event EventHandler? Connected;
 
   /// <summary>
-  ///   Occurs after client lost the connection with the endpoint.
+  ///   Occurs after client disconnected from the endpoint.
   /// </summary>
-  public event EventHandler<DeribitClientDisconnectedEventArgs>? Disconnected;
+  public event EventHandler? Disconnected;
+
+  /// <summary>
+  ///   Occurs when the connection is lost unexpectedly.
+  /// </summary>
+  public event EventHandler? ConnectionLost;
+
+  /// <summary>
+  ///   Occurs when an unexpectedly lost connection is restored.
+  /// </summary>
+  public event EventHandler? ConnectionRestored;
+
+  /// <summary>
+  /// Gets or sets, how much time must have been passed before trying to connect again.
+  /// </summary>
+  public TimeSpan ReConnectDelay { get; set; } = TimeSpan.FromSeconds(1);
+
+  /// <summary>
+  /// Gets or sets, how much the <see cref="ReConnectDelay"/> will be increased on each re-connect attempt.
+  /// </summary>
+  public double ReConnectDelayIncreaseFactor { get; set; } = 2.0;
+
+  /// <summary>
+  /// Gets or sets, how many times a re-connect will be tried before giving up.
+  /// </summary>
+  public int ReConnectMaxAttempts { get; set; } = 5;
 
   private readonly ILogger? _logger;
   private readonly JsonRpcRequestTaskSourceMap _requestTaskSourceMap = new();
   private readonly SubscriptionManager _subscriptionManager;
 
   private readonly Uri _endpointUri;
-  private readonly IJsonRpcMessageSource _messageSource;
+  private readonly ITextMessageClient _messageSource;
+  private readonly SemaphoreSlim _reconnectLock = new(1, 1);
 
   private CancellationTokenSource? _processMessageStreamCts;
   private Task? _processMessageStreamTask;
@@ -68,12 +97,7 @@ public partial class DeribitClient
   /// <summary>
   ///   Gets if the underlying message source is fully connected and ready to receive messages.
   /// </summary>
-  public bool IsConnected
-    => _messageSource.State switch
-    {
-      WebSocketState.Open => true,
-      _                   => false
-    };
+  public bool IsConnected => _messageSource.IsConnected;
 
   /// <summary>
   ///   Gets if the connection is authenticated (i.e. private methods can be called)
@@ -84,10 +108,10 @@ public partial class DeribitClient
   ///   Creates a new <see cref="DeribitClient" /> instance.
   /// </summary>
   /// <param name="endpointType">The endpoint type.</param>
-  /// <param name="messageSource">The message source. <c>null</c> to use <see cref="DefaultJsonRpcMessageSource" /></param>
+  /// <param name="messageSource">The message source. <c>null</c> to use <see cref="TextMessageWebSocketClient" /></param>
   /// <param name="logger">Optional implementation of the <see cref="ILogger" /> interface to enable logging capabilities.</param>
   /// <exception cref="ArgumentOutOfRangeException">Throws an exception if the <paramref name="endpointType" /> is not supported.</exception>
-  public DeribitClient(EndpointType endpointType, IJsonRpcMessageSource? messageSource = null, ILogger? logger = null)
+  public DeribitClient(EndpointType endpointType, ITextMessageClient? messageSource = null, ILogger? logger = null)
   {
     _endpointUri = endpointType switch
     {
@@ -96,26 +120,8 @@ public partial class DeribitClient
       _                       => throw new ArgumentOutOfRangeException(nameof(endpointType), endpointType, "Unsupported endpoint type")
     };
 
-    _messageSource = messageSource ?? new DefaultJsonRpcMessageSource(logger);
-    _messageSource.Connected += async (_, _) =>
-    {
-      if (_authRequest is null)
-        return;
-
-      if (_authRequest.GrantType == GrantType.ClientSignature) {
-        if (_authRequestSignatureData is null) {
-          _authRequest = null;
-          return;
-        }
-
-        _authRequestSignatureData.Refresh();
-        _authRequestSignatureData.Apply(_authRequest);
-      }
-
-      await InternalPublicAuth(_authRequest).ConfigureAwait(false);
-    };
+    _messageSource = messageSource ?? new TextMessageWebSocketClient(logger);
     _logger = logger;
-
     _subscriptionManager = new SubscriptionManager(this, _logger);
   }
 
@@ -125,14 +131,14 @@ public partial class DeribitClient
   /// <returns>The task object representing the asynchronous operation.</returns>
   public async Task Connect(CancellationToken cancellationToken = default)
   {
-    await _messageSource.Connect(_endpointUri, cancellationToken).ConfigureAwait(false);
-
     _authRequest = null;
     _authRequestSignatureData = null;
     AccessToken = null;
     RefreshToken = null;
 
     _subscriptionManager.Clear();
+
+    await _messageSource.Connect(_endpointUri, cancellationToken).ConfigureAwait(false);
 
     _processMessageStreamCts = new CancellationTokenSource();
     _processMessageStreamTask = Task.Factory.StartNew(async () => await ProcessMessageStream(_processMessageStreamCts.Token).ConfigureAwait(false), TaskCreationOptions.LongRunning);
@@ -146,39 +152,153 @@ public partial class DeribitClient
   /// <returns>The task object representing the asynchronous operation.</returns>
   public async Task Disconnect(CancellationToken cancellationToken = default)
   {
-    if (_processMessageStreamTask is not null) {
+    if (_processMessageStreamTask is not null)
+    {
       _processMessageStreamCts?.Cancel();
       await Task.WhenAll(_processMessageStreamTask).ConfigureAwait(false);
     }
 
-    await _messageSource.Disconnect(null, null, cancellationToken).ConfigureAwait(false);
+    await _messageSource.Disconnect(cancellationToken).ConfigureAwait(false);
 
     _authRequest = null;
     _authRequestSignatureData = null;
     AccessToken = null;
     RefreshToken = null;
 
-    Disconnected?.Invoke(this, new DeribitClientDisconnectedEventArgs(_messageSource.CloseStatus, _messageSource.CloseStatusDescription, _messageSource.Exception));
+    Disconnected?.Invoke(this, EventArgs.Empty);
+  }
+
+  private async Task ReConnect()
+  {
+    if (_reconnectLock.CurrentCount < 1)
+      return;
+
+    if (!await _reconnectLock.WaitAsync(1).ConfigureAwait(false))
+      return;
+
+    try
+    {
+      ConnectionLost?.Invoke(this, EventArgs.Empty);
+
+      var currentReConnectDelayFactor = 1.0;
+      var reConnectSuccess = false;
+      var reConnectAttempts = 0;
+
+      while (!reConnectSuccess && ++reConnectAttempts <= ReConnectMaxAttempts)
+      {
+        _requestTaskSourceMap.CancelAndRemoveAll();
+
+        if (_processMessageStreamTask is not null)
+        {
+          _processMessageStreamCts?.Cancel();
+          await Task.WhenAll(_processMessageStreamTask).ConfigureAwait(false);
+        }
+
+        AccessToken = null;
+        RefreshToken = null;
+
+        var delay = TimeSpan.FromTicks((long)(ReConnectDelay.Ticks * currentReConnectDelayFactor));
+        currentReConnectDelayFactor *= ReConnectDelayIncreaseFactor;
+        await Task.Delay(delay).ConfigureAwait(false);
+
+        try
+        {
+          await _messageSource.Connect(_endpointUri).ConfigureAwait(false);
+
+          _processMessageStreamCts = new CancellationTokenSource();
+          _processMessageStreamTask = Task.Factory.StartNew(async () => await ProcessMessageStream(_processMessageStreamCts.Token).ConfigureAwait(false), TaskCreationOptions.LongRunning);
+
+          await ReAuthenticateOnReConnect().ConfigureAwait(false);
+          await _subscriptionManager.ReSubscribeAll().ConfigureAwait(false);
+
+          ConnectionRestored?.Invoke(this, EventArgs.Empty);
+          reConnectSuccess = true;
+        }
+        catch (Exception)
+        {
+          // do nothing
+        }
+      }
+    }
+    finally
+    {
+      _reconnectLock.Release();
+    }
+  }
+
+  private async Task ReAuthenticateOnReConnect()
+  {
+    if (_authRequest is null)
+      return;
+
+    if (_authRequest.GrantType == GrantType.ClientSignature)
+    {
+      if (_authRequestSignatureData is null)
+      {
+        _authRequest = null;
+        return;
+      }
+
+      _authRequestSignatureData.Refresh();
+      _authRequestSignatureData.Apply(_authRequest);
+    }
+
+    await InternalPublicAuth(_authRequest).ConfigureAwait(false);
   }
 
   internal async Task<JsonRpcResponse<T>> Send<T>(string method, object? @params, IJsonConverter<T> converter, CancellationToken cancellationToken = default)
   {
-    var request = new JsonRpcRequest
+    var requestId = RequestIdGenerator.Next();
+    try
     {
-      Id = RequestIdGenerator.Next(),
-      Method = method,
-      Params = @params
-    };
+      try
+      {
+        var request = new JsonRpcRequest
+        {
+          Id = requestId,
+          Method = method,
+          Params = @params
+        };
 
-    _logger?.Verbose("Sending: {@Request}", request);
+        _logger?.Verbose("Sending: {@Request}", request);
 
-    var taskSource = new TaskCompletionSource<JsonRpcResponse>();
-    _requestTaskSourceMap.Add(request, taskSource);
+        var taskSource = new TaskCompletionSource<JsonRpcResponse>();
+        _requestTaskSourceMap.Add(request, taskSource);
+        await _messageSource.Send(JsonConvert.SerializeObject(request, Formatting.None, SerializationSettings), cancellationToken).ConfigureAwait(false);
+        var response = await taskSource.Task.ConfigureAwait(false);
+        return response.CreateTyped(converter.Convert(response.Result)!);
+      }
+      catch (SocketException sockEx) when (sockEx.SocketErrorCode == SocketError.ConnectionReset)
+      {
+        // In case of a connection reset during send, try re-connecting and send the request again
+        await ReConnect().ConfigureAwait(false);
 
-    await _messageSource.Send(JsonConvert.SerializeObject(request, Formatting.None, SerializationSettings), cancellationToken).ConfigureAwait(false);
+        if (!IsConnected)
+          throw;
 
-    var response = await taskSource.Task.ConfigureAwait(false);
-    return response.CreateTyped(converter.Convert(response.Result)!);
+        requestId = RequestIdGenerator.Next();
+
+        var request = new JsonRpcRequest
+        {
+          Id = requestId,
+          Method = method,
+          Params = @params
+        };
+
+        _logger?.Verbose("Re-Sending: {@Request}", request);
+
+        var taskSource = new TaskCompletionSource<JsonRpcResponse>();
+        _requestTaskSourceMap.Add(request, taskSource);
+        await _messageSource.Send(JsonConvert.SerializeObject(request, Formatting.None, SerializationSettings), cancellationToken).ConfigureAwait(false);
+        var response = await taskSource.Task.ConfigureAwait(false);
+        return response.CreateTyped(converter.Convert(response.Result)!);
+      }
+    }
+    catch (Exception)
+    {
+      _requestTaskSourceMap.TryRemove(requestId, out var _, out var _);
+      throw;
+    }
   }
 
   private void SendSync(string method, object? @params)
@@ -196,8 +316,10 @@ public partial class DeribitClient
 
   private async Task ProcessMessageStream(CancellationToken cancellationToken)
   {
-    try {
-      await foreach (var message in _messageSource.GetMessageStream(cancellationToken).ConfigureAwait(false)) {
+    try
+    {
+      await foreach (var message in _messageSource.GetMessageStream(cancellationToken).ConfigureAwait(false))
+      {
         if (JsonConvert.DeserializeObject(message) is not JObject jObject)
           continue;
 
@@ -207,12 +329,17 @@ public partial class DeribitClient
           InternalOnResponseReceived(message, jObject);
       }
     }
-    catch (TaskCanceledException) {
+    catch (TaskCanceledException)
+    {
       //ignore - just exit
     }
+    catch (Exception)
+    {
+      await ReConnect().ConfigureAwait(false);
 
-    if (_messageSource.Exception is not null)
-      await Disconnect(CancellationToken.None).ConfigureAwait(false);
+      if (!IsConnected)
+        throw;
+    }
   }
 
   private void InternalOnRequestReceived(JObject requestObject)
@@ -238,8 +365,9 @@ public partial class DeribitClient
     if (response.Id <= 0)
       return;
 
-    if (!_requestTaskSourceMap.TryRemove(response.Id, out var request, out var taskSource)) {
-      _logger?.Error("Could not find request id {RequestId}", response.Id);
+    if (!_requestTaskSourceMap.TryRemove(response.Id, out var request, out var taskSource))
+    {
+      _logger?.Error("Could not find request id {RequestId}", request.Id);
       return;
     }
 
@@ -271,8 +399,10 @@ public partial class DeribitClient
       _ =>
       {
         var result = ((IAuthenticationMethods)this).WithRefreshToken().GetAwaiter().GetResult();
+
         if (result.Data is not null)
           EnqueueAuthRefresh(result.Data.ExpiresIn);
-      });
+      }
+    );
   }
 }

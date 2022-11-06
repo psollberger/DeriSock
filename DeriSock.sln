@@ -8,6 +8,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "00_Solution Items", "00_Sol
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		README.source.md = README.source.md
+		Directory.Build.props = Directory.Build.props
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeriSock.DevTools", "src\DeriSock.DevTools\DeriSock.DevTools.csproj", "{52039A26-3E09-4D04-8CCE-296ECF4645C2}"
@@ -25,11 +26,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "20_Tests", "20_Tests", "{45D371F7-3267-4929-A020-B729E7A44E75}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeriSock.Tests.Integration", "test\DeriSock.Tests.Integration\DeriSock.Tests.Integration.csproj", "{7438F452-DD0F-4030-97FE-61BE65AB9282}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeriSock.Tests.Integration", "tests\DeriSock.Tests.Integration\DeriSock.Tests.Integration.csproj", "{7438F452-DD0F-4030-97FE-61BE65AB9282}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "10_Projects", "10_Projects", "{48164DAE-1C32-4346-AF5A-5E0DB9929D83}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeriSock.Tests.Unit", "test\DeriSock.Tests.Unit\DeriSock.Tests.Unit.csproj", "{87047B3C-2334-48BD-9579-61F6FD2F3DAE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeriSock.Tests.Unit", "tests\DeriSock.Tests.Unit\DeriSock.Tests.Unit.csproj", "{87047B3C-2334-48BD-9579-61F6FD2F3DAE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeriSock.Tests.DeribitApiMock", "tests\DeriSock.Tests.DeribitApiMock\DeriSock.Tests.DeribitApiMock.csproj", "{A3B2D42C-A4DA-4B74-A792-7F80AAA91840}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,6 +56,10 @@ Global
 		{87047B3C-2334-48BD-9579-61F6FD2F3DAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{87047B3C-2334-48BD-9579-61F6FD2F3DAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{87047B3C-2334-48BD-9579-61F6FD2F3DAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3B2D42C-A4DA-4B74-A792-7F80AAA91840}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3B2D42C-A4DA-4B74-A792-7F80AAA91840}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3B2D42C-A4DA-4B74-A792-7F80AAA91840}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3B2D42C-A4DA-4B74-A792-7F80AAA91840}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -64,6 +71,7 @@ Global
 		{4E520EB0-AA19-465D-9868-4E2D41D47C1E} = {81CCDC57-ACEE-4FE0-A31D-E73697397E06}
 		{7438F452-DD0F-4030-97FE-61BE65AB9282} = {45D371F7-3267-4929-A020-B729E7A44E75}
 		{87047B3C-2334-48BD-9579-61F6FD2F3DAE} = {45D371F7-3267-4929-A020-B729E7A44E75}
+		{A3B2D42C-A4DA-4B74-A792-7F80AAA91840} = {45D371F7-3267-4929-A020-B729E7A44E75}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CD743E2C-4534-4451-BAB6-B2F8CAD86EC9}
