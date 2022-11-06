@@ -7,24 +7,20 @@ using DeriSock.Model;
 using DeriSock.Net;
 using DeriSock.Utils;
 
-using FluentAssertions;
-
 // ReSharper disable once InconsistentNaming
 public sealed class DeribitClient_ConnectionHandling
 {
-  private static async IAsyncEnumerable<string> GetSingleResponseAsyncEnumerable(Func<Task<string>> responseFunc)
-  {
-    yield return await responseFunc.Invoke();
-  }
+  private bool _messageClientIsConnected;
+  private readonly ITextMessageClient _messageClient = Substitute.For<ITextMessageClient>();
+  private readonly DeribitClient _sut;
 
-  private static async IAsyncEnumerable<string> GetMultiResponseAsyncEnumerable(Func<Task<(bool, Func<string>)>> responseFunc)
+  public DeribitClient_ConnectionHandling()
   {
-    var more = true;
-    while (more)
-    {
-      (more, var result) = await responseFunc.Invoke();
-      yield return result.Invoke();
-    }
+    _sut = new DeribitClient(EndpointType.Testnet, _messageClient);
+
+    _messageClient.IsConnected.Returns(_ => _messageClientIsConnected);
+    _messageClient.When(x => x.Connect(Arg.Any<Uri>(), Arg.Any<CancellationToken>())).Do(_ => _messageClientIsConnected = true);
+    _messageClient.When(x => x.Disconnect(Arg.Any<CancellationToken>())).Do(_ => _messageClientIsConnected = true);
   }
 
   [Fact]
@@ -32,41 +28,29 @@ public sealed class DeribitClient_ConnectionHandling
   {
     // Arrange
     RequestIdGenerator.Reset();
-    var isConnected = false;
-    var abortionCount = 0;
-    var mockTextMessageClient = new Mock<ITextMessageClient>();
-    mockTextMessageClient.Setup(l => l.IsConnected).Returns(() => isConnected);
-    mockTextMessageClient.Setup(l => l.Connect(It.IsAny<Uri>(), It.IsAny<CancellationToken>())).Callback(() => { isConnected = true; });
-    mockTextMessageClient.Setup(l => l.Disconnect(It.IsAny<CancellationToken>())).Callback(() => { isConnected = false; });
 
-    mockTextMessageClient.Setup(
-      l => l.GetMessageStream(It.IsAny<CancellationToken>())
-    ).Returns(
-      () => GetSingleResponseAsyncEnumerable(
-        async () =>
-        {
-          await Task.Delay(10);
-
-          if (++abortionCount < 2)
-            throw new SocketException((int)SocketError.ConnectionAborted);
-
-          return string.Empty;
-        }
-      )
+    _messageClient.GetMessageStream(Arg.Any<CancellationToken>()).Returns(
+      Helpers.GetStringAsyncEnumerable((Func<Task<string>>)(() => throw new SocketException((int)SocketError.ConnectionAborted))),
+      Helpers.GetStringAsyncEnumerable(string.Empty)
     );
 
-    var client = new DeribitClient(EndpointType.Testnet, mockTextMessageClient.Object);
-
-    // Act
-    await client.Connect();
-    await Task.Delay(client.ReConnectDelay);
+    await _sut.Connect();
+    await Task.Delay(_sut.ReConnectDelay);
     await Task.Delay(20);
 
     // Assert
-    mockTextMessageClient.Verify(l => l.Connect(Endpoint.TestNet, It.IsAny<CancellationToken>()), Times.Exactly(2));
-    mockTextMessageClient.Verify(l => l.GetMessageStream(It.IsAny<CancellationToken>()), Times.Exactly(2));
-    mockTextMessageClient.Verify(l => l.IsConnected, Times.Once);
-    mockTextMessageClient.VerifyNoOtherCalls();
+    Received.InOrder(
+      () =>
+      {
+        _messageClient.Connect(Endpoint.TestNet, Arg.Any<CancellationToken>());
+        _messageClient.GetMessageStream(Arg.Any<CancellationToken>());
+        _messageClient.Connect(Endpoint.TestNet, Arg.Any<CancellationToken>());
+        _ = _messageClient.IsConnected;
+        _messageClient.GetMessageStream(Arg.Any<CancellationToken>());
+      }
+    );
+
+    _messageClient.ReceivedCalls().Should().HaveCount(5);
   }
 
   [Fact]
@@ -74,50 +58,44 @@ public sealed class DeribitClient_ConnectionHandling
   {
     // Arrange
     RequestIdGenerator.Reset();
-    var isConnected = false;
+
     var requestReceived = false;
-    var abortionCount = 0;
-    var mockTextMessageClient = new Mock<ITextMessageClient>();
-    mockTextMessageClient.Setup(l => l.IsConnected).Returns(() => isConnected);
-    mockTextMessageClient.Setup(l => l.Connect(It.IsAny<Uri>(), It.IsAny<CancellationToken>())).Callback(() => { isConnected = true; });
-    mockTextMessageClient.Setup(l => l.Disconnect(It.IsAny<CancellationToken>())).Callback(() => { isConnected = false; });
+    _messageClient.When(x => x.Send(Arg.Any<string>(), Arg.Any<CancellationToken>())).Do(_ => requestReceived = true);
 
-    mockTextMessageClient.Setup(l => l.Send(It.IsAny<string>(), It.IsAny<CancellationToken>())).Callback<string, CancellationToken>(
-      (_, _) => { requestReceived = true; }
+    _messageClient.GetMessageStream(Arg.Any<CancellationToken>()).Returns(
+      Helpers.GetStringAsyncEnumerable(
+        (Func<Task<string>>)(async () =>
+                              {
+                                while (!requestReceived)
+                                  await Task.Delay(1);
+
+                                throw new SocketException((int)SocketError.ConnectionAborted);
+                              })
+      ),
+      Helpers.GetStringAsyncEnumerable(string.Empty)
     );
-
-    mockTextMessageClient.Setup(
-      l => l.GetMessageStream(It.IsAny<CancellationToken>())
-    ).Returns(
-      () => GetSingleResponseAsyncEnumerable(
-        async () =>
-        {
-          while (!requestReceived)
-            await Task.Delay(1);
-
-          if (++abortionCount < 2)
-            throw new SocketException((int)SocketError.ConnectionAborted);
-
-          return string.Empty;
-        }
-      )
-    );
-
-    var client = new DeribitClient(EndpointType.Testnet, mockTextMessageClient.Object);
 
     // Act
-    await client.Connect();
-    var request = () => client.Supporting.PublicTest();
+    await _sut.Connect();
+    var request = () => _sut.Supporting.PublicTest();
     await request.Should().ThrowAsync<TaskCanceledException>();
-    await Task.Delay(client.ReConnectDelay);
+    await Task.Delay(_sut.ReConnectDelay);
     await Task.Delay(10);
 
     // Assert
-    mockTextMessageClient.Verify(l => l.Connect(Endpoint.TestNet, It.IsAny<CancellationToken>()), Times.Exactly(2));
-    mockTextMessageClient.Verify(l => l.GetMessageStream(It.IsAny<CancellationToken>()), Times.Exactly(2));
-    mockTextMessageClient.Verify(l => l.Send(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
-    mockTextMessageClient.Verify(l => l.IsConnected, Times.Once);
-    mockTextMessageClient.VerifyNoOtherCalls();
+    Received.InOrder(
+      () =>
+      {
+        _messageClient.Connect(Endpoint.TestNet, Arg.Any<CancellationToken>());
+        _messageClient.GetMessageStream(Arg.Any<CancellationToken>());
+        _messageClient.Send(Arg.Any<string>(), Arg.Any<CancellationToken>());
+        _messageClient.Connect(Endpoint.TestNet, Arg.Any<CancellationToken>());
+        _ = _messageClient.IsConnected;
+        _messageClient.GetMessageStream(Arg.Any<CancellationToken>());
+      }
+    );
+
+    _messageClient.ReceivedCalls().Should().HaveCount(6);
   }
 
   [Fact]
@@ -125,40 +103,32 @@ public sealed class DeribitClient_ConnectionHandling
   {
     // Arrange
     RequestIdGenerator.Reset();
-    var isConnected = false;
-    var mockTextMessageClient = new Mock<ITextMessageClient>();
-    mockTextMessageClient.Setup(l => l.IsConnected).Returns(() => isConnected);
-    mockTextMessageClient.Setup(l => l.Connect(It.IsAny<Uri>(), It.IsAny<CancellationToken>())).Callback(() => { isConnected = true; });
-    mockTextMessageClient.Setup(l => l.Disconnect(It.IsAny<CancellationToken>())).Callback(() => { isConnected = false; });
 
-    mockTextMessageClient.Setup(l => l.Send(It.IsAny<string>(), It.IsAny<CancellationToken>())).Callback<string, CancellationToken>(
-      (_, _) => throw new SocketException((int)SocketError.ConnectionAborted)
+    _messageClient.Send(Arg.Any<string>(), Arg.Any<CancellationToken>())
+      .Returns(
+        _ => throw new SocketException((int)SocketError.ConnectionAborted)
+      );
+
+    _messageClient.GetMessageStream(Arg.Any<CancellationToken>()).Returns(
+      Helpers.GetStringAsyncEnumerable(string.Empty)
     );
-
-    mockTextMessageClient.Setup(
-      l => l.GetMessageStream(It.IsAny<CancellationToken>())
-    ).Returns(
-      () => GetSingleResponseAsyncEnumerable(
-        async () =>
-        {
-          await Task.Delay(1);
-          return string.Empty;
-        }
-      )
-    );
-
-    var client = new DeribitClient(EndpointType.Testnet, mockTextMessageClient.Object);
 
     // Act
-    await client.Connect();
-    var request = async () => await client.Supporting.PublicTest();
+    await _sut.Connect();
+    var request = async () => await _sut.Supporting.PublicTest();
     await request.Should().ThrowAsync<SocketException>();
 
     // Assert
-    mockTextMessageClient.Verify(l => l.Connect(Endpoint.TestNet, It.IsAny<CancellationToken>()), Times.Once);
-    mockTextMessageClient.Verify(l => l.GetMessageStream(It.IsAny<CancellationToken>()), Times.Once);
-    mockTextMessageClient.Verify(l => l.Send(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
-    mockTextMessageClient.VerifyNoOtherCalls();
+    Received.InOrder(
+      () =>
+      {
+        _messageClient.Connect(Endpoint.TestNet, Arg.Any<CancellationToken>());
+        _messageClient.GetMessageStream(Arg.Any<CancellationToken>());
+        _messageClient.Send(Arg.Any<string>(), Arg.Any<CancellationToken>());
+      }
+    );
+
+    _messageClient.ReceivedCalls().Should().HaveCount(3);
   }
 
   [Fact]
@@ -166,45 +136,38 @@ public sealed class DeribitClient_ConnectionHandling
   {
     // Arrange
     RequestIdGenerator.Reset();
-    var isConnected = false;
-    var resetCount = 0;
-    var mockTextMessageClient = new Mock<ITextMessageClient>();
-    mockTextMessageClient.Setup(l => l.IsConnected).Returns(() => isConnected);
-    mockTextMessageClient.Setup(l => l.Connect(It.IsAny<Uri>(), It.IsAny<CancellationToken>())).Callback(() => { isConnected = true; });
-    mockTextMessageClient.Setup(l => l.Disconnect(It.IsAny<CancellationToken>())).Callback(() => { isConnected = false; });
 
-    mockTextMessageClient.Setup(l => l.Send(It.IsAny<string>(), It.IsAny<CancellationToken>())).Callback<string, CancellationToken>(
-      (_, _) =>
+    _messageClient.When(x => x.Send(Arg.Any<string>(), Arg.Any<CancellationToken>()))
+      .Do(
+        Callback
+          .First(_ => throw new SocketException((int)SocketError.ConnectionReset))
+          .ThenKeepDoing(_ => { })
+      );
+
+    _messageClient.GetMessageStream(Arg.Any<CancellationToken>()).Returns(
+      Helpers.GetStringAsyncEnumerable(string.Empty),
+      Helpers.GetStringAsyncEnumerable("{\"jsonrpc\": \"2.0\",\"id\": 2,\"testnet\": true,\"result\": {\"version\": \"1.2.26\"},\"usIn\": 1535043730126248,\"usOut\": 1535043730126250,\"usDiff\": 2}")
+    );
+
+    // Act
+    await _sut.Connect();
+    await _sut.Supporting.PublicTest();
+
+    // Assert
+    Received.InOrder(
+      () =>
       {
-        if (++resetCount < 2)
-          throw new SocketException((int)SocketError.ConnectionReset);
+        _messageClient.Connect(Endpoint.TestNet, Arg.Any<CancellationToken>());
+        _messageClient.GetMessageStream(Arg.Any<CancellationToken>());
+        _messageClient.Send(Arg.Any<string>(), Arg.Any<CancellationToken>());
+        _messageClient.Connect(Endpoint.TestNet, Arg.Any<CancellationToken>());
+        _ = _messageClient.IsConnected;
+        _messageClient.GetMessageStream(Arg.Any<CancellationToken>());
+        _messageClient.Send(Arg.Any<string>(), Arg.Any<CancellationToken>());
       }
     );
 
-    mockTextMessageClient.Setup(
-      l => l.GetMessageStream(It.IsAny<CancellationToken>())
-    ).Returns(
-      () => GetSingleResponseAsyncEnumerable(
-        async () =>
-        {
-          await Task.Delay(1);
-          return "{\"jsonrpc\": \"2.0\",\"id\": 2,\"testnet\": true,\"result\": {\"version\": \"1.2.26\"},\"usIn\": 1535043730126248,\"usOut\": 1535043730126250,\"usDiff\": 2}";
-        }
-      )
-    );
-
-    var client = new DeribitClient(EndpointType.Testnet, mockTextMessageClient.Object);
-
-    // Act
-    await client.Connect();
-    await client.Supporting.PublicTest();
-
-    // Assert
-    mockTextMessageClient.Verify(l => l.Connect(Endpoint.TestNet, It.IsAny<CancellationToken>()), Times.Exactly(2));
-    mockTextMessageClient.Verify(l => l.GetMessageStream(It.IsAny<CancellationToken>()), Times.Exactly(2));
-    mockTextMessageClient.Verify(l => l.Send(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Exactly(2));
-    mockTextMessageClient.Verify(l => l.IsConnected, Times.Once);
-    mockTextMessageClient.VerifyNoOtherCalls();
+    _messageClient.ReceivedCalls().Should().HaveCount(7);
   }
 
   [Fact]
@@ -219,22 +182,14 @@ public sealed class DeribitClient_ConnectionHandling
 
     // Arrange
     RequestIdGenerator.Reset();
-    var isConnected = false;
+
     var requestCount = 0;
     var responseCount = 0;
-    var mockTextMessageClient = new Mock<ITextMessageClient>();
-    mockTextMessageClient.Setup(l => l.IsConnected).Returns(() => isConnected);
-    mockTextMessageClient.Setup(l => l.Connect(It.IsAny<Uri>(), It.IsAny<CancellationToken>())).Callback(() => { isConnected = true; });
-    mockTextMessageClient.Setup(l => l.Disconnect(It.IsAny<CancellationToken>())).Callback(() => { isConnected = false; });
 
-    mockTextMessageClient.Setup(l => l.Send(It.IsAny<string>(), It.IsAny<CancellationToken>())).Callback<string, CancellationToken>(
-      (_, _) => { ++requestCount; }
-    );
+    _messageClient.When(x => x.Send(Arg.Any<string>(), Arg.Any<CancellationToken>())).Do(_ => ++requestCount);
 
-    mockTextMessageClient.Setup(
-      l => l.GetMessageStream(It.IsAny<CancellationToken>())
-    ).Returns(
-      () => GetMultiResponseAsyncEnumerable(
+    _messageClient.GetMessageStream(Arg.Any<CancellationToken>()).Returns(
+      Helpers.GetStringAsyncEnumerable(
         async () =>
         {
           ++responseCount;
@@ -253,12 +208,10 @@ public sealed class DeribitClient_ConnectionHandling
       )
     );
 
-    var client = new DeribitClient(EndpointType.Testnet, mockTextMessageClient.Object);
-
     // Act
-    await client.Connect();
+    await _sut.Connect();
 
-    await client.Subscriptions.SubscribeTicker(
+    await _sut.Subscriptions.SubscribeTicker(
       new TickerChannel { InstrumentName = "my.test.instrument.number.0", Interval = NotificationInterval2._100ms },
       new TickerChannel { InstrumentName = "my.test.instrument.number.1", Interval = NotificationInterval2._100ms },
       new TickerChannel { InstrumentName = "my.test.instrument.number.2", Interval = NotificationInterval2._100ms },
@@ -271,18 +224,26 @@ public sealed class DeribitClient_ConnectionHandling
       new TickerChannel { InstrumentName = "my.test.instrument.number.9", Interval = NotificationInterval2._100ms }
     );
 
-    var forceConnectionLoss = () => client.Supporting.PublicTest();
+    var forceConnectionLoss = () => _sut.Supporting.PublicTest();
     await forceConnectionLoss.Should().ThrowAsync<TaskCanceledException>();
-    await Task.Delay(client.ReConnectDelay);
+    await Task.Delay(_sut.ReConnectDelay);
     await Task.Delay(10);
 
     // Assert
-    mockTextMessageClient.Verify(l => l.Connect(Endpoint.TestNet, It.IsAny<CancellationToken>()), Times.Exactly(2));
-    mockTextMessageClient.Verify(l => l.GetMessageStream(It.IsAny<CancellationToken>()), Times.Exactly(2));
-    mockTextMessageClient.Verify(l => l.IsConnected, Times.Once);
-    mockTextMessageClient.Verify(l => l.Send(requestJson1, It.IsAny<CancellationToken>()), Times.Once);
-    mockTextMessageClient.Verify(l => l.Send(requestJson2, It.IsAny<CancellationToken>()), Times.Once);
-    mockTextMessageClient.Verify(l => l.Send(requestJson3, It.IsAny<CancellationToken>()), Times.Once);
-    mockTextMessageClient.VerifyNoOtherCalls();
+    Received.InOrder(
+      () =>
+      {
+        _messageClient.Connect(Endpoint.TestNet, Arg.Any<CancellationToken>());
+        _messageClient.GetMessageStream(Arg.Any<CancellationToken>());
+        _messageClient.Send(requestJson1, Arg.Any<CancellationToken>());
+        _messageClient.Send(requestJson2, Arg.Any<CancellationToken>());
+        _messageClient.Connect(Endpoint.TestNet, Arg.Any<CancellationToken>());
+        _ = _messageClient.IsConnected;
+        _messageClient.GetMessageStream(Arg.Any<CancellationToken>());
+        _messageClient.Send(requestJson3, Arg.Any<CancellationToken>());
+      }
+    );
+
+    _messageClient.ReceivedCalls().Should().HaveCount(8);
   }
 }

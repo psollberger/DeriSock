@@ -28,7 +28,7 @@ using Serilog;
 ///   <para>The implementation of the API methods from Deribit</para>
 ///   <para>The methods are organized by category and scope. For example: <see cref="Public" /> hold all public methods and <see cref="Private" /> holds all private methods.</para>
 /// </summary>
-public partial class DeribitClient
+public partial class DeribitClient : IDisposable
 {
   private static readonly JsonSerializerSettings SerializationSettings = new()
   {
@@ -80,6 +80,7 @@ public partial class DeribitClient
 
   private CancellationTokenSource? _processMessageStreamCts;
   private Task? _processMessageStreamTask;
+  private readonly ManualResetEventSlim _processMessageTaskStartedEvent = new();
 
   private PublicAuthRequest? _authRequest;
   private SignatureData? _authRequestSignatureData;
@@ -141,7 +142,10 @@ public partial class DeribitClient
     await _messageSource.Connect(_endpointUri, cancellationToken).ConfigureAwait(false);
 
     _processMessageStreamCts = new CancellationTokenSource();
+
+    _processMessageTaskStartedEvent.Reset();
     _processMessageStreamTask = Task.Factory.StartNew(async () => await ProcessMessageStream(_processMessageStreamCts.Token).ConfigureAwait(false), TaskCreationOptions.LongRunning);
+    _processMessageTaskStartedEvent.Wait(cancellationToken);
 
     Connected?.Invoke(this, EventArgs.Empty);
   }
@@ -206,7 +210,10 @@ public partial class DeribitClient
           await _messageSource.Connect(_endpointUri).ConfigureAwait(false);
 
           _processMessageStreamCts = new CancellationTokenSource();
+
+          _processMessageTaskStartedEvent.Reset();
           _processMessageStreamTask = Task.Factory.StartNew(async () => await ProcessMessageStream(_processMessageStreamCts.Token).ConfigureAwait(false), TaskCreationOptions.LongRunning);
+          _processMessageTaskStartedEvent.Wait();
 
           await ReAuthenticateOnReConnect().ConfigureAwait(false);
           await _subscriptionManager.ReSubscribeAll().ConfigureAwait(false);
@@ -316,6 +323,7 @@ public partial class DeribitClient
 
   private async Task ProcessMessageStream(CancellationToken cancellationToken)
   {
+    _processMessageTaskStartedEvent.Set();
     try
     {
       await foreach (var message in _messageSource.GetMessageStream(cancellationToken).ConfigureAwait(false))
@@ -365,9 +373,9 @@ public partial class DeribitClient
     if (response.Id <= 0)
       return;
 
-    if (!_requestTaskSourceMap.TryRemove(response.Id, out var request, out var taskSource))
+    if (!_requestTaskSourceMap.TryRemove(response.Id, out _, out var taskSource))
     {
-      _logger?.Error("Could not find request id {RequestId}", request.Id);
+      _logger?.Error("Could not find request id {RequestId}", response.Id);
       return;
     }
 
@@ -404,5 +412,14 @@ public partial class DeribitClient
           EnqueueAuthRefresh(result.Data.ExpiresIn);
       }
     );
+  }
+
+  /// <inheritdoc />
+  public void Dispose()
+  {
+    _reconnectLock.Dispose();
+    _processMessageStreamCts?.Dispose();
+    _processMessageStreamTask?.Dispose();
+    _processMessageTaskStartedEvent.Dispose();
   }
 }
