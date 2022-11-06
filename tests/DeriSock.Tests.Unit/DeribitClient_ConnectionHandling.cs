@@ -59,11 +59,13 @@ public sealed class DeribitClient_ConnectionHandling
 
     // Act
     await client.Connect();
+    await Task.Delay(client.ReConnectDelay);
     await Task.Delay(20);
 
     // Assert
     mockTextMessageClient.Verify(l => l.Connect(Endpoint.TestNet, It.IsAny<CancellationToken>()), Times.Exactly(2));
     mockTextMessageClient.Verify(l => l.GetMessageStream(It.IsAny<CancellationToken>()), Times.Exactly(2));
+    mockTextMessageClient.Verify(l => l.IsConnected, Times.Once);
     mockTextMessageClient.VerifyNoOtherCalls();
   }
 
@@ -107,12 +109,14 @@ public sealed class DeribitClient_ConnectionHandling
     await client.Connect();
     var request = () => client.Supporting.PublicTest();
     await request.Should().ThrowAsync<TaskCanceledException>();
+    await Task.Delay(client.ReConnectDelay);
     await Task.Delay(10);
 
     // Assert
     mockTextMessageClient.Verify(l => l.Connect(Endpoint.TestNet, It.IsAny<CancellationToken>()), Times.Exactly(2));
     mockTextMessageClient.Verify(l => l.GetMessageStream(It.IsAny<CancellationToken>()), Times.Exactly(2));
     mockTextMessageClient.Verify(l => l.Send(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
+    mockTextMessageClient.Verify(l => l.IsConnected, Times.Once);
     mockTextMessageClient.VerifyNoOtherCalls();
   }
 
@@ -269,11 +273,13 @@ public sealed class DeribitClient_ConnectionHandling
 
     var forceConnectionLoss = () => client.Supporting.PublicTest();
     await forceConnectionLoss.Should().ThrowAsync<TaskCanceledException>();
+    await Task.Delay(client.ReConnectDelay);
     await Task.Delay(10);
 
     // Assert
     mockTextMessageClient.Verify(l => l.Connect(Endpoint.TestNet, It.IsAny<CancellationToken>()), Times.Exactly(2));
     mockTextMessageClient.Verify(l => l.GetMessageStream(It.IsAny<CancellationToken>()), Times.Exactly(2));
+    mockTextMessageClient.Verify(l => l.IsConnected, Times.Once);
     mockTextMessageClient.Verify(l => l.Send(requestJson1, It.IsAny<CancellationToken>()), Times.Once);
     mockTextMessageClient.Verify(l => l.Send(requestJson2, It.IsAny<CancellationToken>()), Times.Once);
     mockTextMessageClient.Verify(l => l.Send(requestJson3, It.IsAny<CancellationToken>()), Times.Once);

@@ -55,6 +55,21 @@ public partial class DeribitClient
   /// </summary>
   public event EventHandler? ConnectionRestored;
 
+  /// <summary>
+  /// Gets or sets, how much time must have been passed before trying to connect again.
+  /// </summary>
+  public TimeSpan ReConnectDelay { get; set; } = TimeSpan.FromSeconds(1);
+
+  /// <summary>
+  /// Gets or sets, how much the <see cref="ReConnectDelay"/> will be increased on each re-connect attempt.
+  /// </summary>
+  public double ReConnectDelayIncreaseFactor { get; set; } = 2.0;
+
+  /// <summary>
+  /// Gets or sets, how many times a re-connect will be tried before giving up.
+  /// </summary>
+  public int ReConnectMaxAttempts { get; set; } = 5;
+
   private readonly ILogger? _logger;
   private readonly JsonRpcRequestTaskSourceMap _requestTaskSourceMap = new();
   private readonly SubscriptionManager _subscriptionManager;
@@ -165,26 +180,45 @@ public partial class DeribitClient
     {
       ConnectionLost?.Invoke(this, EventArgs.Empty);
 
-      _requestTaskSourceMap.CancelAndRemoveAll();
+      var currentReConnectDelayFactor = 1.0;
+      var reConnectSuccess = false;
+      var reConnectAttempts = 0;
 
-      if (_processMessageStreamTask is not null)
+      while (!reConnectSuccess && ++reConnectAttempts <= ReConnectMaxAttempts)
       {
-        _processMessageStreamCts?.Cancel();
-        await Task.WhenAll(_processMessageStreamTask).ConfigureAwait(false);
+        _requestTaskSourceMap.CancelAndRemoveAll();
+
+        if (_processMessageStreamTask is not null)
+        {
+          _processMessageStreamCts?.Cancel();
+          await Task.WhenAll(_processMessageStreamTask).ConfigureAwait(false);
+        }
+
+        AccessToken = null;
+        RefreshToken = null;
+
+        var delay = TimeSpan.FromTicks((long)(ReConnectDelay.Ticks * currentReConnectDelayFactor));
+        currentReConnectDelayFactor *= ReConnectDelayIncreaseFactor;
+        await Task.Delay(delay).ConfigureAwait(false);
+
+        try
+        {
+          await _messageSource.Connect(_endpointUri).ConfigureAwait(false);
+
+          _processMessageStreamCts = new CancellationTokenSource();
+          _processMessageStreamTask = Task.Factory.StartNew(async () => await ProcessMessageStream(_processMessageStreamCts.Token).ConfigureAwait(false), TaskCreationOptions.LongRunning);
+
+          await ReAuthenticateOnReConnect().ConfigureAwait(false);
+          await _subscriptionManager.ReSubscribeAll().ConfigureAwait(false);
+
+          ConnectionRestored?.Invoke(this, EventArgs.Empty);
+          reConnectSuccess = true;
+        }
+        catch (Exception)
+        {
+          // do nothing
+        }
       }
-
-      AccessToken = null;
-      RefreshToken = null;
-
-      await _messageSource.Connect(_endpointUri).ConfigureAwait(false);
-
-      _processMessageStreamCts = new CancellationTokenSource();
-      _processMessageStreamTask = Task.Factory.StartNew(async () => await ProcessMessageStream(_processMessageStreamCts.Token).ConfigureAwait(false), TaskCreationOptions.LongRunning);
-
-      await ReAuthenticateOnReConnect().ConfigureAwait(false);
-      await _subscriptionManager.ReSubscribeAll().ConfigureAwait(false);
-
-      ConnectionRestored?.Invoke(this, EventArgs.Empty);
     }
     finally
     {
@@ -302,6 +336,9 @@ public partial class DeribitClient
     catch (Exception)
     {
       await ReConnect().ConfigureAwait(false);
+
+      if (!IsConnected)
+        throw;
     }
   }
 
