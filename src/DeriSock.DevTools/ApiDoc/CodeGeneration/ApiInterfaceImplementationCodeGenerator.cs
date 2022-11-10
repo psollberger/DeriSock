@@ -123,7 +123,7 @@ internal class ApiInterfaceImplementationCodeGenerator : ApiDocCodeGenerator
     };
 
     ctor.Parameters.Add(new CodeParameterDeclarationExpression("DeribitClient", "client"));
-    ctor.Statements.Add(new CodeAssignStatement(new CodeFieldReferenceExpression(null, "_client"), new CodeArgumentReferenceExpression("client")));
+    ctor.Statements.Add(new CodeAssignStatement(new CodeFieldReferenceExpression(null!, "_client"), new CodeArgumentReferenceExpression("client")));
     domType.Members.Add(ctor);
 
     // Adding implementation of methods
@@ -142,7 +142,7 @@ internal class ApiInterfaceImplementationCodeGenerator : ApiDocCodeGenerator
       objMethod.Comments.Add(new CodeCommentStatement($"<inheritdoc cref=\"{interfaceName}.{objMethod.Name}\" />", true));
 
       // Defining return type
-      objMethod.ReturnType = CreateApiMethodTypeReference(function);
+      objMethod.ReturnType = CreateApiMethodTypeReference(function)!;
 
       // Adding Parameters (and collecting call arguments for method body)
       var callArgs = new List<CodeExpression>(2);
@@ -170,7 +170,7 @@ internal class ApiInterfaceImplementationCodeGenerator : ApiDocCodeGenerator
       }
 
       // Adding method body
-      var methodInvoke = new CodeMethodInvokeExpression(new CodeFieldReferenceExpression(null, "_client"), $"Internal{function.ToInterfaceMethodName(false)}", callArgs.ToArray());
+      var methodInvoke = new CodeMethodInvokeExpression(new CodeFieldReferenceExpression(null!, "_client"), $"Internal{function.ToInterfaceMethodName(false)}", callArgs.ToArray());
 
       CodeStatement bodyStatement = objMethod.ReturnType!.BaseType switch
       {
@@ -230,7 +230,7 @@ internal class ApiInterfaceImplementationCodeGenerator : ApiDocCodeGenerator
     };
 
     ctor.Parameters.Add(new CodeParameterDeclarationExpression("DeribitClient", "client"));
-    ctor.Statements.Add(new CodeAssignStatement(new CodeFieldReferenceExpression(null, "_client"), new CodeArgumentReferenceExpression("client")));
+    ctor.Statements.Add(new CodeAssignStatement(new CodeFieldReferenceExpression(null!, "_client"), new CodeArgumentReferenceExpression("client")));
     domType.Members.Add(ctor);
 
     // Adding implementation of methods
@@ -270,7 +270,7 @@ internal class ApiInterfaceImplementationCodeGenerator : ApiDocCodeGenerator
       }
 
       // Adding method body
-      var methodInvoke = new CodeMethodInvokeExpression(new CodeFieldReferenceExpression(null, "_client"),
+      var methodInvoke = new CodeMethodInvokeExpression(new CodeFieldReferenceExpression(null!, "_client"),
                                                         $"Internal{function.ToInterfaceMethodName(false)}",
                                                         new CodeArgumentReferenceExpression("channels"));
 

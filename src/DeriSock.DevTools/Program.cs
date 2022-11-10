@@ -67,6 +67,7 @@ internal class Program
     if (options.ScratchPad) {
       var cts = new CancellationTokenSource();
       var scratchPadTask = ScratchPad.Run(cts.Token);
+      Console.WriteLine("Press any key to signal CancellationToken ...");
       Console.ReadLine();
       cts.Cancel();
       await scratchPadTask;
