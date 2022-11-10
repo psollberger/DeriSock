@@ -2,11 +2,24 @@
   "profiles": {
     "DeriSock.DevTools": {
       "commandName": "Project",
-      "commandLineArgs": "--project-path \"$(MSBuildProjectDirectory)\\..\\DeriSock\" --create-base --create-final --create-enum-map --create-enum-overrides --create-object-map --create-object-overrides --create-request-map --create-request-overrides --generate-code"
+      "commandLineArgs": "--create-base --create-final --create-enum-map --create-enum-overrides --create-object-map --create-object-overrides --create-request-map --create-request-overrides --generate-code",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
     },
     "Scratchpad": {
       "commandName": "Project",
-      "commandLineArgs": "--project-path \"$(MSBuildProjectDirectory)\\..\\DeriSock\" --scratchpad"
+      "commandLineArgs": "--scratchpad",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    },
+    "--help": {
+      "commandName": "Project",
+      "commandLineArgs": "--help",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
     }
   }
 }
