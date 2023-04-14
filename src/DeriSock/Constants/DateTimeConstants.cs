@@ -2,7 +2,7 @@ namespace DeriSock.Constants;
 
 using System;
 
-internal static class DateTimeConstants
+public static class DateTimeConstants
 {
   public const long UnixEpochTicks = 621_355_968_000_000_000;
   public const long TicksPerMillisecond = TimeSpan.TicksPerMillisecond;

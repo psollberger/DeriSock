@@ -10,7 +10,6 @@ using System.Diagnostics;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
-
 using DeriSock.Api;
 using DeriSock.Constants;
 using DeriSock.Converter;
@@ -18,10 +17,8 @@ using DeriSock.Model;
 using DeriSock.Net;
 using DeriSock.Net.JsonRpc;
 using DeriSock.Utils;
-
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-
 using Serilog;
 
 /// <summary>
@@ -56,6 +53,11 @@ public partial class DeribitClient : IDisposable
   public event EventHandler? ConnectionRestored;
 
   /// <summary>
+  ///   Occurs when an unexpectedly lost connection.
+  /// </summary>
+  public event EventHandler? ConnectionFailed;
+
+  /// <summary>
   /// Gets or sets, how much time must have been passed before trying to connect again.
   /// </summary>
   public TimeSpan ReConnectDelay { get; set; } = TimeSpan.FromSeconds(1);
@@ -76,6 +78,7 @@ public partial class DeribitClient : IDisposable
 
   private readonly Uri _endpointUri;
   private readonly ITextMessageClient _messageSource;
+  private readonly SemaphoreSlim _sendLock = new(1, 1);
   private readonly SemaphoreSlim _reconnectLock = new(1, 1);
 
   private CancellationTokenSource? _processMessageStreamCts;
@@ -117,8 +120,8 @@ public partial class DeribitClient : IDisposable
     _endpointUri = endpointType switch
     {
       EndpointType.Productive => Endpoint.Productive,
-      EndpointType.Testnet    => Endpoint.TestNet,
-      _                       => throw new ArgumentOutOfRangeException(nameof(endpointType), endpointType, "Unsupported endpoint type")
+      EndpointType.Testnet => Endpoint.TestNet,
+      _ => throw new ArgumentOutOfRangeException(nameof(endpointType), endpointType, "Unsupported endpoint type")
     };
 
     _messageSource = messageSource ?? new TextMessageWebSocketClient(logger);
@@ -144,11 +147,15 @@ public partial class DeribitClient : IDisposable
     _processMessageStreamCts = new CancellationTokenSource();
 
     _processMessageTaskStartedEvent.Reset();
-    _processMessageStreamTask = Task.Factory.StartNew(async () => await ProcessMessageStream(_processMessageStreamCts.Token).ConfigureAwait(false), TaskCreationOptions.LongRunning);
+    _processMessageStreamTask =
+      Task.Factory.StartNew(
+        async () => await ProcessMessageStream(_processMessageStreamCts.Token).ConfigureAwait(false),
+        TaskCreationOptions.LongRunning);
     _processMessageTaskStartedEvent.Wait(cancellationToken);
 
     Connected?.Invoke(this, EventArgs.Empty);
   }
+
 
   /// <summary>
   ///   Disconnects from the server
@@ -168,9 +175,10 @@ public partial class DeribitClient : IDisposable
     _authRequestSignatureData = null;
     AccessToken = null;
     RefreshToken = null;
-
     Disconnected?.Invoke(this, EventArgs.Empty);
+    _processMessageTaskStartedEvent.Reset();
   }
+
 
   private async Task ReConnect()
   {
@@ -195,13 +203,13 @@ public partial class DeribitClient : IDisposable
         if (_processMessageStreamTask is not null)
         {
           _processMessageStreamCts?.Cancel();
-          await Task.WhenAll(_processMessageStreamTask).ConfigureAwait(false);
+          await _processMessageStreamTask.ConfigureAwait(false);
         }
 
         AccessToken = null;
         RefreshToken = null;
 
-        var delay = TimeSpan.FromTicks((long)(ReConnectDelay.Ticks * currentReConnectDelayFactor));
+        var delay = TimeSpan.FromTicks((long) (ReConnectDelay.Ticks * currentReConnectDelayFactor));
         currentReConnectDelayFactor *= ReConnectDelayIncreaseFactor;
         await Task.Delay(delay).ConfigureAwait(false);
 
@@ -212,7 +220,10 @@ public partial class DeribitClient : IDisposable
           _processMessageStreamCts = new CancellationTokenSource();
 
           _processMessageTaskStartedEvent.Reset();
-          _processMessageStreamTask = Task.Factory.StartNew(async () => await ProcessMessageStream(_processMessageStreamCts.Token).ConfigureAwait(false), TaskCreationOptions.LongRunning);
+          _processMessageStreamTask =
+            Task.Factory.StartNew(
+              async () => await ProcessMessageStream(_processMessageStreamCts.Token).ConfigureAwait(false),
+              TaskCreationOptions.LongRunning);
           _processMessageTaskStartedEvent.Wait();
 
           await ReAuthenticateOnReConnect().ConfigureAwait(false);
@@ -221,10 +232,16 @@ public partial class DeribitClient : IDisposable
           ConnectionRestored?.Invoke(this, EventArgs.Empty);
           reConnectSuccess = true;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-          // do nothing
+          _logger?.Error("Error during reconnect attempt: {@Exception}", ex);
         }
+      }
+
+      if (!reConnectSuccess)
+      {
+        ConnectionFailed?.Invoke(this, EventArgs.Empty); // Raise an event
+        throw new InvalidOperationException("Failed to reconnect after maximum attempts."); // Or throw an exception
       }
     }
     finally
@@ -232,6 +249,7 @@ public partial class DeribitClient : IDisposable
       _reconnectLock.Release();
     }
   }
+
 
   private async Task ReAuthenticateOnReConnect()
   {
@@ -253,8 +271,10 @@ public partial class DeribitClient : IDisposable
     await InternalPublicAuth(_authRequest).ConfigureAwait(false);
   }
 
-  internal async Task<JsonRpcResponse<T>> Send<T>(string method, object? @params, IJsonConverter<T> converter, CancellationToken cancellationToken = default)
+  internal async Task<JsonRpcResponse<T>> Send<T>(string method, object? @params, IJsonConverter<T> converter,
+    CancellationToken cancellationToken = default)
   {
+    await _sendLock.WaitAsync(cancellationToken).ConfigureAwait(false);
     var requestId = RequestIdGenerator.Next();
     try
     {
@@ -271,7 +291,9 @@ public partial class DeribitClient : IDisposable
 
         var taskSource = new TaskCompletionSource<JsonRpcResponse>();
         _requestTaskSourceMap.Add(request, taskSource);
-        await _messageSource.Send(JsonConvert.SerializeObject(request, Formatting.None, SerializationSettings), cancellationToken).ConfigureAwait(false);
+        await _messageSource
+          .Send(JsonConvert.SerializeObject(request, Formatting.None, SerializationSettings), cancellationToken)
+          .ConfigureAwait(false);
         var response = await taskSource.Task.ConfigureAwait(false);
         return response.CreateTyped(converter.Convert(response.Result)!);
       }
@@ -296,7 +318,9 @@ public partial class DeribitClient : IDisposable
 
         var taskSource = new TaskCompletionSource<JsonRpcResponse>();
         _requestTaskSourceMap.Add(request, taskSource);
-        await _messageSource.Send(JsonConvert.SerializeObject(request, Formatting.None, SerializationSettings), cancellationToken).ConfigureAwait(false);
+        await _messageSource
+          .Send(JsonConvert.SerializeObject(request, Formatting.None, SerializationSettings), cancellationToken)
+          .ConfigureAwait(false);
         var response = await taskSource.Task.ConfigureAwait(false);
         return response.CreateTyped(converter.Convert(response.Result)!);
       }
@@ -306,19 +330,33 @@ public partial class DeribitClient : IDisposable
       _requestTaskSourceMap.TryRemove(requestId, out var _, out var _);
       throw;
     }
+    finally
+    {
+      _sendLock.Release();
+    }
   }
 
-  private void SendSync(string method, object? @params)
+  private async Task SendSync(string method, object? @params)
   {
-    var request = new JsonRpcRequest
+    await _sendLock.WaitAsync().ConfigureAwait(false);
+    try
     {
-      Id = RequestIdGenerator.Next(),
-      Method = method,
-      Params = @params
-    };
+      var request = new JsonRpcRequest
+      {
+        Id = RequestIdGenerator.Next(),
+        Method = method,
+        Params = @params
+      };
 
-    _logger?.Verbose("Sending synchroneous: {@Request}", request);
-    _ = _messageSource.Send(JsonConvert.SerializeObject(request, Formatting.None, SerializationSettings), CancellationToken.None).ConfigureAwait(false);
+      _logger?.Verbose("Sending synchronous: {@Request}", request);
+      await _messageSource
+        .Send(JsonConvert.SerializeObject(request, Formatting.None, SerializationSettings), CancellationToken.None)
+        .ConfigureAwait(false);
+    }
+    finally
+    {
+      _sendLock.Release();
+    }
   }
 
   private async Task ProcessMessageStream(CancellationToken cancellationToken)
@@ -341,14 +379,17 @@ public partial class DeribitClient : IDisposable
     {
       //ignore - just exit
     }
-    catch (Exception)
+    catch (Exception ex)
     {
+      _logger?.Error(ex, "An error occurred in ProcessMessageStream");
+
       await ReConnect().ConfigureAwait(false);
 
       if (!IsConnected)
         throw;
     }
   }
+
 
   private void InternalOnRequestReceived(JObject requestObject)
   {
@@ -357,7 +398,8 @@ public partial class DeribitClient : IDisposable
     request!.Original = requestObject;
 
     if (string.Equals(request.Method, "subscription"))
-      Task.Run(() => OnNotification(request.Original["params"]!.ToObject<Notification<object>>()!)).ConfigureAwait(false);
+      Task.Run(() => OnNotification(request.Original["params"]!.ToObject<Notification<object>>()!))
+        .ConfigureAwait(false);
     else if (string.Equals(request.Method, "heartbeat"))
       Task.Run(() => OnHeartbeat(request.Original["params"]!.ToObject<Heartbeat>()!)).ConfigureAwait(false);
     else
@@ -404,15 +446,16 @@ public partial class DeribitClient : IDisposable
       return;
 
     _ = Task.Delay(expireTimeSpan.Subtract(TimeSpan.FromSeconds(5))).ContinueWith(
-      _ =>
+      async _ =>
       {
-        var result = ((IAuthenticationMethods)this).WithRefreshToken().GetAwaiter().GetResult();
+        var result = await ((IAuthenticationMethods)this).WithRefreshToken().ConfigureAwait(false);
 
         if (result.Data is not null)
           EnqueueAuthRefresh(result.Data.ExpiresIn);
-      }
-    );
+      }, TaskContinuationOptions.RunContinuationsAsynchronously);
   }
+
+
 
   /// <inheritdoc />
   public void Dispose()

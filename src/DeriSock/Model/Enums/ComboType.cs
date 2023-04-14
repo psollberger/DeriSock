@@ -39,6 +39,12 @@ public enum ComboType
   CallRatioSpread1x3,
   CallRatioSpread2x3,
   PutRatioSpread1x2,
-  PutRatioSpread2x3
+  PutRatioSpread2x3,
+  Call,
+  Put,
+  ShortCall,
+  ShortPut,
+  LongCall,
+  LongPut
 }
 #pragma warning restore CS1591

@@ -4,10 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
 using DeriSock.Converter;
 using DeriSock.Model;
-
 using Serilog;
 
 internal class SubscriptionManager
@@ -27,11 +25,15 @@ internal class SubscriptionManager
 
   public void NotifyStreams(INotification<object> notification)
   {
-    foreach (var stream in GetChannelStreams(notification.Channel))
-      stream.Queue.Enqueue(notification);
+    lock (_streamMap)
+    {
+      foreach (var stream in GetChannelStreams(notification.Channel))
+        stream.Queue.Enqueue(notification);
+    }
   }
 
-  public async Task<NotificationStream<TNotification>> Subscribe<TNotification, TParams>(params TParams[] channels) where TNotification : class where TParams : ISubscriptionChannel
+  public async Task<NotificationStream<TNotification>> Subscribe<TNotification, TParams>(params TParams[] channels)
+    where TNotification : class where TParams : ISubscriptionChannel
   {
     var channelNames = channels.Select(x => x.ToChannelName()).ToArray();
 
@@ -43,16 +45,16 @@ internal class SubscriptionManager
     var subscriptionScope = _client.IsAuthenticated ? "private" : "public";
 
     var response = await _client.Send(
-                     $"{subscriptionScope}/subscribe",
-                     new { channels = channelNames },
-                     new ListJsonConverter<string>()
-                   ).ConfigureAwait(false);
+      $"{subscriptionScope}/subscribe",
+      new {channels = channelNames},
+      new ListJsonConverter<string>()
+    ).ConfigureAwait(false);
 
     // Updating the list of subscribed channels in the map entry
     if (response.Data is not null)
       streamInfo.Channels = response.Data.ToArray();
 
-    return (NotificationStream<TNotification>)streamInfo.Stream;
+    return (NotificationStream<TNotification>) streamInfo.Stream;
   }
 
   public async Task Unsubscribe(INotificationStream stream)
@@ -88,7 +90,8 @@ internal class SubscriptionManager
   private IEnumerable<INotificationStream> GetChannelStreams(string channelName)
   {
     lock (_streamMap)
-      return _streamMap.Where(x => x.Channels.Contains(channelName, StringComparer.OrdinalIgnoreCase)).Select(x => x.Stream);
+      return _streamMap.Where(x => x.Channels.Contains(channelName, StringComparer.OrdinalIgnoreCase))
+        .Select(x => x.Stream);
   }
 
   private IEnumerable<string> GetAbandonedChannels(IEnumerable<string> channels)
@@ -140,7 +143,7 @@ internal class SubscriptionManager
 
       await _client.Send(
         $"{subscriptionScope}/subscribe",
-        new { channels = channelNamesPartition },
+        new {channels = channelNamesPartition},
         new ListJsonConverter<string>()
       ).ConfigureAwait(false);
     }
