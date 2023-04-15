@@ -9,6 +9,10 @@ To connect to the Deribit Network just instantiate a new instance of the `Deribi
 
 snippet: readme-connect-disconnect
 
+To use a proxy, you can assign an `IWebProxy` instance to the default `ITextMessageClient` implementation (`TextMessageMessageWebSocketClient`) and pass it to the `DeribitClient` constructor.
+
+snippet: readme-webproxy
+
 The various methods are organized in categories (Authentication, Supporting, Market Data, ...) and scopes (Private, Public).
 
 **Example:** Calling `GetOrderBook` from the `Public` scope.

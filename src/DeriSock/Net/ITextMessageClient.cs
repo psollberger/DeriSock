@@ -2,6 +2,7 @@ namespace DeriSock.Net;
 
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,6 +16,11 @@ public interface ITextMessageClient : IAsyncDisposable
   ///   Gets, if the <see cref="ITextMessageClient" /> is connected with the endpoint and ready to operate.
   /// </summary>
   public bool IsConnected { get; }
+
+  /// <summary>
+  ///   Gets or sets the proxy to use when connecting to the endpoint.
+  /// </summary>
+  public IWebProxy? Proxy { get; set; }
 
   /// <summary>
   ///   Connects to the endpoint.
