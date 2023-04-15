@@ -3,6 +3,7 @@ namespace DeriSock.Net;
 using System;
 using System.Buffers;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Sockets;
 using System.Net.WebSockets;
 using System.Runtime.CompilerServices;
@@ -28,6 +29,9 @@ public sealed class TextMessageWebSocketClient : ITextMessageClient
   /// <inheritdoc />
   public bool IsConnected { get; private set; }
 
+  /// <inheritdoc />
+  public IWebProxy? Proxy { get; set; }
+
   /// <summary>
   ///   Creates an instance of the <see cref="TextMessageWebSocketClient" /> class.
   /// </summary>
@@ -46,6 +50,9 @@ public sealed class TextMessageWebSocketClient : ITextMessageClient
     _webSocketEndpoint = endpoint;
 
     _webSocket = new ClientWebSocket();
+
+    if (Proxy is not null)
+      _webSocket.Options.Proxy = Proxy;
 
     _logger?.Information("Connecting to {Endpoint}", _webSocketEndpoint);
 

@@ -1,9 +1,11 @@
 namespace DeriSock.DevTools;
 
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
 using DeriSock.Model;
+using DeriSock.Net;
 
 public class Snippets
 {
@@ -18,6 +20,25 @@ public class Snippets
     await client.Disconnect();
 
     // end-snippet
+
+    {
+      // begin-snippet: readme-webproxy
+      // Use a web proxy to connect to the API
+
+      var messageSource = new TextMessageWebSocketClient(null);
+      messageSource.Proxy = new WebProxy("socks5://socks5.example.com:1080")
+      {
+        Credentials = new NetworkCredential
+        {
+          UserName = "username",
+          Password = "password"
+        }
+      };
+
+      var clientWithProxy = new DeribitClient(EndpointType.Testnet, messageSource);
+
+      // end-snippet
+    }
 
     {
       // begin-snippet: readme-req-bbp-1
@@ -98,7 +119,7 @@ public class Snippets
 
     {
       // begin-snippet: readme-subscribtion-usage
-      // Subscribe to one or more channels. 
+      // Subscribe to one or more channels.
       var subscriptionStream = await client.Subscriptions.SubscribeBookChanges(
                                  new BookChangesChannel
                                  {
