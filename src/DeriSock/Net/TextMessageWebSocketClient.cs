@@ -8,9 +8,10 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using DeriSock.Net;
 using Serilog;
 using Serilog.Events;
+
+namespace DeriSock.Net;
 
 public sealed class TextMessageWebSocketClient : ITextMessageClient, IDisposable
 {
@@ -140,8 +141,12 @@ public sealed class TextMessageWebSocketClient : ITextMessageClient, IDisposable
 
   public async Task Send(string message, CancellationToken cancellationToken = default)
   {
+    // if (!IsConnected)
+    //   throw new InvalidOperationException("Cannot send a message when there is no open connection");
     if (!IsConnected)
-      throw new InvalidOperationException("Cannot send a message when there is no open connection");
+    {
+      await Reconnect(cancellationToken).ConfigureAwait(false);
+    }
 
     try
     {

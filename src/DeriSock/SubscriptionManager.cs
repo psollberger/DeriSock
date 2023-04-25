@@ -28,7 +28,13 @@ internal class SubscriptionManager
     lock (_streamMap)
     {
       foreach (var stream in GetChannelStreams(notification.Channel))
+      {
         stream.Queue.Enqueue(notification);
+        if (stream is NotificationStream<object> notificationStream)
+        {
+          notificationStream.SignalNewItem();
+        }
+      }
     }
   }
 
