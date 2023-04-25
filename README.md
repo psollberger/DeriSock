@@ -24,7 +24,29 @@ await client.Connect();
 
 await client.Disconnect();
 ```
-<sup><a href='/src/DeriSock.DevTools/Snippets.cs#L12-L20' title='Snippet source file'>snippet source</a> | <a href='#snippet-readme-connect-disconnect' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/DeriSock.DevTools/Snippets.cs#L14-L22' title='Snippet source file'>snippet source</a> | <a href='#snippet-readme-connect-disconnect' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+
+To use a proxy, you can assign an `IWebProxy` instance to the default `ITextMessageClient` implementation (`TextMessageMessageWebSocketClient`) and pass it to the `DeribitClient` constructor.
+
+<!-- snippet: readme-webproxy -->
+<a id='snippet-readme-webproxy'></a>
+```cs
+// Use a web proxy to connect to the API
+
+var messageSource = new TextMessageWebSocketClient(null);
+messageSource.Proxy = new WebProxy("socks5://socks5.example.com:1080")
+{
+  Credentials = new NetworkCredential
+  {
+    UserName = "username",
+    Password = "password"
+  }
+};
+
+var clientWithProxy = new DeribitClient(EndpointType.Testnet, messageSource);
+```
+<sup><a href='/src/DeriSock.DevTools/Snippets.cs#L25-L40' title='Snippet source file'>snippet source</a> | <a href='#snippet-readme-webproxy' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 The various methods are organized in categories (Authentication, Supporting, Market Data, ...) and scopes (Private, Public).
@@ -52,7 +74,7 @@ if (response.Data is null) {
 
 var bestBidPrice = response.Data.BestBidPrice;
 ```
-<sup><a href='/src/DeriSock.DevTools/Snippets.cs#L23-L42' title='Snippet source file'>snippet source</a> | <a href='#snippet-readme-req-bbp-1' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/DeriSock.DevTools/Snippets.cs#L44-L63' title='Snippet source file'>snippet source</a> | <a href='#snippet-readme-req-bbp-1' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 **Example:** Calling `GetOrderBook` from the `MarketData` category.
@@ -78,7 +100,7 @@ if (response.Data is null) {
 
 var bestBidPrice = response.Data.BestBidPrice;
 ```
-<sup><a href='/src/DeriSock.DevTools/Snippets.cs#L46-L65' title='Snippet source file'>snippet source</a> | <a href='#snippet-readme-req-bbp-2' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/DeriSock.DevTools/Snippets.cs#L67-L86' title='Snippet source file'>snippet source</a> | <a href='#snippet-readme-req-bbp-2' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 ## Authentication
@@ -97,7 +119,7 @@ await client.Authentication.PublicLogin()
     "<optional state>",
     "<optional scope>");
 ```
-<sup><a href='/src/DeriSock.DevTools/Snippets.cs#L69-L77' title='Snippet source file'>snippet source</a> | <a href='#snippet-readme-auth-credentials' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/DeriSock.DevTools/Snippets.cs#L90-L98' title='Snippet source file'>snippet source</a> | <a href='#snippet-readme-auth-credentials' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 ### Authentication using Signature
@@ -112,7 +134,7 @@ await client.Authentication.PublicLogin()
     "<optional state>",
     "<optional scope>");
 ```
-<sup><a href='/src/DeriSock.DevTools/Snippets.cs#L81-L89' title='Snippet source file'>snippet source</a> | <a href='#snippet-readme-auth-signature' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/DeriSock.DevTools/Snippets.cs#L102-L110' title='Snippet source file'>snippet source</a> | <a href='#snippet-readme-auth-signature' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 ### Logout
@@ -124,7 +146,7 @@ When authenticated, you can logout like this (this is the only synchroneous meth
 ```cs
 client.Authentication.PrivateLogout();
 ```
-<sup><a href='/src/DeriSock.DevTools/Snippets.cs#L93-L96' title='Snippet source file'>snippet source</a> | <a href='#snippet-readme-auth-logout' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/DeriSock.DevTools/Snippets.cs#L114-L117' title='Snippet source file'>snippet source</a> | <a href='#snippet-readme-auth-logout' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 **Note:** The server will automatically close the connection when you logout
@@ -138,7 +160,7 @@ This is also the reason why the subscription methods are not present in the `Pub
 <!-- snippet: readme-subscribtion-usage -->
 <a id='snippet-readme-subscribtion-usage'></a>
 ```cs
-// Subscribe to one or more channels. 
+// Subscribe to one or more channels.
 var subscriptionStream = await client.Subscriptions.SubscribeBookChanges(
                            new BookChangesChannel
                            {
@@ -162,5 +184,5 @@ await foreach (var notification in subscriptionStream.WithCancellation(cts.Token
   var bookChangeId = notification.Data.ChangeId;
 }
 ```
-<sup><a href='/src/DeriSock.DevTools/Snippets.cs#L100-L125' title='Snippet source file'>snippet source</a> | <a href='#snippet-readme-subscribtion-usage' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/DeriSock.DevTools/Snippets.cs#L121-L146' title='Snippet source file'>snippet source</a> | <a href='#snippet-readme-subscribtion-usage' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->

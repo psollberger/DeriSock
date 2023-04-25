@@ -2,6 +2,7 @@
 using System;
 using System.Buffers;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Sockets;
 using System.Net.WebSockets;
 using System.Runtime.CompilerServices;
@@ -22,6 +23,13 @@ public sealed class TextMessageWebSocketClient : ITextMessageClient, IDisposable
 
   public bool IsConnected { get; private set; }
 
+  /// <inheritdoc />
+  public IWebProxy? Proxy { get; set; }
+
+  /// <summary>
+  ///   Creates an instance of the <see cref="TextMessageWebSocketClient" /> class.
+  /// </summary>
+  /// <param name="logger">Optional implementation of the <see cref="ILogger" /> interface to enable logging capabilities.</param>
   public TextMessageWebSocketClient(ILogger? logger)
   {
     _logger = logger;
@@ -35,9 +43,14 @@ public sealed class TextMessageWebSocketClient : ITextMessageClient, IDisposable
     if (IsConnected)
       throw new InvalidOperationException();
 
-    _websocketEndpoint = endpoint;
-    _websocket = new ClientWebSocket();
-    _logger?.Information("Connecting to {Endpoint}", _websocketEndpoint);
+    _webSocketEndpoint = endpoint;
+
+    _webSocket = new ClientWebSocket();
+
+    if (Proxy is not null)
+      _webSocket.Options.Proxy = Proxy;
+
+    _logger?.Information("Connecting to {Endpoint}", _webSocketEndpoint);
 
     try
     {

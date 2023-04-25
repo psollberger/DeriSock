@@ -120,7 +120,7 @@ internal class ApiInterfaceCodeGenerator : ApiDocCodeGenerator
         objMethod.Comments.Add(function.Description.CreateXmlDocumentationPara());
 
       objMethod.Comments.Add(new CodeCommentStatement("</summary>", true));
-      objMethod.ReturnType = CreateApiMethodTypeReference(function);
+      objMethod.ReturnType = CreateApiMethodTypeReference(function)!;
 
       var requestTypeInfo = function.GetRequestTypeInfo();
 
