@@ -43,14 +43,14 @@ public sealed class TextMessageWebSocketClient : ITextMessageClient, IDisposable
     if (IsConnected)
       throw new InvalidOperationException();
 
-    _webSocketEndpoint = endpoint;
+    _websocketEndpoint = endpoint;
 
-    _webSocket = new ClientWebSocket();
+    _websocket = new ClientWebSocket();
 
     if (Proxy is not null)
-      _webSocket.Options.Proxy = Proxy;
+      _websocket.Options.Proxy = Proxy;
 
-    _logger?.Information("Connecting to {Endpoint}", _webSocketEndpoint);
+    _logger?.Information("Connecting to {Endpoint}", _websocketEndpoint);
 
     try
     {
