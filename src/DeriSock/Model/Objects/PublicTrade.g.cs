@@ -65,6 +65,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("mark_price")]
+    [Newtonsoft.Json.JsonConverter(typeof(MarketPriceConverter))]
     public decimal MarkPrice { get; set; }
     /// <summary>
     /// <para>Price in base currency</para>

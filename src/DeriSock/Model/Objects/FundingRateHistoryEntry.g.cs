@@ -41,7 +41,7 @@ namespace DeriSock.Model
     /// </summary>
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [Newtonsoft.Json.JsonPropertyAttribute("prev_index_price")]
-    public decimal PrevIndexPrice { get; set; }
+    public decimal? PrevIndexPrice { get; set; }
     /// <summary>
     /// <para>The timestamp (milliseconds since the Unix epoch)</para>
     /// </summary>

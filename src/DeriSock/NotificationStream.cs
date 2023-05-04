@@ -25,6 +25,8 @@ public class NotificationStream<T> : INotificationStream, IAsyncEnumerable<Notif
   private readonly SubscriptionManager _manager;
   private CancellationToken _cancellationToken;
   private Notification<T>? _current;
+  private readonly SemaphoreSlim _queueSemaphore = new SemaphoreSlim(0);
+
 
   /// <inheritdoc />
   Notification<T> IAsyncEnumerator<Notification<T>>.Current => _current!;
@@ -73,4 +75,9 @@ public class NotificationStream<T> : INotificationStream, IAsyncEnumerable<Notif
   {
     await _manager.Unsubscribe(this).ConfigureAwait(false);
   }
+  internal void SignalNewItem()
+  {
+    _queueSemaphore.Release();
+  }
+  
 }
